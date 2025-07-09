@@ -18,11 +18,11 @@ const About = () => {
           </Badge>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
-            About 404 Games Lab
+            About 404 Code Lab
           </h1>
           
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            404 Games Lab is a Scottish-based indie dev studio creating standout digital experiences. 
+            404 Code Lab is a Scottish-based indie dev studio creating standout digital experiences. 
             Whether it's a buzzing game, a smooth mobile app, or a sharp website — we bring bold ideas to life.
           </p>
         </div>

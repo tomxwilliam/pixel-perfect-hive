@@ -165,10 +165,10 @@ const Contact = () => {
                     Prefer to email directly? We love hearing from you!
                   </p>
                   <a 
-                    href="mailto:hello@404gameslab.com" 
+                    href="mailto:hello@404codelab.com" 
                     className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
                   >
-                    hello@404gameslab.com
+                    hello@404codelab.com
                   </a>
                 </CardContent>
               </Card>

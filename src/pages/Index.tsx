@@ -17,7 +17,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-blue-600/20 text-blue-300 border-blue-500/30 px-4 py-2 text-sm">
-            🚀 404 Games Lab
+            🚀 404 Code Lab
           </Badge>
           
           <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">

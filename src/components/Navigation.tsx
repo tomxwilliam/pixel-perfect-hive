@@ -92,7 +92,7 @@ export const Navigation = () => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">404</span>
             </div>
-            <span className="font-bold text-white text-lg">Games Lab</span>
+            <span className="font-bold text-white text-lg">Code Lab</span>
           </Link>
 
           {/* Desktop Navigation */}
