@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, MapPin, Send, Zap } from "lucide-react";
+import { Mail, MapPin, Send, Zap, Phone } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -13,28 +13,57 @@ import { useToast } from "@/hooks/use-toast";
 const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
     email: "",
     subject: "",
     message: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simulate form submission
-    toast({
-      title: "Message sent! 🚀",
-      description: "We'll get back to you faster than a swarm of bees.",
-    });
-    
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: ""
-    });
+    try {
+      // Prepare email data
+      const emailData = {
+        to: "Thomas.jackk@gmail.com",
+        subject: formData.subject,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
+          <p><strong>Email:</strong> ${formData.email}</p>
+          <p><strong>Phone:</strong> ${formData.phoneNumber}</p>
+          <p><strong>Subject:</strong> ${formData.subject}</p>
+          <p><strong>Message:</strong></p>
+          <p>${formData.message.replace(/\n/g, '<br>')}</p>
+        `
+      };
+
+      // TODO: Implement email sending via Supabase Edge Function
+      console.log('Email data to send:', emailData);
+      
+      toast({
+        title: "Message sent! 🚀",
+        description: "We'll get back to you faster than a swarm of bees.",
+      });
+      
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        email: "",
+        subject: "",
+        message: ""
+      });
+    } catch (error) {
+      toast({
+        title: "Error sending message",
+        description: "Please try again or email us directly.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -78,23 +107,41 @@ const Contact = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                        Name
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
+                        First Name
                       </label>
                       <Input
-                        id="name"
-                        name="name"
+                        id="firstName"
+                        name="firstName"
                         type="text"
                         required
-                        value={formData.name}
+                        value={formData.firstName}
                         onChange={handleChange}
                         className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                        placeholder="Your name"
+                        placeholder="First name"
                       />
                     </div>
                     <div>
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
+                        Last Name
+                      </label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        required
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
+                        placeholder="Last name"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                        Email
+                        Email Address
                       </label>
                       <Input
                         id="email"
@@ -105,6 +152,20 @@ const Contact = () => {
                         onChange={handleChange}
                         className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
                         placeholder="your@email.com"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-2">
+                        Phone Number
+                      </label>
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel"
+                        value={formData.phoneNumber}
+                        onChange={handleChange}
+                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
+                        placeholder="+44 123 456 7890"
                       />
                     </div>
                   </div>
