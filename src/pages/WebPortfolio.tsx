@@ -2,11 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Zap, Code, Smartphone, TrendingUp, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palette, Rocket, HeadphonesIcon } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const WebPortfolio = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
@@ -222,14 +226,156 @@ const WebPortfolio = () => {
                   Let's create something equally impressive for your business.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+                  <Button 
+                    onClick={() => navigate('/contact')}
+                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                  >
                     <Zap className="mr-2 h-5 w-5" />
-                    Start Your Website
+                    Contact Us
                   </Button>
-                  <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                    <Eye className="mr-2 h-5 w-5" />
-                    See Our Process
-                  </Button>
+                  
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+                        <Eye className="mr-2 h-5 w-5" />
+                        See Our Process
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-center text-green-300 mb-6">
+                          Our Development Process
+                        </DialogTitle>
+                      </DialogHeader>
+                      
+                      <div className="space-y-8">
+                        {/* Phase 1: Discovery */}
+                        <div className="flex items-start gap-4 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Users className="h-6 w-6 text-blue-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-blue-300 mb-2">1. Discovery Phase</h3>
+                            <p className="text-gray-300 mb-3">
+                              We start by understanding your vision, goals, and target audience through detailed consultations.
+                            </p>
+                            <div className="text-sm text-gray-400 space-y-1">
+                              <div>• Requirements gathering and project scope definition</div>
+                              <div>• Target audience research and competitor analysis</div>
+                              <div>• Technical feasibility assessment</div>
+                              <div>• Timeline: 1-2 weeks</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Phase 2: Design */}
+                        <div className="flex items-start gap-4 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Palette className="h-6 w-6 text-purple-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-purple-300 mb-2">2. Design Phase</h3>
+                            <p className="text-gray-300 mb-3">
+                              Creating wireframes, mockups, and interactive prototypes that bring your vision to life.
+                            </p>
+                            <div className="text-sm text-gray-400 space-y-1">
+                              <div>• Wireframing and user experience design</div>
+                              <div>• Visual design and branding integration</div>
+                              <div>• Interactive prototypes and user testing</div>
+                              <div>• Timeline: 2-3 weeks</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Phase 3: Development */}
+                        <div className="flex items-start gap-4 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Code className="h-6 w-6 text-green-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-green-300 mb-2">3. Development Phase</h3>
+                            <p className="text-gray-300 mb-3">
+                              Building your project with modern technologies, focusing on performance and scalability.
+                            </p>
+                            <div className="text-sm text-gray-400 space-y-1">
+                              <div>• Frontend development with React/TypeScript</div>
+                              <div>• Backend development and database setup</div>
+                              <div>• Responsive design implementation</div>
+                              <div>• Quality assurance and testing</div>
+                              <div>• Timeline: 3-8 weeks (varies by complexity)</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Phase 4: Launch */}
+                        <div className="flex items-start gap-4 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Rocket className="h-6 w-6 text-yellow-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-yellow-300 mb-2">4. Launch Phase</h3>
+                            <p className="text-gray-300 mb-3">
+                              Deploying your project to production with thorough testing and optimization.
+                            </p>
+                            <div className="text-sm text-gray-400 space-y-1">
+                              <div>• Production deployment and configuration</div>
+                              <div>• Performance optimization and monitoring</div>
+                              <div>• SEO setup and analytics integration</div>
+                              <div>• Timeline: 1 week</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Phase 5: Support */}
+                        <div className="flex items-start gap-4 p-6 bg-gray-800/50 rounded-lg border border-gray-700">
+                          <div className="w-12 h-12 bg-cyan-600/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <HeadphonesIcon className="h-6 w-6 text-cyan-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-cyan-300 mb-2">5. Support & Maintenance</h3>
+                            <p className="text-gray-300 mb-3">
+                              Ongoing support to keep your project secure, updated, and performing at its best.
+                            </p>
+                            <div className="text-sm text-gray-400 space-y-1">
+                              <div>• Regular updates and security patches</div>
+                              <div>• Performance monitoring and optimization</div>
+                              <div>• Feature enhancements and bug fixes</div>
+                              <div>• Timeline: Ongoing as needed</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Communication & Tools */}
+                        <div className="p-6 bg-gradient-to-r from-green-600/10 to-blue-600/10 rounded-lg border border-green-500/30">
+                          <h3 className="text-lg font-bold text-green-300 mb-3">Communication & Tools</h3>
+                          <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
+                            <div>
+                              <strong className="text-white">Weekly Updates:</strong> Regular progress reports and demos
+                            </div>
+                            <div>
+                              <strong className="text-white">Direct Access:</strong> Dedicated project manager and developer contact
+                            </div>
+                            <div>
+                              <strong className="text-white">Modern Tools:</strong> Git, Slack, Figma for collaboration
+                            </div>
+                            <div>
+                              <strong className="text-white">Feedback Loops:</strong> Continuous iteration based on your input
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-center pt-4">
+                          <Button 
+                            onClick={() => navigate('/contact')}
+                            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                          >
+                            Start Your Project
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
