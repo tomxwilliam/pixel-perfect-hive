@@ -39,7 +39,7 @@ const WebPortfolio = () => {
                   <div className="flex items-center mb-6">
                     <Globe className="h-8 w-8 text-green-400 mr-4" />
                     <div>
-                      <h2 className="text-3xl font-bold text-green-300 mb-2">404 Games Lab Website</h2>
+                      <h2 className="text-3xl font-bold text-green-300 mb-2">404 Code Lab Website</h2>
                       <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
                         Featured Project
                       </Badge>
