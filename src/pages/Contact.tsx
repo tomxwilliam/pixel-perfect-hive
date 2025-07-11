@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, MapPin, Send, Zap, Phone } from "lucide-react";
+import { Mail, MapPin, Send, Zap, Phone, Loader2 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -23,25 +25,25 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
-      // Prepare email data
-      const emailData = {
-        to: "Thomas.jackk@gmail.com",
-        subject: formData.subject,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
-          <p><strong>Email:</strong> ${formData.email}</p>
-          <p><strong>Phone:</strong> ${formData.phoneNumber}</p>
-          <p><strong>Subject:</strong> ${formData.subject}</p>
-          <p><strong>Message:</strong></p>
-          <p>${formData.message.replace(/\n/g, '<br>')}</p>
-        `
-      };
-
-      // TODO: Implement email sending via Supabase Edge Function
-      console.log('Email data to send:', emailData);
+      // Initialize EmailJS (replace with your public key)
+      emailjs.init("YOUR_PUBLIC_KEY"); // User needs to replace this
+      
+      // Send email using EmailJS
+      await emailjs.send(
+        "YOUR_SERVICE_ID", // User needs to replace this
+        "YOUR_TEMPLATE_ID", // User needs to replace this
+        {
+          to_email: "Thomas.jackk@gmail.com",
+          from_name: `${formData.firstName} ${formData.lastName}`,
+          from_email: formData.email,
+          phone: formData.phoneNumber,
+          subject: formData.subject,
+          message: formData.message,
+        }
+      );
       
       toast({
         title: "Message sent! 🚀",
@@ -58,11 +60,14 @@ const Contact = () => {
         message: ""
       });
     } catch (error) {
+      console.error('EmailJS error:', error);
       toast({
         title: "Error sending message",
-        description: "Please try again or email us directly.",
+        description: "Please try again or email us directly at Thomas.jackk@gmail.com",
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -204,11 +209,21 @@ const Contact = () => {
                   
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50"
                     size="lg"
                   >
-                    <Send className="mr-2 h-5 w-5" />
-                    Send Message
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-2 h-5 w-5" />
+                        Send Message
+                      </>
+                    )}
                   </Button>
                 </form>
               </CardContent>
