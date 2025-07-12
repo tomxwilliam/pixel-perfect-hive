@@ -208,333 +208,553 @@ const WebPortfolio = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="space-y-12">
             {/* SparkleClean */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-blue-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=200&fit=crop" 
-                    alt="SparkleClean Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-blue-300">SparkleClean</h3>
-                  <p className="text-sm text-gray-400 mb-3">Professional Cleaning Services</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    A modern cleaning service website with gallery and contact form.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-blue-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Globe className="h-6 w-6 text-blue-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-blue-300 mb-2">SparkleClean</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      A modern cleaning service website featuring an elegant gallery showcase, streamlined contact forms, and service booking system designed to convert visitors into customers.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Palette className="h-5 w-5 text-blue-400 mr-3" />
+                        <span>Modern gallery with before/after photos</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-cyan-400 mr-3" />
+                        <span>Streamlined contact and booking forms</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Smartphone className="h-5 w-5 text-blue-400 mr-3" />
+                        <span>Mobile-optimized for on-the-go bookings</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop" 
+                        alt="SparkleClean Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* FixRight Plumbing */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-green-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-green-500/20 to-teal-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=200&fit=crop" 
-                    alt="FixRight Plumbing Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-green-300">FixRight Plumbing</h3>
-                  <p className="text-sm text-gray-400 mb-3">Emergency Plumbing Services</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Emergency plumber site with boiler service booking.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-green-500/30 text-green-300 hover:bg-green-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-green-500/10 to-teal-500/10 border-green-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Zap className="h-6 w-6 text-green-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-green-300 mb-2">FixRight Plumbing</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Emergency plumbing service website with 24/7 booking system, boiler service scheduling, and instant quote calculator to help customers get immediate assistance.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Rocket className="h-5 w-5 text-green-400 mr-3" />
+                        <span>24/7 emergency booking system</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Code className="h-5 w-5 text-teal-400 mr-3" />
+                        <span>Instant quote calculator</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <HeadphonesIcon className="h-5 w-5 text-green-400 mr-3" />
+                        <span>Live chat support integration</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-green-400/20 to-teal-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=600&h=400&fit=crop" 
+                        alt="FixRight Plumbing Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Shear Perfection */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-purple-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=200&fit=crop" 
-                    alt="Shear Perfection Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-purple-300">Shear Perfection</h3>
-                  <p className="text-sm text-gray-400 mb-3">Hair & Beauty Salon</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Hair & beauty salon website with online booking and treatments.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Palette className="h-6 w-6 text-purple-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-purple-300 mb-2">Shear Perfection</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Hair & beauty salon website featuring online booking system, treatment galleries, and stylist profiles to showcase expertise and build client confidence.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-purple-400 mr-3" />
+                        <span>Online appointment booking</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-pink-400 mr-3" />
+                        <span>Treatment gallery showcase</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <TrendingUp className="h-5 w-5 text-purple-400 mr-3" />
+                        <span>Stylist profiles and reviews</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop" 
+                        alt="Shear Perfection Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Padrino's Pizza */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-yellow-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop" 
-                    alt="Padrino's Pizza Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-yellow-300">Padrino's Pizza</h3>
-                  <p className="text-sm text-gray-400 mb-3">Takeaway Pizza Restaurant</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Takeaway pizza site with interactive menu and gallery.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-yellow-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Globe className="h-6 w-6 text-yellow-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-yellow-300 mb-2">Padrino's Pizza</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Takeaway pizza restaurant website with interactive menu builder, food gallery, and seamless online ordering system to boost delivery sales.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Code className="h-5 w-5 text-yellow-400 mr-3" />
+                        <span>Interactive menu and pizza builder</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-orange-400 mr-3" />
+                        <span>Appetizing food gallery</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Rocket className="h-5 w-5 text-yellow-400 mr-3" />
+                        <span>One-click ordering system</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" 
+                        alt="Padrino's Pizza Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Sweet Crumbs */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-pink-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=400&h=200&fit=crop" 
-                    alt="Sweet Crumbs Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-pink-300">Sweet Crumbs</h3>
-                  <p className="text-sm text-gray-400 mb-3">Custom Cake Shop</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Custom cake shop site with flavour lists and order form.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-pink-500/30 text-pink-300 hover:bg-pink-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-pink-500/10 to-rose-500/10 border-pink-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-pink-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Palette className="h-6 w-6 text-pink-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-pink-300 mb-2">Sweet Crumbs</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Custom cake shop website featuring flavor browsing, cake galleries, and personalized order forms to help customers create their dream celebrations.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-pink-400 mr-3" />
+                        <span>Interactive flavor and design galleries</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Code className="h-5 w-5 text-rose-400 mr-3" />
+                        <span>Custom order form builder</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-pink-400 mr-3" />
+                        <span>Event consultation booking</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=600&h=400&fit=crop" 
+                        alt="Sweet Crumbs Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Happy Paws */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-cyan-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=200&fit=crop" 
-                    alt="Happy Paws Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-cyan-300">Happy Paws</h3>
-                  <p className="text-sm text-gray-400 mb-3">Dog Grooming & Daycare</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Dog grooming & daycare website with gallery and services.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border-cyan-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-cyan-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Users className="h-6 w-6 text-cyan-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-cyan-300 mb-2">Happy Paws</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Dog grooming & daycare website with service galleries, staff profiles, and online booking to help pet owners find trusted care for their furry friends.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-cyan-400 mr-3" />
+                        <span>Before/after grooming galleries</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-teal-400 mr-3" />
+                        <span>Staff profiles and credentials</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Rocket className="h-5 w-5 text-cyan-400 mr-3" />
+                        <span>Online booking and scheduling</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=400&fit=crop" 
+                        alt="Happy Paws Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Crafted Joinery */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-orange-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=200&fit=crop" 
-                    alt="Crafted Joinery Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-orange-300">Crafted Joinery</h3>
-                  <p className="text-sm text-gray-400 mb-3">Bespoke Carpenter & Joiner</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Bespoke joiner portfolio site with project photos and contact form.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-orange-500/30 text-orange-300 hover:bg-orange-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-orange-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-orange-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Code className="h-6 w-6 text-orange-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-orange-300 mb-2">Crafted Joinery</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Bespoke joinery portfolio website showcasing handcrafted furniture, project galleries, and consultation booking to attract high-value custom work clients.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-orange-400 mr-3" />
+                        <span>High-quality project photo galleries</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Palette className="h-5 w-5 text-amber-400 mr-3" />
+                        <span>Material and finish showcases</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-orange-400 mr-3" />
+                        <span>Consultation booking system</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop" 
+                        alt="Crafted Joinery Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* IronHouse Gym */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-red-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-red-500/20 to-orange-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=200&fit=crop" 
-                    alt="IronHouse Gym Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-red-300">IronHouse Gym</h3>
-                  <p className="text-sm text-gray-400 mb-3">Fitness & Training Center</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Bold gym website with class timetables and trainer profiles.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-red-500/30 text-red-300 hover:bg-red-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-red-500/10 to-crimson-500/10 border-red-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-red-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Zap className="h-6 w-6 text-red-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-red-300 mb-2">IronHouse Gym</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Bold gym website featuring class timetables, trainer profiles, and membership sign-up to motivate visitors and convert them into dedicated members.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <TrendingUp className="h-5 w-5 text-red-400 mr-3" />
+                        <span>Interactive class timetables</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-red-400 mr-3" />
+                        <span>Trainer profiles and specialties</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Rocket className="h-5 w-5 text-red-400 mr-3" />
+                        <span>Online membership sign-up</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-red-400/20 to-red-600/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop" 
+                        alt="IronHouse Gym Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Inkspire */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-indigo-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=200&fit=crop" 
-                    alt="Inkspire Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-indigo-300">Inkspire</h3>
-                  <p className="text-sm text-gray-400 mb-3">Tattoo Studio</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Tattoo studio site with artist bios and high-res tattoo gallery.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-indigo-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-indigo-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Palette className="h-6 w-6 text-indigo-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-indigo-300 mb-2">Inkspire</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Tattoo studio website featuring artist biographies, high-resolution tattoo galleries, and consultation booking to showcase artistry and attract new clients.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Users className="h-5 w-5 text-indigo-400 mr-3" />
+                        <span>Detailed artist bios and portfolios</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-violet-400 mr-3" />
+                        <span>High-res tattoo gallery showcase</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Code className="h-5 w-5 text-indigo-400 mr-3" />
+                        <span>Design consultation booking</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-indigo-400/20 to-violet-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop" 
+                        alt="Inkspire Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Elite Motors */}
-            <Card className="bg-gray-800/50 border-gray-700 hover:border-slate-500/50 transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-2 right-2 z-10">
-                <Badge className="bg-green-600/20 text-green-300 border-green-500/30 px-2 py-1 text-xs">
-                  New
-                </Badge>
-              </div>
-              <CardContent className="p-0">
-                <div className="h-48 bg-gradient-to-br from-slate-500/20 to-gray-500/20 flex items-center justify-center">
-                  <img 
-                    src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=200&fit=crop" 
-                    alt="Elite Motors Website Preview" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-1 text-slate-300">Elite Motors</h3>
-                  <p className="text-sm text-gray-400 mb-3">Car Dealership</p>
-                  <p className="text-gray-300 mb-4 text-sm">
-                    Premium car dealership site with inventory search and financing.
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
-                  >
-                    <Globe className="mr-2 h-4 w-4" />
-                    View Project
-                  </Button>
+            <Card className="bg-gradient-to-r from-slate-500/10 to-gray-500/10 border-slate-500/30">
+              <CardContent className="p-8 lg:p-12">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  <div>
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-slate-600/20 rounded-lg flex items-center justify-center mr-4">
+                        <Rocket className="h-6 w-6 text-slate-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold text-slate-300 mb-2">Elite Motors</h3>
+                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
+                          New Project
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Premium car dealership website with inventory management, virtual showroom tours, and financing calculator to deliver luxury car buying experience online.
+                    </p>
+                    
+                    <div className="space-y-4 mb-8">
+                      <div className="flex items-center text-gray-300">
+                        <Eye className="h-5 w-5 text-slate-400 mr-3" />
+                        <span>Virtual showroom and 360° tours</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Code className="h-5 w-5 text-gray-400 mr-3" />
+                        <span>Advanced search and filtering</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <TrendingUp className="h-5 w-5 text-slate-400 mr-3" />
+                        <span>Financing calculator and forms</span>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700">
+                      <Globe className="mr-2 h-5 w-5" />
+                      View Project
+                    </Button>
+                  </div>
+                  
+                  <div className="relative">
+                    <div className="bg-gradient-to-br from-slate-400/20 to-gray-400/20 rounded-2xl p-8">
+                      <img 
+                        src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=600&h=400&fit=crop" 
+                        alt="Elite Motors Website Preview" 
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
