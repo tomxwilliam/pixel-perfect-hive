@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +6,9 @@ import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palet
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
-
 const WebPortfolio = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -149,7 +145,7 @@ const WebPortfolio = () => {
 
           {/* Local Business Web Design Projects */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-green-300">Local Business Web Design Projects</h2>
+            <h2 className="text-3xl font-bold mb-4 text-green-300">Here's some of our recent websites we have created.</h2>
             <p className="text-xl text-gray-300">
               Recent website projects we've completed for local businesses across various industries.
             </p>
@@ -200,11 +196,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop" 
-                        alt="SparkleClean Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop" alt="SparkleClean Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -255,11 +247,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-green-400/20 to-teal-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=600&h=400&fit=crop" 
-                        alt="FixRight Plumbing Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=600&h=400&fit=crop" alt="FixRight Plumbing Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -310,11 +298,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop" 
-                        alt="Shear Perfection Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -365,11 +349,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" 
-                        alt="Padrino's Pizza Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" alt="Padrino's Pizza Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -420,11 +400,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=600&h=400&fit=crop" 
-                        alt="Sweet Crumbs Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=600&h=400&fit=crop" alt="Sweet Crumbs Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -475,11 +451,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-cyan-400/20 to-teal-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=400&fit=crop" 
-                        alt="Happy Paws Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=400&fit=crop" alt="Happy Paws Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -530,11 +502,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop" 
-                        alt="Crafted Joinery Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop" alt="Crafted Joinery Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -585,11 +553,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-red-400/20 to-red-600/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop" 
-                        alt="IronHouse Gym Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop" alt="IronHouse Gym Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -640,11 +604,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-indigo-400/20 to-violet-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop" 
-                        alt="Inkspire Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop" alt="Inkspire Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -695,11 +655,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-slate-400/20 to-gray-400/20 rounded-2xl p-8">
-                      <img 
-                        src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=600&h=400&fit=crop" 
-                        alt="Elite Motors Website Preview" 
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
+                      <img src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=600&h=400&fit=crop" alt="Elite Motors Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -717,10 +673,7 @@ const WebPortfolio = () => {
                   Let's create something equally impressive for your business.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    onClick={() => navigate('/contact')}
-                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
-                  >
+                  <Button onClick={() => navigate('/contact')} className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
                     <Zap className="mr-2 h-5 w-5" />
                     Contact Us
                   </Button>
@@ -856,10 +809,7 @@ const WebPortfolio = () => {
                         </div>
 
                         <div className="text-center pt-4">
-                          <Button 
-                            onClick={() => navigate('/contact')}
-                            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
-                          >
+                          <Button onClick={() => navigate('/contact')} className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
                             Start Your Project
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
@@ -875,8 +825,6 @@ const WebPortfolio = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default WebPortfolio;
