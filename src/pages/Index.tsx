@@ -32,7 +32,7 @@ const Index = () => {
                 <span className="text-2xl mr-2 text-stone-950">🐝</span>
                 <h3 className="text-xl font-bold text-yellow-300">Now Featuring: Beevers</h3>
               </div>
-              <p className="text-gray-300 mb-4">The ultimate idle bee empire game.</p>
+              <p className="mb-4 text-stone-950">The ultimate idle bee empire game.</p>
               <p className="text-sm text-gray-400 mb-4">Download now on iPhone.</p>
               <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                 <Download className="mr-2 h-4 w-4" />
