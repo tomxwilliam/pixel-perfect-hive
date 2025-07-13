@@ -58,7 +58,7 @@ const GamePortfolio = () => {
                     </div>
                     <div className="flex items-center text-gray-300">
                       <TrendingUp className="h-5 w-5 text-green-400 mr-3" />
-                      <span>Currently in active development</span>
+                      <span className="text-stone-950">Currently in active development</span>
                     </div>
                   </div>
                   
