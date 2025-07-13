@@ -54,7 +54,7 @@ const AppPortfolio = () => {
                     <Shield className="h-8 w-8 text-purple-400" />
                   </div>
                   <h3 className="font-bold mb-2 text-purple-300">Secure & Scalable</h3>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-sm text-stone-950">
                     Enterprise-grade security with cloud infrastructure
                   </p>
                 </div>
