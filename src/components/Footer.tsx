@@ -13,7 +13,7 @@ export const Footer = () => {
               <img 
                 src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
                 alt="404 Code Lab Logo" 
-                className="w-12 h-12"
+                className="w-60 h-60"
               />
             </div>
             <p className="text-gray-400 mb-4 max-w-md">

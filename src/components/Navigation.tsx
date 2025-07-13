@@ -92,7 +92,7 @@ export const Navigation = () => {
             <img 
               src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
               alt="404 Code Lab Logo" 
-              className="w-20 h-20"
+              className="w-60 h-60"
             />
           </Link>
 
