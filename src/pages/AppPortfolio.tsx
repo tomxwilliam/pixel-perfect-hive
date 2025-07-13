@@ -32,7 +32,7 @@ const AppPortfolio = () => {
             <CardContent className="p-8 lg:p-12">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold mb-4 text-blue-300">Proven Technology Foundation</h2>
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                <p className="text-xl max-w-3xl mx-auto text-stone-950">
                   Beevers may be a game, but the tech stack behind it is rock solid — and reusable across industries.
                   We've built the infrastructure, now we can build your app.
                 </p>
