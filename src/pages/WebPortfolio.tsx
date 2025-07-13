@@ -359,9 +359,7 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-pink-300 mb-2">Sweet Crumbs</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
+                        
                       </div>
                     </div>
                     
@@ -410,9 +408,7 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-cyan-300 mb-2">Happy Paws</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
+                        
                       </div>
                     </div>
                     
@@ -461,9 +457,7 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-orange-300 mb-2">Crafted Joinery</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
+                        
                       </div>
                     </div>
                     
