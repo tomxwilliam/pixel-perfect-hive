@@ -67,10 +67,7 @@ const GamePortfolio = () => {
                       <Download className="mr-2 h-5 w-5" />
                       Download on iOS
                     </Button>
-                    <Button variant="outline" className="border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/20">
-                      <ExternalLink className="mr-2 h-5 w-5" />
-                      View Details
-                    </Button>
+                    
                   </div>
                 </div>
                 
