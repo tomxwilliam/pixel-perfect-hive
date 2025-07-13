@@ -602,7 +602,7 @@ const WebPortfolio = () => {
             <Card className="bg-gradient-to-r from-green-600/20 to-blue-600/20 border-green-500/30">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4">💡 Want a Site Like This One?</h3>
-                <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                <p className="mb-6 max-w-2xl mx-auto text-stone-950">
                   Experience the quality firsthand — you're already browsing our latest work! 
                   Let's create something equally impressive for your business.
                 </p>
