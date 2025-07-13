@@ -11,9 +11,9 @@ export const Footer = () => {
           <div className="md:col-span-2">
             <div className="flex items-center mb-4">
               <img 
-                src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
+                src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
                 alt="404 Code Lab Logo" 
-                className="w-60 h-60"
+                className="w-40 h-40"
               />
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
