@@ -1,14 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Smartphone, Zap, Code, TrendingUp, Star, Shield } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-
 const AppPortfolio = () => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -203,7 +200,7 @@ const AppPortfolio = () => {
             <Card className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-500/30">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4">Ready to Build Your App?</h3>
-                <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                <p className="mb-6 max-w-2xl mx-auto text-stone-950">
                   From concept to App Store, we'll guide you through every step of the development process. 
                   Our proven track record with Beevers shows we can deliver apps that users love.
                 </p>
@@ -224,8 +221,6 @@ const AppPortfolio = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default AppPortfolio;
