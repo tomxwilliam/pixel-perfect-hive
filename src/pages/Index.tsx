@@ -17,7 +17,7 @@ const Index = () => {
             🚀 404 Code Lab
           </Badge>
           
-          <h1 className="text-6xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent py-[15px] md:text-7xl">
             Building the Future of Play
           </h1>
           
