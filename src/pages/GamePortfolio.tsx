@@ -50,7 +50,7 @@ const GamePortfolio = () => {
                   <div className="space-y-4 mb-8 text-stone-950">
                     <div className="flex items-center text-gray-300">
                       <Star className="h-5 w-5 text-yellow-400 mr-3" />
-                      <span>Strategic upgrades and prestige systems</span>
+                      <span className="text-stone-950">Strategic upgrades and prestige systems</span>
                     </div>
                     <div className="flex items-center text-gray-300">
                       <Zap className="h-5 w-5 text-blue-400 mr-3" />
