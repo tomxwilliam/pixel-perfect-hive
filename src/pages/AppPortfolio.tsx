@@ -209,7 +209,7 @@ const AppPortfolio = () => {
                     <Zap className="mr-2 h-5 w-5" />
                     Start Your App Project
                   </Button>
-                  <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+                  <Button variant="outline" className="border-gray-600 hover:bg-gray-800 text-slate-100">
                     <Code className="mr-2 h-5 w-5" />
                     View Technical Details
                   </Button>
