@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,10 +5,8 @@ import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Z
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -119,7 +116,7 @@ const Index = () => {
               </Button>
             </Link>
             <Link to="/about">
-              <Button size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+              <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-800 text-slate-100">
                 <Users className="mr-2 h-5 w-5" />
                 Learn About Us
               </Button>
@@ -129,8 +126,6 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
