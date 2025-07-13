@@ -1,13 +1,10 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Code, Zap, Users, Target } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-
 const About = () => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -109,7 +106,7 @@ const About = () => {
                   <span className="text-3xl mr-3">🐝</span>
                   <h3 className="text-2xl font-bold text-yellow-300">Currently Buzzing: Beevers</h3>
                 </div>
-                <p className="text-gray-300 text-lg mb-6 max-w-2xl mx-auto">
+                <p className="text-lg mb-6 max-w-2xl mx-auto text-stone-950">
                   Our flagship game Beevers showcases everything we stand for: addictive gameplay, 
                   smart systems, and polish that keeps players coming back. It's not just a game — 
                   it's a demonstration of our technical capabilities and design philosophy.
@@ -124,8 +121,6 @@ const About = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
