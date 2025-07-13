@@ -86,13 +86,13 @@ export const Navigation = () => {
   return (
     <nav className="fixed top-0 w-full z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center py-2">
             <img 
               src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
               alt="404 Code Lab Logo" 
-              className="w-40 h-40"
+              className="w-16 h-16 object-contain"
             />
           </Link>
 
