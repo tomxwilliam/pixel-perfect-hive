@@ -6,7 +6,6 @@ import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palet
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
-
 const WebPortfolio = () => {
   const navigate = useNavigate();
   return <div className="min-h-screen bg-gray-900 text-white">
@@ -616,7 +615,7 @@ const WebPortfolio = () => {
                   
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="border-gray-600 hover:bg-gray-800 text-slate-100">
+                      <Button variant="outline" className="border-gray-600 hover:bg-gray-800 text-slate-50">
                         <Eye className="mr-2 h-5 w-5" />
                         See Our Process
                       </Button>
