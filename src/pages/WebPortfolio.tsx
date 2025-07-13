@@ -614,7 +614,7 @@ const WebPortfolio = () => {
                   
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+                      <Button variant="outline" className="border-gray-600 hover:bg-gray-800 text-slate-100">
                         <Eye className="mr-2 h-5 w-5" />
                         See Our Process
                       </Button>
