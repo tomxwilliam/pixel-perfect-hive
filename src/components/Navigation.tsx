@@ -88,13 +88,12 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center">
             <img 
               src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
               alt="404 Code Lab Logo" 
-              className="w-8 h-8"
+              className="w-12 h-12"
             />
-            <span className="font-bold text-white text-lg">Code Lab</span>
           </Link>
 
           {/* Desktop Navigation */}

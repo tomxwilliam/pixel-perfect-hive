@@ -9,13 +9,12 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center mb-4">
               <img 
                 src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
                 alt="404 Code Lab Logo" 
-                className="w-8 h-8"
+                className="w-12 h-12"
               />
-              <span className="font-bold text-white text-lg">Code Lab</span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
               Scottish-based indie dev studio creating standout digital experiences. 
