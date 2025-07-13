@@ -10,9 +10,11 @@ export const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">404</span>
-              </div>
+              <img 
+                src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" 
+                alt="404 Code Lab Logo" 
+                className="w-8 h-8"
+              />
               <span className="font-bold text-white text-lg">Code Lab</span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
