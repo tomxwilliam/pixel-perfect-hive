@@ -145,7 +145,7 @@ const WebPortfolio = () => {
 
           {/* Local Business Web Design Projects */}
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-green-300">Here's some of our recent websites we have created.</h2>
+            <h2 className="text-3xl font-bold mb-4 text-green-300">Our Portfolio</h2>
             <p className="text-xl text-gray-300">
               Recent website projects we've completed for local businesses across various industries.
             </p>
