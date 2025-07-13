@@ -64,7 +64,7 @@ const AppPortfolio = () => {
                     <TrendingUp className="h-8 w-8 text-green-400" />
                   </div>
                   <h3 className="font-bold mb-2 text-green-300">Analytics Ready</h3>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-sm text-stone-950">
                     Built-in analytics and user behavior tracking
                   </p>
                 </div>
