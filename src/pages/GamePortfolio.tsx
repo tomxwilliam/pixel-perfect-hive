@@ -54,7 +54,7 @@ const GamePortfolio = () => {
                     </div>
                     <div className="flex items-center text-gray-300">
                       <Zap className="h-5 w-5 text-blue-400 mr-3" />
-                      <span>Smart buff mechanics and automation</span>
+                      <span className="text-stone-950">Smart buff mechanics and automation</span>
                     </div>
                     <div className="flex items-center text-gray-300">
                       <TrendingUp className="h-5 w-5 text-green-400 mr-3" />
