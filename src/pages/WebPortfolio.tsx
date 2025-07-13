@@ -577,9 +577,7 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                      Tattoo studio website featuring artist biographies, high-resolution tattoo galleries, and consultation booking to showcase artistry and attract new clients.
-                    </p>
+                    
                     
                     <div className="space-y-4 mb-8">
                       <div className="flex items-center text-gray-300">

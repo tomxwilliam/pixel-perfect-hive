@@ -1,48 +1,26 @@
-
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Twitter, Mail, Coffee } from "lucide-react";
-
 export const Footer = () => {
-  return (
-    <footer className="bg-gray-900 border-t border-gray-800 py-12 px-4">
+  return <footer className="bg-gray-900 border-t border-gray-800 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="flex items-center justify-center mb-6">
-              <img 
-                src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
-                alt="404 Code Lab Logo" 
-                className="w-24 h-24 object-contain"
-              />
+            <div className="">
+              <img src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" alt="404 Code Lab Logo" className="w-24 h-24 object-contain" />
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
               Scottish-based indie dev studio creating standout digital experiences. 
               Bold ideas, pixel-perfect reality.
             </p>
             <div className="flex space-x-4">
-              <a 
-                href="https://github.com/thomas-jackk" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
+              <a href="https://github.com/thomas-jackk" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Github className="h-5 w-5" />
               </a>
-              <a 
-                href="https://linkedin.com/in/thomas-jackk" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
+              <a href="https://linkedin.com/in/thomas-jackk" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a 
-                href="https://x.com/thomas_jackk" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
+              <a href="https://x.com/thomas_jackk" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
@@ -96,6 +74,5 @@ export const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
