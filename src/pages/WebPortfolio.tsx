@@ -212,9 +212,7 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-green-300 mb-2">FixRight Plumbing</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
+                        
                       </div>
                     </div>
                     
@@ -609,53 +607,7 @@ const WebPortfolio = () => {
 
             {/* Elite Motors */}
             <Card className="bg-gradient-to-r from-slate-500/10 to-gray-500/10 border-slate-500/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-slate-600/20 rounded-lg flex items-center justify-center mr-4">
-                        <Rocket className="h-6 w-6 text-slate-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-slate-300 mb-2">Elite Motors</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                      Premium car dealership website with inventory management, virtual showroom tours, and financing calculator to deliver luxury car buying experience online.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-gray-300">
-                        <Eye className="h-5 w-5 text-slate-400 mr-3" />
-                        <span>Virtual showroom and 360° tours</span>
-                      </div>
-                      <div className="flex items-center text-gray-300">
-                        <Code className="h-5 w-5 text-gray-400 mr-3" />
-                        <span>Advanced search and filtering</span>
-                      </div>
-                      <div className="flex items-center text-gray-300">
-                        <TrendingUp className="h-5 w-5 text-slate-400 mr-3" />
-                        <span>Financing calculator and forms</span>
-                      </div>
-                    </div>
-                    
-                    <Button className="bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700">
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </Button>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-slate-400/20 to-gray-400/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=600&h=400&fit=crop" alt="Elite Motors Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
+              
             </Card>
           </div>
 
