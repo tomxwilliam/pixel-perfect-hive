@@ -29,7 +29,7 @@ const Index = () => {
           <Card className="mb-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 max-w-md mx-auto">
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <span className="text-2xl mr-2">🐝</span>
+                <span className="text-2xl mr-2 text-stone-950">🐝</span>
                 <h3 className="text-xl font-bold text-yellow-300">Now Featuring: Beevers</h3>
               </div>
               <p className="text-gray-300 mb-4">The ultimate idle bee empire game.</p>
