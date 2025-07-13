@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,9 +9,10 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import emailjs from '@emailjs/browser';
-
 const Contact = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -22,34 +22,31 @@ const Contact = () => {
     subject: "",
     message: ""
   });
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
     try {
       // Initialize EmailJS (replace with your public key)
       emailjs.init("YOUR_PUBLIC_KEY"); // User needs to replace this
-      
+
       // Send email using EmailJS
-      await emailjs.send(
-        "YOUR_SERVICE_ID", // User needs to replace this
-        "YOUR_TEMPLATE_ID", // User needs to replace this
-        {
-          to_email: "Thomas.jackk@gmail.com",
-          from_name: `${formData.firstName} ${formData.lastName}`,
-          from_email: formData.email,
-          phone: formData.phoneNumber,
-          subject: formData.subject,
-          message: formData.message,
-        }
-      );
-      
+      await emailjs.send("YOUR_SERVICE_ID",
+      // User needs to replace this
+      "YOUR_TEMPLATE_ID",
+      // User needs to replace this
+      {
+        to_email: "Thomas.jackk@gmail.com",
+        from_name: `${formData.firstName} ${formData.lastName}`,
+        from_email: formData.email,
+        phone: formData.phoneNumber,
+        subject: formData.subject,
+        message: formData.message
+      });
       toast({
         title: "Message sent! 🚀",
-        description: "We'll get back to you faster than a swarm of bees.",
+        description: "We'll get back to you faster than a swarm of bees."
       });
-      
+
       // Reset form
       setFormData({
         firstName: "",
@@ -70,16 +67,13 @@ const Contact = () => {
       setIsLoading(false);
     }
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -115,31 +109,13 @@ const Contact = () => {
                       <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
                         First Name
                       </label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                        placeholder="First name"
-                      />
+                      <Input id="firstName" name="firstName" type="text" required value={formData.firstName} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="First name" />
                     </div>
                     <div>
                       <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
                         Last Name
                       </label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                        placeholder="Last name"
-                      />
+                      <Input id="lastName" name="lastName" type="text" required value={formData.lastName} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="Last name" />
                     </div>
                   </div>
 
@@ -148,30 +124,13 @@ const Contact = () => {
                       <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                         Email Address
                       </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                        placeholder="your@email.com"
-                      />
+                      <Input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="your@email.com" />
                     </div>
                     <div>
                       <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-300 mb-2">
                         Phone Number
                       </label>
-                      <Input
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        type="tel"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                        placeholder="+44 123 456 7890"
-                      />
+                      <Input id="phoneNumber" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="+44 123 456 7890" />
                     </div>
                   </div>
                   
@@ -179,51 +138,24 @@ const Contact = () => {
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
                       Subject
                     </label>
-                    <Input
-                      id="subject"
-                      name="subject"
-                      type="text"
-                      required
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                      placeholder="What's this about?"
-                    />
+                    <Input id="subject" name="subject" type="text" required value={formData.subject} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="What's this about?" />
                   </div>
                   
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
                       Message
                     </label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      required
-                      rows={6}
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                      placeholder="Tell us about your project, question, or just say hi!"
-                    />
+                    <Textarea id="message" name="message" required rows={6} value={formData.message} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="Tell us about your project, question, or just say hi!" />
                   </div>
                   
-                  <Button 
-                    type="submit" 
-                    disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50"
-                    size="lg"
-                  >
-                    {isLoading ? (
-                      <>
+                  <Button type="submit" disabled={isLoading} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50" size="lg">
+                    {isLoading ? <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         Sending...
-                      </>
-                    ) : (
-                      <>
+                      </> : <>
                         <Send className="mr-2 h-5 w-5" />
                         Send Message
-                      </>
-                    )}
+                      </>}
                   </Button>
                 </form>
               </CardContent>
@@ -240,10 +172,7 @@ const Contact = () => {
                   <p className="text-gray-300 mb-4">
                     Prefer to email directly? We love hearing from you!
                   </p>
-                  <a 
-                    href="mailto:hello@404codelab.com" 
-                    className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
-                  >
+                  <a href="mailto:hello@404codelab.com" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
                     hello@404codelab.com
                   </a>
                 </CardContent>
@@ -266,7 +195,7 @@ const Contact = () => {
                     <Zap className="h-6 w-6 text-green-400 mr-3" />
                     <h3 className="text-xl font-bold text-green-300">Quick Response</h3>
                   </div>
-                  <p className="text-gray-300">
+                  <p className="text-stone-950">
                     We typically respond within 24 hours. For urgent projects, we're often faster 
                     than your morning coffee! ☕
                   </p>
@@ -278,8 +207,6 @@ const Contact = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Contact;
