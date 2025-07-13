@@ -6,6 +6,7 @@ import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palet
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
+
 const WebPortfolio = () => {
   const navigate = useNavigate();
   return <div className="min-h-screen bg-gray-900 text-white">
@@ -555,11 +556,12 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-indigo-300 mb-2">Inkspire</h3>
-                        
                       </div>
                     </div>
                     
-                    
+                    <p className="text-lg text-gray-300 mb-6 leading-relaxed">
+                      Professional tattoo parlor website featuring artist portfolios, design galleries, and consultation booking to help clients find the perfect artist for their vision.
+                    </p>
                     
                     <div className="space-y-4 mb-8">
                       <div className="flex items-center text-gray-300">
