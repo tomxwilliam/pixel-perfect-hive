@@ -163,9 +163,7 @@ const WebPortfolio = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-blue-300 mb-2">SparkleClean</h3>
-                        <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                          New Project
-                        </Badge>
+                        
                       </div>
                     </div>
                     
