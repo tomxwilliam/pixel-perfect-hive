@@ -137,7 +137,7 @@ const GamePortfolio = () => {
 
           {/* CTA Section */}
           <div className="mt-16 text-center">
-            <Card className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/30">
+            <Card className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500/30 text-stone-950">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4">Have a Game Idea?</h3>
                 <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
