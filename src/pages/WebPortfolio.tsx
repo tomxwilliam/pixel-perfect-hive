@@ -33,62 +33,9 @@ const WebPortfolio = () => {
         </div>
       </section>
 
-      {/* Featured Project - This Site */}
+      {/* Design Philosophy */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <Card className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border-green-500/30 mb-12">
-            <CardContent className="p-8 lg:p-12">
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div>
-                  <div className="flex items-center mb-6">
-                    <Globe className="h-8 w-8 text-green-400 mr-4" />
-                    <div>
-                      <h2 className="text-3xl font-bold text-green-300 mb-2">404 Code Lab Website</h2>
-                      <Badge className="bg-green-600/20 text-green-300 border-green-500/30">
-                        Featured Project
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xl text-gray-300 mb-6 leading-relaxed">
-                    This very website showcases our approach to modern web design: 
-                    bold aesthetics, smooth interactions, and performance-first architecture.
-                  </p>
-                  
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-center text-gray-300">
-                      <Zap className="h-5 w-5 text-yellow-400 mr-3" />
-                      <span>Lightning-fast loading times</span>
-                    </div>
-                    <div className="flex items-center text-gray-300">
-                      <Smartphone className="h-5 w-5 text-blue-400 mr-3" />
-                      <span>Fully responsive design</span>
-                    </div>
-                    <div className="flex items-center text-gray-300">
-                      <Eye className="h-5 w-5 text-purple-400 mr-3" />
-                      <span>Accessible and user-friendly</span>
-                    </div>
-                  </div>
-                  
-                  <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
-                    <Code className="mr-2 h-5 w-5" />
-                    View Source Code
-                  </Button>
-                </div>
-                
-                <div className="relative">
-                  <div className="bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-2xl p-8 text-center">
-                    <div className="text-6xl mb-4">🌐</div>
-                    <p className="text-gray-300">
-                      You're experiencing our web design philosophy right now!
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Design Philosophy */}
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <Card className="bg-gray-800/50 border-gray-700 hover:border-green-500/50 transition-all duration-300">
               <CardContent className="p-8 text-center">
