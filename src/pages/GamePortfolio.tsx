@@ -1,14 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-
 const GamePortfolio = () => {
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
+  return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -45,7 +42,7 @@ const GamePortfolio = () => {
                     </div>
                   </div>
                   
-                  <p className="text-xl text-gray-300 mb-6 leading-relaxed">
+                  <p className="text-xl mb-6 leading-relaxed text-zinc-950">
                     The ultimate idle bee empire game where bees run the economy. 
                     Build your hive, manage your workers, and watch your empire grow!
                   </p>
@@ -158,8 +155,6 @@ const GamePortfolio = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default GamePortfolio;
