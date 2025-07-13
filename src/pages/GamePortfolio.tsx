@@ -47,7 +47,7 @@ const GamePortfolio = () => {
                     Build your hive, manage your workers, and watch your empire grow!
                   </p>
                   
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-4 mb-8 text-stone-950">
                     <div className="flex items-center text-gray-300">
                       <Star className="h-5 w-5 text-yellow-400 mr-3" />
                       <span>Strategic upgrades and prestige systems</span>
