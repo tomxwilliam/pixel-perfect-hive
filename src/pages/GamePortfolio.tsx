@@ -36,7 +36,7 @@ const GamePortfolio = () => {
                     <span className="text-4xl mr-4">🐝</span>
                     <div>
                       <h2 className="text-3xl font-bold text-yellow-300 mb-2">Beevers</h2>
-                      <Badge className="bg-yellow-600/20 text-yellow-300 border-yellow-500/30">
+                      <Badge className="text-yellow-300 border-yellow-500/30 bg-black/20">
                         Featured Game
                       </Badge>
                     </div>
