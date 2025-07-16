@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Smartphone, Zap, Code, TrendingUp, Star, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Smartphone, Zap, Code, TrendingUp, Star, Shield, CheckCircle, Users, Clock, Lightbulb } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 const AppPortfolio = () => {
@@ -209,10 +210,142 @@ const AppPortfolio = () => {
                     <Zap className="mr-2 h-5 w-5" />
                     Start Your App Project
                   </Button>
-                  <Button variant="outline" className="border-gray-600 text-slate-100 bg-slate-950 hover:bg-slate-800">
-                    <Code className="mr-2 h-5 w-5" />
-                    View Technical Details
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="border-gray-600 text-slate-100 bg-slate-950 hover:bg-slate-800">
+                        <Code className="mr-2 h-5 w-5" />
+                        View Technical Details
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900 border-gray-700">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold text-purple-300">Our App Development Process</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-6 text-gray-300">
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center mt-1">
+                                <Lightbulb className="h-4 w-4 text-purple-400" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-purple-300 mb-2">1. Discovery & Strategy</h3>
+                                <p className="text-sm">We start by understanding your vision, target audience, and business goals. This includes market research, competitor analysis, and feature prioritization.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-blue-600/20 rounded-full flex items-center justify-center mt-1">
+                                <Code className="h-4 w-4 text-blue-400" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-blue-300 mb-2">2. Design & Prototyping</h3>
+                                <p className="text-sm">Interactive wireframes and high-fidelity designs using modern UI/UX principles. We create clickable prototypes for early testing and feedback.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center mt-1">
+                                <Shield className="h-4 w-4 text-green-400" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-green-300 mb-2">3. Development & Testing</h3>
+                                <p className="text-sm">Agile development with regular updates, comprehensive testing on real devices, and continuous integration for quality assurance.</p>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-start space-x-3">
+                              <div className="w-8 h-8 bg-yellow-600/20 rounded-full flex items-center justify-center mt-1">
+                                <TrendingUp className="h-4 w-4 text-yellow-400" />
+                              </div>
+                              <div>
+                                <h3 className="font-bold text-yellow-300 mb-2">4. Launch & Optimization</h3>
+                                <p className="text-sm">App Store submission, launch strategy, analytics setup, and ongoing optimization based on user feedback and performance data.</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-4">
+                            <h3 className="text-xl font-bold text-gray-200 mb-4">Our Technical Expertise</h3>
+                            
+                            <div className="bg-gray-800/50 p-4 rounded-lg">
+                              <h4 className="font-bold text-blue-300 mb-2">Frontend Technologies</h4>
+                              <div className="flex flex-wrap gap-2">
+                                <Badge className="bg-blue-600/20 text-blue-300 border-blue-500/30">React Native</Badge>
+                                <Badge className="bg-blue-600/20 text-blue-300 border-blue-500/30">Flutter</Badge>
+                                <Badge className="bg-blue-600/20 text-blue-300 border-blue-500/30">Swift</Badge>
+                                <Badge className="bg-blue-600/20 text-blue-300 border-blue-500/30">Kotlin</Badge>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-gray-800/50 p-4 rounded-lg">
+                              <h4 className="font-bold text-purple-300 mb-2">Backend & Cloud</h4>
+                              <div className="flex flex-wrap gap-2">
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30">Node.js</Badge>
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30">Firebase</Badge>
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30">AWS</Badge>
+                                <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30">MongoDB</Badge>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-gray-800/50 p-4 rounded-lg">
+                              <h4 className="font-bold text-green-300 mb-2">Key Features We Implement</h4>
+                              <ul className="space-y-2 text-sm">
+                                <li className="flex items-center space-x-2">
+                                  <CheckCircle className="h-4 w-4 text-green-400" />
+                                  <span>Push notifications & real-time updates</span>
+                                </li>
+                                <li className="flex items-center space-x-2">
+                                  <CheckCircle className="h-4 w-4 text-green-400" />
+                                  <span>User authentication & social login</span>
+                                </li>
+                                <li className="flex items-center space-x-2">
+                                  <CheckCircle className="h-4 w-4 text-green-400" />
+                                  <span>In-app purchases & payment processing</span>
+                                </li>
+                                <li className="flex items-center space-x-2">
+                                  <CheckCircle className="h-4 w-4 text-green-400" />
+                                  <span>Analytics & crash reporting</span>
+                                </li>
+                                <li className="flex items-center space-x-2">
+                                  <CheckCircle className="h-4 w-4 text-green-400" />
+                                  <span>Offline functionality & data sync</span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="border-t border-gray-700 pt-6">
+                          <div className="grid md:grid-cols-3 gap-6 text-center">
+                            <div>
+                              <div className="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <Clock className="h-6 w-6 text-purple-400" />
+                              </div>
+                              <h4 className="font-bold text-purple-300 mb-2">Timeline</h4>
+                              <p className="text-sm">8-16 weeks typical development cycle, depending on complexity and features</p>
+                            </div>
+                            
+                            <div>
+                              <div className="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <Users className="h-6 w-6 text-blue-400" />
+                              </div>
+                              <h4 className="font-bold text-blue-300 mb-2">Team</h4>
+                              <p className="text-sm">Dedicated project manager, UI/UX designer, and senior developers assigned to your project</p>
+                            </div>
+                            
+                            <div>
+                              <div className="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <Shield className="h-6 w-6 text-green-400" />
+                              </div>
+                              <h4 className="font-bold text-green-300 mb-2">Support</h4>
+                              <p className="text-sm">3 months post-launch support included, with ongoing maintenance options available</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
