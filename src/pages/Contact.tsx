@@ -37,7 +37,7 @@ const Contact = () => {
       "YOUR_TEMPLATE_ID",
       // User needs to replace this
       {
-        to_email: "Thomas.jackk@gmail.com",
+        to_email: "hello@404codelabs.com",
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
         phone: formData.phoneNumber,
@@ -64,7 +64,7 @@ const Contact = () => {
       console.error('EmailJS error:', error);
       toast({
         title: "Error sending message",
-        description: "Please try again or email us directly at Thomas.jackk@gmail.com",
+        description: "Please try again or email us directly at hello@404codelabs.com",
         variant: "destructive"
       });
     } finally {
@@ -150,10 +150,10 @@ const Contact = () => {
                       Service Category
                     </label>
                     <Select value={formData.category} onValueChange={handleSelectChange}>
-                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white focus:border-blue-500">
+                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white focus:border-blue-500" type="button">
                         <SelectValue placeholder="Select a service category" />
                       </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                      <SelectContent className="bg-gray-800 border-gray-600 z-50"  onCloseAutoFocus={(e) => e.preventDefault()}>
                         <SelectItem value="game-development" className="text-white hover:bg-gray-700 focus:bg-gray-700">
                           🎮 Game Development
                         </SelectItem>
