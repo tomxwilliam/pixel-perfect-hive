@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { Link } from "react-router-dom";
 const GamePortfolio = () => {
   return <div className="min-h-screen bg-gray-900 text-white">
       <Navigation />
@@ -141,9 +142,11 @@ const GamePortfolio = () => {
                   Whether you have a complete concept or just a spark of an idea, 
                   we'd love to hear about it. Let's build the next addictive mobile game together!
                 </p>
-                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                  <Zap className="mr-2 h-5 w-5" />
-                  Discuss Your Game
+                <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Link to="/contact">
+                    <Zap className="mr-2 h-5 w-5" />
+                    Discuss Your Game
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
