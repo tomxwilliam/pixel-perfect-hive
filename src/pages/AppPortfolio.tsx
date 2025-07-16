@@ -184,11 +184,12 @@ const AppPortfolio = () => {
               <CardContent className="p-8">
                 <div className="flex items-center mb-4">
                   <Smartphone className="h-6 w-6 text-purple-400 mr-3" />
-                  <h3 className="text-xl font-bold text-purple-300">Client Concept Apps</h3>
+                  <h3 className="text-xl font-bold text-purple-300">Directory Platform</h3>
                 </div>
                 <p className="text-gray-300 mb-4">
-                  Several innovative app concepts in development for forward-thinking clients 
-                  across healthcare, education, and entertainment sectors.
+                  A comprehensive directory-style website and companion mobile app 
+                  currently in development, featuring advanced search, filtering, 
+                  user profiles, and location-based services.
                 </p>
                 <Badge className="bg-purple-600/20 text-purple-300 border-purple-500/30">
                   Development
