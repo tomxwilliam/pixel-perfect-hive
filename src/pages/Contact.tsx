@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, MapPin, Send, Zap, Phone, Loader2 } from "lucide-react";
@@ -19,6 +20,7 @@ const Contact = () => {
     lastName: "",
     phoneNumber: "",
     email: "",
+    category: "",
     subject: "",
     message: ""
   });
@@ -39,6 +41,7 @@ const Contact = () => {
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
         phone: formData.phoneNumber,
+        category: formData.category,
         subject: formData.subject,
         message: formData.message
       });
@@ -53,6 +56,7 @@ const Contact = () => {
         lastName: "",
         phoneNumber: "",
         email: "",
+        category: "",
         subject: "",
         message: ""
       });
@@ -71,6 +75,13 @@ const Contact = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData({
+      ...formData,
+      category: value
     });
   };
   return <div className="min-h-screen bg-gray-900 text-white">
@@ -132,6 +143,37 @@ const Contact = () => {
                       </label>
                       <Input id="phoneNumber" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500" placeholder="+44 123 456 7890" />
                     </div>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">
+                      Service Category
+                    </label>
+                    <Select value={formData.category} onValueChange={handleSelectChange}>
+                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white focus:border-blue-500">
+                        <SelectValue placeholder="Select a service category" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-800 border-gray-600 z-50">
+                        <SelectItem value="game-development" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          🎮 Game Development
+                        </SelectItem>
+                        <SelectItem value="app-development" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          📱 App Development
+                        </SelectItem>
+                        <SelectItem value="web-development" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          🌐 Web Development
+                        </SelectItem>
+                        <SelectItem value="consulting" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          💡 Technical Consulting
+                        </SelectItem>
+                        <SelectItem value="maintenance" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          🔧 Maintenance & Support
+                        </SelectItem>
+                        <SelectItem value="other" className="text-white hover:bg-gray-700 focus:bg-gray-700">
+                          ❓ Other
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   <div>
