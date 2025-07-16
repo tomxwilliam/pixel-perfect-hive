@@ -167,14 +167,15 @@ const AppPortfolio = () => {
               <CardContent className="p-8">
                 <div className="flex items-center mb-4">
                   <Star className="h-6 w-6 text-blue-400 mr-3" />
-                  <h3 className="text-xl font-bold text-blue-300">Internal Productivity Suite</h3>
+                  <h3 className="text-xl font-bold text-blue-300">Client Website & Portal</h3>
                 </div>
                 <p className="text-gray-300 mb-4">
-                  A comprehensive productivity platform we're building for our own studio, 
-                  featuring project management, time tracking, and team collaboration tools.
+                  A comprehensive website with customer portal and companion mobile app 
+                  currently in development for a key client, featuring user management, 
+                  data visualization, and seamless cross-platform integration.
                 </p>
                 <Badge className="bg-blue-600/20 text-blue-300 border-blue-500/30">
-                  Beta Testing
+                  Development
                 </Badge>
               </CardContent>
             </Card>
