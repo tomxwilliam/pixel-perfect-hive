@@ -231,16 +231,22 @@ const Contact = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border-green-500/30">
+              <Card className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border-green-500/30 hover:from-green-500/20 hover:to-blue-500/20 transition-all cursor-pointer">
                 <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    <Zap className="h-6 w-6 text-green-400 mr-3" />
-                    <h3 className="text-xl font-bold text-green-300">Quick Response</h3>
-                  </div>
-                  <p className="text-stone-950">
-                    We typically respond within 24 hours. For urgent projects, we're often faster 
-                    than your morning coffee! ☕
-                  </p>
+                  <a 
+                    href="https://wa.me/447123456789?text=Hi%20404CodeLabs!%20I'm%20interested%20in%20your%20services."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    <div className="flex items-center mb-4">
+                      <Phone className="h-6 w-6 text-green-400 mr-3" />
+                      <h3 className="text-xl font-bold text-green-300">WhatsApp Us</h3>
+                    </div>
+                    <p className="text-gray-300">
+                      Need instant support? Message us on WhatsApp for quick responses! 💬
+                    </p>
+                  </a>
                 </CardContent>
               </Card>
             </div>
