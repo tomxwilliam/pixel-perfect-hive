@@ -109,7 +109,7 @@ const GamePortfolio = () => {
             <Card className="bg-gray-800/50 border-gray-700 hover:border-purple-500/50 transition-all duration-300">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl mb-4">🏃</div>
-                <h3 className="text-xl font-bold mb-4 text-purple-300">Endless Runner</h3>
+                <h3 className="text-xl font-bold mb-4 text-purple-300">Idel Clicker</h3>
                 <p className="text-gray-300 mb-4">
                   Fast-paced action with unique mechanics and stunning visual effects.
                 </p>
