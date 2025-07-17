@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const { signIn, signUp, user, profile } = useAuth();
   const { toast } = useToast();
@@ -30,6 +31,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccessMessage('');
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -38,11 +40,12 @@ const Auth = () => {
     const { error, redirectTo } = await signIn(email, password);
 
     if (error) {
-      setError(error.message);
+      console.error('Sign in failed:', error);
+      setError(error.message || 'Sign in failed. Please try again.');
       toast({
         variant: "destructive",
         title: "Sign in failed",
-        description: error.message
+        description: error.message || 'Please check your credentials and try again.'
       });
     } else {
       toast({
@@ -59,6 +62,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccessMessage('');
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -73,20 +77,47 @@ const Auth = () => {
       return;
     }
 
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
+
+    console.log('Starting sign up process for:', email);
     const { error } = await signUp(email, password, firstName, lastName);
 
     if (error) {
-      setError(error.message);
+      console.error('Sign up failed:', error);
+      let errorMessage = 'Sign up failed. Please try again.';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Handle specific error cases
+      if (error.message?.includes('already registered')) {
+        errorMessage = 'This email is already registered. Please try signing in instead.';
+      } else if (error.message?.includes('weak_password')) {
+        errorMessage = 'Password is too weak. Please choose a stronger password.';
+      } else if (error.message?.includes('invalid_email')) {
+        errorMessage = 'Please enter a valid email address.';
+      }
+      
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: "Sign up failed",
-        description: error.message
+        description: errorMessage
       });
     } else {
+      setSuccessMessage('Account created successfully! Please check your email for verification instructions.');
       toast({
         title: "Account created!",
         description: "Please check your email for verification instructions."
       });
+      
+      // Clear the form
+      (e.target as HTMLFormElement).reset();
     }
 
     setIsLoading(false);
@@ -190,6 +221,7 @@ const Auth = () => {
                       id="password"
                       name="password"
                       type="password"
+                      placeholder="Minimum 6 characters"
                       required
                       disabled={isLoading}
                     />
@@ -207,6 +239,11 @@ const Auth = () => {
                   {error && (
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  {successMessage && (
+                    <Alert>
+                      <AlertDescription>{successMessage}</AlertDescription>
                     </Alert>
                   )}
                   <Button type="submit" className="w-full" disabled={isLoading}>

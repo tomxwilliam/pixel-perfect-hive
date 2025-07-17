@@ -37,18 +37,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
           // Fetch user profile
           setTimeout(async () => {
-            const { data: profileData } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-            setProfile(profileData);
+            try {
+              const { data: profileData, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (error) {
+                console.error('Error fetching profile:', error);
+              } else {
+                console.log('Profile loaded:', profileData);
+                setProfile(profileData);
+              }
+            } catch (err) {
+              console.error('Profile fetch error:', err);
+            }
           }, 0);
         } else {
           setProfile(null);
@@ -63,13 +74,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       if (session?.user) {
         setTimeout(async () => {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          setProfile(profileData);
-          setLoading(false);
+          try {
+            const { data: profileData, error } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+            
+            if (error) {
+              console.error('Error fetching profile:', error);
+            } else {
+              setProfile(profileData);
+            }
+            setLoading(false);
+          } catch (err) {
+            console.error('Profile fetch error:', err);
+            setLoading(false);
+          }
         }, 0);
       } else {
         setLoading(false);
@@ -80,35 +101,66 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, firstName = '', lastName = '') => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          first_name: firstName,
-          last_name: lastName
+    try {
+      console.log('Attempting sign up for:', email);
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            first_name: firstName,
+            last_name: lastName
+          }
         }
+      });
+      
+      console.log('Sign up response:', { data, error });
+      
+      if (error) {
+        console.error('Sign up error:', error);
+        return { error };
       }
-    });
-    return { error };
+      
+      // If sign up was successful but user needs email confirmation
+      if (data.user && !data.session) {
+        console.log('User created but needs email confirmation');
+      }
+      
+      return { error: null };
+    } catch (err) {
+      console.error('Sign up exception:', err);
+      return { error: err };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    // Determine redirect path based on email domain
-    let redirectTo = '/dashboard'; // default for customers
-    if (email.endsWith('@404codelab.com')) {
-      redirectTo = '/admin';
+    try {
+      console.log('Attempting sign in for:', email);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        console.error('Sign in error:', error);
+        return { error };
+      }
+      
+      // Determine redirect path based on email domain
+      let redirectTo = '/dashboard'; // default for customers
+      if (email.endsWith('@404codelab.com')) {
+        redirectTo = '/admin';
+      }
+      
+      console.log('Sign in successful, redirecting to:', redirectTo);
+      return { error: null, redirectTo };
+    } catch (err) {
+      console.error('Sign in exception:', err);
+      return { error: err };
     }
-    
-    return { error, redirectTo };
   };
 
   const signOut = async () => {
