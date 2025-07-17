@@ -85,40 +85,52 @@ const Auth = () => {
     }
 
     console.log('Starting sign up process for:', email);
-    const { error } = await signUp(email, password, firstName, lastName);
+    try {
+      const { error } = await signUp(email, password, firstName, lastName);
 
-    if (error) {
-      console.error('Sign up failed:', error);
-      let errorMessage = 'Sign up failed. Please try again.';
-      
-      if (error.message) {
-        errorMessage = error.message;
+      if (error) {
+        console.error('Sign up failed:', error);
+        let errorMessage = 'Sign up failed. Please try again.';
+        
+        if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        // Handle specific error cases
+        if (error.message?.includes('already registered')) {
+          errorMessage = 'This email is already registered. Please try signing in instead.';
+        } else if (error.message?.includes('weak_password')) {
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+        } else if (error.message?.includes('invalid_email')) {
+          errorMessage = 'Please enter a valid email address.';
+        } else if (error.message?.includes('Database error')) {
+          errorMessage = 'Database error occurred. Please try again or contact support.';
+        }
+        
+        setError(errorMessage);
+        toast({
+          variant: "destructive",
+          title: "Sign up failed",
+          description: errorMessage
+        });
+      } else {
+        setSuccessMessage('Account created successfully! Please check your email for verification instructions.');
+        toast({
+          title: "Account created!",
+          description: "Please check your email for verification instructions."
+        });
+        
+        // Clear the form
+        (e.target as HTMLFormElement).reset();
       }
-      
-      // Handle specific error cases
-      if (error.message?.includes('already registered')) {
-        errorMessage = 'This email is already registered. Please try signing in instead.';
-      } else if (error.message?.includes('weak_password')) {
-        errorMessage = 'Password is too weak. Please choose a stronger password.';
-      } else if (error.message?.includes('invalid_email')) {
-        errorMessage = 'Please enter a valid email address.';
-      }
-      
-      setError(errorMessage);
+    } catch (err: any) {
+      console.error('Unexpected error during signup:', err);
+      setError(err?.message || 'An unexpected error occurred');
       toast({
-        variant: "destructive",
-        title: "Sign up failed",
-        description: errorMessage
+        variant: "destructive", 
+        title: "Error",
+        description: err?.message || 'An unexpected error occurred'
       });
-    } else {
-      setSuccessMessage('Account created successfully! Please check your email for verification instructions.');
-      toast({
-        title: "Account created!",
-        description: "Please check your email for verification instructions."
-      });
-      
-      // Clear the form
-      (e.target as HTMLFormElement).reset();
     }
 
     setIsLoading(false);
