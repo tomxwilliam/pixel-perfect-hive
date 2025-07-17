@@ -23,7 +23,8 @@ const Auth = () => {
   useEffect(() => {
     if (user && profile) {
       const redirectPath = profile.role === 'admin' ? '/admin' : '/dashboard';
-      navigate(redirectPath);
+      console.log('Redirecting authenticated user to:', redirectPath);
+      navigate(redirectPath, { replace: true });
     }
   }, [user, profile, navigate]);
 
@@ -37,7 +38,7 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const { error, redirectTo } = await signIn(email, password);
+    const { error } = await signIn(email, password);
 
     if (error) {
       console.error('Sign in failed:', error);
@@ -52,7 +53,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have been signed in successfully."
       });
-      navigate(redirectTo || '/dashboard');
+      // Let the useEffect handle the redirect based on profile role
     }
 
     setIsLoading(false);

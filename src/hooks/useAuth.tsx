@@ -12,7 +12,7 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any; redirectTo?: string }>;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
 }
@@ -33,67 +33,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    try {
-      console.log('Fetching profile for user:', userId);
-      const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-      } else {
-        console.log('Profile loaded:', profileData);
-        return profileData;
-      }
-    } catch (err) {
-      console.error('Profile fetch exception:', err);
-      return null;
-    }
-  };
-
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Fetch user profile with a small delay to avoid recursion issues
-          setTimeout(async () => {
-            const profileData = await fetchProfile(session.user.id);
-            setProfile(profileData);
-            setLoading(false);
-          }, 100);
-        } else {
-          setProfile(null);
-          setLoading(false);
-        }
+        setProfile(null); // Reset profile when auth state changes
+        setLoading(false);
       }
     );
 
-    // Check for existing session
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session:', session);
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        setTimeout(async () => {
-          const profileData = await fetchProfile(session.user.id);
-          setProfile(profileData);
-          setLoading(false);
-        }, 100);
-      } else {
-        setLoading(false);
-      }
+      setProfile(null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Separate effect to fetch profile when user changes
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) {
+        setProfile(null);
+        return;
+      }
+
+      try {
+        console.log('Fetching profile for user:', user.id);
+        const { data: profileData, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Error fetching profile:', error);
+          setProfile(null);
+        } else if (profileData) {
+          console.log('Profile loaded:', profileData);
+          setProfile(profileData);
+        } else {
+          console.log('No profile found for user');
+          setProfile(null);
+        }
+      } catch (err) {
+        console.error('Profile fetch exception:', err);
+        setProfile(null);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const signUp = async (email: string, password: string, firstName = '', lastName = '') => {
     try {
@@ -151,14 +148,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error };
       }
       
-      // Determine redirect path based on email domain
-      let redirectTo = '/dashboard'; // default for customers
-      if (email.endsWith('@404codelab.com')) {
-        redirectTo = '/admin';
-      }
-      
-      console.log('Sign in successful, redirecting to:', redirectTo);
-      return { error: null, redirectTo };
+      console.log('Sign in successful');
+      return { error: null };
     } catch (err) {
       console.error('Sign in exception:', err);
       return { error: err };
