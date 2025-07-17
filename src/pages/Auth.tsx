@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,15 +15,16 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, profile } = useAuth();
   const { toast } = useToast();
 
-  // Redirect if already logged in
+  // Redirect if already logged in based on role
   useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
+    if (user && profile) {
+      const redirectPath = profile.role === 'admin' ? '/admin' : '/dashboard';
+      navigate(redirectPath);
     }
-  }, [user, navigate]);
+  }, [user, profile, navigate]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ const Auth = () => {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const { error } = await signIn(email, password);
+    const { error, redirectTo } = await signIn(email, password);
 
     if (error) {
       setError(error.message);
@@ -47,7 +49,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have been signed in successfully."
       });
-      navigate('/dashboard');
+      navigate(redirectTo || '/dashboard');
     }
 
     setIsLoading(false);
@@ -102,9 +104,9 @@ const Auth = () => {
 
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Customer Portal</CardTitle>
+            <CardTitle className="text-2xl">Sign In</CardTitle>
             <CardDescription>
-              Sign in to your account or create a new one to get started
+              Access your account or create a new one to get started
             </CardDescription>
           </CardHeader>
           <CardContent>
