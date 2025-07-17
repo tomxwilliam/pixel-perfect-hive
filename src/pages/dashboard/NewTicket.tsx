@@ -19,7 +19,7 @@ const NewTicket = () => {
     title: '',
     description: '',
     priority: 'medium',
-    project_id: ''
+    project_id: 'none'
   });
   
   const { user } = useAuth();
@@ -40,7 +40,7 @@ const NewTicket = () => {
           title: formData.title,
           description: formData.description,
           priority: formData.priority as any,
-          project_id: formData.project_id || null
+          project_id: formData.project_id === 'none' ? null : formData.project_id
         });
 
       if (error) throw error;
@@ -164,7 +164,7 @@ const NewTicket = () => {
                       <SelectValue placeholder="Select a project (if applicable)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No specific project</SelectItem>
+                      <SelectItem value="none">No specific project</SelectItem>
                       {/* Projects will be loaded dynamically in a real implementation */}
                     </SelectContent>
                   </Select>
