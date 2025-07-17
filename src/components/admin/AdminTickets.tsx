@@ -13,13 +13,13 @@ import { Tables } from '@/integrations/supabase/types';
 type Ticket = Tables<'tickets'>;
 type Profile = Tables<'profiles'>;
 
-interface TicketWithCustomer extends Ticket {
-  customer: Profile;
-  project?: { title: string };
+interface TicketWithDetails extends Ticket {
+  customer?: Profile | null;
+  project?: { title: string } | null;
 }
 
 export const AdminTickets = () => {
-  const [tickets, setTickets] = useState<TicketWithCustomer[]>([]);
+  const [tickets, setTickets] = useState<TicketWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -28,18 +28,46 @@ export const AdminTickets = () => {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const { data } = await supabase
+        // First fetch tickets
+        const { data: ticketsData, error: ticketsError } = await supabase
           .from('tickets')
-          .select(`
-            *,
-            customer:profiles(*),
-            project:projects(title)
-          `)
+          .select('*')
           .order('created_at', { ascending: false });
 
-        if (data) {
-          setTickets(data as TicketWithCustomer[]);
+        if (ticketsError) {
+          console.error('Error fetching tickets:', ticketsError);
+          setLoading(false);
+          return;
         }
+
+        if (!ticketsData) {
+          setTickets([]);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch customer profiles separately
+        const customerIds = [...new Set(ticketsData.map(ticket => ticket.customer_id))];
+        const { data: customersData } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('id', customerIds);
+
+        // Fetch project details separately  
+        const projectIds = [...new Set(ticketsData.map(ticket => ticket.project_id).filter(Boolean))];
+        const { data: projectsData } = await supabase
+          .from('projects')
+          .select('id, title')
+          .in('id', projectIds);
+
+        // Combine the data
+        const ticketsWithDetails: TicketWithDetails[] = ticketsData.map(ticket => ({
+          ...ticket,
+          customer: customersData?.find(customer => customer.id === ticket.customer_id) || null,
+          project: projectsData?.find(project => project.id === ticket.project_id) || null
+        }));
+
+        setTickets(ticketsWithDetails);
       } catch (error) {
         console.error('Error fetching tickets:', error);
       } finally {
@@ -71,9 +99,9 @@ export const AdminTickets = () => {
   };
 
   const filteredTickets = tickets.filter(ticket => {
+    const customerName = ticket.customer ? `${ticket.customer.first_name || ''} ${ticket.customer.last_name || ''}`.toLowerCase() : '';
     const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.customer?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ticket.customer?.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
+      customerName.includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || ticket.status === statusFilter;
     const matchesPriority = priorityFilter === 'all' || ticket.priority === priorityFilter;
@@ -90,7 +118,7 @@ export const AdminTickets = () => {
 
       if (error) throw error;
 
-      // Refresh tickets
+      // Update local state
       setTickets(prev => prev.map(ticket => 
         ticket.id === ticketId 
           ? { ...ticket, status: newStatus as any }
@@ -189,10 +217,13 @@ export const AdminTickets = () => {
                     <User className="h-4 w-4" />
                     <div>
                       <div className="font-medium">
-                        {ticket.customer?.first_name} {ticket.customer?.last_name}
+                        {ticket.customer 
+                          ? `${ticket.customer.first_name || ''} ${ticket.customer.last_name || ''}`.trim() || 'Unknown'
+                          : 'Unknown Customer'
+                        }
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {ticket.customer?.email}
+                        {ticket.customer?.email || 'No email'}
                       </div>
                     </div>
                   </div>
