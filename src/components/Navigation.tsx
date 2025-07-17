@@ -2,18 +2,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Download, ChevronDown } from "lucide-react";
+import { Menu, Download, ChevronDown, User, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, profile, signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -101,11 +104,47 @@ export const Navigation = () => {
             <NavLinks />
           </div>
 
-          {/* App Store Button & Mobile Menu */}
+          {/* Auth & Mobile Menu */}
           <div className="flex items-center space-x-4">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="hidden md:flex">
+                    <User className="mr-2 h-4 w-4" />
+                    {profile?.first_name || 'Account'}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background border">
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="cursor-pointer">
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="hidden md:flex items-center space-x-2">
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    Customer Portal
+                  </Button>
+                </Link>
+              </div>
+            )}
+
             <Button 
               size="sm" 
-              className="hidden sm:flex bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="hidden sm:flex bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
             >
               <Download className="mr-2 h-4 w-4" />
               App Store
@@ -118,10 +157,46 @@ export const Navigation = () => {
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="bg-gray-900 border-gray-800">
+              <SheetContent side="right" className="bg-background border">
                 <div className="flex flex-col space-y-4 mt-8">
                   <NavLinks mobile={true} onLinkClick={() => setIsOpen(false)} />
-                  <Button className="mt-4 bg-gradient-to-r from-blue-600 to-purple-600">
+                  
+                  {user ? (
+                    <div className="space-y-2 pt-4 border-t">
+                      <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" className="w-full justify-start">
+                          <User className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Button>
+                      </Link>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start" 
+                        onClick={() => {
+                          signOut();
+                          setIsOpen(false);
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 pt-4 border-t">
+                      <Link to="/auth" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" className="w-full">
+                          Sign In
+                        </Button>
+                      </Link>
+                      <Link to="/auth" onClick={() => setIsOpen(false)}>
+                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
+                          Customer Portal
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+
+                  <Button className="mt-4 bg-gradient-to-r from-yellow-500 to-orange-500">
                     <Download className="mr-2 h-4 w-4" />
                     App Store
                   </Button>
