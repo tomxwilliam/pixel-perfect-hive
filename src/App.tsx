@@ -14,6 +14,10 @@ import AppPortfolio from "./pages/AppPortfolio";
 import WebPortfolio from "./pages/WebPortfolio";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import NewProject from "./pages/dashboard/NewProject";
+import NewTicket from "./pages/dashboard/NewTicket";
+import BookCall from "./pages/dashboard/BookCall";
+import AIChat from "./pages/dashboard/AIChat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +40,26 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/projects/new" element={
+              <ProtectedRoute>
+                <NewProject />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/tickets/new" element={
+              <ProtectedRoute>
+                <NewTicket />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/book-call" element={
+              <ProtectedRoute>
+                <BookCall />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/chat" element={
+              <ProtectedRoute>
+                <AIChat />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
