@@ -14,6 +14,7 @@ import AppPortfolio from "./pages/AppPortfolio";
 import WebPortfolio from "./pages/WebPortfolio";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
@@ -40,6 +41,11 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/projects/new" element={

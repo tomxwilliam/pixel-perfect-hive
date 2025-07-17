@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Download, ChevronDown, User, LogOut } from "lucide-react";
+import { Menu, Download, ChevronDown, User, LogOut, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -120,6 +120,14 @@ export const Navigation = () => {
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
+                  {profile?.role === 'admin' && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Portal
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -169,6 +177,14 @@ export const Navigation = () => {
                           Dashboard
                         </Button>
                       </Link>
+                      {profile?.role === 'admin' && (
+                        <Link to="/admin" onClick={() => setIsOpen(false)}>
+                          <Button variant="ghost" className="w-full justify-start">
+                            <Shield className="mr-2 h-4 w-4" />
+                            Admin Portal
+                          </Button>
+                        </Link>
+                      )}
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start" 
