@@ -29,12 +29,12 @@ interface MessageWithSender extends Message {
     first_name: string;
     last_name: string;
     role: string;
-  };
+  } | null;
   recipient?: {
     first_name: string;
     last_name: string;
     role: string;
-  };
+  } | null;
 }
 
 export const MessageCenter = () => {
@@ -58,11 +58,7 @@ export const MessageCenter = () => {
     try {
       const { data, error } = await supabase
         .from('messages')
-        .select(`
-          *,
-          sender:profiles!messages_sender_id_fkey(first_name, last_name, role),
-          recipient:profiles!messages_recipient_id_fkey(first_name, last_name, role)
-        `)
+        .select('*')
         .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
@@ -305,26 +301,18 @@ export const MessageCenter = () => {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <User className="h-4 w-4" />
-                          <span className="font-medium">
-                            {isReceived 
-                              ? `From: ${message.sender?.first_name} ${message.sender?.last_name}`
-                              : `To: ${message.recipient?.first_name} ${message.recipient?.last_name}`
-                            }
-                          </span>
-                          <Badge variant={isReceived ? 'default' : 'secondary'}>
-                            {isReceived ? 'Received' : 'Sent'}
-                          </Badge>
-                          {message.sender?.role && (
-                            <Badge variant="outline">
-                              {message.sender.role}
-                            </Badge>
-                          )}
-                          {isUnread && (
-                            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                          )}
-                        </div>
+                         <div className="flex items-center gap-2 mb-2">
+                           <User className="h-4 w-4" />
+                           <span className="font-medium">
+                             {isReceived ? 'From: Admin' : 'To: Admin'}
+                           </span>
+                           <Badge variant={isReceived ? 'default' : 'secondary'}>
+                             {isReceived ? 'Received' : 'Sent'}
+                           </Badge>
+                           {isUnread && (
+                             <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                           )}
+                         </div>
                         
                         {message.subject && (
                           <h4 className="font-medium mb-2">{message.subject}</h4>

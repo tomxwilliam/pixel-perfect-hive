@@ -28,7 +28,7 @@ interface ActivityWithActor extends ActivityLog {
     first_name: string;
     last_name: string;
     role: string;
-  };
+  } | null;
 }
 
 export const ActivityTimeline = () => {
@@ -42,10 +42,7 @@ export const ActivityTimeline = () => {
     try {
       const { data, error } = await supabase
         .from('activity_log')
-        .select(`
-          *,
-          actor:profiles!activity_log_actor_id_fkey(first_name, last_name, role)
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50);
@@ -178,15 +175,12 @@ export const ActivityTimeline = () => {
                             <Clock className="h-3 w-3 mr-1" />
                             {formatDistanceToNow(new Date(activity.created_at))} ago
                           </div>
-                          {activity.actor && (
-                            <div className="flex items-center">
-                              <User className="h-3 w-3 mr-1" />
-                              {activity.actor.first_name} {activity.actor.last_name}
-                              <Badge variant="secondary" className="ml-1 text-xs">
-                                {activity.actor.role}
-                              </Badge>
-                            </div>
-                          )}
+                           {activity.actor_id && (
+                             <div className="flex items-center">
+                               <User className="h-3 w-3 mr-1" />
+                               Admin Action
+                             </div>
+                           )}
                         </div>
 
                         {/* Show changed values for updates */}

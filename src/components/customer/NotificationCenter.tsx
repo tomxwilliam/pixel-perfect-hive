@@ -24,7 +24,7 @@ interface NotificationWithSender extends Notification {
   sender?: {
     first_name: string;
     last_name: string;
-  };
+  } | null;
 }
 
 export const NotificationCenter = () => {
@@ -39,10 +39,7 @@ export const NotificationCenter = () => {
     try {
       const { data, error } = await supabase
         .from('notifications')
-        .select(`
-          *,
-          sender:profiles!notifications_created_by_fkey(first_name, last_name)
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -207,12 +204,12 @@ export const NotificationCenter = () => {
                           <Clock className="h-3 w-3 mr-1" />
                           {formatDistanceToNow(new Date(notification.created_at))} ago
                         </div>
-                        {notification.sender && (
-                          <div className="flex items-center">
-                            <MessageSquare className="h-3 w-3 mr-1" />
-                            From {notification.sender.first_name} {notification.sender.last_name}
-                          </div>
-                        )}
+                         {notification.created_by && (
+                           <div className="flex items-center">
+                             <MessageSquare className="h-3 w-3 mr-1" />
+                             From Admin
+                           </div>
+                         )}
                       </div>
                     </div>
                     
