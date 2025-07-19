@@ -48,7 +48,7 @@ const formSchema = z.object({
   project_id: z.string().optional(),
   amount: z.string().min(1, 'Amount is required'),
   due_date: z.date().optional(),
-  status: z.enum(['pending', 'paid', 'overdue', 'cancelled']),
+  status: z.enum(['pending', 'paid', 'failed', 'refunded']),
   invoice_number: z.string().min(1, 'Invoice number is required'),
 });
 
@@ -103,24 +103,18 @@ export const CreateInvoiceDialog = ({ onInvoiceCreated }: CreateInvoiceDialogPro
 
   const sendInvoiceEmail = async (customerEmail: string, customerName: string, invoiceData: any) => {
     try {
-      const response = await fetch("/api/send-invoice-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { error } = await supabase.functions.invoke('send-invoice-email', {
+        body: {
           to: customerEmail,
           customerName,
           invoiceNumber: invoiceData.invoice_number,
           amount: parseFloat(invoiceData.amount),
           dueDate: invoiceData.due_date,
           invoiceType: "invoice",
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to send email");
-      }
+      if (error) throw error;
 
       toast.success("Invoice email sent successfully!");
     } catch (error) {
@@ -279,12 +273,12 @@ export const CreateInvoiceDialog = ({ onInvoiceCreated }: CreateInvoiceDialogPro
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="paid">Paid</SelectItem>
-                        <SelectItem value="overdue">Overdue</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
+                       <SelectContent>
+                         <SelectItem value="pending">Pending</SelectItem>
+                         <SelectItem value="paid">Paid</SelectItem>
+                         <SelectItem value="failed">Failed</SelectItem>
+                         <SelectItem value="refunded">Refunded</SelectItem>
+                       </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>

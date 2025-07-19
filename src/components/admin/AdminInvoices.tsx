@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Download, Send, DollarSign, Calendar, Search } from 'lucide-react';
+import { Eye, Download, Send, DollarSign, Calendar, Search, Plus } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { CreateInvoiceDialog } from './forms/CreateInvoiceDialog';
 
 type Invoice = Tables<'invoices'>;
 type Profile = Tables<'profiles'>;
@@ -23,29 +24,29 @@ export const AdminInvoices = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  
+  const fetchInvoices = async () => {
+    try {
+      const { data } = await supabase
+        .from('invoices')
+        .select(`
+          *,
+          customer:profiles(*),
+          project:projects(title)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (data) {
+        setInvoices(data as InvoiceWithCustomer[]);
+      }
+    } catch (error) {
+      console.error('Error fetching invoices:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchInvoices = async () => {
-      try {
-        const { data } = await supabase
-          .from('invoices')
-          .select(`
-            *,
-            customer:profiles(*),
-            project:projects(title)
-          `)
-          .order('created_at', { ascending: false });
-
-        if (data) {
-          setInvoices(data as InvoiceWithCustomer[]);
-        }
-      } catch (error) {
-        console.error('Error fetching invoices:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchInvoices();
   }, []);
 
@@ -134,10 +135,15 @@ export const AdminInvoices = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Invoice Management</CardTitle>
-          <CardDescription>
-            Track payments and manage invoicing
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Invoice Management</CardTitle>
+              <CardDescription>
+                Track payments and manage invoicing
+              </CardDescription>
+            </div>
+            <CreateInvoiceDialog onInvoiceCreated={fetchInvoices} />
+          </div>
           <div className="flex items-center space-x-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
