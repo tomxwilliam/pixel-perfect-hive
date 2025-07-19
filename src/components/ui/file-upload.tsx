@@ -26,22 +26,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   multiple = false,
   className
 }) => {
-  const { uploadFile, uploading, uploadProgress } = useFileUpload()
+  const { uploadFile, isUploading, uploadProgress } = useFileUpload()
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     for (const file of acceptedFiles) {
-      const uploadedFile = await uploadFile(file, {
-        entityType,
-        entityId,
-        maxFileSize,
-        allowedTypes
-      })
+      const uploadedFile = await uploadFile(file, entityType, entityId)
       
       if (uploadedFile && onFileUploaded) {
         onFileUploaded(uploadedFile)
       }
     }
-  }, [uploadFile, entityType, entityId, maxFileSize, allowedTypes, onFileUploaded])
+  }, [uploadFile, entityType, entityId, onFileUploaded])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -61,12 +56,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           isDragActive 
             ? "border-primary bg-primary/5" 
             : "border-muted-foreground/25 hover:border-primary/50",
-          uploading && "pointer-events-none opacity-50"
+          isUploading && "pointer-events-none opacity-50"
         )}
       >
         <input {...getInputProps()} />
         
-        {uploading ? (
+        {isUploading ? (
           <div className="space-y-2">
             <div className="flex items-center justify-center">
               <Upload className="h-8 w-8 animate-pulse text-primary" />
@@ -109,10 +104,10 @@ export const FileList: React.FC<FileListProps> = ({
 }) => {
   const { deleteFile } = useFileUpload()
 
-  const handleRemove = async (fileId: string) => {
-    const success = await deleteFile(fileId)
+  const handleRemove = async (file: any) => {
+    const success = await deleteFile(file.id, file.file_path)
     if (success && onRemove) {
-      onRemove(fileId)
+      onRemove(file.id)
     }
   }
 
@@ -146,7 +141,7 @@ export const FileList: React.FC<FileListProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleRemove(file.id)}
+              onClick={() => handleRemove(file)}
               className="text-destructive hover:text-destructive"
             >
               <X className="h-4 w-4" />
