@@ -1,10 +1,17 @@
+
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useCustomerStats } from '@/hooks/useCustomerStats';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Navigation } from '@/components/Navigation';
+import { CustomerProjects } from '@/components/customer/CustomerProjects';
+import { CustomerTickets } from '@/components/customer/CustomerTickets';
+import { CustomerInvoices } from '@/components/customer/CustomerInvoices';
+import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import { 
   User, 
   FolderOpen, 
@@ -13,12 +20,14 @@ import {
   Settings,
   Plus,
   Calendar,
-  MessageCircle
+  MessageCircle,
+  FileText
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user, profile } = useAuth();
+  const { stats, loading: statsLoading } = useCustomerStats();
 
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
@@ -55,10 +64,22 @@ const Dashboard = () => {
     }
   ];
 
-  const stats = [
-    { label: 'Active Projects', value: '0', icon: FolderOpen },
-    { label: 'Open Tickets', value: '0', icon: TicketIcon },
-    { label: 'Pending Invoices', value: '$0', icon: CreditCard }
+  const statsCards = [
+    { 
+      label: 'Active Projects', 
+      value: statsLoading ? '...' : stats.activeProjects.toString(), 
+      icon: FolderOpen 
+    },
+    { 
+      label: 'Open Tickets', 
+      value: statsLoading ? '...' : stats.openTickets.toString(), 
+      icon: TicketIcon 
+    },
+    { 
+      label: 'Pending Invoices', 
+      value: statsLoading ? '...' : `£${stats.pendingInvoices}`, 
+      icon: CreditCard 
+    }
   ];
 
   return (
@@ -93,7 +114,7 @@ const Dashboard = () => {
 
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {stats.map((stat, index) => (
+            {statsCards.map((stat, index) => (
               <Card key={index}>
                 <CardContent className="flex items-center p-6">
                   <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mr-4">
@@ -128,44 +149,51 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Projects</CardTitle>
-                <CardDescription>Your latest project activity</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No projects yet</p>
-                  <Link to="/dashboard/projects/new">
-                    <Button className="mt-4" size="sm">
-                      Start Your First Project
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="overview" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="projects" className="flex items-center gap-2">
+                <FolderOpen className="h-4 w-4" />
+                Projects
+              </TabsTrigger>
+              <TabsTrigger value="tickets" className="flex items-center gap-2">
+                <TicketIcon className="h-4 w-4" />
+                Support
+              </TabsTrigger>
+              <TabsTrigger value="invoices" className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4" />
+                Billing
+              </TabsTrigger>
+              <TabsTrigger value="quotes" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Quotes
+              </TabsTrigger>
+            </TabsList>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Support</CardTitle>
-                <CardDescription>Your latest support interactions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <TicketIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No support tickets</p>
-                  <Link to="/dashboard/tickets/new">
-                    <Button className="mt-4" size="sm" variant="outline">
-                      Get Help
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+            <TabsContent value="overview">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <CustomerProjects />
+                <CustomerTickets />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="projects">
+              <CustomerProjects />
+            </TabsContent>
+
+            <TabsContent value="tickets">
+              <CustomerTickets />
+            </TabsContent>
+
+            <TabsContent value="invoices">
+              <CustomerInvoices />
+            </TabsContent>
+
+            <TabsContent value="quotes">
+              <CustomerQuotes />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

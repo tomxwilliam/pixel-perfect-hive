@@ -1,23 +1,198 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, Clock, MapPin, Video } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, Calendar as CalendarIcon, Clock, MapPin, Video, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+interface AvailabilitySettings {
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  is_available: boolean;
+  setting_type: string;
+}
+
+interface BlockedDate {
+  date: string;
+  is_full_day: boolean;
+  start_time?: string;
+  end_time?: string;
+  reason?: string;
+}
 
 const BookCall = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [callType, setCallType] = useState<string>('project_discovery');
+  const [notes, setNotes] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [availabilitySettings, setAvailabilitySettings] = useState<AvailabilitySettings[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
-  const timeSlots = [
-    { time: '9:00 AM', available: true },
-    { time: '10:00 AM', available: false },
-    { time: '11:00 AM', available: true },
-    { time: '1:00 PM', available: true },
-    { time: '2:00 PM', available: true },
-    { time: '3:00 PM', available: false },
-    { time: '4:00 PM', available: true },
+  const callTypes = [
+    { 
+      id: 'project_discovery', 
+      name: 'Project Discovery', 
+      duration: 30, 
+      description: 'Discuss your project idea and requirements' 
+    },
+    { 
+      id: 'technical_consultation', 
+      name: 'Technical Consultation', 
+      duration: 45, 
+      description: 'Deep dive into technical architecture and solutions' 
+    },
+    { 
+      id: 'project_review', 
+      name: 'Project Review', 
+      duration: 30, 
+      description: 'Review progress and discuss next steps' 
+    }
   ];
+
+  useEffect(() => {
+    fetchAvailabilityData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedDate) {
+      generateAvailableSlots();
+    }
+  }, [selectedDate, availabilitySettings, blockedDates]);
+
+  const fetchAvailabilityData = async () => {
+    try {
+      // Fetch availability settings
+      const { data: settings } = await supabase
+        .from('availability_settings')
+        .select('*')
+        .eq('setting_type', 'general');
+
+      // Fetch blocked dates
+      const { data: blocked } = await supabase
+        .from('blocked_dates')
+        .select('*');
+
+      setAvailabilitySettings(settings || []);
+      setBlockedDates(blocked || []);
+    } catch (error) {
+      console.error('Error fetching availability data:', error);
+    }
+  };
+
+  const generateAvailableSlots = () => {
+    if (!selectedDate) return;
+
+    const dayOfWeek = selectedDate.getDay();
+    const dateString = selectedDate.toISOString().split('T')[0];
+    
+    // Check if date is blocked
+    const isBlocked = blockedDates.some(blocked => 
+      blocked.date === dateString && blocked.is_full_day
+    );
+    
+    if (isBlocked) {
+      setAvailableSlots([]);
+      return;
+    }
+
+    // Find availability for this day of week
+    const daySettings = availabilitySettings.find(setting => 
+      setting.day_of_week === dayOfWeek && setting.is_available
+    );
+
+    if (!daySettings) {
+      setAvailableSlots([]);
+      return;
+    }
+
+    // Generate time slots (every 30 minutes)
+    const slots: string[] = [];
+    const startTime = new Date(`2000-01-01T${daySettings.start_time}`);
+    const endTime = new Date(`2000-01-01T${daySettings.end_time}`);
+    
+    const currentSlot = new Date(startTime);
+    while (currentSlot < endTime) {
+      const timeString = currentSlot.toTimeString().slice(0, 5);
+      slots.push(timeString);
+      currentSlot.setMinutes(currentSlot.getMinutes() + 30);
+    }
+
+    setAvailableSlots(slots);
+  };
+
+  const handleBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!user || !selectedDate || !selectedTime) {
+      toast({
+        title: "Missing Information",
+        description: "Please select a date and time for your call.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const scheduledAt = new Date(selectedDate);
+      const [hours, minutes] = selectedTime.split(':');
+      scheduledAt.setHours(parseInt(hours), parseInt(minutes));
+
+      const selectedCallType = callTypes.find(type => type.id === callType);
+
+      const { error } = await supabase
+        .from('call_bookings')
+        .insert({
+          customer_id: user.id,
+          name: `${user.email}`, // We'll get the actual name from profile
+          email: user.email,
+          scheduled_at: scheduledAt.toISOString(),
+          duration_minutes: selectedCallType?.duration || 30,
+          notes: notes || `${selectedCallType?.name} - ${selectedCallType?.description}`,
+          meeting_link: null, // To be set by admin
+          completed: false
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Confirmed!",
+        description: `Your ${selectedCallType?.name} is scheduled for ${selectedDate.toLocaleDateString()} at ${selectedTime}. We'll send you a meeting link shortly.`,
+      });
+
+      // Reset form
+      setSelectedDate(undefined);
+      setSelectedTime('');
+      setNotes('');
+      
+    } catch (error) {
+      console.error('Error booking call:', error);
+      toast({
+        title: "Booking Failed",
+        description: "There was an error booking your call. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,35 +223,26 @@ const BookCall = () => {
                   <CardTitle className="text-lg">Call Types</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Project Discovery</h4>
-                      <Badge variant="secondary">30 min</Badge>
+                  {callTypes.map((type) => (
+                    <div 
+                      key={type.id}
+                      className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                        callType === type.id ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+                      }`}
+                      onClick={() => setCallType(type.id)}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{type.name}</h4>
+                        <Badge variant="secondary">{type.duration} min</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {type.description}
+                      </p>
+                      {callType === type.id && (
+                        <CheckCircle className="h-4 w-4 text-primary mt-2" />
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Discuss your project idea and requirements
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Technical Consultation</h4>
-                      <Badge variant="secondary">45 min</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Deep dive into technical architecture and solutions
-                    </p>
-                  </div>
-                  
-                  <div className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">Project Review</h4>
-                      <Badge variant="secondary">30 min</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Review progress and discuss next steps
-                    </p>
-                  </div>
+                  ))}
                 </CardContent>
               </Card>
             </div>
@@ -86,7 +252,7 @@ const BookCall = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Calendar className="h-5 w-5 mr-2" />
+                    <CalendarIcon className="h-5 w-5 mr-2" />
                     Schedule Your Call
                   </CardTitle>
                   <CardDescription>
@@ -94,57 +260,72 @@ const BookCall = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {/* Coming Soon Notice */}
-                  <div className="text-center py-12">
-                    <Video className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-xl font-semibold mb-2">Calendly Integration Coming Soon</h3>
-                    <p className="text-muted-foreground mb-6">
-                      We're integrating with Calendly to make booking even easier. 
-                      For now, please contact us directly to schedule your call.
-                    </p>
-                    
-                    <div className="bg-muted rounded-lg p-6 mb-6">
-                      <h4 className="font-medium mb-4">Contact Information</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center justify-center">
-                          <span className="font-medium mr-2">Email:</span>
-                          <span>hello@404codelab.com</span>
-                        </div>
-                        <div className="flex items-center justify-center">
-                          <span className="font-medium mr-2">Response Time:</span>
-                          <span>Within 4 hours</span>
-                        </div>
+                  <form onSubmit={handleBooking} className="space-y-6">
+                    {/* Date Selection */}
+                    <div>
+                      <Label>Select Date</Label>
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }}
+                        className="rounded-md border"
+                      />
+                    </div>
+
+                    {/* Time Selection */}
+                    {selectedDate && (
+                      <div>
+                        <Label>Available Times</Label>
+                        {availableSlots.length === 0 ? (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            No available slots for this date. Please select another date.
+                          </p>
+                        ) : (
+                          <div className="grid grid-cols-3 gap-2 mt-2">
+                            {availableSlots.map((slot) => (
+                              <Button
+                                key={slot}
+                                type="button"
+                                variant={selectedTime === slot ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setSelectedTime(slot)}
+                                className="flex items-center"
+                              >
+                                <Clock className="h-3 w-3 mr-1" />
+                                {slot}
+                              </Button>
+                            ))}
+                          </div>
+                        )}
                       </div>
+                    )}
+
+                    {/* Notes */}
+                    <div>
+                      <Label htmlFor="notes">Additional Notes (Optional)</Label>
+                      <Textarea
+                        id="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Tell us more about what you'd like to discuss..."
+                        className="mt-1"
+                      />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button onClick={() => navigate('/contact')}>
-                        Contact Us Directly
-                      </Button>
-                      <Button variant="outline">
-                        Send Email
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Preview of future booking interface */}
-                  <div className="mt-8 opacity-50 pointer-events-none">
-                    <h4 className="font-medium mb-4">Available Times (Preview)</h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {timeSlots.map((slot, index) => (
-                        <Button
-                          key={index}
-                          variant={slot.available ? "outline" : "ghost"}
-                          size="sm"
-                          disabled={!slot.available}
-                          className="flex items-center"
-                        >
-                          <Clock className="h-3 w-3 mr-1" />
-                          {slot.time}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
+                    {/* Submit */}
+                    <Button 
+                      type="submit" 
+                      disabled={!selectedDate || !selectedTime || loading}
+                      className="w-full"
+                    >
+                      {loading ? 'Booking...' : 'Confirm Booking'}
+                    </Button>
+                  </form>
                 </CardContent>
               </Card>
             </div>
