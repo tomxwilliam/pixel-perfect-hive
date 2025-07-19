@@ -13,6 +13,9 @@ import { CustomerProjects } from '@/components/customer/CustomerProjects';
 import { CustomerTickets } from '@/components/customer/CustomerTickets';
 import { CustomerInvoices } from '@/components/customer/CustomerInvoices';
 import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
+import { NotificationCenter } from '@/components/customer/NotificationCenter';
+import { ActivityTimeline } from '@/components/customer/ActivityTimeline';
+import { MessageCenter } from '@/components/customer/MessageCenter';
 import { 
   User, 
   FolderOpen, 
@@ -22,7 +25,10 @@ import {
   Plus,
   Calendar,
   MessageCircle,
-  FileText
+  FileText,
+  BarChart,
+  Bell,
+  Activity
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -152,8 +158,11 @@ const Dashboard = () => {
 
           {/* Main Content Tabs */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-8">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <BarChart className="h-4 w-4" />
+                Overview
+              </TabsTrigger>
               <TabsTrigger value="projects" className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4" />
                 Projects
@@ -169,6 +178,18 @@ const Dashboard = () => {
               <TabsTrigger value="quotes" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Quotes
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                Notifications
+              </TabsTrigger>
+              <TabsTrigger value="messages" className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Messages
+              </TabsTrigger>
+              <TabsTrigger value="activity" className="flex items-center gap-2">
+                <Activity className="h-4 w-4" />
+                Activity
               </TabsTrigger>
             </TabsList>
 
@@ -194,6 +215,18 @@ const Dashboard = () => {
 
             <TabsContent value="quotes">
               <CustomerQuotes />
+            </TabsContent>
+
+            <TabsContent value="notifications">
+              <NotificationCenter />
+            </TabsContent>
+
+            <TabsContent value="messages">
+              <MessageCenter />
+            </TabsContent>
+
+            <TabsContent value="activity">
+              <ActivityTimeline />
             </TabsContent>
           </Tabs>
         </div>
