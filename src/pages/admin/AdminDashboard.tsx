@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminTickets } from '@/components/admin/AdminTickets';
 import { AdminInvoices } from '@/components/admin/AdminInvoices';
+import { AdminQuotes } from '@/components/admin/AdminQuotes';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -59,6 +59,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="invoices" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Invoices
+            </TabsTrigger>
+            <TabsTrigger value="quotes" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Quotes
             </TabsTrigger>
             <TabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -88,6 +92,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="invoices">
             <AdminInvoices />
+          </TabsContent>
+
+          <TabsContent value="quotes">
+            <AdminQuotes />
           </TabsContent>
 
           <TabsContent value="calendar">

@@ -276,9 +276,11 @@ export type Database = {
           company_name: string | null
           created_at: string
           email: string
+          email_notifications: boolean | null
           first_name: string | null
           id: string
           last_name: string | null
+          notification_preferences: Json | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
@@ -288,9 +290,11 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email: string
+          email_notifications?: boolean | null
           first_name?: string | null
           id: string
           last_name?: string | null
+          notification_preferences?: Json | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -300,9 +304,11 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           email?: string
+          email_notifications?: boolean | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          notification_preferences?: Json | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
@@ -364,6 +370,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      quotes: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_id: string
+          description: string | null
+          due_date: string | null
+          id: string
+          project_id: string | null
+          quote_number: string
+          status: string
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          customer_id: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          project_id?: string | null
+          quote_number: string
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_id?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          project_id?: string | null
+          quote_number?: string
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: []
       }
       social_posts: {
         Row: {

@@ -90,6 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             company_name: null,
             phone: null,
             avatar_url: null,
+            email_notifications: true,
+            notification_preferences: { invoices: true, quotes: true, projects: true },
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
@@ -111,6 +113,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             company_name: null,
             phone: null,
             avatar_url: null,
+            email_notifications: true,
+            notification_preferences: { invoices: true, quotes: true, projects: true },
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
@@ -129,6 +133,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           company_name: null,
           phone: null,
           avatar_url: null,
+          email_notifications: true,
+          notification_preferences: { invoices: true, quotes: true, projects: true },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         };

@@ -101,21 +101,59 @@ export const CreateInvoiceDialog = ({ onInvoiceCreated }: CreateInvoiceDialogPro
     }
   }, [open, form]);
 
+  const sendInvoiceEmail = async (customerEmail: string, customerName: string, invoiceData: any) => {
+    try {
+      const response = await fetch("/api/send-invoice-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: customerEmail,
+          customerName,
+          invoiceNumber: invoiceData.invoice_number,
+          amount: parseFloat(invoiceData.amount),
+          dueDate: invoiceData.due_date,
+          invoiceType: "invoice",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send email");
+      }
+
+      toast.success("Invoice email sent successfully!");
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("Invoice created but failed to send email notification");
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('invoices')
-        .insert({
-          customer_id: values.customer_id,
-          project_id: values.project_id || null,
-          amount: parseFloat(values.amount),
-          due_date: values.due_date?.toISOString().split('T')[0] || null,
-          status: values.status as any,
-          invoice_number: values.invoice_number,
-        });
+      const invoiceData = {
+        customer_id: values.customer_id,
+        project_id: values.project_id === "no-project" ? null : values.project_id || null,
+        amount: parseFloat(values.amount),
+        due_date: values.due_date?.toISOString().split('T')[0] || null,
+        status: values.status as any,
+        invoice_number: values.invoice_number,
+      };
+
+      const { error } = await supabase.from('invoices').insert([invoiceData]);
 
       if (error) throw error;
+
+      // Find customer details for email
+      const customer = customers.find(c => c.id === values.customer_id);
+      if (customer) {
+        await sendInvoiceEmail(
+          customer.email, 
+          `${customer.first_name} ${customer.last_name}`,
+          invoiceData
+        );
+      }
 
       toast.success('Invoice created successfully');
       setOpen(false);
