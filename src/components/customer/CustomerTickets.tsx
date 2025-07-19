@@ -47,7 +47,9 @@ export const CustomerTickets = () => {
       )
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user?.id]);
 
   const getPriorityColor = (priority: string) => {

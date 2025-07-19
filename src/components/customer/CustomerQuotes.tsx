@@ -46,7 +46,9 @@ export const CustomerQuotes = () => {
       )
       .subscribe();
 
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user?.id]);
 
   const getStatusColor = (status: string) => {
