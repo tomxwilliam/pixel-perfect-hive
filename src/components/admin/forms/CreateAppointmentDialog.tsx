@@ -215,7 +215,7 @@ export const CreateAppointmentDialog = ({ onAppointmentCreated }: CreateAppointm
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">New Customer</SelectItem>
+                        <SelectItem value="new-customer">New Customer</SelectItem>
                         {customers.map((customer) => (
                           <SelectItem key={customer.id} value={customer.id}>
                             {customer.first_name} {customer.last_name}

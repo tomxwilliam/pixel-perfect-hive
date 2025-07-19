@@ -197,7 +197,7 @@ export const CreateInvoiceDialog = ({ onInvoiceCreated }: CreateInvoiceDialogPro
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No Project</SelectItem>
+                        <SelectItem value="no-project">No Project</SelectItem>
                         {projects.map((project) => (
                           <SelectItem key={project.id} value={project.id}>
                             {project.title}

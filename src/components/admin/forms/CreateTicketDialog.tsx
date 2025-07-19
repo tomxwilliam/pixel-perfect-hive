@@ -217,7 +217,7 @@ export const CreateTicketDialog = ({ onTicketCreated }: CreateTicketDialogProps)
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">No Project</SelectItem>
+                        <SelectItem value="no-project">No Project</SelectItem>
                         {projects.map((project) => (
                           <SelectItem key={project.id} value={project.id}>
                             {project.title}
@@ -290,7 +290,7 @@ export const CreateTicketDialog = ({ onTicketCreated }: CreateTicketDialogProps)
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Unassigned</SelectItem>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
                         {admins.map((admin) => (
                           <SelectItem key={admin.id} value={admin.id}>
                             {admin.first_name} {admin.last_name}
