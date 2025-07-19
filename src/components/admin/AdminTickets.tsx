@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, MessageSquare, User, Clock, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { CreateTicketDialog } from './forms/CreateTicketDialog';
 
 type Ticket = Tables<'tickets'>;
 type Profile = Tables<'profiles'>;
@@ -25,58 +26,62 @@ export const AdminTickets = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        // First fetch tickets
-        const { data: ticketsData, error: ticketsError } = await supabase
-          .from('tickets')
-          .select('*')
-          .order('created_at', { ascending: false });
+  const fetchTickets = async () => {
+    try {
+      // First fetch tickets
+      const { data: ticketsData, error: ticketsError } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-        if (ticketsError) {
-          console.error('Error fetching tickets:', ticketsError);
-          setLoading(false);
-          return;
-        }
-
-        if (!ticketsData) {
-          setTickets([]);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch customer profiles separately
-        const customerIds = [...new Set(ticketsData.map(ticket => ticket.customer_id))];
-        const { data: customersData } = await supabase
-          .from('profiles')
-          .select('*')
-          .in('id', customerIds);
-
-        // Fetch project details separately  
-        const projectIds = [...new Set(ticketsData.map(ticket => ticket.project_id).filter(Boolean))];
-        const { data: projectsData } = await supabase
-          .from('projects')
-          .select('id, title')
-          .in('id', projectIds);
-
-        // Combine the data
-        const ticketsWithDetails: TicketWithDetails[] = ticketsData.map(ticket => ({
-          ...ticket,
-          customer: customersData?.find(customer => customer.id === ticket.customer_id) || null,
-          project: projectsData?.find(project => project.id === ticket.project_id) || null
-        }));
-
-        setTickets(ticketsWithDetails);
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-      } finally {
+      if (ticketsError) {
+        console.error('Error fetching tickets:', ticketsError);
         setLoading(false);
+        return;
       }
-    };
 
+      if (!ticketsData) {
+        setTickets([]);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch customer profiles separately
+      const customerIds = [...new Set(ticketsData.map(ticket => ticket.customer_id))];
+      const { data: customersData } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', customerIds);
+
+      // Fetch project details separately  
+      const projectIds = [...new Set(ticketsData.map(ticket => ticket.project_id).filter(Boolean))];
+      const { data: projectsData } = await supabase
+        .from('projects')
+        .select('id, title')
+        .in('id', projectIds);
+
+      // Combine the data
+      const ticketsWithDetails: TicketWithDetails[] = ticketsData.map(ticket => ({
+        ...ticket,
+        customer: customersData?.find(customer => customer.id === ticket.customer_id) || null,
+        project: projectsData?.find(project => project.id === ticket.project_id) || null
+      }));
+
+      setTickets(ticketsWithDetails);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchTickets();
   }, []);
+
+  const handleTicketCreated = () => {
+    fetchTickets();
+  };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -154,7 +159,8 @@ export const AdminTickets = () => {
         <CardDescription>
           Manage customer support requests and issues
         </CardDescription>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search tickets..."
@@ -186,6 +192,8 @@ export const AdminTickets = () => {
               <SelectItem value="urgent">Urgent</SelectItem>
             </SelectContent>
           </Select>
+          </div>
+          <CreateTicketDialog onTicketCreated={handleTicketCreated} />
         </div>
       </CardHeader>
       <CardContent>

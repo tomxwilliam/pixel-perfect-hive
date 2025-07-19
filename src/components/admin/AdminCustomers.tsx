@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, Mail, Phone, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { CreateCustomerDialog } from './forms/CreateCustomerDialog';
 
 type Profile = Tables<'profiles'>;
 
@@ -22,58 +23,62 @@ export const AdminCustomers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
+  const fetchCustomers = async () => {
+    try {
+      // Fetch customers with basic info
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'customer');
+
+      if (!profiles) return;
+
+      // Fetch additional stats for each customer
+      const customersWithStats = await Promise.all(
+        profiles.map(async (profile) => {
+          const [projectsResult, ticketsResult, invoicesResult] = await Promise.all([
+            supabase
+              .from('projects')
+              .select('*', { count: 'exact', head: true })
+              .eq('customer_id', profile.id),
+            supabase
+              .from('tickets')
+              .select('*', { count: 'exact', head: true })
+              .eq('customer_id', profile.id),
+            supabase
+              .from('invoices')
+              .select('amount, status')
+              .eq('customer_id', profile.id)
+          ]);
+
+          const totalSpent = invoicesResult.data
+            ?.filter(inv => inv.status === 'paid')
+            .reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+
+          return {
+            ...profile,
+            project_count: projectsResult.count || 0,
+            ticket_count: ticketsResult.count || 0,
+            total_spent: totalSpent
+          } as CustomerWithStats;
+        })
+      );
+
+      setCustomers(customersWithStats);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        // Fetch customers with basic info
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('role', 'customer');
-
-        if (!profiles) return;
-
-        // Fetch additional stats for each customer
-        const customersWithStats = await Promise.all(
-          profiles.map(async (profile) => {
-            const [projectsResult, ticketsResult, invoicesResult] = await Promise.all([
-              supabase
-                .from('projects')
-                .select('*', { count: 'exact', head: true })
-                .eq('customer_id', profile.id),
-              supabase
-                .from('tickets')
-                .select('*', { count: 'exact', head: true })
-                .eq('customer_id', profile.id),
-              supabase
-                .from('invoices')
-                .select('amount, status')
-                .eq('customer_id', profile.id)
-            ]);
-
-            const totalSpent = invoicesResult.data
-              ?.filter(inv => inv.status === 'paid')
-              .reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
-
-            return {
-              ...profile,
-              project_count: projectsResult.count || 0,
-              ticket_count: ticketsResult.count || 0,
-              total_spent: totalSpent
-            } as CustomerWithStats;
-          })
-        );
-
-        setCustomers(customersWithStats);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCustomers();
   }, []);
+
+  const handleCustomerCreated = () => {
+    fetchCustomers();
+  };
 
   const filteredCustomers = customers.filter(customer =>
     customer.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -107,7 +112,8 @@ export const AdminCustomers = () => {
         <CardDescription>
           Manage your customers and view their activity
         </CardDescription>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search customers..."
@@ -115,6 +121,8 @@ export const AdminCustomers = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="max-w-sm"
           />
+          </div>
+          <CreateCustomerDialog onCustomerCreated={handleCustomerCreated} />
         </div>
       </CardHeader>
       <CardContent>

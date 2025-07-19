@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, Edit, Calendar, DollarSign, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { CreateProjectDialog } from './forms/CreateProjectDialog';
 
 type Project = Tables<'projects'>;
 type Profile = Tables<'profiles'>;
@@ -23,29 +24,33 @@ export const AdminProjects = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const { data } = await supabase
-          .from('projects')
-          .select(`
-            *,
-            customer:profiles(*)
-          `)
-          .order('created_at', { ascending: false });
+  const fetchProjects = async () => {
+    try {
+      const { data } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          customer:profiles(*)
+        `)
+        .order('created_at', { ascending: false });
 
-        if (data) {
-          setProjects(data as ProjectWithCustomer[]);
-        }
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      } finally {
-        setLoading(false);
+      if (data) {
+        setProjects(data as ProjectWithCustomer[]);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProjects();
   }, []);
+
+  const handleProjectCreated = () => {
+    fetchProjects();
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -102,7 +107,8 @@ export const AdminProjects = () => {
         <CardDescription>
           Track and manage all customer projects
         </CardDescription>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search projects..."
@@ -123,6 +129,8 @@ export const AdminProjects = () => {
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
+          </div>
+          <CreateProjectDialog onProjectCreated={handleProjectCreated} />
         </div>
       </CardHeader>
       <CardContent>
