@@ -1,196 +1,271 @@
-
 import React, { useState, useEffect } from 'react';
-import { Navigation } from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Calendar as CalendarIcon, Clock, MapPin, Video, CheckCircle } from 'lucide-react';
+import { Navigation } from '@/components/Navigation';
+import { 
+  Calendar as CalendarIcon, 
+  Clock, 
+  User, 
+  Phone, 
+  Mail,
+  MessageSquare,
+  CheckCircle,
+  AlertCircle,
+  X,
+  ArrowLeft
+} from 'lucide-react';
+import { format, addDays, isAfter, isBefore, startOfDay, setHours, setMinutes, addMinutes } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
-interface AvailabilitySettings {
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
-  is_available: boolean;
-  setting_type: string;
+interface AvailabilitySlot {
+  date: Date;
+  time: string;
+  available: boolean;
 }
 
-interface BlockedDate {
-  date: string;
-  is_full_day: boolean;
-  start_time?: string;
-  end_time?: string;
-  reason?: string;
+interface BookingData {
+  id: string;
+  scheduled_at: string;
+  duration_minutes: number;
+  notes: string | null;
+  created_at: string;
+  completed: boolean;
 }
 
 const BookCall = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [callType, setCallType] = useState<string>('project_discovery');
-  const [notes, setNotes] = useState<string>('');
+  const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+  const [existingBookings, setExistingBookings] = useState<BookingData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [availabilitySettings, setAvailabilitySettings] = useState<AvailabilitySettings[]>([]);
-  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
-  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  
+  // Form data
+  const [formData, setFormData] = useState({
+    name: profile?.first_name && profile?.last_name 
+      ? `${profile.first_name} ${profile.last_name}` 
+      : '',
+    email: user?.email || '',
+    phone: profile?.phone || '',
+    notes: ''
+  });
 
-  const callTypes = [
-    { 
-      id: 'project_discovery', 
-      name: 'Project Discovery', 
-      duration: 30, 
-      description: 'Discuss your project idea and requirements' 
-    },
-    { 
-      id: 'technical_consultation', 
-      name: 'Technical Consultation', 
-      duration: 45, 
-      description: 'Deep dive into technical architecture and solutions' 
-    },
-    { 
-      id: 'project_review', 
-      name: 'Project Review', 
-      duration: 30, 
-      description: 'Review progress and discuss next steps' 
-    }
-  ];
-
-  useEffect(() => {
-    fetchAvailabilityData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedDate) {
-      generateAvailableSlots();
-    }
-  }, [selectedDate, availabilitySettings, blockedDates]);
-
-  const fetchAvailabilityData = async () => {
+  // Fetch availability settings and blocked dates
+  const fetchAvailability = async (date: Date) => {
     try {
-      // Fetch availability settings
+      setLoading(true);
+      
+      const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+      
+      // Get availability settings for this day
       const { data: settings } = await supabase
         .from('availability_settings')
         .select('*')
-        .eq('setting_type', 'general');
+        .eq('day_of_week', dayOfWeek)
+        .eq('is_available', true);
 
-      // Fetch blocked dates
-      const { data: blocked } = await supabase
+      // Get blocked dates for this specific date
+      const { data: blockedDates } = await supabase
         .from('blocked_dates')
-        .select('*');
+        .select('*')
+        .eq('date', format(date, 'yyyy-MM-dd'));
 
-      setAvailabilitySettings(settings || []);
-      setBlockedDates(blocked || []);
+      // Get existing bookings for this date
+      const startOfSelectedDate = startOfDay(date);
+      const endOfSelectedDate = addDays(startOfSelectedDate, 1);
+      
+      const { data: bookings } = await supabase
+        .from('call_bookings')
+        .select('scheduled_at, duration_minutes')
+        .gte('scheduled_at', startOfSelectedDate.toISOString())
+        .lt('scheduled_at', endOfSelectedDate.toISOString());
+
+      // Generate available time slots
+      const slots: AvailabilitySlot[] = [];
+      
+      if (settings && settings.length > 0) {
+        settings.forEach(setting => {
+          const startTime = setting.start_time;
+          const endTime = setting.end_time;
+          
+          // Parse time strings (assuming format "HH:MM:SS")
+          const [startHour, startMin] = startTime.split(':').map(Number);
+          const [endHour, endMin] = endTime.split(':').map(Number);
+          
+          // Generate 30-minute slots
+          let currentTime = setMinutes(setHours(date, startHour), startMin);
+          const endTimeDate = setMinutes(setHours(date, endHour), endMin);
+          
+          while (isBefore(currentTime, endTimeDate)) {
+            const timeString = format(currentTime, 'HH:mm');
+            
+            // Check if this slot is blocked
+            const isBlocked = blockedDates?.some(blocked => {
+              if (blocked.is_full_day) return true;
+              
+              if (blocked.start_time && blocked.end_time) {
+                const blockStart = blocked.start_time;
+                const blockEnd = blocked.end_time;
+                return timeString >= blockStart && timeString < blockEnd;
+              }
+              
+              return false;
+            });
+
+            // Check if this slot is already booked
+            const isBooked = bookings?.some(booking => {
+              const bookingTime = new Date(booking.scheduled_at);
+              const bookingEnd = addMinutes(bookingTime, booking.duration_minutes);
+              return currentTime >= bookingTime && currentTime < bookingEnd;
+            });
+
+            slots.push({
+              date: currentTime,
+              time: timeString,
+              available: !isBlocked && !isBooked && isAfter(currentTime, new Date())
+            });
+            
+            currentTime = addMinutes(currentTime, 30);
+          }
+        });
+      }
+      
+      setAvailableSlots(slots);
     } catch (error) {
-      console.error('Error fetching availability data:', error);
+      console.error('Error fetching availability:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load availability. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const generateAvailableSlots = () => {
-    if (!selectedDate) return;
-
-    const dayOfWeek = selectedDate.getDay();
-    const dateString = selectedDate.toISOString().split('T')[0];
+  // Fetch user's existing bookings
+  const fetchExistingBookings = async () => {
+    if (!user) return;
     
-    // Check if date is blocked
-    const isBlocked = blockedDates.some(blocked => 
-      blocked.date === dateString && blocked.is_full_day
-    );
-    
-    if (isBlocked) {
-      setAvailableSlots([]);
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('call_bookings')
+        .select('*')
+        .eq('customer_id', user.id)
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true });
+
+      if (error) throw error;
+      setExistingBookings(data || []);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
     }
-
-    // Find availability for this day of week
-    const daySettings = availabilitySettings.find(setting => 
-      setting.day_of_week === dayOfWeek && setting.is_available
-    );
-
-    if (!daySettings) {
-      setAvailableSlots([]);
-      return;
-    }
-
-    // Generate time slots (every 30 minutes)
-    const slots: string[] = [];
-    const startTime = new Date(`2000-01-01T${daySettings.start_time}`);
-    const endTime = new Date(`2000-01-01T${daySettings.end_time}`);
-    
-    const currentSlot = new Date(startTime);
-    while (currentSlot < endTime) {
-      const timeString = currentSlot.toTimeString().slice(0, 5);
-      slots.push(timeString);
-      currentSlot.setMinutes(currentSlot.getMinutes() + 30);
-    }
-
-    setAvailableSlots(slots);
   };
 
-  const handleBooking = async (e: React.FormEvent) => {
+  useEffect(() => {
+    fetchExistingBookings();
+  }, [user]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchAvailability(selectedDate);
+    }
+  }, [selectedDate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !selectedDate || !selectedTime) {
+    if (!selectedDate || !selectedTime || !formData.name || !formData.email) {
       toast({
         title: "Missing Information",
-        description: "Please select a date and time for your call.",
+        description: "Please fill in all required fields and select a time slot.",
         variant: "destructive"
       });
       return;
     }
 
-    setLoading(true);
-
+    setSubmitting(true);
+    
     try {
-      const scheduledAt = new Date(selectedDate);
-      const [hours, minutes] = selectedTime.split(':');
-      scheduledAt.setHours(parseInt(hours), parseInt(minutes));
-
-      const selectedCallType = callTypes.find(type => type.id === callType);
-
+      const [hours, minutes] = selectedTime.split(':').map(Number);
+      const scheduledDateTime = setMinutes(setHours(selectedDate, hours), minutes);
+      
       const { error } = await supabase
         .from('call_bookings')
         .insert({
-          customer_id: user.id,
-          name: `${user.email}`, // We'll get the actual name from profile
-          email: user.email,
-          scheduled_at: scheduledAt.toISOString(),
-          duration_minutes: selectedCallType?.duration || 30,
-          notes: notes || `${selectedCallType?.name} - ${selectedCallType?.description}`,
-          meeting_link: null, // To be set by admin
-          completed: false
+          customer_id: user?.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          notes: formData.notes || null,
+          scheduled_at: scheduledDateTime.toISOString(),
+          duration_minutes: 30
         });
 
       if (error) throw error;
 
       toast({
         title: "Booking Confirmed!",
-        description: `Your ${selectedCallType?.name} is scheduled for ${selectedDate.toLocaleDateString()} at ${selectedTime}. We'll send you a meeting link shortly.`,
+        description: `Your call is scheduled for ${format(scheduledDateTime, 'PPP')} at ${selectedTime}.`,
       });
 
       // Reset form
       setSelectedDate(undefined);
       setSelectedTime('');
-      setNotes('');
+      setFormData({ ...formData, notes: '' });
+      
+      // Refresh bookings
+      fetchExistingBookings();
       
     } catch (error) {
-      console.error('Error booking call:', error);
+      console.error('Error creating booking:', error);
       toast({
         title: "Booking Failed",
-        description: "There was an error booking your call. Please try again.",
+        description: "There was an error creating your booking. Please try again.",
         variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      setSubmitting(false);
+    }
+  };
+
+  const cancelBooking = async (bookingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('call_bookings')
+        .delete()
+        .eq('id', bookingId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Booking Cancelled",
+        description: "Your booking has been successfully cancelled.",
+      });
+
+      fetchExistingBookings();
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      toast({
+        title: "Error",
+        description: "Failed to cancel booking. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -199,7 +274,7 @@ const BookCall = () => {
       <Navigation />
       
       <div className="pt-20 pb-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center mb-8">
             <Button 
               variant="ghost" 
@@ -210,125 +285,216 @@ const BookCall = () => {
               Back to Dashboard
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Book a Consultation Call</h1>
-              <p className="text-muted-foreground">Schedule a call to discuss your project</p>
+              <h1 className="text-3xl font-bold">Book a Call</h1>
+              <p className="text-muted-foreground">
+                Schedule a consultation call with our team
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Call Types */}
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Call Types</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {callTypes.map((type) => (
-                    <div 
-                      key={type.id}
-                      className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                        callType === type.id ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => setCallType(type.id)}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{type.name}</h4>
-                        <Badge variant="secondary">{type.duration} min</Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {type.description}
-                      </p>
-                      {callType === type.id && (
-                        <CheckCircle className="h-4 w-4 text-primary mt-2" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Booking Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <CalendarIcon className="h-5 w-5 mr-2" />
+                  Schedule New Call
+                </CardTitle>
+                <CardDescription>
+                  Select a date and time that works for you
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Contact Information */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">Full Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Date Selection */}
+                  <div>
+                    <Label>Select Date *</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !selectedDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={setSelectedDate}
+                          disabled={(date) => date < startOfDay(new Date())}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Time Selection */}
+                  {selectedDate && (
+                    <div>
+                      <Label>Available Times *</Label>
+                      {loading ? (
+                        <div className="grid grid-cols-3 gap-2 mt-2">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="h-10 bg-muted animate-pulse rounded" />
+                          ))}
+                        </div>
+                      ) : availableSlots.length > 0 ? (
+                        <div className="grid grid-cols-3 gap-2 mt-2">
+                          {availableSlots.map((slot) => (
+                            <Button
+                              key={slot.time}
+                              type="button"
+                              variant={selectedTime === slot.time ? "default" : "outline"}
+                              size="sm"
+                              disabled={!slot.available}
+                              onClick={() => setSelectedTime(slot.time)}
+                              className={cn(
+                                "text-sm",
+                                !slot.available && "opacity-50 cursor-not-allowed"
+                              )}
+                            >
+                              {slot.time}
+                            </Button>
+                          ))}
+                        </div>
+                      ) : (
+                        <Alert className="mt-2">
+                          <AlertCircle className="h-4 w-4" />
+                          <AlertDescription>
+                            No available time slots for this date. Please select another date.
+                          </AlertDescription>
+                        </Alert>
                       )}
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
+                  )}
 
-            {/* Booking Interface */}
-            <div className="lg:col-span-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CalendarIcon className="h-5 w-5 mr-2" />
-                    Schedule Your Call
-                  </CardTitle>
-                  <CardDescription>
-                    Choose a convenient time for your consultation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleBooking} className="space-y-6">
-                    {/* Date Selection */}
-                    <div>
-                      <Label>Select Date</Label>
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        disabled={(date) => {
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          return date < today;
-                        }}
-                        className="rounded-md border"
-                      />
-                    </div>
+                  {/* Notes */}
+                  <div>
+                    <Label htmlFor="notes">Additional Notes</Label>
+                    <Textarea
+                      id="notes"
+                      placeholder="Tell us what you'd like to discuss..."
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
 
-                    {/* Time Selection */}
-                    {selectedDate && (
-                      <div>
-                        <Label>Available Times</Label>
-                        {availableSlots.length === 0 ? (
-                          <p className="text-sm text-muted-foreground mt-2">
-                            No available slots for this date. Please select another date.
-                          </p>
-                        ) : (
-                          <div className="grid grid-cols-3 gap-2 mt-2">
-                            {availableSlots.map((slot) => (
-                              <Button
-                                key={slot}
-                                type="button"
-                                variant={selectedTime === slot ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setSelectedTime(slot)}
-                                className="flex items-center"
-                              >
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={submitting || !selectedDate || !selectedTime}
+                  >
+                    {submitting ? "Booking..." : "Confirm Booking"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Existing Bookings */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Clock className="h-5 w-5 mr-2" />
+                  Your Upcoming Calls
+                </CardTitle>
+                <CardDescription>
+                  Manage your scheduled consultations
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {existingBookings.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CalendarIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No upcoming calls scheduled</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {existingBookings.map((booking) => (
+                      <div
+                        key={booking.id}
+                        className="border rounded-lg p-4 space-y-3"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <span className="font-medium">
+                                {format(new Date(booking.scheduled_at), 'PPP')}
+                              </span>
+                              <Badge variant="outline">
+                                {format(new Date(booking.scheduled_at), 'p')}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-muted-foreground space-y-1">
+                              <div className="flex items-center">
                                 <Clock className="h-3 w-3 mr-1" />
-                                {slot}
-                              </Button>
-                            ))}
+                                {booking.duration_minutes} minutes
+                              </div>
+                              {booking.notes && (
+                                <div className="flex items-start">
+                                  <MessageSquare className="h-3 w-3 mr-1 mt-0.5" />
+                                  <span>{booking.notes}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => cancelBooking(booking.id)}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    )}
-
-                    {/* Notes */}
-                    <div>
-                      <Label htmlFor="notes">Additional Notes (Optional)</Label>
-                      <Textarea
-                        id="notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="Tell us more about what you'd like to discuss..."
-                        className="mt-1"
-                      />
-                    </div>
-
-                    {/* Submit */}
-                    <Button 
-                      type="submit" 
-                      disabled={!selectedDate || !selectedTime || loading}
-                      className="w-full"
-                    >
-                      {loading ? 'Booking...' : 'Confirm Booking'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
