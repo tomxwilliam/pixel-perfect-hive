@@ -105,7 +105,8 @@ export const CustomerProjects = () => {
         {projects.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <FolderOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No projects yet</p>
+            <p className="mb-2">No projects yet</p>
+            <p className="text-sm">When you start a project with us, it will appear here</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -114,11 +115,16 @@ export const CustomerProjects = () => {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h4 className="font-semibold">{project.title}</h4>
-                    <p className="text-sm text-muted-foreground">{project.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="outline" className={getStatusColor(project.status)}>
+                        {project.status.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        #{project.id.split('-')[0]}
+                      </span>
+                    </div>
                   </div>
-                  <Badge variant="outline" className={getStatusColor(project.status)}>
-                    {project.status.replace('_', ' ').toUpperCase()}
-                  </Badge>
                 </div>
                 
                 <div className="mb-3">

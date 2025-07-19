@@ -121,10 +121,15 @@ export const CustomerTickets = () => {
         ) : (
           <div className="space-y-4">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="border rounded-lg p-4">
+                <div key={ticket.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h4 className="font-semibold">{ticket.title}</h4>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-semibold">{ticket.title}</h4>
+                      <span className="text-xs text-muted-foreground">
+                        #{ticket.id.split('-')[0]}
+                      </span>
+                    </div>
                     <p className="text-sm text-muted-foreground line-clamp-2">
                       {ticket.description}
                     </p>

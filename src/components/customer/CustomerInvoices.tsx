@@ -127,7 +127,7 @@ export const CustomerInvoices = () => {
         ) : (
           <div className="space-y-4">
             {invoices.map((invoice) => (
-              <div key={invoice.id} className="border rounded-lg p-4">
+              <div key={invoice.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h4 className="font-semibold">
@@ -136,6 +136,11 @@ export const CustomerInvoices = () => {
                     <p className="text-2xl font-bold text-primary">
                       £{Number(invoice.amount).toLocaleString()}
                     </p>
+                    {invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' && (
+                      <p className="text-sm text-destructive font-medium">
+                        Payment overdue
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Badge variant={getStatusColor(invoice.status)}>
@@ -147,6 +152,16 @@ export const CustomerInvoices = () => {
                         Pay Now
                       </Button>
                     )}
+                    {invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' && (
+                      <Button size="sm" variant="destructive">
+                        <Download className="h-4 w-4 mr-1" />
+                        Pay Now
+                      </Button>
+                    )}
+                    <Button size="sm" variant="ghost">
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
+                    </Button>
                   </div>
                 </div>
                 

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { CustomerStats } from '@/components/customer/CustomerStats';
 import { useCustomerStats } from '@/hooks/useCustomerStats';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -171,7 +172,8 @@ const Dashboard = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview">
+            <TabsContent value="overview" className="space-y-6">
+              <CustomerStats />
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CustomerProjects />
                 <CustomerTickets />

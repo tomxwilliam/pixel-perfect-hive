@@ -117,20 +117,26 @@ export const CustomerQuotes = () => {
         {quotes.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No quotes available</p>
+            <p className="mb-2">No quotes available</p>
+            <p className="text-sm">Request a project quote to get started</p>
           </div>
         ) : (
           <div className="space-y-4">
             {quotes.map((quote) => (
-              <div key={quote.id} className="border rounded-lg p-4">
+              <div key={quote.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h4 className="font-semibold flex items-center">
-                      {getStatusIcon(quote.status)}
-                      <span className="ml-2">Quote #{quote.quote_number}</span>
-                    </h4>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-semibold flex items-center">
+                        {getStatusIcon(quote.status)}
+                        <span className="ml-2">Quote #{quote.quote_number}</span>
+                      </h4>
+                      <span className="text-xs text-muted-foreground">
+                        #{quote.id.split('-')[0]}
+                      </span>
+                    </div>
                     {quote.description && (
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                         {quote.description}
                       </p>
                     )}
