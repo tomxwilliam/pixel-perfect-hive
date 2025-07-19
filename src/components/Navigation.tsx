@@ -1,227 +1,238 @@
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Download, ChevronDown, User, LogOut, Shield } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/hooks/useAuth';
+import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe } from 'lucide-react';
 
-export const Navigation = () => {
+const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
   const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  const isActive = (path: string) => location.pathname === path;
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
-  const NavLinks = ({ mobile = false, onLinkClick = () => {} }) => (
-    <>
-      <Link 
-        to="/" 
-        className={`${mobile ? 'block py-2' : ''} hover:text-blue-400 transition-colors ${isActive('/') ? 'text-blue-400' : 'text-gray-300'}`}
-        onClick={onLinkClick}
-      >
-        Home
-      </Link>
-      <Link 
-        to="/about" 
-        className={`${mobile ? 'block py-2' : ''} hover:text-blue-400 transition-colors ${isActive('/about') ? 'text-blue-400' : 'text-gray-300'}`}
-        onClick={onLinkClick}
-      >
-        About
-      </Link>
-      
-      {mobile ? (
-        <div className="py-2">
-          <div className="text-gray-300 font-medium mb-2">Portfolio</div>
-          <Link to="/portfolio/games" className="block py-1 pl-4 text-gray-400 hover:text-blue-400" onClick={onLinkClick}>
-            🎮 Games
-          </Link>
-          <Link to="/portfolio/apps" className="block py-1 pl-4 text-gray-400 hover:text-blue-400" onClick={onLinkClick}>
-            📱 Apps  
-          </Link>
-          <Link to="/portfolio/web" className="block py-1 pl-4 text-gray-400 hover:text-blue-400" onClick={onLinkClick}>
-            💻 Web Design
-          </Link>
-        </div>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-            Portfolio
-            <ChevronDown className="ml-1 h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="bg-gray-800 border-gray-700">
-            <DropdownMenuItem asChild>
-              <Link to="/portfolio/games" className="text-gray-300 hover:text-blue-400 cursor-pointer">
-                🎮 Games
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/portfolio/apps" className="text-gray-300 hover:text-blue-400 cursor-pointer">
-                📱 Apps
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/portfolio/web" className="text-gray-300 hover:text-blue-400 cursor-pointer">
-                💻 Web Design
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-      
-      <Link 
-        to="/contact" 
-        className={`${mobile ? 'block py-2' : ''} hover:text-blue-400 transition-colors ${isActive('/contact') ? 'text-blue-400' : 'text-gray-300'}`}
-        onClick={onLinkClick}
-      >
-        Contact
-      </Link>
-    </>
-  );
+  const getInitials = (firstName?: string | null, lastName?: string | null) => {
+    return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
+  };
+
+  const portfolioLinks = [
+    { href: '/portfolio/games', label: 'Games', icon: GamepadIcon },
+    { href: '/portfolio/apps', label: 'Mobile Apps', icon: Smartphone },
+    { href: '/portfolio/web', label: 'Web Apps', icon: Globe },
+  ];
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-gray-900/95 backdrop-blur-sm border-b border-gray-800">
+    <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center py-2">
-            <img 
-              src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
-              alt="404 Code Lab Logo" 
-              className="w-16 h-16 object-contain"
-            />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <NavLinks />
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold text-primary">
+              404 Code Lab
+            </Link>
           </div>
 
-          {/* Auth & Mobile Menu */}
-          <div className="flex items-center space-x-4">
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              <Link to="/" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                <Home className="inline-block w-4 h-4 mr-1" />
+                Home
+              </Link>
+              <Link to="/about" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                <Info className="inline-block w-4 h-4 mr-1" />
+                About
+              </Link>
+              
+              {/* Portfolio Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium">
+                    <Briefcase className="inline-block w-4 h-4 mr-1" />
+                    Portfolio
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {portfolioLinks.map((link) => (
+                    <DropdownMenuItem key={link.href} asChild>
+                      <Link to={link.href} className="flex items-center">
+                        <link.icon className="mr-2 h-4 w-4" />
+                        {link.label}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Link to="/contact" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium transition-colors">
+                <Mail className="inline-block w-4 h-4 mr-1" />
+                Contact
+              </Link>
+            </div>
+          </div>
+
+          {/* User Menu and Theme Toggle */}
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="hidden md:flex">
-                    <User className="mr-2 h-4 w-4" />
-                    {profile?.first_name || 'Account'}
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={profile?.avatar_url || ''} alt={profile?.first_name || 'User'} />
+                      <AvatarFallback>
+                        {getInitials(profile?.first_name, profile?.last_name)}
+                      </AvatarFallback>
+                    </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-background border">
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">
+                        {profile?.first_name} {profile?.last_name}
+                      </p>
+                      <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard" className="cursor-pointer">
+                    <Link to="/dashboard" className="flex items-center">
+                      <User className="mr-2 h-4 w-4" />
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
                   {profile?.role === 'admin' && (
                     <DropdownMenuItem asChild>
-                      <Link to="/admin" className="cursor-pointer">
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Portal
+                      <Link to="/admin" className="flex items-center">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Panel
                       </Link>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="hidden md:flex items-center space-x-2">
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    Customer Portal
-                  </Button>
-                </Link>
-              </div>
+              <Link to="/auth">
+                <Button>Sign In</Button>
+              </Link>
             )}
 
-            <Button 
-              size="sm" 
-              className="hidden sm:flex bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              App Store
-            </Button>
-
-            {/* Mobile Menu */}
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="bg-background border">
-                <div className="flex flex-col space-y-4 mt-8">
-                  <NavLinks mobile={true} onLinkClick={() => setIsOpen(false)} />
-                  
-                  {user ? (
-                    <div className="space-y-2 pt-4 border-t">
-                      <Link to="/dashboard" onClick={() => setIsOpen(false)}>
-                        <Button variant="ghost" className="w-full justify-start">
-                          <User className="mr-2 h-4 w-4" />
-                          Dashboard
-                        </Button>
-                      </Link>
-                      {profile?.role === 'admin' && (
-                        <Link to="/admin" onClick={() => setIsOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start">
-                            <Shield className="mr-2 h-4 w-4" />
-                            Admin Portal
-                          </Button>
-                        </Link>
-                      )}
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start" 
-                        onClick={() => {
-                          signOut();
-                          setIsOpen(false);
-                        }}
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign Out
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2 pt-4 border-t">
-                      <Link to="/auth" onClick={() => setIsOpen(false)}>
-                        <Button variant="ghost" className="w-full">
-                          Sign In
-                        </Button>
-                      </Link>
-                      <Link to="/auth" onClick={() => setIsOpen(false)}>
-                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600">
-                          Customer Portal
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
-
-                  <Button className="mt-4 bg-gradient-to-r from-yellow-500 to-orange-500">
-                    <Download className="mr-2 h-4 w-4" />
-                    App Store
-                  </Button>
-                </div>
-              </SheetContent>
-            </Sheet>
+            {/* Mobile menu button */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-expanded="false"
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background border-b border-border">
+            <Link
+              to="/"
+              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              <Home className="inline-block w-4 h-4 mr-2" />
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              <Info className="inline-block w-4 h-4 mr-2" />
+              About
+            </Link>
+            
+            {/* Mobile Portfolio Links */}
+            {portfolioLinks.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium pl-6"
+                onClick={() => setIsOpen(false)}
+              >
+                <link.icon className="inline-block w-4 h-4 mr-2" />
+                {link.label}
+              </Link>
+            ))}
+            
+            <Link
+              to="/contact"
+              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              <Mail className="inline-block w-4 h-4 mr-2" />
+              Contact
+            </Link>
+            
+            {user && (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <User className="inline-block w-4 h-4 mr-2" />
+                  Dashboard
+                </Link>
+                {profile?.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Settings className="inline-block w-4 h-4 mr-2" />
+                    Admin Panel
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setIsOpen(false);
+                  }}
+                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium w-full text-left"
+                >
+                  <LogOut className="inline-block w-4 h-4 mr-2" />
+                  Sign Out
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
+
+export default Navigation;
