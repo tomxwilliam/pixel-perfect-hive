@@ -75,10 +75,19 @@ export const AvailabilitySettings = () => {
         .from('availability_settings')
         .select('*')
         .eq('setting_type', 'working_hours')
-        .single();
+        .order('day_of_week');
 
-      if (hoursData && !hoursError) {
-        setWorkingHours(hoursData.settings as WorkingHours[]);
+      if (hoursData && !hoursError && hoursData.length > 0) {
+        const updatedHours = workingHours.map((day, index) => {
+          const setting = hoursData.find((h: any) => h.day_of_week === index);
+          return setting ? {
+            ...day,
+            enabled: setting.is_available,
+            startTime: setting.start_time.slice(0, 5), // Convert HH:MM:SS to HH:MM
+            endTime: setting.end_time.slice(0, 5)
+          } : day;
+        });
+        setWorkingHours(updatedHours);
       }
 
       // Fetch blocked dates
@@ -88,7 +97,15 @@ export const AvailabilitySettings = () => {
         .order('date', { ascending: true });
 
       if (blockedData && !blockedError) {
-        setBlockedDates(blockedData);
+        const mappedBlocked = blockedData.map((block: any) => ({
+          id: block.id,
+          date: block.date,
+          reason: block.reason,
+          isFullDay: block.is_full_day,
+          startTime: block.start_time?.slice(0, 5),
+          endTime: block.end_time?.slice(0, 5)
+        }));
+        setBlockedDates(mappedBlocked);
       }
     } catch (error) {
       console.error('Error fetching availability settings:', error);
@@ -98,13 +115,24 @@ export const AvailabilitySettings = () => {
   const saveWorkingHours = async () => {
     setLoading(true);
     try {
+      // Delete existing settings
+      await supabase
+        .from('availability_settings')
+        .delete()
+        .eq('setting_type', 'working_hours');
+
+      // Insert new settings
+      const settingsToInsert = workingHours.map((day, index) => ({
+        setting_type: 'working_hours',
+        day_of_week: index,
+        start_time: day.startTime + ':00',
+        end_time: day.endTime + ':00',
+        is_available: day.enabled,
+      }));
+
       const { error } = await supabase
         .from('availability_settings')
-        .upsert({
-          setting_type: 'working_hours',
-          settings: workingHours,
-          updated_at: new Date().toISOString()
-        });
+        .insert(settingsToInsert);
 
       if (error) throw error;
 
@@ -135,12 +163,12 @@ export const AvailabilitySettings = () => {
 
     setLoading(true);
     try {
-      const newBlock: Omit<BlockedDate, 'id'> = {
+      const newBlock = {
         date: selectedDate.toISOString().split('T')[0],
-        reason: blockReason,
-        isFullDay: isFullDayBlock,
-        startTime: isFullDayBlock ? undefined : blockStartTime,
-        endTime: isFullDayBlock ? undefined : blockEndTime,
+        reason: blockReason || null,
+        is_full_day: isFullDayBlock,
+        start_time: isFullDayBlock ? null : blockStartTime + ':00',
+        end_time: isFullDayBlock ? null : blockEndTime + ':00',
       };
 
       const { error } = await supabase
