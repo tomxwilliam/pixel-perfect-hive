@@ -166,7 +166,7 @@ export const AdminCustomers = () => {
                 <TableCell>
                   <Badge variant="outline">{customer.ticket_count}</Badge>
                 </TableCell>
-                <TableCell>${customer.total_spent.toLocaleString()}</TableCell>
+                <TableCell>£{customer.total_spent.toLocaleString()}</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm">
                     <Eye className="h-4 w-4" />

@@ -173,7 +173,7 @@ export const AdminProjects = () => {
                 <TableCell>
                   <div className="flex items-center space-x-1">
                     <DollarSign className="h-3 w-3" />
-                    <span>{project.budget ? `$${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
+                    <span>{project.budget ? `£${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
                   </div>
                 </TableCell>
                 <TableCell>

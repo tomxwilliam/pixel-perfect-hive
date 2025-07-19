@@ -104,7 +104,7 @@ export const AdminInvoices = () => {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">£{totalRevenue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">From paid invoices</p>
           </CardContent>
         </Card>
@@ -115,7 +115,7 @@ export const AdminInvoices = () => {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${pendingAmount.toLocaleString()}</div>
+            <div className="text-2xl font-bold">£{pendingAmount.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">Awaiting payment</p>
           </CardContent>
         </Card>
