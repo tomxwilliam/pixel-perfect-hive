@@ -44,8 +44,12 @@ const Navigation = () => {
                 src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
                 alt="404 Code Lab Logo" 
                 className="w-8 h-8 object-contain"
+                onError={(e) => {
+                  console.log('Logo failed to load, hiding image');
+                  e.currentTarget.style.display = 'none';
+                }}
               />
-              <span className="text-xl font-bold text-primary hidden sm:block">
+              <span className="text-xl font-bold text-primary">
                 404 Code Lab
               </span>
             </Link>

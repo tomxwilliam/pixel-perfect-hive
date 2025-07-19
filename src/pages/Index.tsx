@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,23 +6,25 @@ import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Z
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+
 const Index = () => {
-  return <div className="min-h-screen bg-background text-foreground">
+  return (
+    <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
+        <div className="absolute inset-0 bg-background/20"></div>
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-blue-600/20 text-blue-300 border-blue-500/30 px-4 py-2 text-sm">
+          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm">
             🚀 404 Code Lab
           </Badge>
           
-          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent py-[15px] md:text-7xl">
+          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px] md:text-7xl">
             Building the Future of Play
           </h1>
           
-          <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
           </p>
 
@@ -29,19 +32,19 @@ const Index = () => {
           <Card className="mb-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 max-w-md mx-auto">
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
-                <span className="text-2xl mr-2 text-stone-950">🐝</span>
-                <h3 className="text-xl font-bold text-yellow-300">Now Featuring: Beevers</h3>
+                <span className="text-2xl mr-2">🐝</span>
+                <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: Beevers</h3>
               </div>
-              <p className="mb-4 text-stone-950">The ultimate idle bee empire game.</p>
-              <p className="text-sm text-gray-400 mb-4">Download now on iPhone.</p>
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <p className="mb-4 text-foreground">The ultimate idle bee empire game.</p>
+              <p className="text-sm text-muted-foreground mb-4">Download now on iPhone.</p>
+              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
                 <Download className="mr-2 h-4 w-4" />
                 App Store
               </Button>
             </CardContent>
           </Card>
 
-          <div className="flex items-center justify-center text-gray-400 animate-bounce">
+          <div className="flex items-center justify-center text-muted-foreground animate-bounce">
             <span className="mr-2">Explore Our Work</span>
             <ArrowDown className="h-5 w-5" />
           </div>
@@ -49,18 +52,18 @@ const Index = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 px-4 bg-gray-800/50">
+      <section className="py-20 px-4 bg-muted/30">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-gray-800/80 border-gray-700 hover:border-blue-500/50 transition-all duration-300 hover:transform hover:scale-105">
+            <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300 hover:transform hover:scale-105">
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
-                  <Gamepad2 className="h-12 w-12 text-blue-400 mx-auto" />
+                  <Gamepad2 className="h-12 w-12 text-primary mx-auto" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-blue-300">🎮 Games</h3>
-                <p className="text-gray-300 mb-6">Addictive mobile games with smart systems and satisfying loops.</p>
+                <h3 className="text-2xl font-bold mb-4 text-primary">🎮 Games</h3>
+                <p className="text-muted-foreground mb-6">Addictive mobile games with smart systems and satisfying loops.</p>
                 <Link to="/portfolio/games">
-                  <Button variant="outline" className="border-blue-500/50 text-blue-300 hover:bg-blue-500/20">
+                  <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary/20">
                     View Games
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
@@ -68,15 +71,15 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-800/80 border-gray-700 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
+            <Card className="bg-card border-border hover:border-accent/50 transition-all duration-300 hover:transform hover:scale-105">
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
-                  <Smartphone className="h-12 w-12 text-purple-400 mx-auto" />
+                  <Smartphone className="h-12 w-12 text-accent mx-auto" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-purple-300">📱 Apps</h3>
-                <p className="text-gray-300 mb-6">Custom mobile applications built from wireframe to App Store.</p>
+                <h3 className="text-2xl font-bold mb-4 text-accent">📱 Apps</h3>
+                <p className="text-muted-foreground mb-6">Custom mobile applications built from wireframe to App Store.</p>
                 <Link to="/portfolio/apps">
-                  <Button variant="outline" className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20">
+                  <Button variant="outline" className="border-accent/50 text-accent hover:bg-accent/20">
                     View Apps
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
@@ -84,15 +87,15 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-800/80 border-gray-700 hover:border-green-500/50 transition-all duration-300 hover:transform hover:scale-105">
+            <Card className="bg-card border-border hover:border-secondary/50 transition-all duration-300 hover:transform hover:scale-105">
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
-                  <Globe className="h-12 w-12 text-green-400 mx-auto" />
+                  <Globe className="h-12 w-12 text-secondary mx-auto" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-green-300">💻 Web Design</h3>
-                <p className="text-gray-300 mb-6">Sleek websites with real-world power and pixel-perfect design.</p>
+                <h3 className="text-2xl font-bold mb-4 text-secondary">💻 Web Design</h3>
+                <p className="text-muted-foreground mb-6">Sleek websites with real-world power and pixel-perfect design.</p>
                 <Link to="/portfolio/web">
-                  <Button variant="outline" className="border-green-500/50 text-green-300 hover:bg-green-500/20">
+                  <Button variant="outline" className="border-secondary/50 text-secondary hover:bg-secondary/20">
                     View Websites
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
@@ -104,19 +107,19 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20">
+      <section className="py-20 px-4 bg-gradient-to-r from-primary/20 to-accent/20">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Build Something Amazing?</h2>
-          <p className="text-xl text-gray-300 mb-8">Let's turn your bold ideas into pixel-perfect reality.</p>
+          <h2 className="text-4xl font-bold mb-6 text-foreground">Ready to Build Something Amazing?</h2>
+          <p className="text-xl text-muted-foreground mb-8">Let's turn your bold ideas into pixel-perfect reality.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/contact">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
                 <Zap className="mr-2 h-5 w-5" />
                 Start Your Project
               </Button>
             </Link>
             <Link to="/about">
-              <Button size="lg" variant="outline" className="border-gray-600 text-slate-100 bg-slate-900 hover:bg-slate-800">
+              <Button size="lg" variant="outline" className="border-border text-foreground bg-background hover:bg-muted">
                 <Users className="mr-2 h-5 w-5" />
                 Learn About Us
               </Button>
@@ -126,6 +129,8 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
