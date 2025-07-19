@@ -4,12 +4,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar } from 'lucide-react';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminTickets } from '@/components/admin/AdminTickets';
 import { AdminInvoices } from '@/components/admin/AdminInvoices';
 import { AdminOverview } from '@/components/admin/AdminOverview';
+import { AdminCalendar } from '@/components/admin/AdminCalendar';
+import { AdminCommunications } from '@/components/admin/AdminCommunications';
 
 const AdminDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -31,11 +33,11 @@ const AdminDashboard = () => {
       <div className="container mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-2">Manage your business operations</p>
+          <p className="text-muted-foreground mt-2">Comprehensive business management and control center</p>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -55,6 +57,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="invoices" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Invoices
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Calendar
             </TabsTrigger>
             <TabsTrigger value="communications" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -82,18 +88,12 @@ const AdminDashboard = () => {
             <AdminInvoices />
           </TabsContent>
 
+          <TabsContent value="calendar">
+            <AdminCalendar />
+          </TabsContent>
+
           <TabsContent value="communications">
-            <Card>
-              <CardHeader>
-                <CardTitle>Communication Center</CardTitle>
-                <CardDescription>
-                  Email campaigns, AI chat logs, and customer communications
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Communication features coming soon...</p>
-              </CardContent>
-            </Card>
+            <AdminCommunications />
           </TabsContent>
         </Tabs>
       </div>
