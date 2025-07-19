@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Twitter, Mail, Coffee } from "lucide-react";
+import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
+import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
 export const Footer = () => {
   return <footer className="bg-gray-900 border-t border-gray-800 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -21,7 +22,13 @@ export const Footer = () => {
                 <Linkedin className="h-5 w-5" />
               </a>
               <a href="https://x.com/thomas_jackk" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Twitter className="h-5 w-5" />
+                <FaXTwitter className="h-5 w-5" />
+              </a>
+              <a href="https://tiktok.com/@thomas_jackk" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <FaTiktok className="h-5 w-5" />
+              </a>
+              <a href="https://discord.gg/your-server" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <FaDiscord className="h-5 w-5" />
               </a>
             </div>
           </div>
