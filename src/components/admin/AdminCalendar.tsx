@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CreateAppointmentDialog } from '@/components/admin/forms/CreateAppointmentDialog';
 
 interface CallBooking {
   id: string;
@@ -156,7 +157,7 @@ export const AdminCalendar = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with filters */}
+      {/* Header with filters and create button */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Calendar & Appointments</h2>
@@ -175,6 +176,7 @@ export const AdminCalendar = () => {
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
+          <CreateAppointmentDialog onAppointmentCreated={fetchBookings} />
         </div>
       </div>
 
