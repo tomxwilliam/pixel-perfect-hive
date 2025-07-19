@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar } from 'lucide-react';
+import { Navigation } from '@/components/Navigation';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminTickets } from '@/components/admin/AdminTickets';
@@ -30,7 +31,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
+      <Navigation />
+      <div className="container mx-auto p-6 pt-28">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground mt-2">Comprehensive business management and control center</p>
