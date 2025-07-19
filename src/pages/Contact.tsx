@@ -9,7 +9,7 @@ import { Mail, MapPin, Send, Zap, Phone, Loader2 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
-import emailjs from '@emailjs/browser';
+import { supabase } from "@/integrations/supabase/client";
 const Contact = () => {
   const {
     toast
@@ -28,23 +28,20 @@ const Contact = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      // Initialize EmailJS (replace with your public key)
-      emailjs.init("YOUR_PUBLIC_KEY"); // User needs to replace this
-
-      // Send email using EmailJS
-      await emailjs.send("YOUR_SERVICE_ID",
-      // User needs to replace this
-      "YOUR_TEMPLATE_ID",
-      // User needs to replace this
-      {
-        to_email: "hello@404codelabs.com",
-        from_name: `${formData.firstName} ${formData.lastName}`,
-        from_email: formData.email,
-        phone: formData.phoneNumber,
-        category: formData.category,
-        subject: formData.subject,
-        message: formData.message
+      // Send contact form data via Supabase edge function
+      const { data, error } = await supabase.functions.invoke('send-contact-notification', {
+        body: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phoneNumber: formData.phoneNumber,
+          category: formData.category,
+          subject: formData.subject,
+          message: formData.message
+        }
       });
+
+      if (error) throw error;
       toast({
         title: "Message sent! 🚀",
         description: "We'll get back to you faster than a swarm of bees."
@@ -61,10 +58,10 @@ const Contact = () => {
         message: ""
       });
     } catch (error) {
-      console.error('EmailJS error:', error);
+      console.error('Contact form error:', error);
       toast({
         title: "Error sending message",
-        description: "Please try again or email us directly at hello@404codelabs.com",
+        description: "Please try again or email us directly at hello@404codelab.com",
         variant: "destructive"
       });
     } finally {
