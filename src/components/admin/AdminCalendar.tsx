@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,11 +14,14 @@ import {
   CheckCircle, 
   XCircle,
   Plus,
-  Filter
+  Filter,
+  Settings
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateAppointmentDialog } from '@/components/admin/forms/CreateAppointmentDialog';
+import { AvailabilitySettings } from '@/components/admin/AvailabilitySettings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CallBooking {
   id: string;
@@ -180,162 +182,181 @@ export const AdminCalendar = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar View */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5" />
-              Calendar
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              className="rounded-md border"
-              modifiers={{
-                hasBooking: (date) => getBookingsForDate(date).length > 0
-              }}
-              modifiersStyles={{
-                hasBooking: { 
-                  backgroundColor: 'hsl(var(--primary))',
-                  color: 'white',
-                  fontWeight: 'bold'
-                }
-              }}
-            />
-            {selectedDate && (
-              <div className="mt-4">
-                <h4 className="font-semibold mb-2">
-                  {selectedDate.toLocaleDateString()} 
-                </h4>
-                <div className="space-y-2">
-                  {getBookingsForDate(selectedDate).map(booking => (
-                    <div key={booking.id} className="text-sm p-2 bg-muted rounded">
-                      <div className="font-medium">{booking.name}</div>
-                      <div className="text-muted-foreground">
-                        {new Date(booking.scheduled_at).toLocaleTimeString([], { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                  {getBookingsForDate(selectedDate).length === 0 && (
-                    <p className="text-sm text-muted-foreground">No appointments</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="calendar" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="calendar" className="flex items-center gap-2">
+            <CalendarIcon className="h-4 w-4" />
+            Calendar
+          </TabsTrigger>
+          <TabsTrigger value="availability" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            Availability
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Bookings List */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Appointments ({filteredBookings.length})</CardTitle>
-            <CardDescription>
-              {filter === 'today' && 'Today\'s appointments'}
-              {filter === 'upcoming' && 'Upcoming appointments'}
-              {filter === 'completed' && 'Completed appointments'}
-              {filter === 'all' && 'All appointments'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {filteredBookings.length > 0 ? (
-                filteredBookings.map((booking) => (
-                  <div key={booking.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2 flex-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold">{booking.name}</h4>
-                          <Badge variant={booking.completed ? "default" : "secondary"}>
-                            {booking.completed ? "Completed" : "Scheduled"}
-                          </Badge>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <CalendarIcon className="h-4 w-4" />
-                            {new Date(booking.scheduled_at).toLocaleDateString()}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
+        <TabsContent value="calendar" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Calendar View */}
+            <Card className="lg:col-span-1">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Calendar
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  className="rounded-md border"
+                  modifiers={{
+                    hasBooking: (date) => getBookingsForDate(date).length > 0
+                  }}
+                  modifiersStyles={{
+                    hasBooking: { 
+                      backgroundColor: 'hsl(var(--primary))',
+                      color: 'white',
+                      fontWeight: 'bold'
+                    }
+                  }}
+                />
+                {selectedDate && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold mb-2">
+                      {selectedDate.toLocaleDateString()} 
+                    </h4>
+                    <div className="space-y-2">
+                      {getBookingsForDate(selectedDate).map(booking => (
+                        <div key={booking.id} className="text-sm p-2 bg-muted rounded">
+                          <div className="font-medium">{booking.name}</div>
+                          <div className="text-muted-foreground">
                             {new Date(booking.scheduled_at).toLocaleTimeString([], { 
                               hour: '2-digit', 
                               minute: '2-digit' 
-                            })} ({booking.duration_minutes}min)
+                            })}
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-4 w-4" />
-                            {booking.email}
-                          </div>
-                          {booking.phone && (
-                            <div className="flex items-center gap-1">
-                              <Phone className="h-4 w-4" />
-                              {booking.phone}
-                            </div>
-                          )}
                         </div>
-
-                        {booking.notes && (
-                          <p className="text-sm bg-muted p-2 rounded">
-                            <strong>Notes:</strong> {booking.notes}
-                          </p>
-                        )}
-
-                        {booking.meeting_link && (
-                          <div className="flex items-center gap-2">
-                            <Button asChild size="sm" variant="outline">
-                              <a href={booking.meeting_link} target="_blank" rel="noopener noreferrer">
-                                Join Meeting
-                              </a>
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2 ml-4">
-                        <Button
-                          size="sm"
-                          variant={booking.completed ? "outline" : "default"}
-                          onClick={() => markAsCompleted(booking.id, !booking.completed)}
-                        >
-                          {booking.completed ? (
-                            <>
-                              <XCircle className="h-4 w-4 mr-1" />
-                              Mark Pending
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="h-4 w-4 mr-1" />
-                              Mark Complete
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                      ))}
+                      {getBookingsForDate(selectedDate).length === 0 && (
+                        <p className="text-sm text-muted-foreground">No appointments</p>
+                      )}
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CalendarIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No appointments found</p>
-                  <p className="text-sm">
-                    {filter === 'today' && "No appointments scheduled for today"}
-                    {filter === 'upcoming' && "No upcoming appointments"}
-                    {filter === 'completed' && "No completed appointments"}
-                    {filter === 'all' && "No appointments have been booked yet"}
-                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Bookings List */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Appointments ({filteredBookings.length})</CardTitle>
+                <CardDescription>
+                  {filter === 'today' && 'Today\'s appointments'}
+                  {filter === 'upcoming' && 'Upcoming appointments'}
+                  {filter === 'completed' && 'Completed appointments'}
+                  {filter === 'all' && 'All appointments'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {filteredBookings.length > 0 ? (
+                    filteredBookings.map((booking) => (
+                      <div key={booking.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-semibold">{booking.name}</h4>
+                              <Badge variant={booking.completed ? "default" : "secondary"}>
+                                {booking.completed ? "Completed" : "Scheduled"}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <CalendarIcon className="h-4 w-4" />
+                                {new Date(booking.scheduled_at).toLocaleDateString()}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                {new Date(booking.scheduled_at).toLocaleTimeString([], { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })} ({booking.duration_minutes}min)
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Mail className="h-4 w-4" />
+                                {booking.email}
+                              </div>
+                              {booking.phone && (
+                                <div className="flex items-center gap-1">
+                                  <Phone className="h-4 w-4" />
+                                  {booking.phone}
+                                </div>
+                              )}
+                            </div>
+
+                            {booking.notes && (
+                              <p className="text-sm bg-muted p-2 rounded">
+                                <strong>Notes:</strong> {booking.notes}
+                              </p>
+                            )}
+
+                            {booking.meeting_link && (
+                              <div className="flex items-center gap-2">
+                                <Button asChild size="sm" variant="outline">
+                                  <a href={booking.meeting_link} target="_blank" rel="noopener noreferrer">
+                                    Join Meeting
+                                  </a>
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex gap-2 ml-4">
+                            <Button
+                              size="sm"
+                              variant={booking.completed ? "outline" : "default"}
+                              onClick={() => markAsCompleted(booking.id, !booking.completed)}
+                            >
+                              {booking.completed ? (
+                                <>
+                                  <XCircle className="h-4 w-4 mr-1" />
+                                  Mark Pending
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Mark Complete
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <CalendarIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No appointments found</p>
+                      <p className="text-sm">
+                        {filter === 'today' && "No appointments scheduled for today"}
+                        {filter === 'upcoming' && "No upcoming appointments"}
+                        {filter === 'completed' && "No completed appointments"}
+                        {filter === 'all' && "No appointments have been booked yet"}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="availability">
+          <AvailabilitySettings />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
