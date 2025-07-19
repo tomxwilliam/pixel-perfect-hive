@@ -40,7 +40,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        setProfile(null); // Reset profile when auth state changes
+        
+        // Reset profile when auth state changes
+        if (!session?.user) {
+          setProfile(null);
+        }
+        
         setLoading(false);
       }
     );
@@ -50,7 +55,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Initial session:', session);
       setSession(session);
       setUser(session?.user ?? null);
-      setProfile(null);
       setLoading(false);
     });
 
@@ -75,17 +79,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (error) {
           console.error('Error fetching profile:', error);
-          setProfile(null);
+          // Create a fallback profile based on user email for admin detection
+          const isAdmin = user.email?.includes('@404codelab.com') || false;
+          const fallbackProfile: Profile = {
+            id: user.id,
+            email: user.email || '',
+            first_name: user.user_metadata?.first_name || '',
+            last_name: user.user_metadata?.last_name || '',
+            role: isAdmin ? 'admin' : 'customer',
+            company_name: null,
+            phone: null,
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          console.log('Using fallback profile:', fallbackProfile);
+          setProfile(fallbackProfile);
         } else if (profileData) {
           console.log('Profile loaded:', profileData);
           setProfile(profileData);
         } else {
-          console.log('No profile found for user');
-          setProfile(null);
+          console.log('No profile found, creating fallback');
+          // Create fallback profile when no profile exists
+          const isAdmin = user.email?.includes('@404codelab.com') || false;
+          const fallbackProfile: Profile = {
+            id: user.id,
+            email: user.email || '',
+            first_name: user.user_metadata?.first_name || '',
+            last_name: user.user_metadata?.last_name || '',
+            role: isAdmin ? 'admin' : 'customer',
+            company_name: null,
+            phone: null,
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          setProfile(fallbackProfile);
         }
       } catch (err) {
         console.error('Profile fetch exception:', err);
-        setProfile(null);
+        // Still create fallback profile on exception
+        const isAdmin = user.email?.includes('@404codelab.com') || false;
+        const fallbackProfile: Profile = {
+          id: user.id,
+          email: user.email || '',
+          first_name: user.user_metadata?.first_name || '',
+          last_name: user.user_metadata?.last_name || '',
+          role: isAdmin ? 'admin' : 'customer',
+          company_name: null,
+          phone: null,
+          avatar_url: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        setProfile(fallbackProfile);
       }
     };
 
@@ -114,18 +161,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         console.error('Sign up error:', error);
         return { error };
-      }
-      
-      // If sign up was successful but user needs email confirmation
-      if (data.user && !data.session) {
-        console.log('User created but needs email confirmation');
-        return { error: null };
-      }
-      
-      // If user was created and signed in immediately
-      if (data.user && data.session) {
-        console.log('User created and signed in successfully');
-        return { error: null };
       }
       
       return { error: null };

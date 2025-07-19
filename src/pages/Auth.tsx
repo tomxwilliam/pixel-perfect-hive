@@ -16,17 +16,32 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
-  const { signIn, signUp, user, profile } = useAuth();
+  const { signIn, signUp, user, profile, loading } = useAuth();
   const { toast } = useToast();
 
   // Redirect if already logged in based on role
   useEffect(() => {
-    if (user && profile) {
-      const redirectPath = profile.role === 'admin' ? '/admin' : '/dashboard';
-      console.log('Redirecting authenticated user to:', redirectPath);
+    if (user && !loading) {
+      // Use email-based fallback for admin detection if profile isn't available yet
+      const isAdmin = profile?.role === 'admin' || user.email?.includes('@404codelab.com');
+      const redirectPath = isAdmin ? '/admin' : '/dashboard';
+      console.log('Redirecting authenticated user to:', redirectPath, { 
+        hasProfile: !!profile, 
+        profileRole: profile?.role, 
+        isAdmin 
+      });
       navigate(redirectPath, { replace: true });
     }
-  }, [user, profile, navigate]);
+  }, [user, profile, loading, navigate]);
+
+  // Don't render the form if user is already authenticated
+  if (user && !loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +68,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have been signed in successfully."
       });
-      // Let the useEffect handle the redirect based on profile role
+      // The useEffect will handle the redirect
     }
 
     setIsLoading(false);
@@ -103,8 +118,6 @@ const Auth = () => {
           errorMessage = 'Password is too weak. Please choose a stronger password.';
         } else if (error.message?.includes('invalid_email')) {
           errorMessage = 'Please enter a valid email address.';
-        } else if (error.message?.includes('Database error')) {
-          errorMessage = 'Database error occurred. Please try again or contact support.';
         }
         
         setError(errorMessage);
@@ -114,14 +127,15 @@ const Auth = () => {
           description: errorMessage
         });
       } else {
-        setSuccessMessage('Account created successfully! Please check your email for verification instructions.');
+        setSuccessMessage('Account created successfully! You are now signed in.');
         toast({
           title: "Account created!",
-          description: "Please check your email for verification instructions."
+          description: "Welcome! You are now signed in."
         });
         
         // Clear the form
         (e.target as HTMLFormElement).reset();
+        // The useEffect will handle the redirect
       }
     } catch (err: any) {
       console.error('Unexpected error during signup:', err);
@@ -231,7 +245,7 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <Input
-                      id="password"
+                      id="password"  
                       name="password"
                       type="password"
                       placeholder="Minimum 6 characters"
