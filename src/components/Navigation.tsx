@@ -39,8 +39,15 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-primary">
-              404 Code Lab
+            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <img 
+                src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
+                alt="404 Code Lab Logo" 
+                className="w-8 h-8 object-contain"
+              />
+              <span className="text-xl font-bold text-primary hidden sm:block">
+                404 Code Lab
+              </span>
             </Link>
           </div>
 
