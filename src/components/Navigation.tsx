@@ -49,9 +49,6 @@ const Navigation = () => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <span className="text-xl font-bold text-primary">
-                404 Code Lab
-              </span>
             </Link>
           </div>
 
