@@ -14,6 +14,7 @@ import { AdminQuotes } from '@/components/admin/AdminQuotes';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
+import { AdminSocialMedia } from '@/components/admin/AdminSocialMedia';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
