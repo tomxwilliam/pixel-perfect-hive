@@ -16,10 +16,35 @@ import { WebDevelopmentForm } from '@/components/project-forms/WebDevelopmentFor
 import { AppDevelopmentForm } from '@/components/project-forms/AppDevelopmentForm';
 import { GameDevelopmentForm } from '@/components/project-forms/GameDevelopmentForm';
 
+interface ProjectFormData {
+  title: string;
+  project_type: string;
+  budget: string;
+  timeline: string;
+  requirements: {};
+  // Web Development fields
+  websiteType?: string;
+  expectedPages?: string;
+  webFeatures?: string[];
+  webAssets?: string[];
+  // App Development fields
+  appPlatforms?: string[];
+  appCategory?: string;
+  appFunctionality?: string;
+  appBackendFeatures?: string[];
+  appMaterials?: string[];
+  // Game Development fields
+  gameGenre?: string;
+  gamePlatforms?: string[];
+  gameplayDescription?: string;
+  gameFeatures?: string[];
+  gameAssets?: string[];
+}
+
 const NewProject = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProjectFormData>({
     title: '',
     project_type: '',
     budget: '',
