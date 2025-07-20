@@ -86,7 +86,7 @@ export const Footer = () => {
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 404 Code Lab. All rights reserved.
+            © {new Date().getFullYear()} 404 Code Lab. All rights reserved.
           </p>
           <div className="flex items-center space-x-2 text-muted-foreground text-sm mt-4 md:mt-0">
             <Coffee className="h-4 w-4" />
