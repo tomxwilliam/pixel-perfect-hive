@@ -53,7 +53,7 @@ const Navigation = () => {
               <img 
                 src={logoSrc}
                 alt="404 Code Lab Logo" 
-                className="w-16 h-16 object-cover hover:scale-105 transition-transform duration-200"
+                className="w-24 h-24 object-cover hover:scale-105 transition-transform duration-200"
                 onError={(e) => {
                   console.log('Logo failed to load, hiding image');
                   e.currentTarget.style.display = 'none';
