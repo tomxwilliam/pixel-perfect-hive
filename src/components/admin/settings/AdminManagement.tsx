@@ -1,39 +1,28 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
-import { UserPlus, Check, X, Shield, Users } from 'lucide-react';
+import { Users, UserPlus, UserCheck, UserX, Shield, Clock } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AdminRequest {
   id: string;
   user_id: string;
+  status: string;
   requested_at: string;
-  status: 'pending' | 'approved' | 'rejected';
   reviewed_by?: string;
   reviewed_at?: string;
   notes?: string;
   profiles?: {
+    email: string;
     first_name?: string;
     last_name?: string;
-    email: string;
   };
-}
-
-interface Admin {
-  id: string;
-  email: string;
-  first_name?: string;
-  last_name?: string;
-  role: string;
-  created_at: string;
 }
 
 interface AdminManagementProps {
@@ -41,18 +30,14 @@ interface AdminManagementProps {
 }
 
 const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
-  const { user } = useAuth();
   const [adminRequests, setAdminRequests] = useState<AdminRequest[]>([]);
-  const [admins, setAdmins] = useState<Admin[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [requestEmail, setRequestEmail] = useState('');
-  const [requestNotes, setRequestNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (isSuperAdmin) {
       fetchAdminRequests();
-      fetchAdmins();
     }
   }, [isSuperAdmin]);
 
@@ -62,52 +47,30 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         .from('admin_requests')
         .select(`
           *,
-          profiles (
+          profiles:user_id (
+            email,
             first_name,
-            last_name,
-            email
+            last_name
           )
         `)
-        .eq('status', 'pending')
         .order('requested_at', { ascending: false });
 
-      if (error) throw error;
-      setAdminRequests((data as any) || []);
+      if (error) {
+        console.error('Error fetching admin requests:', error);
+        return;
+      }
+
+      setAdminRequests(data || []);
     } catch (error) {
       console.error('Error fetching admin requests:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch admin requests",
-        variant: "destructive",
-      });
     }
   };
 
-  const fetchAdmins = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', 'admin')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setAdmins(data as Admin[] || []);
-    } catch (error) {
-      console.error('Error fetching admins:', error);
+  const handleRequestResponse = async (requestId: string, status: 'approved' | 'rejected', notes?: string) => {
+    if (!isSuperAdmin) {
       toast({
-        title: "Error",
-        description: "Failed to fetch admins",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleRequestAdminAccess = async () => {
-    if (!requestEmail.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter an email address",
+        title: "Access Denied",
+        description: "Only super admin can manage admin requests",
         variant: "destructive",
       });
       return;
@@ -115,107 +78,23 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
-      // First, check if user exists
-      const { data: userProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', requestEmail.trim())
-        .single();
-
-      if (profileError || !userProfile) {
-        toast({
-          title: "Error",
-          description: "User not found with this email address",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Check if request already exists
-      const { data: existingRequest, error: requestError } = await supabase
-        .from('admin_requests')
-        .select('id')
-        .eq('user_id', userProfile.id)
-        .eq('status', 'pending')
-        .single();
-
-      if (existingRequest) {
-        toast({
-          title: "Error",
-          description: "Admin request already exists for this user",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Create admin request
       const { error } = await supabase
         .from('admin_requests')
-        .insert({
-          user_id: userProfile.id,
-          notes: requestNotes
-        });
+        .update({
+          status,
+          reviewed_at: new Date().toISOString(),
+          notes: notes || null
+        })
+        .eq('id', requestId);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Admin access request submitted successfully",
-      });
-
-      setIsDialogOpen(false);
-      setRequestEmail('');
-      setRequestNotes('');
-      fetchAdminRequests();
-    } catch (error) {
-      console.error('Error requesting admin access:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit admin request",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRequestAction = async (requestId: string, action: 'approved' | 'rejected') => {
-    setLoading(true);
-    try {
-      const request = adminRequests.find(r => r.id === requestId);
-      if (!request) return;
-
-      // Update request status
-      const { error: requestError } = await supabase
-        .from('admin_requests')
-        .update({
-          status: action,
-          reviewed_by: user?.id,
-          reviewed_at: new Date().toISOString()
-        })
-        .eq('id', requestId);
-
-      if (requestError) throw requestError;
-
-      // If approved, update user role
-      if (action === 'approved') {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ role: 'admin' })
-          .eq('id', request.user_id);
-
-        if (profileError) throw profileError;
-      }
-
-      toast({
-        title: "Success",
-        description: `Admin request ${action} successfully`,
+        description: `Admin request ${status} successfully`,
       });
 
       fetchAdminRequests();
-      if (action === 'approved') {
-        fetchAdmins();
-      }
     } catch (error) {
       console.error('Error updating admin request:', error);
       toast({
@@ -228,11 +107,20 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
     }
   };
 
-  const handleRevokeAdmin = async (adminId: string) => {
-    if (adminId === user?.id) {
+  const handlePromoteToAdmin = async () => {
+    if (!isSuperAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "Only super admin can promote users to admin",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newAdminEmail.trim()) {
       toast({
         title: "Error",
-        description: "You cannot revoke your own admin access",
+        description: "Please enter an email address",
         variant: "destructive",
       });
       return;
@@ -240,24 +128,41 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      // First check if user exists
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .update({ role: 'customer' })
-        .eq('id', adminId);
+        .select('*')
+        .eq('email', newAdminEmail.trim())
+        .single();
 
-      if (error) throw error;
+      if (profileError || !profile) {
+        toast({
+          title: "Error",
+          description: "User not found with this email address",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update user role to admin
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ role: 'admin' })
+        .eq('id', profile.id);
+
+      if (updateError) throw updateError;
 
       toast({
         title: "Success",
-        description: "Admin access revoked successfully",
+        description: `${newAdminEmail} has been promoted to admin`,
       });
 
-      fetchAdmins();
+      setNewAdminEmail('');
     } catch (error) {
-      console.error('Error revoking admin access:', error);
+      console.error('Error promoting user to admin:', error);
       toast({
         title: "Error",
-        description: "Failed to revoke admin access",
+        description: "Failed to promote user to admin",
         variant: "destructive",
       });
     } finally {
@@ -273,179 +178,136 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         <p className="text-muted-foreground">
           Only the super admin (tom@404codelab.com) can manage admin permissions.
         </p>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="mt-4" variant="outline">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Request Admin Access
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Request Admin Access</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="email">User Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={requestEmail}
-                  onChange={(e) => setRequestEmail(e.target.value)}
-                  placeholder="user@example.com"
-                />
-              </div>
-              <div>
-                <Label htmlFor="notes">Notes (Optional)</Label>
-                <Textarea
-                  id="notes"
-                  value={requestNotes}
-                  onChange={(e) => setRequestNotes(e.target.value)}
-                  placeholder="Reason for admin access request..."
-                />
-              </div>
-              <Button 
-                onClick={handleRequestAdminAccess} 
-                disabled={loading}
-                className="w-full"
-              >
-                Submit Request
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Pending Admin Requests */}
+      <div className="text-muted-foreground">
+        <p>Manage admin permissions and review admin access requests.</p>
+      </div>
+
+      {/* Promote User to Admin */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" />
-              Pending Admin Requests
-            </span>
-            <Badge variant="secondary">
-              {adminRequests.length} pending
-            </Badge>
+          <CardTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            Promote User to Admin
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {adminRequests.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4">
-              No pending admin requests
-            </p>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Requested</TableHead>
-                  <TableHead>Notes</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {adminRequests.map((request) => (
-                  <TableRow key={request.id}>
-                    <TableCell>
-                      {request.profiles?.first_name || request.profiles?.last_name
-                        ? `${request.profiles.first_name || ''} ${request.profiles.last_name || ''}`.trim()
-                        : 'N/A'}
-                    </TableCell>
-                    <TableCell>{request.profiles?.email}</TableCell>
-                    <TableCell>
-                      {new Date(request.requested_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>{request.notes || 'N/A'}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleRequestAction(request.id, 'approved')}
-                          disabled={loading}
-                        >
-                          <Check className="h-4 w-4 mr-1" />
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleRequestAction(request.id, 'rejected')}
-                          disabled={loading}
-                        >
-                          <X className="h-4 w-4 mr-1" />
-                          Reject
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-4`}>
+            <div className="flex-1">
+              <Label htmlFor="admin_email">Email Address</Label>
+              <Input
+                id="admin_email"
+                type="email"
+                value={newAdminEmail}
+                onChange={(e) => setNewAdminEmail(e.target.value)}
+                placeholder="user@example.com"
+                disabled={loading}
+              />
+            </div>
+            <div className={`flex items-end ${isMobile ? 'w-full' : ''}`}>
+              <Button 
+                onClick={handlePromoteToAdmin}
+                disabled={loading || !newAdminEmail.trim()}
+                className={isMobile ? 'w-full' : ''}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Promote to Admin
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Current Admins */}
+      {/* Admin Requests */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Current Admins
+            Admin Access Requests
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Added</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {admins.map((admin) => (
-                <TableRow key={admin.id}>
-                  <TableCell>
-                    {admin.first_name || admin.last_name
-                      ? `${admin.first_name || ''} ${admin.last_name || ''}`.trim()
-                      : 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {admin.email}
-                      {admin.email === 'tom@404codelab.com' && (
-                        <Badge variant="default">Super Admin</Badge>
+          {adminRequests.length === 0 ? (
+            <div className="text-center py-8">
+              <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No admin requests found</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {adminRequests.map((request) => (
+                <div key={request.id} className={`p-4 border rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
+                  <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
+                    <div className={`flex items-center gap-3 ${isMobile ? 'mb-2' : ''}`}>
+                      <Users className="h-5 w-5 text-primary" />
+                      <div>
+                        <h4 className="font-medium">
+                          {request.profiles?.first_name && request.profiles?.last_name 
+                            ? `${request.profiles.first_name} ${request.profiles.last_name}`
+                            : request.profiles?.email || 'Unknown User'
+                          }
+                        </h4>
+                        <p className="text-sm text-muted-foreground">{request.profiles?.email}</p>
+                      </div>
+                    </div>
+                    <div className={`flex items-center gap-2 ${isMobile ? 'flex-col w-full' : ''}`}>
+                      <Badge 
+                        variant={
+                          request.status === 'approved' ? 'default' : 
+                          request.status === 'rejected' ? 'destructive' : 
+                          'secondary'
+                        }
+                        className="flex items-center gap-1"
+                      >
+                        {request.status === 'approved' && <UserCheck className="h-3 w-3" />}
+                        {request.status === 'rejected' && <UserX className="h-3 w-3" />}
+                        {request.status === 'pending' && <Clock className="h-3 w-3" />}
+                        {request.status}
+                      </Badge>
+                      {request.status === 'pending' && (
+                        <div className={`flex gap-2 ${isMobile ? 'w-full' : ''}`}>
+                          <Button
+                            size="sm"
+                            onClick={() => handleRequestResponse(request.id, 'approved')}
+                            disabled={loading}
+                            className={isMobile ? 'flex-1' : ''}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleRequestResponse(request.id, 'rejected')}
+                            disabled={loading}
+                            className={isMobile ? 'flex-1' : ''}
+                          >
+                            Reject
+                          </Button>
+                        </div>
                       )}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(admin.created_at).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {admin.id !== user?.id ? (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleRevokeAdmin(admin.id)}
-                        disabled={loading}
-                      >
-                        Revoke Access
-                      </Button>
-                    ) : (
-                      <Badge variant="outline">You</Badge>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Requested: {new Date(request.requested_at).toLocaleDateString()}
+                    {request.reviewed_at && (
+                      <span className="ml-2">
+                        • Reviewed: {new Date(request.reviewed_at).toLocaleDateString()}
+                      </span>
                     )}
-                  </TableCell>
-                </TableRow>
+                  </div>
+                  {request.notes && (
+                    <div className="mt-2 text-sm bg-muted p-2 rounded">
+                      <strong>Notes:</strong> {request.notes}
+                    </div>
+                  )}
+                </div>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

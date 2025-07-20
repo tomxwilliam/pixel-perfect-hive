@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -19,8 +21,22 @@ import {
   Settings,
   CheckCircle,
   XCircle,
-  Shield
+  Shield,
+  Users,
+  Clock,
+  Zap,
+  Target,
+  Mail,
+  Tag,
+  BarChart3,
+  Workflow,
+  Save,
+  AlertTriangle,
+  ChevronRight,
+  Play,
+  Pause
 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AIAgentSettings {
   id: string;
@@ -30,6 +46,11 @@ interface AIAgentSettings {
     quoting: boolean;
     faqs: boolean;
     admin_tasks: boolean;
+    client_intake: boolean;
+    ai_workflows: boolean;
+    calendar_management: boolean;
+    social_automation: boolean;
+    session_management: boolean;
   };
   module_permissions: {
     billing: boolean;
@@ -37,6 +58,20 @@ interface AIAgentSettings {
     messaging: boolean;
     calendar: boolean;
     socials: boolean;
+    client_triage: boolean;
+    task_prioritization: boolean;
+    email_drafting: boolean;
+    progress_tracking: boolean;
+  };
+  automation_config: {
+    auto_triage: boolean;
+    auto_quotes: boolean;
+    email_replies: boolean;
+    welcome_messages: boolean;
+    offline_progression: boolean;
+    task_prioritization: boolean;
+    social_posting: boolean;
+    calendar_scheduling: boolean;
   };
   vertex_config: any;
   created_at: string;
@@ -51,6 +86,8 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
   const [aiSettings, setAiSettings] = useState<AIAgentSettings | null>(null);
   const [loading, setLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchAISettings();
@@ -67,7 +104,6 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
       
       if (data) {
         setAiSettings(data as AIAgentSettings);
-        // Check if Vertex AI is connected (you would implement actual connection check)
         setIsConnected(!!data.vertex_config && Object.keys(data.vertex_config as any).length > 0);
       }
     } catch (error) {
@@ -105,6 +141,37 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
           .insert({
             agent_name: '404 Code Lab AI Assistant',
             is_enabled: false,
+            scope_config: {
+              quoting: true,
+              faqs: true,
+              admin_tasks: true,
+              client_intake: false,
+              ai_workflows: false,
+              calendar_management: false,
+              social_automation: false,
+              session_management: false
+            },
+            module_permissions: {
+              billing: false,
+              quotes: false,
+              messaging: false,
+              calendar: false,
+              socials: false,
+              client_triage: false,
+              task_prioritization: false,
+              email_drafting: false,
+              progress_tracking: false
+            },
+            automation_config: {
+              auto_triage: false,
+              auto_quotes: false,
+              email_replies: false,
+              welcome_messages: false,
+              offline_progression: false,
+              task_prioritization: false,
+              social_posting: false,
+              calendar_scheduling: false
+            },
             ...updates
           });
 
@@ -139,33 +206,10 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
       return;
     }
 
-    // TODO: Implement Google Vertex AI OAuth flow
     toast({
       title: "Vertex AI Connection",
       description: "Google Vertex AI OAuth flow would be initiated here",
     });
-  };
-
-  const moduleIcons = {
-    billing: <DollarSign className="h-4 w-4" />,
-    quotes: <FileText className="h-4 w-4" />,
-    messaging: <MessageSquare className="h-4 w-4" />,
-    calendar: <Calendar className="h-4 w-4" />,
-    socials: <Share2 className="h-4 w-4" />
-  };
-
-  const moduleLabels = {
-    billing: 'Billing & Invoices',
-    quotes: 'Quote Generation',
-    messaging: 'Customer Messaging',
-    calendar: 'Calendar Management',
-    socials: 'Social Media'
-  };
-
-  const scopeLabels = {
-    quoting: 'Automated Quoting',
-    faqs: 'FAQ Responses',
-    admin_tasks: 'Admin Task Assistance'
   };
 
   if (!isSuperAdmin) {
@@ -183,7 +227,7 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
   return (
     <div className="space-y-6">
       <div className="text-muted-foreground">
-        <p>Configure Google Vertex AI Agent to automate tasks and assist with admin operations.</p>
+        <p>Configure comprehensive AI automation for 404 Code Lab operations.</p>
       </div>
 
       {/* Connection Status */}
@@ -192,190 +236,548 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5" />
-              Google Vertex AI Connection
+              AI Automation Status
             </div>
-            <Badge variant={isConnected ? "default" : "destructive"} className="flex items-center gap-1">
-              {isConnected ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
-              {isConnected ? 'Connected' : 'Not Connected'}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant={isConnected ? "default" : "destructive"} className="flex items-center gap-1">
+                {isConnected ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+                {isConnected ? 'Connected' : 'Not Connected'}
+              </Badge>
+              {aiSettings?.is_enabled && (
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Play className="h-3 w-3" />
+                  Active
+                </Badge>
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
+          <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'}`}>
             <div>
               <p className="text-sm text-muted-foreground">
                 {isConnected 
-                  ? 'Your Google Vertex AI account is connected and ready to assist.'
-                  : 'Connect your Google Vertex AI account to enable AI-powered automation.'
+                  ? 'AI automation system is connected and ready for comprehensive automation.'
+                  : 'Connect Google Vertex AI to enable advanced automation features.'
                 }
               </p>
             </div>
-            <Button 
-              onClick={handleConnectVertexAI}
-              disabled={loading}
-              variant={isConnected ? "outline" : "default"}
-            >
-              {isConnected ? 'Reconnect' : 'Connect Vertex AI'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Agent Configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5" />
-            Agent Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="agent_name">Agent Name</Label>
-            <Input
-              id="agent_name"
-              value={aiSettings?.agent_name || '404 Code Lab AI Assistant'}
-              onChange={(e) => handleUpdateSettings({ agent_name: e.target.value })}
-              placeholder="AI Agent Name"
-              disabled={!isConnected}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="is_enabled" className="text-base font-medium">
-                Enable AI Agent
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Activate the AI agent to start automation and assistance
-              </p>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleConnectVertexAI}
+                disabled={loading}
+                variant={isConnected ? "outline" : "default"}
+                size={isMobile ? "sm" : "default"}
+              >
+                {isConnected ? 'Reconnect' : 'Connect Vertex AI'}
+              </Button>
+              {isConnected && (
+                <Button
+                  onClick={() => handleUpdateSettings({ is_enabled: !aiSettings?.is_enabled })}
+                  variant={aiSettings?.is_enabled ? "secondary" : "default"}
+                  size={isMobile ? "sm" : "default"}
+                  disabled={loading}
+                >
+                  {aiSettings?.is_enabled ? (
+                    <>
+                      <Pause className="h-4 w-4 mr-1" />
+                      Pause AI
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-4 w-4 mr-1" />
+                      Start AI
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
-            <Switch
-              id="is_enabled"
-              checked={aiSettings?.is_enabled || false}
-              onCheckedChange={(checked) => handleUpdateSettings({ is_enabled: checked })}
-              disabled={!isConnected}
-            />
           </div>
         </CardContent>
       </Card>
 
-      {/* Scope Configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Agent Capabilities
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {Object.entries(scopeLabels).map(([key, label]) => (
-              <div key={key} className="flex items-center justify-between">
-                <div>
-                  <Label className="text-base font-medium">{label}</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {key === 'quoting' && 'Automatically generate quotes based on project requirements'}
-                    {key === 'faqs' && 'Respond to frequently asked questions from customers'}
-                    {key === 'admin_tasks' && 'Assist with administrative tasks and data management'}
-                  </p>
-                </div>
-                <Switch
-                  checked={aiSettings?.scope_config?.[key as keyof typeof aiSettings.scope_config] || false}
-                  onCheckedChange={(checked) => 
-                    handleUpdateSettings({
-                      scope_config: {
-                        ...aiSettings?.scope_config,
-                        [key]: checked
-                      }
-                    })
-                  }
-                  disabled={!isConnected || !aiSettings?.is_enabled}
+      {/* Main Configuration Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className={`${isMobile ? 'grid grid-cols-2 h-auto' : 'grid grid-cols-6'} w-full`}>
+          <TabsTrigger value="overview" className="flex items-center gap-1 text-xs">
+            <Target className="h-3 w-3" />
+            {!isMobile && 'Overview'}
+          </TabsTrigger>
+          <TabsTrigger value="intake" className="flex items-center gap-1 text-xs">
+            <Users className="h-3 w-3" />
+            {!isMobile && 'Client Intake'}
+          </TabsTrigger>
+          <TabsTrigger value="workflows" className="flex items-center gap-1 text-xs">
+            <Workflow className="h-3 w-3" />
+            {!isMobile && 'AI Workflows'}
+          </TabsTrigger>
+          <TabsTrigger value="calendar" className="flex items-center gap-1 text-xs">
+            <Calendar className="h-3 w-3" />
+            {!isMobile && 'Calendar'}
+          </TabsTrigger>
+          <TabsTrigger value="social" className="flex items-center gap-1 text-xs">
+            <Share2 className="h-3 w-3" />
+            {!isMobile && 'Social'}
+          </TabsTrigger>
+          <TabsTrigger value="system" className="flex items-center gap-1 text-xs">
+            <Save className="h-3 w-3" />
+            {!isMobile && 'System'}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Agent Configuration</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="agent_name">Agent Name</Label>
+                <Input
+                  id="agent_name"
+                  value={aiSettings?.agent_name || '404 Code Lab AI Assistant'}
+                  onChange={(e) => handleUpdateSettings({ agent_name: e.target.value })}
+                  placeholder="AI Agent Name"
+                  disabled={!isConnected}
                 />
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Module Permissions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Module Permissions
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(moduleLabels).map(([key, label]) => (
-              <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  {moduleIcons[key as keyof typeof moduleIcons]}
-                  <div>
-                    <Label className="text-base font-medium">{label}</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Allow AI control of {label.toLowerCase()}
-                    </p>
+              <Separator />
+
+              <div className="grid gap-4">
+                <h4 className="font-medium">Quick Actions</h4>
+                <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-4`}>
+                  <Card className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Users className="h-8 w-8 text-blue-500" />
+                      <div>
+                        <h5 className="font-medium">Client Intake</h5>
+                        <p className="text-sm text-muted-foreground">Auto-triage & communication</p>
+                      </div>
+                    </div>
+                    <Switch 
+                      checked={aiSettings?.scope_config?.client_intake || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          scope_config: {
+                            ...aiSettings?.scope_config,
+                            client_intake: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected}
+                      className="mt-2"
+                    />
+                  </Card>
+
+                  <Card className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Workflow className="h-8 w-8 text-green-500" />
+                      <div>
+                        <h5 className="font-medium">AI Workflows</h5>
+                        <p className="text-sm text-muted-foreground">Task automation & priority</p>
+                      </div>
+                    </div>
+                    <Switch 
+                      checked={aiSettings?.scope_config?.ai_workflows || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          scope_config: {
+                            ...aiSettings?.scope_config,
+                            ai_workflows: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected}
+                      className="mt-2"
+                    />
+                  </Card>
+
+                  <Card className="p-4">
+                    <div className="flex items-center gap-3">
+                      <Share2 className="h-8 w-8 text-purple-500" />
+                      <div>
+                        <h5 className="font-medium">Social Media</h5>
+                        <p className="text-sm text-muted-foreground">Auto-posting & scheduling</p>
+                      </div>
+                    </div>
+                    <Switch 
+                      checked={aiSettings?.scope_config?.social_automation || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          scope_config: {
+                            ...aiSettings?.scope_config,
+                            social_automation: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected}
+                      className="mt-2"
+                    />
+                  </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="intake" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Client Intake & Communication
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {[
+                  { key: 'auto_triage', label: 'Auto-triage Client Requests', desc: 'Automatically categorize by Web/App/Game services', icon: Target },
+                  { key: 'auto_quotes', label: 'Auto-generate Quotes', desc: 'Create rough estimates from intake forms', icon: DollarSign },
+                  { key: 'email_replies', label: 'Draft Email Replies', desc: 'AI-powered professional responses', icon: Mail },
+                  { key: 'welcome_messages', label: 'Welcome-back Messages', desc: 'Personalized messages for returning clients', icon: MessageSquare },
+                ].map(({ key, label, desc, icon: Icon }) => (
+                  <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5 text-blue-500" />
+                      <div>
+                        <Label className="text-base font-medium">{label}</Label>
+                        <p className="text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={aiSettings?.automation_config?.[key as keyof typeof aiSettings.automation_config] || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          automation_config: {
+                            ...aiSettings?.automation_config,
+                            [key]: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected || !aiSettings?.is_enabled}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              <div>
+                <h4 className="font-medium mb-3">Advanced Features</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4" />
+                      <span>Auto-tagging System</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      <span>Conditional Form Inputs</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
                   </div>
                 </div>
-                <Switch
-                  checked={aiSettings?.module_permissions?.[key as keyof typeof aiSettings.module_permissions] || false}
-                  onCheckedChange={(checked) => 
-                    handleUpdateSettings({
-                      module_permissions: {
-                        ...aiSettings?.module_permissions,
-                        [key]: checked
-                      }
-                    })
-                  }
-                  disabled={!isConnected || !aiSettings?.is_enabled}
-                />
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* AI Features Overview */}
+        <TabsContent value="workflows" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Workflow className="h-5 w-5" />
+                AI Agent Workflows
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {[
+                  { key: 'task_prioritization', label: 'Auto-prioritize Tasks', desc: 'Based on deadline and complexity', icon: AlertTriangle },
+                  { key: 'offline_progression', label: 'Offline Progression Tracking', desc: 'Simulate up to 5 hours of work progress', icon: Clock },
+                ].map(({ key, label, desc, icon: Icon }) => (
+                  <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5 text-green-500" />
+                      <div>
+                        <Label className="text-base font-medium">{label}</Label>
+                        <p className="text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={aiSettings?.automation_config?.[key as keyof typeof aiSettings.automation_config] || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          automation_config: {
+                            ...aiSettings?.automation_config,
+                            [key]: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected || !aiSettings?.is_enabled}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              <div>
+                <h4 className="font-medium mb-3">Smart Assistance Features</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Brain className="h-4 w-4" />
+                      <span>Pre-fill Form Data</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Save className="h-4 w-4" />
+                      <span>Session State Saving</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      <span>Auto-populate Progress Updates</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Calendar & Project Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {[
+                  { key: 'calendar_scheduling', label: 'Auto-schedule Calls & Deadlines', desc: 'Google Calendar integration', icon: Calendar },
+                ].map(({ key, label, desc, icon: Icon }) => (
+                  <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5 text-orange-500" />
+                      <div>
+                        <Label className="text-base font-medium">{label}</Label>
+                        <p className="text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={aiSettings?.automation_config?.[key as keyof typeof aiSettings.automation_config] || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          automation_config: {
+                            ...aiSettings?.automation_config,
+                            [key]: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected || !aiSettings?.is_enabled}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              <div>
+                <h4 className="font-medium mb-3">Notification Features</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Bell className="h-4 w-4" />
+                      <span>Client Milestone Notifications</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      <span>Internal Team Reminders</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="social" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share2 className="h-5 w-5" />
+                Social Media Automation
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4">
+                {[
+                  { key: 'social_posting', label: 'Auto-post Project Updates', desc: 'Twitter and LinkedIn integration', icon: Share2 },
+                ].map(({ key, label, desc, icon: Icon }) => (
+                  <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-5 w-5 text-purple-500" />
+                      <div>
+                        <Label className="text-base font-medium">{label}</Label>
+                        <p className="text-sm text-muted-foreground">{desc}</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={aiSettings?.automation_config?.[key as keyof typeof aiSettings.automation_config] || false}
+                      onCheckedChange={(checked) => 
+                        handleUpdateSettings({
+                          automation_config: {
+                            ...aiSettings?.automation_config,
+                            [key]: checked
+                          }
+                        })
+                      }
+                      disabled={!isConnected || !aiSettings?.is_enabled}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <Separator />
+
+              <div>
+                <h4 className="font-medium mb-3">Content Features</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      <span>Draft Social Content from Projects</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      <span>Engagement Tracking</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>Optimal Posting Time Suggestions</span>
+                    </div>
+                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="system" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Save className="h-5 w-5" />
+                System & Session Features
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Save className="h-4 w-4" />
+                    <span>Save/Resume Dashboard Progress</span>
+                  </div>
+                  <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    <span>Welcome Back Screen</span>
+                  </div>
+                  <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>5-Hour Offline Progression</span>
+                  </div>
+                  <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    <span>Comprehensive Data Backup</span>
+                  </div>
+                  <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  System Status
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Last Backup:</span>
+                    <span className="text-muted-foreground">2 hours ago</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Active Sessions:</span>
+                    <span className="text-muted-foreground">3</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Offline Progress:</span>
+                    <span className="text-muted-foreground">Enabled</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Status Summary */}
       <Card>
         <CardHeader>
-          <CardTitle>AI Agent Features</CardTitle>
+          <CardTitle>Automation Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <h4 className="font-medium flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Intelligent Quoting
-              </h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Analyze project requirements</li>
-                <li>• Generate accurate pricing</li>
-                <li>• Suggest service packages</li>
-              </ul>
+          <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-4`}>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-500">
+                {Object.values(aiSettings?.automation_config || {}).filter(Boolean).length}
+              </div>
+              <div className="text-sm text-muted-foreground">Active Automations</div>
             </div>
-            <div className="space-y-2">
-              <h4 className="font-medium flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Customer Support
-              </h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Answer common questions</li>
-                <li>• Route complex inquiries</li>
-                <li>• Provide project updates</li>
-              </ul>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-500">24/7</div>
+              <div className="text-sm text-muted-foreground">Monitoring</div>
             </div>
-            <div className="space-y-2">
-              <h4 className="font-medium flex items-center gap-2">
-                <Brain className="h-4 w-4" />
-                Admin Assistance
-              </h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Data entry automation</li>
-                <li>• Report generation</li>
-                <li>• Task prioritization</li>
-              </ul>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-500">5hrs</div>
+              <div className="text-sm text-muted-foreground">Offline Progress</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-500">∞</div>
+              <div className="text-sm text-muted-foreground">Scalability</div>
             </div>
           </div>
         </CardContent>
