@@ -46,6 +46,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/portfolio/web" className="text-muted-foreground hover:text-primary transition-colors">
+                  Web Portfolio
+                </Link>
+              </li>
+              <li>
                 <Link to="/portfolio/games" className="text-muted-foreground hover:text-primary transition-colors">
                   Games
                 </Link>
@@ -53,6 +58,11 @@ export const Footer = () => {
               <li>
                 <Link to="/portfolio/apps" className="text-muted-foreground hover:text-primary transition-colors">
                   Apps
+                </Link>
+              </li>
+              <li>
+                <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
+                  Customer Portal
                 </Link>
               </li>
               <li>
