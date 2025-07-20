@@ -12,12 +12,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
+
+  // Determine if we're in dark mode
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  
+  // Choose logo based on theme
+  const logoSrc = isDarkMode 
+    ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Current logo for dark mode
+    : "/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png"; // New logo for light mode
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,7 +51,7 @@ const Navigation = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
               <img 
-                src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" 
+                src={logoSrc}
                 alt="404 Code Lab Logo" 
                 className="w-12 h-12 object-contain hover:scale-105 transition-transform duration-200"
                 onError={(e) => {
