@@ -47,7 +47,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         .from('admin_requests')
         .select(`
           *,
-          profiles:user_id (
+          profiles!inner (
             email,
             first_name,
             last_name
@@ -57,12 +57,22 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
       if (error) {
         console.error('Error fetching admin requests:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch admin requests",
+          variant: "destructive",
+        });
         return;
       }
 
       setAdminRequests(data || []);
     } catch (error) {
       console.error('Error fetching admin requests:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to fetch admin requests",
+        variant: "destructive",
+      });
     }
   };
 
