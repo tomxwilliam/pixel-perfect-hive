@@ -2,8 +2,19 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
+import { useTheme } from "@/hooks/useTheme";
 
 export const Footer = () => {
+  const { theme } = useTheme();
+  
+  // Determine if we're in dark mode
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  
+  // Choose logo based on theme
+  const logoSrc = isDarkMode 
+    ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Dark theme logo
+    : "/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png"; // Light theme logo
+
   return (
     <footer className="bg-background border-t border-border py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -11,7 +22,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="">
-              <img src="/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png" alt="404 Code Lab Logo" className="w-24 h-24 object-contain" />
+              <img src={logoSrc} alt="404 Code Lab Logo" className="w-24 h-24 object-contain" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
               Scottish-based indie dev studio creating standout digital experiences. 
