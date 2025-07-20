@@ -310,6 +310,42 @@ export type Database = {
         }
         Relationships: []
       }
+      hashtag_suggestions: {
+        Row: {
+          category: string | null
+          created_at: string
+          hashtag: string
+          id: string
+          last_used_at: string | null
+          platform: string
+          trending_score: number | null
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          hashtag: string
+          id?: string
+          last_used_at?: string | null
+          platform: string
+          trending_score?: number | null
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          hashtag?: string
+          id?: string
+          last_used_at?: string | null
+          platform?: string
+          trending_score?: number | null
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
@@ -644,38 +680,246 @@ export type Database = {
         }
         Relationships: []
       }
-      social_posts: {
+      social_accounts: {
         Row: {
-          ai_generated: boolean | null
-          content: string
+          access_token: string
+          account_display_name: string | null
+          account_id: string
+          account_username: string
+          created_at: string
+          follower_count: number | null
+          following_count: number | null
+          id: string
+          is_active: boolean | null
+          last_synced_at: string | null
+          platform: string
+          profile_image_url: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token: string
+          account_display_name?: string | null
+          account_id: string
+          account_username: string
+          created_at?: string
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          platform: string
+          profile_image_url?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          account_display_name?: string | null
+          account_id?: string
+          account_username?: string
+          created_at?: string
+          follower_count?: number | null
+          following_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          platform?: string
+          profile_image_url?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_media_metrics: {
+        Row: {
+          account_id: string
+          clicks: number | null
+          comments: number | null
           created_at: string
           id: string
+          impressions: number | null
+          likes: number | null
+          metric_date: string
+          post_id: string | null
+          reach: number | null
+          shares: number | null
+          views: number | null
+        }
+        Insert: {
+          account_id: string
+          clicks?: number | null
+          comments?: number | null
+          created_at?: string
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          metric_date?: string
+          post_id?: string | null
+          reach?: number | null
+          shares?: number | null
+          views?: number | null
+        }
+        Update: {
+          account_id?: string
+          clicks?: number | null
+          comments?: number | null
+          created_at?: string
+          id?: string
+          impressions?: number | null
+          likes?: number | null
+          metric_date?: string
+          post_id?: string | null
+          reach?: number | null
+          shares?: number | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_metrics_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_media_metrics_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "social_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_media_settings: {
+        Row: {
+          can_create_posts: boolean | null
+          can_delete_posts: boolean | null
+          can_manage_accounts: boolean | null
+          can_schedule_posts: boolean | null
+          can_view: boolean | null
+          can_view_analytics: boolean | null
+          created_at: string
+          id: string
+          notification_preferences: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_create_posts?: boolean | null
+          can_delete_posts?: boolean | null
+          can_manage_accounts?: boolean | null
+          can_schedule_posts?: boolean | null
+          can_view?: boolean | null
+          can_view_analytics?: boolean | null
+          created_at?: string
+          id?: string
+          notification_preferences?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_create_posts?: boolean | null
+          can_delete_posts?: boolean | null
+          can_manage_accounts?: boolean | null
+          can_schedule_posts?: boolean | null
+          can_view?: boolean | null
+          can_view_analytics?: boolean | null
+          created_at?: string
+          id?: string
+          notification_preferences?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_media_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_posts: {
+        Row: {
+          account_id: string | null
+          ai_generated: boolean | null
+          character_count: number | null
+          content: string
+          created_at: string
+          engagement_comments: number | null
+          engagement_likes: number | null
+          engagement_shares: number | null
+          engagement_views: number | null
+          error_message: string | null
+          hashtags: string[] | null
+          id: string
+          media_type: string | null
+          media_urls: string[] | null
           platform: string
           post_id: string | null
+          post_url: string | null
           posted_at: string | null
+          retry_count: number | null
           scheduled_for: string | null
         }
         Insert: {
+          account_id?: string | null
           ai_generated?: boolean | null
+          character_count?: number | null
           content: string
           created_at?: string
+          engagement_comments?: number | null
+          engagement_likes?: number | null
+          engagement_shares?: number | null
+          engagement_views?: number | null
+          error_message?: string | null
+          hashtags?: string[] | null
           id?: string
+          media_type?: string | null
+          media_urls?: string[] | null
           platform: string
           post_id?: string | null
+          post_url?: string | null
           posted_at?: string | null
+          retry_count?: number | null
           scheduled_for?: string | null
         }
         Update: {
+          account_id?: string | null
           ai_generated?: boolean | null
+          character_count?: number | null
           content?: string
           created_at?: string
+          engagement_comments?: number | null
+          engagement_likes?: number | null
+          engagement_shares?: number | null
+          engagement_views?: number | null
+          error_message?: string | null
+          hashtags?: string[] | null
           id?: string
+          media_type?: string | null
+          media_urls?: string[] | null
           platform?: string
           post_id?: string | null
+          post_url?: string | null
           posted_at?: string | null
+          retry_count?: number | null
           scheduled_for?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_social_posts_account"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets: {
         Row: {

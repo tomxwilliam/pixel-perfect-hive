@@ -71,6 +71,10 @@ const AdminDashboard = () => {
               <Calendar className="h-4 w-4" />
               Calendar
             </MobileTabsTrigger>
+            <MobileTabsTrigger value="social" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Social
+            </MobileTabsTrigger>
             <MobileTabsTrigger value="communications" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Communications
@@ -103,6 +107,10 @@ const AdminDashboard = () => {
 
           <MobileTabsContent value="calendar">
             <AdminCalendar />
+          </MobileTabsContent>
+
+          <MobileTabsContent value="social">
+            <AdminSocialMedia />
           </MobileTabsContent>
 
           <MobileTabsContent value="communications">
