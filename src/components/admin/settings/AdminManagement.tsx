@@ -46,8 +46,16 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
       const { data, error } = await supabase
         .from('admin_requests')
         .select(`
-          *,
-          profiles!inner (
+          id,
+          user_id,
+          status,
+          requested_at,
+          reviewed_by,
+          reviewed_at,
+          notes,
+          created_at,
+          updated_at,
+          profiles!admin_requests_user_id_fkey (
             email,
             first_name,
             last_name

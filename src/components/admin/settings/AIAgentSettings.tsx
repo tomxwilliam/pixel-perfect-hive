@@ -34,7 +34,8 @@ import {
   AlertTriangle,
   ChevronRight,
   Play,
-  Pause
+  Pause,
+  Bell
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
