@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
@@ -16,6 +16,7 @@ import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
 import { AdminSocialMedia } from '@/components/admin/AdminSocialMedia';
 import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
+import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -45,7 +46,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs defaultValue="overview" className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11'}>
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-12'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -85,6 +86,10 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               Domains
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
+              <Server className="h-4 w-4" />
+              Hosting
             </MobileTabsTrigger>
             <MobileTabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
@@ -130,6 +135,10 @@ const AdminDashboard = () => {
 
           <MobileTabsContent value="domains">
             <AdminDomainManagement />
+          </MobileTabsContent>
+
+          <MobileTabsContent value="hosting">
+            <AdminHostingManagement />
           </MobileTabsContent>
           
           <MobileTabsContent value="settings">

@@ -140,16 +140,34 @@ export default function CustomerDomainsHosting() {
   };
 
   const handleHostingOrder = async (packageId: string) => {
+    if (!user) return;
+    
     try {
-      // TODO: Implement hosting order flow
-      toast({
-        title: "Hosting order initiated",
-        description: "Hosting provisioning will be implemented in Phase 3",
+      const response = await supabase.functions.invoke('hosting-order', {
+        body: { 
+          packageId: packageId,
+          customerId: user.id,
+          billingCycle: 'monthly' // Default to monthly, could be made configurable
+        }
       });
-    } catch (error) {
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
       toast({
-        title: "Order failed", 
-        description: "Unable to process hosting order.",
+        title: "Hosting Order Created",
+        description: "Your hosting order has been created. You will receive an invoice shortly.",
+      });
+
+      // Refresh hosting subscriptions list
+      // The useQuery will automatically refetch
+      
+    } catch (error) {
+      console.error('Hosting order failed:', error);
+      toast({
+        title: "Order Failed", 
+        description: "Unable to process hosting order. Please try again.",
         variant: "destructive"
       });
     }
