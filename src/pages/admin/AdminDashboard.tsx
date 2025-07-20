@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs defaultValue="overview" className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-10'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
               Communications
             </MobileTabsTrigger>
             <MobileTabsTrigger value="settings" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
+              <Settings className="h-4 w-4" />
               Settings
             </MobileTabsTrigger>
           </MobileTabsList>
