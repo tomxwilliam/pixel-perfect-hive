@@ -346,6 +346,117 @@ export type Database = {
           },
         ]
       }
+      domain_hosting_settings: {
+        Row: {
+          api_settings: Json | null
+          auto_provisioning: boolean | null
+          created_at: string
+          default_nameservers: string[] | null
+          domain_pricing: Json | null
+          domain_registration_enabled: boolean | null
+          email_templates: Json | null
+          hosting_orders_enabled: boolean | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          api_settings?: Json | null
+          auto_provisioning?: boolean | null
+          created_at?: string
+          default_nameservers?: string[] | null
+          domain_pricing?: Json | null
+          domain_registration_enabled?: boolean | null
+          email_templates?: Json | null
+          hosting_orders_enabled?: boolean | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          api_settings?: Json | null
+          auto_provisioning?: boolean | null
+          created_at?: string
+          default_nameservers?: string[] | null
+          domain_pricing?: Json | null
+          domain_registration_enabled?: boolean | null
+          email_templates?: Json | null
+          hosting_orders_enabled?: boolean | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      domains: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string
+          customer_id: string
+          dns_management: boolean | null
+          domain_name: string
+          expiry_date: string | null
+          id: string
+          invoice_id: string | null
+          nameservers: string[] | null
+          notes: string | null
+          openprovider_domain_id: string | null
+          price: number
+          registration_date: string | null
+          status: Database["public"]["Enums"]["domain_status"]
+          tld: string
+          updated_at: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string
+          customer_id: string
+          dns_management?: boolean | null
+          domain_name: string
+          expiry_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          nameservers?: string[] | null
+          notes?: string | null
+          openprovider_domain_id?: string | null
+          price: number
+          registration_date?: string | null
+          status?: Database["public"]["Enums"]["domain_status"]
+          tld: string
+          updated_at?: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string
+          customer_id?: string
+          dns_management?: boolean | null
+          domain_name?: string
+          expiry_date?: string | null
+          id?: string
+          invoice_id?: string | null
+          nameservers?: string[] | null
+          notes?: string | null
+          openprovider_domain_id?: string | null
+          price?: number
+          registration_date?: string | null
+          status?: Database["public"]["Enums"]["domain_status"]
+          tld?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "domains_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "domains_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_logs: {
         Row: {
           ai_generated: boolean | null
@@ -464,6 +575,152 @@ export type Database = {
           usage_count?: number | null
         }
         Relationships: []
+      }
+      hosting_packages: {
+        Row: {
+          annual_price: number | null
+          bandwidth_gb: number | null
+          created_at: string
+          databases: number | null
+          disk_space_gb: number
+          email_accounts: number | null
+          features: Json | null
+          free_ssl: boolean | null
+          id: string
+          is_active: boolean | null
+          monthly_price: number
+          package_name: string
+          package_type: Database["public"]["Enums"]["hosting_package_type"]
+          setup_fee: number | null
+          subdomains: number | null
+          updated_at: string
+        }
+        Insert: {
+          annual_price?: number | null
+          bandwidth_gb?: number | null
+          created_at?: string
+          databases?: number | null
+          disk_space_gb: number
+          email_accounts?: number | null
+          features?: Json | null
+          free_ssl?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          monthly_price: number
+          package_name: string
+          package_type: Database["public"]["Enums"]["hosting_package_type"]
+          setup_fee?: number | null
+          subdomains?: number | null
+          updated_at?: string
+        }
+        Update: {
+          annual_price?: number | null
+          bandwidth_gb?: number | null
+          created_at?: string
+          databases?: number | null
+          disk_space_gb?: number
+          email_accounts?: number | null
+          features?: Json | null
+          free_ssl?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          monthly_price?: number
+          package_name?: string
+          package_type?: Database["public"]["Enums"]["hosting_package_type"]
+          setup_fee?: number | null
+          subdomains?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hosting_subscriptions: {
+        Row: {
+          billing_cycle: string
+          cpanel_password: string | null
+          cpanel_username: string | null
+          created_at: string
+          customer_id: string
+          domain_id: string | null
+          expires_at: string | null
+          hosting_provider_account_id: string | null
+          id: string
+          invoice_id: string | null
+          next_billing_date: string | null
+          notes: string | null
+          package_id: string
+          provisioned_at: string | null
+          server_ip: string | null
+          status: Database["public"]["Enums"]["hosting_status"]
+          updated_at: string
+        }
+        Insert: {
+          billing_cycle?: string
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string
+          customer_id: string
+          domain_id?: string | null
+          expires_at?: string | null
+          hosting_provider_account_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          next_billing_date?: string | null
+          notes?: string | null
+          package_id: string
+          provisioned_at?: string | null
+          server_ip?: string | null
+          status?: Database["public"]["Enums"]["hosting_status"]
+          updated_at?: string
+        }
+        Update: {
+          billing_cycle?: string
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string
+          customer_id?: string
+          domain_id?: string | null
+          expires_at?: string | null
+          hosting_provider_account_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          next_billing_date?: string | null
+          notes?: string | null
+          package_id?: string
+          provisioned_at?: string | null
+          server_ip?: string | null
+          status?: Database["public"]["Enums"]["hosting_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_subscriptions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosting_subscriptions_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosting_subscriptions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosting_subscriptions_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_packages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoices: {
         Row: {
@@ -751,6 +1008,69 @@ export type Database = {
           {
             foreignKeyName: "projects_customer_id_fkey"
             columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provisioning_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          customer_id: string
+          entity_id: string
+          error_message: string | null
+          id: string
+          priority: number | null
+          processed_at: string | null
+          processed_by: string | null
+          request_type: string
+          retry_count: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_id: string
+          entity_id: string
+          error_message?: string | null
+          id?: string
+          priority?: number | null
+          processed_at?: string | null
+          processed_by?: string | null
+          request_type: string
+          retry_count?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          customer_id?: string
+          entity_id?: string
+          error_message?: string | null
+          id?: string
+          priority?: number | null
+          processed_at?: string | null
+          processed_by?: string | null
+          request_type?: string
+          retry_count?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provisioning_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisioning_requests_processed_by_fkey"
+            columns: ["processed_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1216,6 +1536,23 @@ export type Database = {
       }
     }
     Enums: {
+      domain_status:
+        | "pending"
+        | "registered"
+        | "active"
+        | "expired"
+        | "cancelled"
+      hosting_package_type:
+        | "starter"
+        | "business"
+        | "professional"
+        | "enterprise"
+      hosting_status:
+        | "pending"
+        | "provisioning"
+        | "active"
+        | "suspended"
+        | "cancelled"
       payment_status: "pending" | "paid" | "failed" | "refunded"
       project_status:
         | "pending"
@@ -1354,6 +1691,26 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      domain_status: [
+        "pending",
+        "registered",
+        "active",
+        "expired",
+        "cancelled",
+      ],
+      hosting_package_type: [
+        "starter",
+        "business",
+        "professional",
+        "enterprise",
+      ],
+      hosting_status: [
+        "pending",
+        "provisioning",
+        "active",
+        "suspended",
+        "cancelled",
+      ],
       payment_status: ["pending", "paid", "failed", "refunded"],
       project_status: [
         "pending",

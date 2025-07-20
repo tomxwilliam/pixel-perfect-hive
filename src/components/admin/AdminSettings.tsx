@@ -1,12 +1,13 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, DollarSign, Link2, Bot } from 'lucide-react';
+import { Settings, Users, DollarSign, Link2, Bot, Globe } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AdminManagement from './settings/AdminManagement';
 import ServicePricingDefaults from './settings/ServicePricingDefaults';
 import APIIntegrations from './settings/APIIntegrations';
 import AIAgentSettings from './settings/AIAgentSettings';
+import DomainHostingSettings from './settings/DomainHostingSettings';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -25,14 +26,18 @@ const AdminSettings = () => {
       </div>
 
       <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Admin Management
+            Admins
           </TabsTrigger>
           <TabsTrigger value="pricing" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
-            Service Pricing
+            Pricing
+          </TabsTrigger>
+          <TabsTrigger value="domains" className="flex items-center gap-2">
+            <Globe className="h-4 w-4" />
+            Domains
           </TabsTrigger>
           <TabsTrigger value="integrations" className="flex items-center gap-2">
             <Link2 className="h-4 w-4" />
@@ -68,6 +73,20 @@ const AdminSettings = () => {
             </CardHeader>
             <CardContent>
               <ServicePricingDefaults isSuperAdmin={isSuperAdmin} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="domains" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                Domain & Hosting Settings
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DomainHostingSettings isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
         </TabsContent>
