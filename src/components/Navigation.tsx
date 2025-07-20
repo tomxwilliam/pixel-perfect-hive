@@ -27,7 +27,7 @@ const Navigation = () => {
   // Choose logo based on theme
   const logoSrc = isDarkMode 
     ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Current logo for dark mode
-    : "/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png"; // New logo for light mode
+    : "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"; // New updated logo for light mode
 
   const handleSignOut = async () => {
     await signOut();

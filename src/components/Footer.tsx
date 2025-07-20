@@ -13,7 +13,7 @@ export const Footer = () => {
   // Choose logo based on theme
   const logoSrc = isDarkMode 
     ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Dark theme logo
-    : "/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png"; // Light theme logo
+    : "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"; // Updated light theme logo
 
   return (
     <footer className="bg-background border-t border-border py-12 px-4">
