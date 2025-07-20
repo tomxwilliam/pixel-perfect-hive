@@ -595,53 +595,6 @@ const WebPortfolio = () => {
               </CardContent>
             </Card>
 
-            {/* Elite Motors */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Globe className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">Elite Motors</h3>
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Luxury car dealership website featuring inventory showcase, financing calculator, and appointment booking to attract high-end clients.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Rocket className="h-5 w-5 text-primary mr-3" />
-                        <span>Dynamic inventory management</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Code className="h-5 w-5 text-primary mr-3" />
-                        <span>Financing calculator integration</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-primary mr-3" />
-                        <span>Appointment booking system</span>
-                      </div>
-                    </div>
-                    
-                    <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </Button>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?w=600&h=400&fit=crop" alt="Elite Motors Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* CTA Section */}
