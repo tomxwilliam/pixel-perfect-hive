@@ -22,7 +22,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="">
-              <img src={logoSrc} alt="404 Code Lab Logo" className="w-24 h-24 object-contain" />
+              <img src={logoSrc} alt="404 Code Lab Logo" className="w-24 h-24 object-contain p-1" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
               Scottish-based indie dev studio creating standout digital experiences. 
