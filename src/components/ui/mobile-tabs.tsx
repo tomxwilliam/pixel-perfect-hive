@@ -1,7 +1,6 @@
 
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
@@ -32,9 +31,13 @@ const MobileTabsList = React.forwardRef<
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-80">
-            <div className="space-y-2 mt-6">
+            <TabsPrimitive.List
+              ref={ref}
+              className="flex flex-col space-y-2 mt-6"
+              {...props}
+            >
               {children}
-            </div>
+            </TabsPrimitive.List>
           </SheetContent>
         </Sheet>
       </div>
@@ -59,8 +62,23 @@ MobileTabsList.displayName = "MobileTabsList"
 const MobileTabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, children, ...props }, ref) => {
+>(({ className, children, onClick, ...props }, ref) => {
   const isMobile = useIsMobile()
+  const [, setIsOpen] = React.useState(false)
+  
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) {
+      onClick(event)
+    }
+    // Close the sheet when a tab is selected on mobile
+    if (isMobile) {
+      // Find the closest Sheet component and close it
+      const sheetTrigger = document.querySelector('[data-state="open"]')
+      if (sheetTrigger) {
+        setIsOpen(false)
+      }
+    }
+  }
   
   if (isMobile) {
     return (
@@ -70,6 +88,7 @@ const MobileTabsTrigger = React.forwardRef<
           "flex w-full items-center justify-start gap-3 rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
           className
         )}
+        onClick={handleClick}
         {...props}
       >
         {children}
@@ -84,6 +103,7 @@ const MobileTabsTrigger = React.forwardRef<
         "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm min-w-0 flex-shrink-0",
         className
       )}
+      onClick={handleClick}
       {...props}
     >
       {children}
