@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -5,20 +6,21 @@ import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Upload, DollarSign } from 'lucide-react';
+import { ArrowLeft, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { WebDevelopmentForm } from '@/components/project-forms/WebDevelopmentForm';
+import { AppDevelopmentForm } from '@/components/project-forms/AppDevelopmentForm';
+import { GameDevelopmentForm } from '@/components/project-forms/GameDevelopmentForm';
 
 const NewProject = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
     project_type: '',
     budget: '',
     timeline: '',
@@ -36,15 +38,42 @@ const NewProject = () => {
     setIsLoading(true);
     
     try {
+      // Compile all the form data into requirements
+      const compiledRequirements = {
+        // Web Development requirements
+        ...(formData.project_type === 'web' && {
+          websiteType: formData.websiteType,
+          expectedPages: formData.expectedPages,
+          webFeatures: formData.webFeatures || [],
+          webAssets: formData.webAssets || []
+        }),
+        // App Development requirements
+        ...(formData.project_type === 'app' && {
+          appPlatforms: formData.appPlatforms || [],
+          appCategory: formData.appCategory,
+          appFunctionality: formData.appFunctionality,
+          appBackendFeatures: formData.appBackendFeatures || [],
+          appMaterials: formData.appMaterials || []
+        }),
+        // Game Development requirements
+        ...(formData.project_type === 'game' && {
+          gameGenre: formData.gameGenre,
+          gamePlatforms: formData.gamePlatforms || [],
+          gameplayDescription: formData.gameplayDescription,
+          gameFeatures: formData.gameFeatures || [],
+          gameAssets: formData.gameAssets || []
+        })
+      };
+
       const { error } = await supabase
         .from('projects')
         .insert({
           customer_id: user.id,
           title: formData.title,
-          description: formData.description,
+          description: getProjectDescription(),
           project_type: formData.project_type as any,
           budget: formData.budget ? parseFloat(formData.budget) : null,
-          requirements: formData.requirements
+          requirements: compiledRequirements
         });
 
       if (error) throw error;
@@ -66,8 +95,47 @@ const NewProject = () => {
     }
   };
 
-  const updateFormData = (field: string, value: string) => {
+  const getProjectDescription = () => {
+    switch (formData.project_type) {
+      case 'web':
+        return `Web Development Project: ${formData.websiteType || 'Website'} - ${formData.expectedPages || 'Custom pages and features as specified'}`;
+      case 'app':
+        return `App Development Project: ${formData.appCategory || 'Mobile Application'} - ${formData.appFunctionality || 'Custom functionality as specified'}`;
+      case 'game':
+        return `Game Development Project: ${formData.gameGenre || 'Game'} - ${formData.gameplayDescription || 'Custom gameplay as specified'}`;
+      default:
+        return 'Custom project with detailed requirements';
+    }
+  };
+
+  const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const renderProjectTypeForm = () => {
+    switch (formData.project_type) {
+      case 'web':
+        return <WebDevelopmentForm formData={formData} updateFormData={updateFormData} />;
+      case 'app':
+        return <AppDevelopmentForm formData={formData} updateFormData={updateFormData} />;
+      case 'game':
+        return <GameDevelopmentForm formData={formData} updateFormData={updateFormData} />;
+      default:
+        return null;
+    }
+  };
+
+  const getProjectTypeHelperText = () => {
+    switch (formData.project_type) {
+      case 'web':
+        return "📱 Tell us about your website needs - we'll guide you through the important details";
+      case 'app':
+        return "📱 Share your app vision - we'll help you plan the features and functionality";
+      case 'game':
+        return "🎮 Describe your game concept - we'll work together to bring it to life";
+      default:
+        return "Select a project type above to see detailed questions tailored to your needs";
+    }
   };
 
   return (
@@ -102,13 +170,13 @@ const NewProject = () => {
                   <div className="flex items-center space-x-3">
                     <Badge variant={currentStep >= 1 ? "default" : "secondary"}>1</Badge>
                     <span className={currentStep >= 1 ? "font-medium" : "text-muted-foreground"}>
-                      Project Details
+                      Basic Info
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Badge variant={currentStep >= 2 ? "default" : "secondary"}>2</Badge>
-                    <span className={currentStep >= 2 ? "font-medium" : "text-muted-foreground"}>
-                      Requirements
+                    <Badge variant={formData.project_type && currentStep >= 2 ? "default" : "secondary"}>2</Badge>
+                    <span className={formData.project_type && currentStep >= 2 ? "font-medium" : "text-muted-foreground"}>
+                      Project Details
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -123,20 +191,20 @@ const NewProject = () => {
 
             {/* Main Form */}
             <div className="lg:col-span-3">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Project Information</CardTitle>
-                  <CardDescription>
-                    Provide details about your project to help us understand your needs
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Project Information</CardTitle>
+                    <CardDescription>
+                      Start by providing basic details about your project
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="title">Project Title *</Label>
                       <Input
                         id="title"
-                        placeholder="My awesome app idea"
+                        placeholder="My awesome project idea"
                         value={formData.title}
                         onChange={(e) => updateFormData('title', e.target.value)}
                         required
@@ -154,27 +222,20 @@ const NewProject = () => {
                           <SelectValue placeholder="Select project type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="game">🎮 Mobile Game</SelectItem>
-                          <SelectItem value="app">📱 Mobile App</SelectItem>
-                          <SelectItem value="web">💻 Web Application</SelectItem>
+                          <SelectItem value="web">💻 Web Development</SelectItem>
+                          <SelectItem value="app">📱 App Development</SelectItem>
+                          <SelectItem value="game">🎮 Game Development</SelectItem>
                         </SelectContent>
                       </Select>
+                      {formData.project_type && (
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {getProjectTypeHelperText()}
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="description">Project Description *</Label>
-                      <Textarea
-                        id="description"
-                        placeholder="Describe your project idea, target audience, key features..."
-                        value={formData.description}
-                        onChange={(e) => updateFormData('description', e.target.value)}
-                        rows={4}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="budget">Budget Range</Label>
+                      <Label htmlFor="budget">Budget Range (USD)</Label>
                       <div className="relative">
                         <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -190,35 +251,25 @@ const NewProject = () => {
                         Optional: Help us understand your budget expectations
                       </p>
                     </div>
+                  </CardContent>
+                </Card>
 
-                    <div className="space-y-2">
-                      <Label>Additional Requirements</Label>
-                      <div className="p-4 border rounded-lg bg-muted/50">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          We'll discuss detailed requirements in our consultation call
-                        </p>
-                        <Button type="button" variant="outline" size="sm">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Upload Files (Coming Soon)
-                        </Button>
-                      </div>
-                    </div>
+                {/* Dynamic Project Type Form */}
+                {formData.project_type && renderProjectTypeForm()}
 
-                    <div className="flex justify-between pt-6">
-                      <Button 
-                        type="button" 
-                        variant="outline"
-                        onClick={() => navigate('/dashboard')}
-                      >
-                        Save as Draft
-                      </Button>
-                      <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Submitting..." : "Submit Project"}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
+                <div className="flex justify-between pt-6">
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    Save as Draft
+                  </Button>
+                  <Button type="submit" disabled={isLoading || !formData.title || !formData.project_type}>
+                    {isLoading ? "Submitting..." : "Submit Project"}
+                  </Button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
