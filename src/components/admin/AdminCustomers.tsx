@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, Mail, Phone, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateCustomerDialog } from './forms/CreateCustomerDialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Profile = Tables<'profiles'>;
 
@@ -22,6 +23,7 @@ export const AdminCustomers = () => {
   const [customers, setCustomers] = useState<CustomerWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const isMobile = useIsMobile();
 
   const fetchCustomers = async () => {
     try {
@@ -105,6 +107,93 @@ export const AdminCustomers = () => {
     );
   }
 
+  // Mobile card layout
+  if (isMobile) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Customer Management</CardTitle>
+          <CardDescription>
+            Manage your customers and view their activity
+          </CardDescription>
+          <div className="flex flex-col space-y-3">
+            <div className="flex items-center space-x-2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search customers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1"
+              />
+            </div>
+            <CreateCustomerDialog onCustomerCreated={handleCustomerCreated} />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {filteredCustomers.map((customer) => (
+            <Card key={customer.id} className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="font-medium">
+                      {customer.first_name} {customer.last_name}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {customer.email}
+                    </div>
+                    {customer.company_name && (
+                      <div className="text-sm text-muted-foreground">
+                        {customer.company_name}
+                      </div>
+                    )}
+                  </div>
+                  <Button variant="ghost" size="sm">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-1">
+                      <span className="text-muted-foreground">Projects:</span>
+                      <Badge variant="outline">{customer.project_count}</Badge>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-muted-foreground">Tickets:</span>
+                      <Badge variant="outline">{customer.ticket_count}</Badge>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium">£{customer.total_spent.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Total Spent</div>
+                  </div>
+                </div>
+
+                {(customer.email || customer.phone) && (
+                  <div className="flex flex-col space-y-1 text-xs">
+                    {customer.email && (
+                      <div className="flex items-center space-x-1">
+                        <Mail className="h-3 w-3" />
+                        <span className="truncate">{customer.email}</span>
+                      </div>
+                    )}
+                    {customer.phone && (
+                      <div className="flex items-center space-x-1">
+                        <Phone className="h-3 w-3" />
+                        <span>{customer.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Desktop table layout
   return (
     <Card>
       <CardHeader>

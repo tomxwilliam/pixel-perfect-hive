@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCustomerStats } from '@/hooks/useCustomerStats';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   FolderOpen, 
   TicketIcon, 
@@ -12,6 +14,7 @@ import {
 
 export const CustomerStats = () => {
   const { stats, loading } = useCustomerStats();
+  const isMobile = useIsMobile();
 
   const statsCards = [
     {
@@ -45,22 +48,22 @@ export const CustomerStats = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'}`}>
       {statsCards.map((stat, index) => (
         <Card key={index} className="hover:shadow-md transition-shadow">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-sm font-medium text-muted-foreground">
+          <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+            <div className={`flex items-center ${isMobile ? 'justify-between' : 'justify-between'}`}>
+              <div className={isMobile ? 'flex-1' : ''}>
+                <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold`}>{stat.value}</p>
+                <p className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-muted-foreground`}>
                   {stat.title}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground mt-1`}>
                   {stat.description}
                 </p>
               </div>
-              <div className={`p-3 rounded-lg bg-muted/50 ${stat.color}`}>
-                <stat.icon className="h-6 w-6" />
+              <div className={`p-3 rounded-lg bg-muted/50 ${stat.color} ${isMobile ? 'ml-3' : ''}`}>
+                <stat.icon className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'}`} />
               </div>
             </div>
           </CardContent>

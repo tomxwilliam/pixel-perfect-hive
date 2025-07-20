@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -13,9 +14,11 @@ import { AdminQuotes } from '@/components/admin/AdminQuotes';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
   const { user, profile, loading } = useAuth();
+  const isMobile = useIsMobile();
 
   if (loading) {
     return (
@@ -33,79 +36,79 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <div className="container mx-auto p-6 pt-28">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground">Admin Dashboard</h1>
+        <div className={`mb-8 ${isMobile ? 'text-center' : ''}`}>
+          <h1 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-foreground`}>Admin Dashboard</h1>
           <p className="text-muted-foreground mt-2">Comprehensive business management and control center</p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
+        <MobileTabs defaultValue="overview" className="space-y-6">
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
+            <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
-            </TabsTrigger>
-            <TabsTrigger value="customers" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="customers" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Customers
-            </TabsTrigger>
-            <TabsTrigger value="projects" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="h-4 w-4" />
               Projects
-            </TabsTrigger>
-            <TabsTrigger value="tickets" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="tickets" className="flex items-center gap-2">
               <Ticket className="h-4 w-4" />
               Support
-            </TabsTrigger>
-            <TabsTrigger value="invoices" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
               Invoices
-            </TabsTrigger>
-            <TabsTrigger value="quotes" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Quotes
-            </TabsTrigger>
-            <TabsTrigger value="calendar" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               Calendar
-            </TabsTrigger>
-            <TabsTrigger value="communications" className="flex items-center gap-2">
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="communications" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Communications
-            </TabsTrigger>
-          </TabsList>
+            </MobileTabsTrigger>
+          </MobileTabsList>
 
-          <TabsContent value="overview">
+          <MobileTabsContent value="overview">
             <AdminOverview />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="customers">
+          <MobileTabsContent value="customers">
             <AdminCustomers />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="projects">
+          <MobileTabsContent value="projects">
             <AdminProjects />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="tickets">
+          <MobileTabsContent value="tickets">
             <AdminTickets />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="invoices">
+          <MobileTabsContent value="invoices">
             <AdminInvoices />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="quotes">
+          <MobileTabsContent value="quotes">
             <AdminQuotes />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="calendar">
+          <MobileTabsContent value="calendar">
             <AdminCalendar />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="communications">
+          <MobileTabsContent value="communications">
             <AdminCommunications />
-          </TabsContent>
-        </Tabs>
+          </MobileTabsContent>
+        </MobileTabs>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Navigation } from '@/components/Navigation';
 import { CustomerProjects } from '@/components/customer/CustomerProjects';
 import { CustomerTickets } from '@/components/customer/CustomerTickets';
@@ -16,6 +16,7 @@ import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
 import { ActivityTimeline } from '@/components/customer/ActivityTimeline';
 import { MessageCenter } from '@/components/customer/MessageCenter';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   User, 
   FolderOpen, 
@@ -35,6 +36,7 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const { user, profile } = useAuth();
   const { stats, loading: statsLoading } = useCustomerStats();
+  const isMobile = useIsMobile();
 
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
@@ -95,17 +97,17 @@ const Dashboard = () => {
       
       <div className="pt-20 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-16 w-16">
+          {/* Welcome Header - Mobile Optimized */}
+          <div className={`${isMobile ? 'flex flex-col space-y-4' : 'flex items-center justify-between'} mb-8`}>
+            <div className={`flex ${isMobile ? 'flex-col items-center text-center space-y-3' : 'items-center space-x-4'}`}>
+              <Avatar className={`${isMobile ? 'h-20 w-20' : 'h-16 w-16'}`}>
                 <AvatarImage src={profile?.avatar_url || ''} />
                 <AvatarFallback className="text-lg">
                   {getInitials(profile?.first_name, profile?.last_name)}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-3xl font-bold">
+                <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>
                   Welcome back, {profile?.first_name || 'there'}!
                 </h1>
                 <p className="text-muted-foreground">
@@ -119,8 +121,8 @@ const Dashboard = () => {
             </Badge>
           </div>
 
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Stats Overview - Mobile Grid */}
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-3 gap-6'} mb-8`}>
             {statsCards.map((stat, index) => (
               <Card key={index}>
                 <CardContent className="flex items-center p-6">
@@ -136,19 +138,19 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions - Mobile Grid */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'}`}>
               {quickActions.map((action, index) => (
                 <Link key={index} to={action.href}>
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardContent className="p-6">
+                    <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
                       <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${action.color} text-white mb-3`}>
                         <action.icon className="h-5 w-5" />
                       </div>
                       <h3 className="font-semibold mb-1">{action.title}</h3>
-                      <p className="text-sm text-muted-foreground">{action.description}</p>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{action.description}</p>
                     </CardContent>
                   </Card>
                 </Link>
@@ -156,79 +158,79 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Main Content Tabs */}
-          <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-8">
-              <TabsTrigger value="overview" className="flex items-center gap-2">
+          {/* Main Content Tabs - Mobile Optimized */}
+          <MobileTabs defaultValue="overview" className="space-y-6">
+            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
+              <MobileTabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart className="h-4 w-4" />
                 Overview
-              </TabsTrigger>
-              <TabsTrigger value="projects" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="projects" className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4" />
                 Projects
-              </TabsTrigger>
-              <TabsTrigger value="tickets" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="tickets" className="flex items-center gap-2">
                 <TicketIcon className="h-4 w-4" />
                 Support
-              </TabsTrigger>
-              <TabsTrigger value="invoices" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
                 Billing
-              </TabsTrigger>
-              <TabsTrigger value="quotes" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Quotes
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
                 <Bell className="h-4 w-4" />
                 Notifications
-              </TabsTrigger>
-              <TabsTrigger value="messages" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="messages" className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4" />
                 Messages
-              </TabsTrigger>
-              <TabsTrigger value="activity" className="flex items-center gap-2">
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="activity" className="flex items-center gap-2">
                 <Activity className="h-4 w-4" />
                 Activity
-              </TabsTrigger>
-            </TabsList>
+              </MobileTabsTrigger>
+            </MobileTabsList>
 
-            <TabsContent value="overview" className="space-y-6">
+            <MobileTabsContent value="overview" className="space-y-6">
               <CustomerStats />
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 lg:grid-cols-2 gap-6'}`}>
                 <CustomerProjects />
                 <CustomerTickets />
               </div>
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="projects">
+            <MobileTabsContent value="projects">
               <CustomerProjects />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="tickets">
+            <MobileTabsContent value="tickets">
               <CustomerTickets />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="invoices">
+            <MobileTabsContent value="invoices">
               <CustomerInvoices />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="quotes">
+            <MobileTabsContent value="quotes">
               <CustomerQuotes />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="notifications">
+            <MobileTabsContent value="notifications">
               <NotificationCenter />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="messages">
+            <MobileTabsContent value="messages">
               <MessageCenter />
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="activity">
+            <MobileTabsContent value="activity">
               <ActivityTimeline />
-            </TabsContent>
-          </Tabs>
+            </MobileTabsContent>
+          </MobileTabs>
         </div>
       </div>
     </div>
