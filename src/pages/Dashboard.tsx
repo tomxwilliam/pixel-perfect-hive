@@ -14,6 +14,7 @@ import { CustomerTickets } from '@/components/customer/CustomerTickets';
 import { CustomerInvoices } from '@/components/customer/CustomerInvoices';
 import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import CustomerDomainsHosting from '@/components/customer/CustomerDomainsHosting';
+import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
 import { ActivityTimeline } from '@/components/customer/ActivityTimeline';
 import { MessageCenter } from '@/components/customer/MessageCenter';
@@ -217,17 +218,17 @@ const Dashboard = () => {
               <CustomerTickets />
             </MobileTabsContent>
 
-            <MobileTabsContent value="invoices">
-              <CustomerInvoices />
-            </MobileTabsContent>
+          <MobileTabsContent value="invoices">
+            <CustomerBilling />
+          </MobileTabsContent>
 
-            <MobileTabsContent value="quotes">
-              <CustomerQuotes />
-            </MobileTabsContent>
+          <MobileTabsContent value="quotes">
+            <CustomerQuotes />
+          </MobileTabsContent>
 
-            <MobileTabsContent value="domains">
-              <CustomerDomainsHosting />
-            </MobileTabsContent>
+          <MobileTabsContent value="domains">
+            <CustomerDomainsHosting />
+          </MobileTabsContent>
 
             <MobileTabsContent value="notifications">
               <NotificationCenter />
