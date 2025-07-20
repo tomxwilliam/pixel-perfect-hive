@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -35,7 +34,11 @@ export const WebDevelopmentForm: React.FC<WebDevelopmentFormProps> = ({ formData
     { id: 'multilang', label: 'Multi-language Support' },
     { id: 'booking', label: 'Appointment/Booking System' },
     { id: 'chat', label: 'Live Chat Support' },
-    { id: 'analytics', label: 'Analytics Integration' }
+    { id: 'analytics', label: 'Analytics Integration' },
+    { id: 'hosting', label: 'Web Hosting Setup & Management' },
+    { id: 'domain', label: 'Domain Registration & Setup' },
+    { id: 'ssl', label: 'SSL Certificate Setup' },
+    { id: 'email', label: 'Email Setup (Professional Email)' }
   ];
 
   const existingAssets = [
