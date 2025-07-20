@@ -7,19 +7,147 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Edit, Calendar, DollarSign, Search } from 'lucide-react';
+import { Eye, Edit, Calendar, PoundSterling, Search, Paperclip, Download } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateProjectDialog } from './forms/CreateProjectDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 type Project = Tables<'projects'>;
 type Profile = Tables<'profiles'>;
+type FileUpload = Tables<'file_uploads'>;
 
 interface ProjectWithCustomer extends Project {
   customer: Profile;
+  file_count?: number;
 }
+
+interface ProjectDetailsProps {
+  project: ProjectWithCustomer;
+  files: FileUpload[];
+}
+
+const ProjectDetailsModal: React.FC<ProjectDetailsProps> = ({ project, files }) => {
+  const { getFileUrl } = useFileUpload();
+
+  const handleDownload = async (file: FileUpload) => {
+    const url = await getFileUrl(file.file_path);
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
+
+  const formatRequirements = (requirements: any) => {
+    if (!requirements || typeof requirements !== 'object') return null;
+
+    return Object.entries(requirements).map(([key, value]) => (
+      <div key={key} className="mb-2">
+        <span className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}: </span>
+        <span className="text-muted-foreground">
+          {Array.isArray(value) ? value.join(', ') : String(value)}
+        </span>
+      </div>
+    ));
+  };
+
+  return (
+    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>{project.title}</DialogTitle>
+      </DialogHeader>
+      
+      <div className="space-y-6">
+        {/* Basic Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-medium mb-2">Customer Information</h4>
+            <p className="text-sm">
+              <span className="font-medium">Name:</span> {project.customer?.first_name} {project.customer?.last_name}
+            </p>
+            <p className="text-sm">
+              <span className="font-medium">Email:</span> {project.customer?.email}
+            </p>
+            {project.customer?.company_name && (
+              <p className="text-sm">
+                <span className="font-medium">Company:</span> {project.customer.company_name}
+              </p>
+            )}
+          </div>
+          
+          <div>
+            <h4 className="font-medium mb-2">Project Details</h4>
+            <p className="text-sm">
+              <span className="font-medium">Type:</span> {project.project_type}
+            </p>
+            <p className="text-sm">
+              <span className="font-medium">Status:</span> 
+              <Badge className="ml-2">{project.status.replace('_', ' ')}</Badge>
+            </p>
+            {project.budget && (
+              <p className="text-sm">
+                <span className="font-medium">Budget:</span> £{Number(project.budget).toLocaleString()}
+              </p>
+            )}
+            <p className="text-sm">
+              <span className="font-medium">Created:</span> {new Date(project.created_at).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+
+        {/* Description */}
+        {project.description && (
+          <div>
+            <h4 className="font-medium mb-2">Description</h4>
+            <p className="text-sm text-muted-foreground">{project.description}</p>
+          </div>
+        )}
+
+        {/* Requirements */}
+        {project.requirements && (
+          <div>
+            <h4 className="font-medium mb-2">Requirements</h4>
+            <div className="text-sm">
+              {formatRequirements(project.requirements)}
+            </div>
+          </div>
+        )}
+
+        {/* Files */}
+        {files && files.length > 0 && (
+          <div>
+            <h4 className="font-medium mb-2">Attached Files ({files.length})</h4>
+            <div className="space-y-2">
+              {files.map((file) => (
+                <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <Paperclip className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">{file.original_filename}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(file.file_size / 1024).toFixed(1)} KB • Uploaded {new Date(file.uploaded_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDownload(file)}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </DialogContent>
+  );
+};
 
 export const AdminProjects = () => {
   const [projects, setProjects] = useState<ProjectWithCustomer[]>([]);
+  const [projectFiles, setProjectFiles] = useState<Record<string, FileUpload[]>>({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -36,6 +164,28 @@ export const AdminProjects = () => {
 
       if (data) {
         setProjects(data as ProjectWithCustomer[]);
+        
+        // Fetch file counts for each project
+        const projectIds = data.map(p => p.id);
+        if (projectIds.length > 0) {
+          const { data: filesData } = await supabase
+            .from('file_uploads')
+            .select('*')
+            .eq('entity_type', 'project')
+            .in('entity_id', projectIds);
+
+          if (filesData) {
+            const filesByProject = filesData.reduce((acc, file) => {
+              if (!acc[file.entity_id!]) {
+                acc[file.entity_id!] = [];
+              }
+              acc[file.entity_id!].push(file);
+              return acc;
+            }, {} as Record<string, FileUpload[]>);
+            
+            setProjectFiles(filesByProject);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -142,6 +292,7 @@ export const AdminProjects = () => {
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Budget</TableHead>
+              <TableHead>Files</TableHead>
               <TableHead>Timeline</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -180,8 +331,16 @@ export const AdminProjects = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-1">
-                    <DollarSign className="h-3 w-3" />
-                    <span>{project.budget ? `£${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
+                    <PoundSterling className="h-3 w-3" />
+                    <span>{project.budget ? `${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center space-x-1">
+                    <Paperclip className="h-3 w-3" />
+                    <span className="text-sm">
+                      {projectFiles[project.id]?.length || 0}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -197,9 +356,17 @@ export const AdminProjects = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-1">
-                    <Button variant="ghost" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <ProjectDetailsModal 
+                        project={project} 
+                        files={projectFiles[project.id] || []} 
+                      />
+                    </Dialog>
                     <Button variant="ghost" size="sm">
                       <Edit className="h-4 w-4" />
                     </Button>
