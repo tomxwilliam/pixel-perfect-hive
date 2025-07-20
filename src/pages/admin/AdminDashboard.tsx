@@ -15,6 +15,7 @@ import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
 import { AdminSocialMedia } from '@/components/admin/AdminSocialMedia';
+import AdminSettings from '@/components/admin/AdminSettings';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -80,6 +81,10 @@ const AdminDashboard = () => {
               <MessageSquare className="h-4 w-4" />
               Communications
             </MobileTabsTrigger>
+            <MobileTabsTrigger value="settings" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Settings
+            </MobileTabsTrigger>
           </MobileTabsList>
 
           <MobileTabsContent value="overview">
@@ -116,6 +121,10 @@ const AdminDashboard = () => {
 
           <MobileTabsContent value="communications">
             <AdminCommunications />
+          </MobileTabsContent>
+          
+          <MobileTabsContent value="settings">
+            <AdminSettings />
           </MobileTabsContent>
         </MobileTabs>
       </div>

@@ -53,6 +53,75 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_requests: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          requested_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          requested_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_agent_settings: {
+        Row: {
+          agent_name: string
+          created_at: string
+          id: string
+          is_enabled: boolean
+          module_permissions: Json | null
+          scope_config: Json | null
+          updated_at: string
+          vertex_config: Json | null
+        }
+        Insert: {
+          agent_name?: string
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          module_permissions?: Json | null
+          scope_config?: Json | null
+          updated_at?: string
+          vertex_config?: Json | null
+        }
+        Update: {
+          agent_name?: string
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          module_permissions?: Json | null
+          scope_config?: Json | null
+          updated_at?: string
+          vertex_config?: Json | null
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           ai_response: string | null
@@ -97,6 +166,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      api_integrations: {
+        Row: {
+          access_token: string | null
+          config_data: Json | null
+          created_at: string
+          id: string
+          integration_name: string
+          integration_type: string
+          is_connected: boolean
+          last_sync_at: string | null
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string | null
+          config_data?: Json | null
+          created_at?: string
+          id?: string
+          integration_name: string
+          integration_type: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string | null
+          config_data?: Json | null
+          created_at?: string
+          id?: string
+          integration_name?: string
+          integration_type?: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       availability_settings: {
         Row: {
@@ -677,6 +788,48 @@ export type Database = {
           status?: string
           updated_at?: string
           valid_until?: string | null
+        }
+        Relationships: []
+      }
+      service_pricing_defaults: {
+        Row: {
+          created_at: string
+          currency: string
+          default_price: number | null
+          hourly_rate: number | null
+          id: string
+          is_active: boolean
+          price_range_max: number | null
+          price_range_min: number | null
+          service_name: string
+          service_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          default_price?: number | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          price_range_max?: number | null
+          price_range_min?: number | null
+          service_name: string
+          service_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          default_price?: number | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean
+          price_range_max?: number | null
+          price_range_min?: number | null
+          service_name?: string
+          service_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
