@@ -7,16 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 export default function CustomerDomainsHosting() {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const { toast } = useToast();
 
   // Fetch customer's existing domains
-  const { data: domains } = useQuery({
+  const { data: domains, refetch: refetchDomains } = useQuery({
     queryKey: ['customer-domains'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -67,27 +69,28 @@ export default function CustomerDomainsHosting() {
     
     setIsSearching(true);
     try {
-      // TODO: Implement OpenProvider domain search API call
-      // For now, simulate search results
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const tlds = ['com', 'net', 'org', 'uk', 'co.uk'];
-      const mockResults = tlds.map(tld => ({
-        domain: `${searchTerm}.${tld}`,
-        available: Math.random() > 0.5,
-        price: Math.floor(Math.random() * 20) + 10
-      }));
-      
-      setSearchResults(mockResults);
+      const response = await supabase.functions.invoke('domain-search', {
+        body: { 
+          domain: searchTerm.toLowerCase().trim(),
+          tlds: ['.com', '.co.uk', '.org', '.net', '.info', '.biz']
+        }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      setSearchResults(response.data.results || []);
       toast({
         title: "Domain search completed",
-        description: `Found ${mockResults.filter(r => r.available).length} available domains`
+        description: `Found ${response.data.results?.filter((r: any) => r.available).length || 0} available domains`
       });
     } catch (error) {
+      console.error('Domain search failed:', error);
       toast({
-        title: "Search failed",
-        description: "Unable to search domains. Please try again.",
-        variant: "destructive"
+        title: "Search Failed",
+        description: "Unable to search for domains. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSearching(false);
@@ -95,17 +98,43 @@ export default function CustomerDomainsHosting() {
   };
 
   const handleDomainPurchase = async (domain: string, price: number) => {
+    if (!user) return;
+    
     try {
-      // TODO: Implement domain purchase flow
-      toast({
-        title: "Domain purchase initiated",
-        description: `Purchase process for ${domain} will be implemented in Phase 2`,
+      const domainParts = domain.split('.');
+      const domainName = domainParts[0];
+      const tld = '.' + domainParts.slice(1).join('.');
+
+      const response = await supabase.functions.invoke('domain-register', {
+        body: { 
+          domain: domainName,
+          tld: tld,
+          price: price,
+          customerId: user.id
+        }
       });
-    } catch (error) {
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
       toast({
-        title: "Purchase failed",
-        description: "Unable to process domain purchase.",
-        variant: "destructive"
+        title: "Registration Initiated",
+        description: `Domain registration for ${domain} has been initiated. You will receive an invoice shortly.`,
+      });
+
+      // Refresh domains list
+      if (refetchDomains) refetchDomains();
+      
+      // Clear search results
+      setSearchResults([]);
+      setSearchTerm('');
+    } catch (error) {
+      console.error('Domain purchase failed:', error);
+      toast({
+        title: "Registration Failed",
+        description: "Unable to initiate domain registration. Please try again.",
+        variant: "destructive",
       });
     }
   };
