@@ -598,7 +598,7 @@ const WebPortfolio = () => {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center">
+          <div className="text-center mt-16">
             <Card className="bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4 text-foreground">💡 Want a Site Like This One?</h3>
