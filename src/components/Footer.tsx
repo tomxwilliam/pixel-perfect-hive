@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
@@ -21,8 +20,13 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="">
-              <img src={logoSrc} alt="404 Code Lab Logo" className="w-24 h-24 object-contain p-1" />
+            <div className="w-24 h-24 flex items-center justify-center mb-4">
+              <img 
+                src={logoSrc} 
+                alt="404 Code Lab Logo" 
+                className="w-full h-full object-cover"
+                style={{ minWidth: '96px', minHeight: '96px', maxWidth: '96px', maxHeight: '96px' }}
+              />
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
               Scottish-based indie dev studio creating standout digital experiences. 

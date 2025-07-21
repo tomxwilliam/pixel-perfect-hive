@@ -50,15 +50,18 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <img 
-                src={logoSrc}
-                alt="404 Code Lab Logo" 
-                className="w-24 h-24 object-contain hover:scale-105 transition-transform duration-200 p-1"
-                onError={(e) => {
-                  console.log('Logo failed to load, hiding image');
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
+              <div className="w-24 h-24 flex items-center justify-center">
+                <img 
+                  src={logoSrc}
+                  alt="404 Code Lab Logo" 
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                  style={{ minWidth: '96px', minHeight: '96px', maxWidth: '96px', maxHeight: '96px' }}
+                  onError={(e) => {
+                    console.log('Logo failed to load, hiding image');
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
             </Link>
           </div>
 
