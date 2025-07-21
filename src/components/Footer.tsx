@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
@@ -9,10 +10,10 @@ export const Footer = () => {
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
-  // Choose logo based on theme
+  // Choose logo based on theme - using new uploaded logos
   const logoSrc = isDarkMode 
-    ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Dark theme logo
-    : "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"; // Updated light theme logo
+    ? "/lovable-uploads/6d8bfb2a-4c83-45f0-8a72-765c9a8b4587.png"  // Dark theme logo
+    : "/lovable-uploads/e42a2091-a9b2-49ef-bb10-1f08b5899bce.png"; // Light theme logo
 
   return (
     <footer className="bg-background border-t border-border py-12 px-4">
@@ -24,8 +25,7 @@ export const Footer = () => {
               <img 
                 src={logoSrc} 
                 alt="404 Code Lab Logo" 
-                className="w-full h-full object-cover"
-                style={{ minWidth: '96px', minHeight: '96px', maxWidth: '96px', maxHeight: '96px' }}
+                className="w-full h-full object-contain"
               />
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">

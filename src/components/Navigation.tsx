@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,10 +23,10 @@ const Navigation = () => {
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
-  // Choose logo based on theme
+  // Choose logo based on theme - using new uploaded logos
   const logoSrc = isDarkMode 
-    ? "/lovable-uploads/e8dbb82e-a966-421f-82ba-b83542109f76.png"  // Current logo for dark mode
-    : "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"; // New updated logo for light mode
+    ? "/lovable-uploads/6d8bfb2a-4c83-45f0-8a72-765c9a8b4587.png"  // Dark theme logo
+    : "/lovable-uploads/e42a2091-a9b2-49ef-bb10-1f08b5899bce.png"; // Light theme logo
 
   const handleSignOut = async () => {
     await signOut();
@@ -54,8 +53,7 @@ const Navigation = () => {
                 <img 
                   src={logoSrc}
                   alt="404 Code Lab Logo" 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                  style={{ minWidth: '96px', minHeight: '96px', maxWidth: '96px', maxHeight: '96px' }}
+                  className="w-full h-full object-contain hover:scale-105 transition-transform duration-200"
                   onError={(e) => {
                     console.log('Logo failed to load, hiding image');
                     e.currentTarget.style.display = 'none';
