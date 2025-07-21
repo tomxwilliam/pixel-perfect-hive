@@ -87,15 +87,15 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-card border-border hover:border-secondary/50 transition-all duration-300 hover:transform hover:scale-105">
+            <Card className="bg-card/50 backdrop-blur-sm border-border hover:border-secondary/50 transition-all duration-300 hover:transform hover:scale-105">
               <CardContent className="p-8 text-center">
                 <div className="mb-6">
                   <Globe className="h-12 w-12 text-secondary mx-auto" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-secondary">💻 Web Design</h3>
+                <h3 className="text-2xl font-bold mb-4 text-foreground">💻 Web Design</h3>
                 <p className="text-muted-foreground mb-6">Sleek websites with real-world power and pixel-perfect design.</p>
                 <Link to="/portfolio/web">
-                  <Button variant="outline" className="border-secondary/50 text-secondary hover:bg-secondary/20">
+                  <Button variant="outline" className="border-secondary/50 text-foreground hover:bg-secondary/10 hover:text-secondary">
                     View Websites
                     <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
