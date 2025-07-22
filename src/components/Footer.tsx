@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
@@ -10,10 +9,10 @@ export const Footer = () => {
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
-  // Choose logo based on theme - using new uploaded logos
+  // Choose logo based on theme - using correct uploaded logos
   const logoSrc = isDarkMode 
-    ? "/lovable-uploads/6d8bfb2a-4c83-45f0-8a72-765c9a8b4587.png"  // Dark theme logo
-    : "/lovable-uploads/e42a2091-a9b2-49ef-bb10-1f08b5899bce.png"; // Light theme logo
+    ? "/lovable-uploads/3dea7409-60c1-4b69-b6ea-23b045c8de45.png"  // Dark theme logo
+    : "/lovable-uploads/34f433b8-f5e1-41b2-9ea4-d062df08e71f.png"; // Light theme logo
 
   return (
     <footer className="bg-background border-t border-border py-12 px-4">
