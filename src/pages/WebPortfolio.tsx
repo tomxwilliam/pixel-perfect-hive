@@ -204,7 +204,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop" alt="SparkleClean Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/de1286a6-6683-4438-a78c-c5995a51478e.png" alt="SparkleClean Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -258,7 +258,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=600&h=400&fit=crop" alt="FixRight Plumbing Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/08b142ce-467d-4503-aa9d-28d4085bbf3b.png" alt="FixRight Plumbing Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=400&fit=crop" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/4a5f1662-f838-4873-8197-031303c450d6.png" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -366,7 +366,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop" alt="Padrino's Pizza Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/c4140cc5-49a7-448f-a499-fa51ef6ff6c9.png" alt="Padrino's Pizza Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -420,7 +420,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=600&h=400&fit=crop" alt="Sweet Crumbs Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/1e963e0b-cd28-4c9f-a4ee-0efb51b7c7fa.png" alt="Sweet Crumbs Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -474,7 +474,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=600&h=400&fit=crop" alt="Happy Paws Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/5deb9273-b749-4781-803a-ac052ba93374.png" alt="Happy Paws Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -528,7 +528,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop" alt="Crafted Joinery Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/ae042420-8758-4f7f-89c6-368216ad3dd5.png" alt="Crafted Joinery Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -582,7 +582,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&h=400&fit=crop" alt="IronHouse Gym Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/47f9ad80-e301-4e42-aab1-48bedbe2da16.png" alt="IronHouse Gym Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
@@ -635,7 +635,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop" alt="Inkspire Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/0f5fc07e-8b2a-49a3-b4d4-1e7a3adb62b1.png" alt="Inkspire Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
