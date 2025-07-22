@@ -312,7 +312,7 @@ const WebPortfolio = () => {
                   
                   <div className="relative">
                     <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/4a5f1662-f838-4873-8197-031303c450d6.png" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <img src="/lovable-uploads/9bf1d85f-9e5f-4fb0-9ce8-f74db644a586.png" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
                     </div>
                   </div>
                 </div>
