@@ -23,10 +23,10 @@ const Navigation = () => {
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
-  // Choose logo based on theme - using correct uploaded logos
+  // Choose logo based on theme - using available uploaded logos
   const logoSrc = isDarkMode 
-    ? "/lovable-uploads/3dea7409-60c1-4b69-b6ea-23b045c8de45.png"  // Dark theme logo
-    : "/lovable-uploads/34f433b8-f5e1-41b2-9ea4-d062df08e71f.png"; // Light theme logo
+    ? "/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png"  // Dark theme logo
+    : "/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png"; // Light theme logo
 
   const handleSignOut = async () => {
     await signOut();
