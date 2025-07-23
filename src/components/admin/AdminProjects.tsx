@@ -12,6 +12,7 @@ import { Tables } from '@/integrations/supabase/types';
 import { CreateProjectDialog } from './forms/CreateProjectDialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Project = Tables<'projects'>;
 type Profile = Tables<'profiles'>;
@@ -151,6 +152,7 @@ export const AdminProjects = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const isMobile = useIsMobile();
 
   const fetchProjects = async () => {
     try {
@@ -257,104 +259,57 @@ export const AdminProjects = () => {
         <CardDescription>
           Track and manage all customer projects
         </CardDescription>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search projects..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="on_hold">On Hold</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'}`}>
+          <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'items-center space-x-2'}`}>
+            <div className="flex items-center space-x-2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={isMobile ? "w-full" : "max-w-sm"}
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className={isMobile ? "w-full" : "w-[180px]"}>
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="on_hold">On Hold</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <CreateProjectDialog onProjectCreated={handleProjectCreated} />
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Project</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Budget</TableHead>
-              <TableHead>Files</TableHead>
-              <TableHead>Timeline</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        {isMobile ? (
+          <div className="space-y-4">
             {filteredProjects.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{project.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {project.description?.slice(0, 50)}...
+              <div key={project.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span>{getTypeIcon(project.project_type)}</span>
+                      <h4 className="font-medium">{project.title}</h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {project.description}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className={getStatusColor(project.status)}>
+                        {project.status.replace('_', ' ')}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {project.customer?.first_name} {project.customer?.last_name}
+                      </span>
                     </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">
-                      {project.customer?.first_name} {project.customer?.last_name}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {project.customer?.company_name || 'Individual'}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <span>{getTypeIcon(project.project_type)}</span>
-                    <span className="capitalize">{project.project_type}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status.replace('_', ' ')}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <PoundSterling className="h-3 w-3" />
-                    <span>{project.budget ? `${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <Paperclip className="h-3 w-3" />
-                    <span className="text-sm">
-                      {projectFiles[project.id]?.length || 0}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="h-3 w-3" />
-                    <span className="text-sm">
-                      {project.estimated_completion_date 
-                        ? new Date(project.estimated_completion_date).toLocaleDateString()
-                        : 'TBD'
-                      }
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
                   <div className="flex space-x-1">
                     <Dialog>
                       <DialogTrigger asChild>
@@ -371,11 +326,124 @@ export const AdminProjects = () => {
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
-                </TableCell>
-              </TableRow>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-1">
+                    <PoundSterling className="h-3 w-3" />
+                    <span>{project.budget ? `£${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Paperclip className="h-3 w-3" />
+                    <span>{projectFiles[project.id]?.length || 0}</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>
+                      {project.estimated_completion_date 
+                        ? new Date(project.estimated_completion_date).toLocaleDateString()
+                        : 'TBD'
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Project</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Budget</TableHead>
+                <TableHead>Files</TableHead>
+                <TableHead>Timeline</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredProjects.map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{project.title}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {project.description?.slice(0, 50)}...
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">
+                        {project.customer?.first_name} {project.customer?.last_name}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {project.customer?.company_name || 'Individual'}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>{getTypeIcon(project.project_type)}</span>
+                      <span className="capitalize">{project.project_type}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(project.status)}>
+                      {project.status.replace('_', ' ')}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <PoundSterling className="h-3 w-3" />
+                      <span>{project.budget ? `${Number(project.budget).toLocaleString()}` : 'TBD'}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <Paperclip className="h-3 w-3" />
+                      <span className="text-sm">
+                        {projectFiles[project.id]?.length || 0}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-3 w-3" />
+                      <span className="text-sm">
+                        {project.estimated_completion_date 
+                          ? new Date(project.estimated_completion_date).toLocaleDateString()
+                          : 'TBD'
+                        }
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-1">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </DialogTrigger>
+                        <ProjectDetailsModal 
+                          project={project} 
+                          files={projectFiles[project.id] || []} 
+                        />
+                      </Dialog>
+                      <Button variant="ghost" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );

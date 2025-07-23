@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { FileText, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Quote = Tables<'quotes'>;
 
@@ -14,6 +15,7 @@ export const CustomerQuotes = () => {
   const { user } = useAuth();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   const fetchQuotes = async () => {
     if (!user) return;
@@ -124,9 +126,9 @@ export const CustomerQuotes = () => {
           <div className="space-y-4">
             {quotes.map((quote) => (
               <div key={quote.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
-                <div className="flex items-start justify-between mb-2">
+                <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-start justify-between'} mb-2`}>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2 mb-1`}>
                       <h4 className="font-semibold flex items-center">
                         {getStatusIcon(quote.status)}
                         <span className="ml-2">Quote #{quote.quote_number}</span>
@@ -140,35 +142,37 @@ export const CustomerQuotes = () => {
                         {quote.description}
                       </p>
                     )}
-                    <p className="text-2xl font-bold text-primary mt-2">
+                    <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-primary mt-2`}>
                       £{Number(quote.amount).toLocaleString()}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className={`flex ${isMobile ? 'flex-row justify-between items-center' : 'flex-col items-end'} gap-2`}>
                     <Badge variant={getStatusColor(quote.status)}>
                       {quote.status.toUpperCase()}
                     </Badge>
                     {quote.status === 'pending' && (
-                      <div className="flex gap-2">
+                      <div className={`flex ${isMobile ? 'gap-1' : 'gap-2'}`}>
                         <Button 
-                          size="sm" 
+                          size="sm"
                           variant="outline"
                           onClick={() => handleQuoteAction(quote.id, 'reject')}
+                          className={isMobile ? "text-xs px-2 h-7" : ""}
                         >
-                          Decline
+                          {isMobile ? 'No' : 'Decline'}
                         </Button>
                         <Button 
                           size="sm"
                           onClick={() => handleQuoteAction(quote.id, 'accept')}
+                          className={isMobile ? "text-xs px-2 h-7" : ""}
                         >
-                          Accept
+                          {isMobile ? 'Yes' : 'Accept'}
                         </Button>
                       </div>
                     )}
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className={`${isMobile ? 'flex flex-col space-y-1' : 'flex items-center justify-between'} text-sm text-muted-foreground`}>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
                     Created: {new Date(quote.created_at).toLocaleDateString()}

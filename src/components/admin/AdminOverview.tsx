@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DashboardStats {
   totalCustomers: number;
@@ -54,6 +55,7 @@ export const AdminOverview = () => {
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [chartData, setChartData] = useState<any[]>([]);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -237,7 +239,7 @@ export const AdminOverview = () => {
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
         {[...Array(8)].map((_, i) => (
           <Card key={i}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -279,7 +281,7 @@ export const AdminOverview = () => {
       )}
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
@@ -352,16 +354,16 @@ export const AdminOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-3">
+        <Card className={isMobile ? 'col-span-1' : 'md:col-span-3'}>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Revenue Trend (Last 30 Days)</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px]">
+            <ChartContainer config={chartConfig} className={isMobile ? "h-[150px]" : "h-[200px]"}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <XAxis dataKey="date" />
-                  <YAxis />
+                  <XAxis dataKey="date" fontSize={isMobile ? 10 : 12} />
+                  <YAxis fontSize={isMobile ? 10 : 12} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Line type="monotone" dataKey="revenue" stroke="var(--color-revenue)" strokeWidth={2} />
                 </LineChart>
@@ -372,7 +374,7 @@ export const AdminOverview = () => {
       </div>
 
       {/* Activity and Status */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'}`}>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>

@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Calendar, Download } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type Invoice = Tables<'invoices'>;
 
@@ -14,6 +15,7 @@ export const CustomerInvoices = () => {
   const { user } = useAuth();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   const fetchInvoices = async () => {
     if (!user) return;
@@ -108,13 +110,13 @@ export const CustomerInvoices = () => {
       </CardHeader>
       <CardContent>
         {/* Summary */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-4'} mb-6`}>
           <div className="bg-muted/50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-green-600">£{totalPaid.toLocaleString()}</div>
+            <div className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-green-600`}>£{totalPaid.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Total Paid</div>
           </div>
           <div className="bg-muted/50 rounded-lg p-4">
-            <div className="text-2xl font-bold text-orange-600">£{pendingAmount.toLocaleString()}</div>
+            <div className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-orange-600`}>£{pendingAmount.toLocaleString()}</div>
             <div className="text-sm text-muted-foreground">Pending</div>
           </div>
         </div>
@@ -128,12 +130,12 @@ export const CustomerInvoices = () => {
           <div className="space-y-4">
             {invoices.map((invoice) => (
               <div key={invoice.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
-                <div className="flex items-start justify-between mb-2">
+                <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-start justify-between'} mb-2`}>
                   <div className="flex-1">
                     <h4 className="font-semibold">
                       {getStatusIcon(invoice.status)} Invoice #{invoice.invoice_number}
                     </h4>
-                    <p className="text-2xl font-bold text-primary">
+                    <p className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-primary`}>
                       £{Number(invoice.amount).toLocaleString()}
                     </p>
                     {invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' && (
@@ -142,30 +144,32 @@ export const CustomerInvoices = () => {
                       </p>
                     )}
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className={`flex ${isMobile ? 'flex-row justify-between items-center' : 'flex-col items-end'} gap-2`}>
                     <Badge variant={getStatusColor(invoice.status)}>
                       {invoice.status.toUpperCase()}
                     </Badge>
-                    {invoice.status === 'pending' && (
-                      <Button size="sm" variant="outline">
+                    <div className={`flex ${isMobile ? 'flex-col gap-1' : 'flex-col gap-2'}`}>
+                      {invoice.status === 'pending' && (
+                        <Button size="sm" variant="outline" className={isMobile ? "text-xs px-2 h-7" : ""}>
+                          <Download className="h-4 w-4 mr-1" />
+                          {isMobile ? 'Pay' : 'Pay Now'}
+                        </Button>
+                      )}
+                      {invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' && (
+                        <Button size="sm" variant="destructive" className={isMobile ? "text-xs px-2 h-7" : ""}>
+                          <Download className="h-4 w-4 mr-1" />
+                          {isMobile ? 'Pay' : 'Pay Now'}
+                        </Button>
+                      )}
+                      <Button size="sm" variant="ghost" className={isMobile ? "text-xs px-2 h-7" : ""}>
                         <Download className="h-4 w-4 mr-1" />
-                        Pay Now
+                        {isMobile ? 'DL' : 'Download'}
                       </Button>
-                    )}
-                    {invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' && (
-                      <Button size="sm" variant="destructive">
-                        <Download className="h-4 w-4 mr-1" />
-                        Pay Now
-                      </Button>
-                    )}
-                    <Button size="sm" variant="ghost">
-                      <Download className="h-4 w-4 mr-1" />
-                      Download
-                    </Button>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className={`${isMobile ? 'flex flex-col space-y-1' : 'flex items-center justify-between'} text-sm text-muted-foreground`}>
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-1" />
                     Issued: {new Date(invoice.created_at).toLocaleDateString()}
