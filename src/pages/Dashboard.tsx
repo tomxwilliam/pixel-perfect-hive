@@ -186,7 +186,7 @@ const Dashboard = () => {
               </MobileTabsTrigger>
               <MobileTabsTrigger value="domains" className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
-                Domains
+                Domains & Hosting
               </MobileTabsTrigger>
               <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
                 <Bell className="h-4 w-4" />
