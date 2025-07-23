@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,10 +5,8 @@ import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Z
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
+  return <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       
       {/* Hero Section */}
@@ -33,7 +30,7 @@ const Index = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
                 <span className="text-2xl mr-2">🐝</span>
-                <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: Beevers</h3>
+                <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: BeeVerse</h3>
               </div>
               <p className="mb-4 text-foreground">The ultimate idle bee empire game.</p>
               <p className="text-sm text-muted-foreground mb-4">Download now on iPhone.</p>
@@ -129,8 +126,6 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
