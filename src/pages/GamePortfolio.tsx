@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,10 +5,8 @@ import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
-
 const GamePortfolio = () => {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
+  return <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       
       {/* Hero Section */}
@@ -39,7 +36,7 @@ const GamePortfolio = () => {
                   <div className="flex items-center mb-6">
                     <span className="text-4xl mr-4">🐝</span>
                     <div>
-                      <h2 className="text-3xl font-bold text-accent mb-2">Beevers</h2>
+                      <h2 className="text-3xl font-bold text-accent mb-2">BeeVerse</h2>
                       <Badge className="text-accent border-accent/30 bg-accent/20">
                         Featured Game
                       </Badge>
@@ -157,8 +154,6 @@ const GamePortfolio = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default GamePortfolio;
