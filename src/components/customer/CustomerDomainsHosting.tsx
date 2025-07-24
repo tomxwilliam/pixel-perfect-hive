@@ -324,46 +324,168 @@ export default function CustomerDomainsHosting() {
           )}
         </TabsContent>
 
-        <TabsContent value="packages" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {hostingPackages?.map((pkg) => (
-              <Card key={pkg.id} className="relative">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    {pkg.package_name}
-                    {pkg.package_type === 'business' && (
-                      <Badge variant="secondary">Popular</Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Perfect for {pkg.package_type} use
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-3xl font-bold">
-                    £{pkg.monthly_price}
-                    <span className="text-sm font-normal text-muted-foreground">/month</span>
-                  </div>
-                  
-                  <ul className="space-y-2 text-sm">
-                    <li>✓ {pkg.disk_space_gb}GB Storage</li>
-                    <li>✓ {pkg.bandwidth_gb}GB Bandwidth</li>
-                    <li>✓ {pkg.email_accounts} Email Accounts</li>
-                    <li>✓ {pkg.databases} Databases</li>
-                    <li>✓ {pkg.subdomains} Subdomains</li>
-                    {pkg.free_ssl && <li>✓ Free SSL Certificate</li>}
-                  </ul>
+        <TabsContent value="packages" className="space-y-6">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2">Web Hosting Packages (Annual Billing)</h2>
+            <p className="text-muted-foreground">
+              All packages include a FREE .co.uk domain, lightning-fast UK servers, and 24/7 support.
+            </p>
+          </div>
 
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleHostingOrder(pkg.id)}
-                    variant={pkg.package_type === 'business' ? 'default' : 'outline'}
-                  >
-                    Order Now
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+            {/* Starter Plan */}
+            <Card className="relative border-2 border-green-200">
+              <CardHeader className="text-center">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-lg">🟢</span>
+                </div>
+                <CardTitle className="text-xl">Starter Plan</CardTitle>
+                <div className="text-3xl font-bold">
+                  £33
+                  <span className="text-sm font-normal text-muted-foreground"> / year</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    1 Website
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    5 GB SSD Storage
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free SSL Certificate
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free .co.uk Domain
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    1 Email Account
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Weekly Backups
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    UK-Based Support
+                  </li>
+                </ul>
+                <Button className="w-full" variant="outline">
+                  Choose Plan
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Pro Plan */}
+            <Card className="relative border-2 border-blue-200">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-blue-500 text-white">Best Value</Badge>
+              </div>
+              <CardHeader className="text-center">
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-lg">🔵</span>
+                </div>
+                <CardTitle className="text-xl">Pro Plan</CardTitle>
+                <div className="text-3xl font-bold">
+                  £66
+                  <span className="text-sm font-normal text-muted-foreground"> / year</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    3 Websites
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    20 GB SSD Storage
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free SSL Certificates
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free .co.uk Domain
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    5 Email Accounts
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Daily Backups
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Priority UK Support
+                  </li>
+                </ul>
+                <Button className="w-full">
+                  Choose Plan
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Elite Plan */}
+            <Card className="relative border-2 border-purple-200">
+              <CardHeader className="text-center">
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <span className="text-white text-lg">🟣</span>
+                </div>
+                <CardTitle className="text-xl">Elite Plan</CardTitle>
+                <div className="text-3xl font-bold">
+                  £99
+                  <span className="text-sm font-normal text-muted-foreground"> / year</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Unlimited Websites
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    50 GB SSD Storage
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free SSL Certificates
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Free .co.uk Domain
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Unlimited Emails
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Daily Backups
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Priority UK Support
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-500">✅</span>
+                    Enhanced Security & Performance Tools
+                  </li>
+                </ul>
+                <Button className="w-full" variant="outline">
+                  Choose Plan
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
