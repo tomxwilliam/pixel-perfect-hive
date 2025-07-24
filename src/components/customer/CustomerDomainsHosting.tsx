@@ -147,7 +147,7 @@ export default function CustomerDomainsHosting() {
         body: { 
           packageId: packageId,
           customerId: user.id,
-          billingCycle: 'monthly' // Default to monthly, could be made configurable
+          billingCycle: 'annual' // Updated to annual billing to match new plans
         }
       });
 
@@ -376,7 +376,11 @@ export default function CustomerDomainsHosting() {
                     UK-Based Support
                   </li>
                 </ul>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => handleHostingOrder('11111111-1111-1111-1111-111111111111')}
+                >
                   Choose Plan
                 </Button>
               </CardContent>
@@ -428,7 +432,10 @@ export default function CustomerDomainsHosting() {
                     Priority UK Support
                   </li>
                 </ul>
-                <Button className="w-full">
+                <Button 
+                  className="w-full"
+                  onClick={() => handleHostingOrder('22222222-2222-2222-2222-222222222222')}
+                >
                   Choose Plan
                 </Button>
               </CardContent>
@@ -481,7 +488,11 @@ export default function CustomerDomainsHosting() {
                     Enhanced Security & Performance Tools
                   </li>
                 </ul>
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => handleHostingOrder('33333333-3333-3333-3333-333333333333')}
+                >
                   Choose Plan
                 </Button>
               </CardContent>
