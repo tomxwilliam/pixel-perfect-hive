@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, Edit, Calendar, PoundSterling, Search, Paperclip, Download } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateProjectDialog } from './forms/CreateProjectDialog';
+import { ProjectEditModal } from './modals/ProjectEditModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -152,6 +153,8 @@ export const AdminProjects = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedProject, setSelectedProject] = useState<ProjectWithCustomer | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const fetchProjects = async () => {
@@ -322,7 +325,7 @@ export const AdminProjects = () => {
                         files={projectFiles[project.id] || []} 
                       />
                     </Dialog>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => { setSelectedProject(project); setIsEditModalOpen(true); }}>
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
@@ -434,7 +437,7 @@ export const AdminProjects = () => {
                           files={projectFiles[project.id] || []} 
                         />
                       </Dialog>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => { setSelectedProject(project); setIsEditModalOpen(true); }}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </div>
@@ -445,6 +448,15 @@ export const AdminProjects = () => {
           </Table>
         )}
       </CardContent>
+      
+      {selectedProject && (
+        <ProjectEditModal
+          project={selectedProject}
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          onProjectUpdated={fetchProjects}
+        />
+      )}
     </Card>
   );
 };

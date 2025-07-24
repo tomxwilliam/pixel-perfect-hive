@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, Download, Send, DollarSign, Calendar, Search, Plus } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateInvoiceDialog } from './forms/CreateInvoiceDialog';
+import { InvoiceManagementModal } from './modals/InvoiceManagementModal';
 
 type Invoice = Tables<'invoices'>;
 type Profile = Tables<'profiles'>;
@@ -24,6 +25,8 @@ export const AdminInvoices = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedInvoice, setSelectedInvoice] = useState<InvoiceWithCustomer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const fetchInvoices = async () => {
     try {
@@ -224,14 +227,8 @@ export const AdminInvoices = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
                         <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Send className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, Mail, Phone, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateCustomerDialog } from './forms/CreateCustomerDialog';
+import { CustomerDetailsModal } from './modals/CustomerDetailsModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 type Profile = Tables<'profiles'>;
@@ -23,6 +24,8 @@ export const AdminCustomers = () => {
   const [customers, setCustomers] = useState<CustomerWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerWithStats | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const fetchCustomers = async () => {
@@ -80,6 +83,11 @@ export const AdminCustomers = () => {
 
   const handleCustomerCreated = () => {
     fetchCustomers();
+  };
+
+  const handleViewCustomer = (customer: CustomerWithStats) => {
+    setSelectedCustomer(customer);
+    setIsModalOpen(true);
   };
 
   const filteredCustomers = customers.filter(customer =>
@@ -147,7 +155,7 @@ export const AdminCustomers = () => {
                       </div>
                     )}
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => handleViewCustomer(customer)}>
                     <Eye className="h-4 w-4" />
                   </Button>
                 </div>
@@ -265,7 +273,7 @@ export const AdminCustomers = () => {
                 </TableCell>
                 <TableCell>£{customer.total_spent.toLocaleString()}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => handleViewCustomer(customer)}>
                     <Eye className="h-4 w-4" />
                   </Button>
                 </TableCell>
@@ -274,6 +282,14 @@ export const AdminCustomers = () => {
           </TableBody>
         </Table>
       </CardContent>
+      
+      {selectedCustomer && (
+        <CustomerDetailsModal
+          customer={selectedCustomer}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+        />
+      )}
     </Card>
   );
 };

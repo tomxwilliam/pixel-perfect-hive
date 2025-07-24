@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, MessageSquare, User, Clock, Search } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateTicketDialog } from './forms/CreateTicketDialog';
+import { TicketDetailsModal } from './modals/TicketDetailsModal';
 
 type Ticket = Tables<'tickets'>;
 type Profile = Tables<'profiles'>;
@@ -25,6 +26,8 @@ export const AdminTickets = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [priorityFilter, setPriorityFilter] = useState('all');
+  const [selectedTicket, setSelectedTicket] = useState<TicketWithDetails | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchTickets = async () => {
     try {
@@ -274,11 +277,8 @@ export const AdminTickets = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-1">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => { setSelectedTicket(ticket); setIsModalOpen(true); }}>
                       <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <MessageSquare className="h-4 w-4" />
                     </Button>
                   </div>
                 </TableCell>
@@ -287,6 +287,15 @@ export const AdminTickets = () => {
           </TableBody>
         </Table>
       </CardContent>
+      
+      {selectedTicket && (
+        <TicketDetailsModal
+          ticket={selectedTicket}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          onTicketUpdated={fetchTickets}
+        />
+      )}
     </Card>
   );
 };
