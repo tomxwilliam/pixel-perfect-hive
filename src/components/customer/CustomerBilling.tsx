@@ -192,10 +192,60 @@ const CustomerBilling = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                // TODO: Implement invoice download
+                                const html = `
+                                  <!DOCTYPE html>
+                                  <html>
+                                    <head>
+                                      <meta charset="UTF-8">
+                                      <title>Invoice ${invoice.invoice_number}</title>
+                                      <style>
+                                        body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+                                        .header { border-bottom: 2px solid #007bff; padding-bottom: 20px; margin-bottom: 30px; }
+                                        .company-name { font-size: 24px; font-weight: bold; color: #007bff; }
+                                        .invoice-title { font-size: 32px; font-weight: bold; margin: 20px 0; }
+                                        .invoice-details { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+                                        .amount { font-size: 24px; font-weight: bold; color: #28a745; }
+                                        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
+                                      </style>
+                                    </head>
+                                    <body>
+                                      <div class="header">
+                                        <div class="company-name">404 Code Lab</div>
+                                        <p>Professional Development Services</p>
+                                      </div>
+                                      
+                                      <div class="invoice-title">INVOICE</div>
+                                      
+                                      <div class="invoice-details">
+                                        <p><strong>Invoice Number:</strong> ${invoice.invoice_number}</p>
+                                        <p><strong>Issue Date:</strong> ${format(new Date(invoice.created_at), 'PPP')}</p>
+                                        ${invoice.due_date ? `<p><strong>Due Date:</strong> ${format(new Date(invoice.due_date), 'PPP')}</p>` : ''}
+                                        <div class="amount">Amount: £${invoice.amount}</div>
+                                        <p><strong>Status:</strong> ${invoice.status.toUpperCase()}</p>
+                                        ${invoice.paid_at ? `<p><strong>Paid Date:</strong> ${format(new Date(invoice.paid_at), 'PPP')}</p>` : ''}
+                                      </div>
+
+                                      <div class="footer">
+                                        <p>Thank you for your business!</p>
+                                        <p>404 Code Lab - contact@404codelab.com</p>
+                                      </div>
+                                    </body>
+                                  </html>
+                                `;
+
+                                const blob = new Blob([html], { type: 'text/html' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `invoice-${invoice.invoice_number}.html`;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+
                                 toast({
-                                  title: "Download Invoice",
-                                  description: "Invoice download will be implemented soon.",
+                                  title: "Invoice Downloaded",
+                                  description: "Invoice has been downloaded as HTML file.",
                                 });
                               }}
                             >
