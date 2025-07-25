@@ -178,6 +178,27 @@ export const InvoiceManagementModal: React.FC<InvoiceManagementModalProps> = ({
 
       if (error) throw error;
 
+      // Send notification to customer about payment received
+      try {
+        await supabase.functions.invoke('admin-notifications', {
+          body: {
+            action: 'send_status_change_notification',
+            data: {
+              user_id: invoice.customer_id,
+              entity_type: 'invoice',
+              entity_id: invoice.id,
+              old_status: invoice.status,
+              new_status: 'paid',
+              entity_title: `Invoice ${invoice.invoice_number}`,
+              created_by: null // Will be set by the edge function
+            }
+          }
+        });
+      } catch (notificationError) {
+        console.error('Error sending notification:', notificationError);
+        // Don't fail the main operation if notification fails
+      }
+
       toast.success('Invoice marked as paid');
       onInvoiceUpdated();
     } catch (error) {

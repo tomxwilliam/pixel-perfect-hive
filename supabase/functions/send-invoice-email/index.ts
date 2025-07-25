@@ -10,12 +10,17 @@ const corsHeaders = {
 };
 
 interface InvoiceEmailRequest {
-  to: string;
-  customerName: string;
-  invoiceNumber: string;
+  to?: string;
+  customer_email?: string;
+  customerName?: string;
+  customer_name?: string;
+  invoiceNumber?: string;
+  invoice_number?: string;
   amount: number;
-  dueDate: string;
-  invoiceType: 'invoice' | 'quote';
+  dueDate?: string;
+  due_date?: string;
+  invoiceType?: 'invoice' | 'quote';
+  invoice_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,7 +29,19 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, customerName, invoiceNumber, amount, dueDate, invoiceType }: InvoiceEmailRequest = await req.json();
+    const requestData: InvoiceEmailRequest = await req.json();
+    
+    // Handle different request formats for backward compatibility
+    const to = requestData.to || requestData.customer_email;
+    const customerName = requestData.customerName || requestData.customer_name;
+    const invoiceNumber = requestData.invoiceNumber || requestData.invoice_number;
+    const amount = requestData.amount;
+    const dueDate = requestData.dueDate || requestData.due_date;
+    const invoiceType = requestData.invoiceType || 'invoice';
+
+    if (!to || !customerName || !invoiceNumber) {
+      throw new Error('Missing required fields: email, customer name, or invoice number');
+    }
 
     const subject = invoiceType === 'invoice' 
       ? `New Invoice ${invoiceNumber} - Amount $${amount}`

@@ -235,9 +235,18 @@ export const AdminInvoices = () => {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+        </Table>
         </CardContent>
       </Card>
+
+      {selectedInvoice && (
+        <InvoiceManagementModal
+          invoice={selectedInvoice}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          onInvoiceUpdated={fetchInvoices}
+        />
+      )}
     </div>
   );
 };

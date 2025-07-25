@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateQuoteDialog } from "./forms/CreateQuoteDialog";
+import { QuoteManagementModal } from "./modals/QuoteManagementModal";
 import { Search, Filter, DollarSign, FileText, Clock } from "lucide-react";
 
 interface Quote {
@@ -40,6 +41,7 @@ interface Profile {
   first_name: string;
   last_name: string;
   email: string;
+  company_name: string | null;
 }
 
 interface Project {
@@ -57,6 +59,8 @@ export function AdminQuotes() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedQuote, setSelectedQuote] = useState<QuoteWithCustomer | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchQuotes();
@@ -69,7 +73,7 @@ export function AdminQuotes() {
         .from("quotes")
         .select(`
           *,
-          customer:profiles(id, first_name, last_name, email),
+          customer:profiles(id, first_name, last_name, email, company_name),
           project:projects(id, title)
         `)
         .order("created_at", { ascending: false });
@@ -230,11 +234,15 @@ export function AdminQuotes() {
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        setSelectedQuote(quote);
+                        setIsModalOpen(true);
+                      }}
+                    >
                       View
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Convert to Invoice
                     </Button>
                   </div>
                 </TableCell>
@@ -243,6 +251,15 @@ export function AdminQuotes() {
           </TableBody>
         </Table>
       </Card>
+
+      {selectedQuote && (
+        <QuoteManagementModal
+          quote={selectedQuote}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          onQuoteUpdated={fetchQuotes}
+        />
+      )}
     </div>
   );
 }

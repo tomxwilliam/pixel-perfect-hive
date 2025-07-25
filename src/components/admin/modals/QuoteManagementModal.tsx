@@ -76,6 +76,29 @@ export const QuoteManagementModal: React.FC<QuoteManagementModalProps> = ({
 
       if (error) throw error;
 
+      // Send notification to customer about status change
+      if (newStatus !== quote.status) {
+        try {
+          await supabase.functions.invoke('admin-notifications', {
+            body: {
+              action: 'send_status_change_notification',
+              data: {
+                user_id: quote.customer_id,
+                entity_type: 'quote',
+                entity_id: quote.id,
+                old_status: quote.status,
+                new_status: newStatus,
+                entity_title: `Quote ${quote.quote_number}`,
+                created_by: null // Will be set by the edge function
+              }
+            }
+          });
+        } catch (notificationError) {
+          console.error('Error sending notification:', notificationError);
+          // Don't fail the main operation if notification fails
+        }
+      }
+
       toast.success('Quote status updated successfully');
       onQuoteUpdated();
     } catch (error) {
@@ -132,23 +155,24 @@ export const QuoteManagementModal: React.FC<QuoteManagementModalProps> = ({
   const handleSendQuote = async () => {
     setLoading(true);
     try {
-      // Create quote content
-      const quoteData = {
-        quote_number: quote.quote_number,
-        customer_name: `${quote.customer.first_name} ${quote.customer.last_name}`,
-        customer_email: quote.customer.email,
-        amount: quote.amount,
-        description: quote.description,
-        valid_until: quote.valid_until,
-        project_title: quote.project?.title
-      };
+      // Call the edge function to send quote email
+      const { error } = await supabase.functions.invoke('send-invoice-email', {
+        body: {
+          customer_email: quote.customer.email,
+          customer_name: `${quote.customer.first_name} ${quote.customer.last_name}`,
+          invoice_number: quote.quote_number,
+          amount: quote.amount,
+          due_date: quote.valid_until,
+          invoiceType: 'quote'
+        }
+      });
 
-      // Here you would typically call an edge function to send the quote email
-      // For now, we'll simulate the action
+      if (error) throw error;
+
       toast.success('Quote sent to customer successfully');
     } catch (error) {
       console.error('Error sending quote:', error);
-      toast.error('Failed to send quote');
+      toast.error('Failed to send quote. Please check edge function configuration.');
     } finally {
       setLoading(false);
     }
