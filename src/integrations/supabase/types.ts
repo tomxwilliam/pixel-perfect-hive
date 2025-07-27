@@ -722,6 +722,39 @@ export type Database = {
           },
         ]
       }
+      invoice_templates: {
+        Row: {
+          branding: Json | null
+          company_details: Json | null
+          created_at: string | null
+          id: string
+          is_default: boolean | null
+          layout_settings: Json | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          branding?: Json | null
+          company_details?: Json | null
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          layout_settings?: Json | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          branding?: Json | null
+          company_details?: Json | null
+          created_at?: string | null
+          id?: string
+          is_default?: boolean | null
+          layout_settings?: Json | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
