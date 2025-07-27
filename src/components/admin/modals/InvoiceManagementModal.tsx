@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Download, Send, Eye, FileText, User, Calendar, DollarSign, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import { generateInvoicePDF, generateSimpleInvoicePDF } from '@/utils/pdfGenerator';
 
 type Invoice = Tables<'invoices'>;
 type Profile = Tables<'profiles'>;
@@ -44,93 +45,84 @@ export const InvoiceManagementModal: React.FC<InvoiceManagementModalProps> = ({
   const handleDownloadInvoice = async () => {
     setLoading(true);
     try {
-      // Generate PDF content for the invoice
+      // Fetch template settings
+      const { data: template } = await supabase
+        .from('invoice_templates')
+        .select('*')
+        .eq('is_default', true)
+        .single();
+
       const invoiceData = {
         invoice_number: invoice.invoice_number,
         customer_name: `${invoice.customer.first_name} ${invoice.customer.last_name}`,
         customer_email: invoice.customer.email,
-        customer_company: invoice.customer.company_name,
-        amount: invoice.amount,
-        due_date: invoice.due_date,
+        customer_company: invoice.customer.company_name || undefined,
+        amount: Number(invoice.amount),
+        due_date: invoice.due_date || undefined,
         created_date: invoice.created_at,
         project_title: invoice.project?.title,
-        status: invoice.status
+        status: invoice.status,
+        paid_at: invoice.paid_at || undefined
       };
 
-      // Create a simple HTML invoice for download
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Invoice ${invoice.invoice_number}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .invoice-details { margin-bottom: 30px; }
-            .customer-details { margin-bottom: 30px; }
-            .amount-section { background: #f5f5f5; padding: 20px; margin: 20px 0; }
-            .footer { margin-top: 40px; text-align: center; color: #666; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>INVOICE</h1>
-            <h2>${invoice.invoice_number}</h2>
-          </div>
+      if (template) {
+        // Use advanced PDF generation with template
+        try {
+          const pdfBlob = await generateInvoicePDF(invoiceData, {
+            company_details: template.company_details as any,
+            branding: template.branding as any,
+            layout_settings: template.layout_settings as any
+          });
           
-          <div class="invoice-details">
-            <p><strong>Date:</strong> ${new Date(invoice.created_at).toLocaleDateString()}</p>
-            <p><strong>Due Date:</strong> ${invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'No due date'}</p>
-            <p><strong>Status:</strong> ${invoice.status.toUpperCase()}</p>
-          </div>
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `invoice-${invoice.invoice_number}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } catch (pdfError) {
+          console.warn('Advanced PDF generation failed, using simple PDF:', pdfError);
+          // Fallback to simple PDF generation
+          const pdf = generateSimpleInvoicePDF(invoiceData, {
+            company_details: template.company_details as any,
+            branding: template.branding as any,
+            layout_settings: template.layout_settings as any
+          });
+          pdf.save(`invoice-${invoice.invoice_number}.pdf`);
+        }
+      } else {
+        // Fallback to simple PDF with default template
+        const defaultTemplate = {
+          company_details: {
+            company_name: '404 Code Lab',
+            address: 'Professional Development Services',
+            email: 'contact@404codelab.com',
+            phone: '',
+            website: 'https://404codelab.com'
+          },
+          branding: {
+            logo_url: '',
+            primary_color: '#007bff',
+            secondary_color: '#28a745',
+            accent_color: '#007bff'
+          },
+          layout_settings: {
+            template_style: 'modern',
+            show_company_logo: true,
+            show_payment_terms: true,
+            footer_text: 'Thank you for your business!',
+            currency_symbol: '£',
+            date_format: 'DD/MM/YYYY'
+          }
+        };
+        
+        const pdf = generateSimpleInvoicePDF(invoiceData, defaultTemplate);
+        pdf.save(`invoice-${invoice.invoice_number}.pdf`);
+      }
 
-          <div class="customer-details">
-            <h3>Bill To:</h3>
-            <p><strong>${invoiceData.customer_name}</strong></p>
-            <p>${invoice.customer.email}</p>
-            ${invoice.customer.company_name ? `<p>${invoice.customer.company_name}</p>` : ''}
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>${invoice.project?.title || 'Professional Services'}</td>
-                <td>£${Number(invoice.amount).toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <div class="amount-section">
-            <h2>Total Amount: £${Number(invoice.amount).toLocaleString()}</h2>
-          </div>
-
-          <div class="footer">
-            <p>Thank you for your business!</p>
-          </div>
-        </body>
-        </html>
-      `;
-
-      // Create blob and download
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `invoice-${invoice.invoice_number}.html`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      toast.success('Invoice downloaded successfully');
+      toast.success('Invoice PDF downloaded successfully');
     } catch (error) {
       console.error('Error downloading invoice:', error);
       toast.error('Failed to download invoice');

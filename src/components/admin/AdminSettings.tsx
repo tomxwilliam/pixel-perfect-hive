@@ -1,13 +1,14 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, DollarSign, Link2, Bot, Globe } from 'lucide-react';
+import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AdminManagement from './settings/AdminManagement';
 import ServicePricingDefaults from './settings/ServicePricingDefaults';
 import APIIntegrations from './settings/APIIntegrations';
 import AIAgentSettings from './settings/AIAgentSettings';
 import DomainHostingSettings from './settings/DomainHostingSettings';
+import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -26,10 +27,14 @@ const AdminSettings = () => {
       </div>
 
       <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Admins
+          </TabsTrigger>
+          <TabsTrigger value="invoices" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Invoices
           </TabsTrigger>
           <TabsTrigger value="pricing" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
@@ -61,6 +66,10 @@ const AdminSettings = () => {
               <AdminManagement isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="invoices" className="space-y-6">
+          <InvoiceTemplateSettings />
         </TabsContent>
 
         <TabsContent value="pricing" className="space-y-6">

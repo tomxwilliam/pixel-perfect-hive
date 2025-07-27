@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CreditCard, Calendar, Download } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { generateInvoicePDF, generateSimpleInvoicePDF } from '@/utils/pdfGenerator';
 
 type Invoice = Tables<'invoices'>;
 
@@ -109,62 +110,104 @@ export const CustomerInvoices = () => {
     }
   };
 
-  const handleDownloadInvoice = (invoice: Invoice) => {
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Invoice ${invoice.invoice_number}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
-            .header { border-bottom: 2px solid #007bff; padding-bottom: 20px; margin-bottom: 30px; }
-            .company-name { font-size: 24px; font-weight: bold; color: #007bff; }
-            .invoice-title { font-size: 32px; font-weight: bold; margin: 20px 0; }
-            .invoice-details { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            .amount { font-size: 24px; font-weight: bold; color: #28a745; }
-            .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="company-name">404 Code Lab</div>
-            <p>Professional Development Services</p>
-          </div>
+  const handleDownloadInvoice = async (invoice: Invoice) => {
+    try {
+      // Fetch template settings
+      const { data: template } = await supabase
+        .from('invoice_templates')
+        .select('*')
+        .eq('is_default', true)
+        .single();
+
+      // Fetch customer profile for complete information
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+
+      const invoiceData = {
+        invoice_number: invoice.invoice_number,
+        customer_name: profile ? `${profile.first_name} ${profile.last_name}` : 'Customer',
+        customer_email: profile?.email || user?.email || '',
+        customer_company: profile?.company_name || undefined,
+        amount: Number(invoice.amount),
+        due_date: invoice.due_date || undefined,
+        created_date: invoice.created_at,
+        project_title: 'Professional Services',
+        status: invoice.status,
+        paid_at: invoice.paid_at || undefined
+      };
+
+      if (template) {
+        // Use advanced PDF generation with template
+        try {
+          const pdfBlob = await generateInvoicePDF(invoiceData, {
+            company_details: template.company_details as any,
+            branding: template.branding as any,
+            layout_settings: template.layout_settings as any
+          });
           
-          <div class="invoice-title">INVOICE</div>
-          
-          <div class="invoice-details">
-            <p><strong>Invoice Number:</strong> ${invoice.invoice_number}</p>
-            <p><strong>Issue Date:</strong> ${new Date(invoice.created_at).toLocaleDateString()}</p>
-            ${invoice.due_date ? `<p><strong>Due Date:</strong> ${new Date(invoice.due_date).toLocaleDateString()}</p>` : ''}
-            <div class="amount">Amount: £${Number(invoice.amount).toLocaleString()}</div>
-            <p><strong>Status:</strong> ${invoice.status.toUpperCase()}</p>
-            ${invoice.paid_at ? `<p><strong>Paid Date:</strong> ${new Date(invoice.paid_at).toLocaleDateString()}</p>` : ''}
-          </div>
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `invoice-${invoice.invoice_number}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } catch (pdfError) {
+          console.warn('Advanced PDF generation failed, using simple PDF:', pdfError);
+          // Fallback to simple PDF generation
+          const pdf = generateSimpleInvoicePDF(invoiceData, {
+            company_details: template.company_details as any,
+            branding: template.branding as any,
+            layout_settings: template.layout_settings as any
+          });
+          pdf.save(`invoice-${invoice.invoice_number}.pdf`);
+        }
+      } else {
+        // Fallback to simple PDF with default template
+        const defaultTemplate = {
+          company_details: {
+            company_name: '404 Code Lab',
+            address: 'Professional Development Services',
+            email: 'contact@404codelab.com',
+            phone: '',
+            website: 'https://404codelab.com'
+          },
+          branding: {
+            logo_url: '',
+            primary_color: '#007bff',
+            secondary_color: '#28a745',
+            accent_color: '#007bff'
+          },
+          layout_settings: {
+            template_style: 'modern',
+            show_company_logo: true,
+            show_payment_terms: true,
+            footer_text: 'Thank you for your business!',
+            currency_symbol: '£',
+            date_format: 'DD/MM/YYYY'
+          }
+        };
+        
+        const pdf = generateSimpleInvoicePDF(invoiceData, defaultTemplate);
+        pdf.save(`invoice-${invoice.invoice_number}.pdf`);
+      }
 
-          <div class="footer">
-            <p>Thank you for your business!</p>
-            <p>404 Code Lab - contact@404codelab.com</p>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `invoice-${invoice.invoice_number}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Invoice Downloaded",
-      description: "Invoice has been downloaded as HTML file.",
-    });
+      toast({
+        title: "Invoice Downloaded",
+        description: "Invoice has been downloaded as PDF file.",
+      });
+    } catch (error) {
+      console.error('Error downloading invoice:', error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download invoice. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
