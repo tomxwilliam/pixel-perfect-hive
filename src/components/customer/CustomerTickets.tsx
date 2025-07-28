@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Ticket, Clock, AlertCircle } from 'lucide-react';
+import { Ticket, Clock, AlertCircle, MessageSquare } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { Link } from 'react-router-dom';
+import { CustomerTicketDetailsModal } from './TicketDetailsModal';
 
 type TicketData = Tables<'tickets'>;
 
@@ -15,6 +16,8 @@ export const CustomerTickets = () => {
   const { user } = useAuth();
   const [tickets, setTickets] = useState<TicketData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchTickets = async () => {
     if (!user) return;
@@ -71,6 +74,11 @@ export const CustomerTickets = () => {
     }
   };
 
+  const handleTicketClick = (ticket: TicketData) => {
+    setSelectedTicket(ticket);
+    setIsModalOpen(true);
+  };
+
   if (loading) {
     return (
       <Card>
@@ -121,7 +129,11 @@ export const CustomerTickets = () => {
         ) : (
           <div className="space-y-4">
             {tickets.map((ticket) => (
-                <div key={ticket.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
+              <div 
+                key={ticket.id} 
+                className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                onClick={() => handleTicketClick(ticket)}
+              >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -150,8 +162,12 @@ export const CustomerTickets = () => {
                     <Clock className="h-4 w-4 mr-1" />
                     Created: {new Date(ticket.created_at).toLocaleDateString()}
                   </div>
-                  <div>
-                    Updated: {new Date(ticket.updated_at).toLocaleDateString()}
+                  <div className="flex items-center gap-4">
+                    <span>Updated: {new Date(ticket.updated_at).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-1 text-primary">
+                      <MessageSquare className="h-4 w-4" />
+                      <span className="text-xs">View & Reply</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -159,6 +175,14 @@ export const CustomerTickets = () => {
           </div>
         )}
       </CardContent>
+
+      {selectedTicket && (
+        <CustomerTicketDetailsModal
+          ticket={selectedTicket}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+        />
+      )}
     </Card>
   );
 };
