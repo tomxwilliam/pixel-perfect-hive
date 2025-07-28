@@ -16,7 +16,6 @@ import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import CustomerDomainsHosting from '@/components/customer/CustomerDomainsHosting';
 import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
-import { ActivityTimeline } from '@/components/customer/ActivityTimeline';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   User, 
@@ -30,7 +29,6 @@ import {
   FileText,
   BarChart,
   Bell,
-  Activity,
   Globe
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -162,7 +160,7 @@ const Dashboard = () => {
 
           {/* Main Content Tabs - Mobile Optimized */}
           <MobileTabs defaultValue="overview" className="space-y-6">
-            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
+            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-7'}>
               <MobileTabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart className="h-4 w-4" />
                 Overview
@@ -190,10 +188,6 @@ const Dashboard = () => {
               <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
                 <Bell className="h-4 w-4" />
                 Notifications
-              </MobileTabsTrigger>
-              <MobileTabsTrigger value="activity" className="flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                Activity
               </MobileTabsTrigger>
             </MobileTabsList>
 
@@ -227,11 +221,6 @@ const Dashboard = () => {
 
             <MobileTabsContent value="notifications">
               <NotificationCenter />
-            </MobileTabsContent>
-
-
-            <MobileTabsContent value="activity">
-              <ActivityTimeline />
             </MobileTabsContent>
           </MobileTabs>
         </div>
