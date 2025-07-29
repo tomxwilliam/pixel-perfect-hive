@@ -5,9 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { FileText, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { FileText, Calendar, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { QuoteDetailsModal } from './QuoteDetailsModal';
 
 type Quote = Tables<'quotes'>;
 
@@ -15,6 +16,8 @@ export const CustomerQuotes = () => {
   const { user } = useAuth();
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const fetchQuotes = async () => {
@@ -125,7 +128,10 @@ export const CustomerQuotes = () => {
         ) : (
           <div className="space-y-4">
             {quotes.map((quote) => (
-              <div key={quote.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
+              <div key={quote.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => {
+                setSelectedQuote(quote);
+                setModalOpen(true);
+              }}>
                 <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-start justify-between'} mb-2`}>
                   <div className="flex-1">
                     <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2 mb-1`}>
@@ -150,25 +156,46 @@ export const CustomerQuotes = () => {
                     <Badge variant={getStatusColor(quote.status)}>
                       {quote.status.toUpperCase()}
                     </Badge>
-                    {quote.status === 'pending' && (
-                      <div className={`flex ${isMobile ? 'gap-1' : 'gap-2'}`}>
-                        <Button 
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleQuoteAction(quote.id, 'reject')}
-                          className={isMobile ? "text-xs px-2 h-7" : ""}
-                        >
-                          {isMobile ? 'No' : 'Decline'}
-                        </Button>
-                        <Button 
-                          size="sm"
-                          onClick={() => handleQuoteAction(quote.id, 'accept')}
-                          className={isMobile ? "text-xs px-2 h-7" : ""}
-                        >
-                          {isMobile ? 'Yes' : 'Accept'}
-                        </Button>
-                      </div>
-                    )}
+                    <div className={`flex ${isMobile ? 'gap-1' : 'gap-2'}`}>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedQuote(quote);
+                          setModalOpen(true);
+                        }}
+                        className={isMobile ? "text-xs px-2 h-7" : ""}
+                      >
+                        <Eye className="h-4 w-4" />
+                        {!isMobile && 'View'}
+                      </Button>
+                      {quote.status === 'pending' && (
+                        <>
+                          <Button 
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuoteAction(quote.id, 'reject');
+                            }}
+                            className={isMobile ? "text-xs px-2 h-7" : ""}
+                          >
+                            {isMobile ? 'No' : 'Decline'}
+                          </Button>
+                          <Button 
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuoteAction(quote.id, 'accept');
+                            }}
+                            className={isMobile ? "text-xs px-2 h-7" : ""}
+                          >
+                            {isMobile ? 'Yes' : 'Accept'}
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
@@ -188,6 +215,13 @@ export const CustomerQuotes = () => {
           </div>
         )}
       </CardContent>
+      
+      <QuoteDetailsModal 
+        quote={selectedQuote}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onQuoteUpdated={fetchQuotes}
+      />
     </Card>
   );
 };

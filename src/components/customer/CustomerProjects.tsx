@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { FolderOpen, Calendar, DollarSign } from 'lucide-react';
+import { FolderOpen, Calendar, DollarSign, Eye } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { ProjectDetailsModal } from './ProjectDetailsModal';
 
 type Project = Tables<'projects'>;
 
@@ -15,6 +16,8 @@ export const CustomerProjects = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchProjects = async () => {
     if (!user) return;
@@ -111,7 +114,10 @@ export const CustomerProjects = () => {
         ) : (
           <div className="space-y-4">
             {projects.map((project) => (
-              <div key={project.id} className="border rounded-lg p-4">
+              <div key={project.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => {
+                setSelectedProject(project);
+                setModalOpen(true);
+              }}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h4 className="font-semibold">{project.title}</h4>
@@ -125,6 +131,13 @@ export const CustomerProjects = () => {
                       </span>
                     </div>
                   </div>
+                  <Button variant="ghost" size="sm" onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedProject(project);
+                    setModalOpen(true);
+                  }}>
+                    <Eye className="h-4 w-4" />
+                  </Button>
                 </div>
                 
                 <div className="mb-3">
@@ -158,6 +171,12 @@ export const CustomerProjects = () => {
           </div>
         )}
       </CardContent>
+      
+      <ProjectDetailsModal 
+        project={selectedProject}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+      />
     </Card>
   );
 };

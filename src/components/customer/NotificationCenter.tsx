@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
+import { NotificationDetailsModal } from './NotificationDetailsModal';
 
 type Notification = Tables<'notifications'>;
 
@@ -32,6 +33,8 @@ export const NotificationCenter = () => {
   const [notifications, setNotifications] = useState<NotificationWithSender[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -178,9 +181,13 @@ export const NotificationCenter = () => {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`border rounded-lg p-4 transition-all hover:bg-muted/20 ${
+                  className={`border rounded-lg p-4 transition-all hover:bg-muted/20 cursor-pointer ${
                     !notification.read ? 'bg-blue-50 border-blue-200' : ''
                   }`}
+                  onClick={() => {
+                    setSelectedNotification(notification);
+                    setModalOpen(true);
+                  }}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -195,7 +202,7 @@ export const NotificationCenter = () => {
                         )}
                       </div>
                       
-                      <p className="text-sm text-muted-foreground mb-2">
+                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                         {notification.message}
                       </p>
                       
@@ -214,11 +221,25 @@ export const NotificationCenter = () => {
                     </div>
                     
                     <div className="flex items-center gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedNotification(notification);
+                          setModalOpen(true);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                       {notification.action_url && (
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => window.location.href = notification.action_url!}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = notification.action_url!;
+                          }}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -227,7 +248,10 @@ export const NotificationCenter = () => {
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => markAsRead(notification.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(notification.id);
+                          }}
                         >
                           <CheckCircle className="h-4 w-4" />
                         </Button>
@@ -240,6 +264,13 @@ export const NotificationCenter = () => {
           </ScrollArea>
         )}
       </CardContent>
+      
+      <NotificationDetailsModal 
+        notification={selectedNotification}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onNotificationUpdated={fetchNotifications}
+      />
     </Card>
   );
 };

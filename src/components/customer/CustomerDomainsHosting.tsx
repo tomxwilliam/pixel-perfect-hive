@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Globe, Server, Plus } from "lucide-react";
+import { Search, Globe, Server, Plus, Eye } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { DomainDetailsModal } from "./DomainDetailsModal";
+import { HostingDetailsModal } from "./HostingDetailsModal";
 export default function CustomerDomainsHosting() {
   const {
     user
@@ -19,6 +21,10 @@ export default function CustomerDomainsHosting() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedDomain, setSelectedDomain] = useState<any>(null);
+  const [selectedHosting, setSelectedHosting] = useState<any>(null);
+  const [domainModalOpen, setDomainModalOpen] = useState(false);
+  const [hostingModalOpen, setHostingModalOpen] = useState(false);
 
   // Fetch customer's existing domains
   const {
@@ -232,10 +238,13 @@ export default function CustomerDomainsHosting() {
                   Search and register your first domain to get started
                 </p>
               </CardContent>
-            </Card> : domains?.map(domain => <Card key={domain.id}>
+            </Card> : domains?.map(domain => <Card key={domain.id} className="cursor-pointer hover:bg-muted/20 transition-colors" onClick={() => {
+                setSelectedDomain(domain);
+                setDomainModalOpen(true);
+              }}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold">{domain.domain_name}.{domain.tld}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={domain.status === 'active' ? 'default' : 'secondary'}>
@@ -246,9 +255,18 @@ export default function CustomerDomainsHosting() {
                           </span>}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium">£{domain.price}</div>
-                      <div className="text-xs text-muted-foreground">per year</div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-sm font-medium">£{domain.price}</div>
+                        <div className="text-xs text-muted-foreground">per year</div>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedDomain(domain);
+                        setDomainModalOpen(true);
+                      }}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -264,10 +282,13 @@ export default function CustomerDomainsHosting() {
                   Choose a hosting plan to get started
                 </p>
               </CardContent>
-            </Card> : hostingSubscriptions?.map(subscription => <Card key={subscription.id}>
+            </Card> : hostingSubscriptions?.map(subscription => <Card key={subscription.id} className="cursor-pointer hover:bg-muted/20 transition-colors" onClick={() => {
+                setSelectedHosting(subscription);
+                setHostingModalOpen(true);
+              }}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold">{subscription.hosting_packages.package_name}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge variant={subscription.status === 'active' ? 'default' : 'secondary'}>
@@ -278,13 +299,22 @@ export default function CustomerDomainsHosting() {
                           </span>}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium">
-                        £{subscription.hosting_packages.monthly_price}/month
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-sm font-medium">
+                          £{subscription.hosting_packages.monthly_price}/month
+                        </div>
+                        {subscription.next_billing_date && <div className="text-xs text-muted-foreground">
+                            Next billing: {new Date(subscription.next_billing_date).toLocaleDateString()}
+                          </div>}
                       </div>
-                      {subscription.next_billing_date && <div className="text-xs text-muted-foreground">
-                          Next billing: {new Date(subscription.next_billing_date).toLocaleDateString()}
-                        </div>}
+                      <Button variant="ghost" size="sm" onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedHosting(subscription);
+                        setHostingModalOpen(true);
+                      }}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -453,5 +483,17 @@ export default function CustomerDomainsHosting() {
           </div>
         </TabsContent>
       </Tabs>
+      
+      <DomainDetailsModal 
+        domain={selectedDomain}
+        open={domainModalOpen}
+        onOpenChange={setDomainModalOpen}
+      />
+      
+      <HostingDetailsModal 
+        subscription={selectedHosting}
+        open={hostingModalOpen}
+        onOpenChange={setHostingModalOpen}
+      />
     </div>;
 }

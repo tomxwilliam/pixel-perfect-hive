@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { CreditCard, Calendar, Download } from 'lucide-react';
+import { CreditCard, Calendar, Download, Eye } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { generateInvoicePDF, generateSimpleInvoicePDF } from '@/utils/pdfGenerator';
+import { InvoiceDetailsModal } from './InvoiceDetailsModal';
 
 type Invoice = Tables<'invoices'>;
 
@@ -19,6 +20,8 @@ export const CustomerInvoices = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState<string | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const fetchInvoices = async () => {
@@ -268,7 +271,10 @@ export const CustomerInvoices = () => {
         ) : (
           <div className="space-y-4">
             {invoices.map((invoice) => (
-              <div key={invoice.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors">
+              <div key={invoice.id} className="border rounded-lg p-4 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => {
+                setSelectedInvoice(invoice);
+                setModalOpen(true);
+              }}>
                 <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-start justify-between'} mb-2`}>
                   <div className="flex-1">
                     <h4 className="font-semibold">
@@ -288,12 +294,28 @@ export const CustomerInvoices = () => {
                       {invoice.status.toUpperCase()}
                     </Badge>
                     <div className={`flex ${isMobile ? 'flex-col gap-1' : 'flex-col gap-2'}`}>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedInvoice(invoice);
+                          setModalOpen(true);
+                        }}
+                        className={isMobile ? "text-xs px-2 h-7" : ""}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        {isMobile ? 'View' : 'View Details'}
+                      </Button>
                       {invoice.status === 'pending' && (
                         <Button 
                           size="sm" 
                           variant={invoice.due_date && new Date(invoice.due_date) < new Date() ? "destructive" : "outline"} 
                           className={isMobile ? "text-xs px-2 h-7" : ""}
-                          onClick={() => handlePayInvoice(invoice.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePayInvoice(invoice.id);
+                          }}
                           disabled={processingPayment === invoice.id}
                         >
                           <CreditCard className="h-4 w-4 mr-1" />
@@ -304,7 +326,10 @@ export const CustomerInvoices = () => {
                         size="sm" 
                         variant="ghost" 
                         className={isMobile ? "text-xs px-2 h-7" : ""}
-                        onClick={() => handleDownloadInvoice(invoice)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownloadInvoice(invoice);
+                        }}
                       >
                         <Download className="h-4 w-4 mr-1" />
                         {isMobile ? 'DL' : 'Download'}
@@ -334,6 +359,13 @@ export const CustomerInvoices = () => {
           </div>
         )}
       </CardContent>
+      
+      <InvoiceDetailsModal 
+        invoice={selectedInvoice}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onInvoiceUpdated={fetchInvoices}
+      />
     </Card>
   );
 };
