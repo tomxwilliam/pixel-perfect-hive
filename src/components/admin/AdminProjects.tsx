@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Eye, Edit, Calendar, PoundSterling, Search, Paperclip, Download } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateProjectDialog } from './forms/CreateProjectDialog';
+import { EnhancedCreateProjectDialog } from './forms/EnhancedCreateProjectDialog';
 import { ProjectEditModal } from './modals/ProjectEditModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
@@ -287,7 +288,10 @@ export const AdminProjects = () => {
               </SelectContent>
             </Select>
           </div>
-          <CreateProjectDialog onProjectCreated={handleProjectCreated} />
+          <div className="flex gap-2">
+            <CreateProjectDialog onProjectCreated={handleProjectCreated} />
+            <EnhancedCreateProjectDialog onProjectCreated={handleProjectCreated} />
+          </div>
         </div>
       </CardHeader>
       <CardContent>

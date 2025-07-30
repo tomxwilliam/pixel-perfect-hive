@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { CreateNotificationDialog } from '@/components/admin/forms/CreateNotificationDialog';
 import { 
   Mail, 
   MessageSquare, 
@@ -198,6 +199,7 @@ export const AdminCommunications = () => {
           <h2 className="text-2xl font-bold">Communication Center</h2>
           <p className="text-muted-foreground">Email campaigns, AI chat logs, and customer communications</p>
         </div>
+        <CreateNotificationDialog onNotificationCreated={fetchCommunicationData} />
       </div>
 
       {/* Search and Filters */}

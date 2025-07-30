@@ -9,8 +9,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import { Tables } from '@/integrations/supabase/types';
-import { Calendar, DollarSign, FileText, Clock, Target } from 'lucide-react';
+import { Calendar, DollarSign, FileText, Clock, Target, Download, Upload } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { FileUpload, FileList } from '@/components/ui/file-upload';
+import { useState, useEffect } from 'react';
 
 type Project = Tables<'projects'>;
 
@@ -54,6 +58,61 @@ export const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
       month: 'long',
       year: 'numeric'
     });
+  };
+
+  const FileSection = ({ projectId }: { projectId: string }) => {
+    const [files, setFiles] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      fetchFiles();
+    }, [projectId]);
+
+    const fetchFiles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('file_uploads')
+          .select('*')
+          .eq('entity_id', projectId)
+          .eq('entity_type', 'project');
+
+        if (error) throw error;
+        setFiles(data || []);
+      } catch (error) {
+        console.error('Error fetching files:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleFileUploaded = () => {
+      fetchFiles();
+    };
+
+    const handleFileRemoved = () => {
+      fetchFiles();
+    };
+
+    if (loading) {
+      return <div className="text-sm text-muted-foreground">Loading files...</div>;
+    }
+
+    return (
+      <div className="space-y-4">
+        <FileUpload
+          onFileUploaded={handleFileUploaded}
+          entityType="project"
+          entityId={projectId}
+          maxFileSize={10 * 1024 * 1024}
+          className="border-dashed border-2 border-muted"
+        />
+        <FileList
+          files={files}
+          onRemove={handleFileRemoved}
+          showRemove={false}
+        />
+      </div>
+    );
   };
 
   return (
@@ -174,16 +233,12 @@ export const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
               </CardContent>
             </Card>
 
-            {project.files_uploaded && project.files_uploaded.length > 0 && (
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-3">Uploaded Files</h3>
-                  <div className="text-sm text-muted-foreground">
-                    {project.files_uploaded.length} file(s) uploaded
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-3">Project Files</h3>
+                <FileSection projectId={project.id} />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </DialogContent>
