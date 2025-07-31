@@ -47,7 +47,10 @@ export const CustomerQuotes = () => {
       .channel('customer-quotes')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'quotes', filter: `customer_id=eq.${user?.id}` },
-        () => fetchQuotes()
+        (payload) => {
+          console.log('Quote real-time update:', payload);
+          fetchQuotes();
+        }
       )
       .subscribe();
 

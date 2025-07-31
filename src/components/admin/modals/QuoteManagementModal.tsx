@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
-import { FileText, User, Calendar, DollarSign, Mail, Send, Receipt } from 'lucide-react';
+import { FileText, User, Calendar, DollarSign, Mail, Send, Receipt, Edit } from 'lucide-react';
 import { toast } from 'sonner';
+import { EditQuoteModal } from './EditQuoteModal';
 
 interface Quote {
   id: string;
@@ -55,6 +56,7 @@ export const QuoteManagementModal: React.FC<QuoteManagementModalProps> = ({
 }) => {
   const [newStatus, setNewStatus] = useState(quote.status);
   const [loading, setLoading] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -311,6 +313,15 @@ export const QuoteManagementModal: React.FC<QuoteManagementModalProps> = ({
             <CardContent>
               <div className="flex flex-wrap gap-3">
                 <Button
+                  onClick={() => setEditModalOpen(true)}
+                  disabled={loading}
+                  variant="outline"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Quote
+                </Button>
+
+                <Button
                   onClick={handleSendQuote}
                   disabled={loading}
                   variant="outline"
@@ -334,6 +345,16 @@ export const QuoteManagementModal: React.FC<QuoteManagementModalProps> = ({
           </Card>
         </div>
       </DialogContent>
+
+      <EditQuoteModal
+        quote={quote}
+        open={editModalOpen}
+        onOpenChange={setEditModalOpen}
+        onQuoteUpdated={() => {
+          onQuoteUpdated();
+          setEditModalOpen(false);
+        }}
+      />
     </Dialog>
   );
 };

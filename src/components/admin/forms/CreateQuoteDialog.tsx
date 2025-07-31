@@ -111,24 +111,18 @@ export function CreateQuoteDialog({ onQuoteCreated }: CreateQuoteDialogProps) {
 
   const sendQuoteEmail = async (customerEmail: string, customerName: string, quoteData: any) => {
     try {
-      const response = await fetch("/api/send-invoice-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          to: customerEmail,
-          customerName,
-          invoiceNumber: quoteData.quote_number,
+      const { error } = await supabase.functions.invoke('send-invoice-email', {
+        body: {
+          customer_email: customerEmail,
+          customer_name: customerName,
+          invoice_number: quoteData.quote_number,
           amount: parseFloat(quoteData.amount),
-          dueDate: quoteData.valid_until,
-          invoiceType: "quote",
-        }),
+          due_date: quoteData.valid_until,
+          invoiceType: 'quote'
+        }
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to send email");
-      }
+      if (error) throw error;
 
       toast.success("Quote email sent successfully!");
     } catch (error) {
@@ -234,7 +228,7 @@ export function CreateQuoteDialog({ onQuoteCreated }: CreateQuoteDialogProps) {
                     <SelectContent>
                       {customers.map((customer) => (
                         <SelectItem key={customer.id} value={customer.id}>
-                          {customer.first_name} {customer.last_name}
+                          {customer.first_name} {customer.last_name} ({customer.email})
                         </SelectItem>
                       ))}
                     </SelectContent>
