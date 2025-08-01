@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Server, Play, Pause, Trash2, Eye, AlertTriangle } from "lucide-react";
+import { Server, Play, Pause, Trash2, Eye, AlertTriangle, Settings, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -18,6 +18,22 @@ const AdminHostingManagement = () => {
   const queryClient = useQueryClient();
   const [selectedSubscription, setSelectedSubscription] = useState<any>(null);
   const [notes, setNotes] = useState("");
+  const [hostingIntegration, setHostingIntegration] = useState<any>(null);
+
+  // Fetch hosting integration status
+  useEffect(() => {
+    const fetchHostingIntegration = async () => {
+      const { data } = await supabase
+        .from('api_integrations')
+        .select('*')
+        .eq('integration_type', 'unlimited_web_hosting')
+        .single();
+      
+      setHostingIntegration(data);
+    };
+    
+    fetchHostingIntegration();
+  }, []);
 
   // Fetch all hosting subscriptions
   const { data: subscriptions, isLoading: subscriptionsLoading } = useQuery({
@@ -139,12 +155,30 @@ const AdminHostingManagement = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Server className="h-5 w-5" />
-            Hosting Management
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Server className="h-5 w-5" />
+              Hosting Management
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant={hostingIntegration?.is_connected ? "default" : "destructive"}>
+                {hostingIntegration?.is_connected ? "Connected" : "Not Connected"}
+              </Badge>
+              <Button variant="outline" size="sm" asChild>
+                <a href="/dashboard?tab=admin&section=settings&subsection=api-integrations">
+                  <Settings className="h-4 w-4 mr-1" />
+                  Integration Settings
+                </a>
+              </Button>
+            </div>
           </CardTitle>
           <CardDescription>
-            Manage customer hosting subscriptions and provisioning
+            Manage customer hosting subscriptions and provisioning with Unlimited Web Hosting UK
+            {!hostingIntegration?.is_connected && (
+              <span className="text-destructive block mt-1">
+                ⚠️ Connect to Unlimited Web Hosting UK in integration settings to enable automatic provisioning
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -295,27 +329,44 @@ const AdminHostingManagement = () => {
                                       </p>
                                     </div>
                                   </div>
-                                )}
-                                <div>
-                                  <label className="text-sm font-medium">Notes</label>
-                                  <Textarea
-                                    placeholder="Add notes about this hosting account..."
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
-                                  />
-                                  <Button
-                                    className="mt-2"
-                                    onClick={() => {
-                                      updateSubscriptionNotes.mutate({
-                                        subscriptionId: selectedSubscription?.id,
-                                        notes
-                                      });
-                                      setNotes("");
-                                    }}
-                                  >
-                                    Update Notes
-                                  </Button>
-                                </div>
+                                 )}
+                                 {selectedSubscription?.cpanel_username && hostingIntegration?.is_connected && (
+                                   <div>
+                                     <label className="text-sm font-medium">cPanel Access</label>
+                                     <div className="flex gap-2 mt-2">
+                                       <Button
+                                         variant="outline"
+                                         onClick={() => {
+                                           const cpanelUrl = `${hostingIntegration.config_data?.cpanel_url || 'https://cpanel.unlimitedwebhosting.co.uk'}:2083`;
+                                           window.open(cpanelUrl, '_blank');
+                                         }}
+                                       >
+                                         <ExternalLink className="h-4 w-4 mr-1" />
+                                         Open cPanel
+                                       </Button>
+                                     </div>
+                                   </div>
+                                 )}
+                                 <div>
+                                   <label className="text-sm font-medium">Notes</label>
+                                   <Textarea
+                                     placeholder="Add notes about this hosting account..."
+                                     value={notes}
+                                     onChange={(e) => setNotes(e.target.value)}
+                                   />
+                                   <Button
+                                     className="mt-2"
+                                     onClick={() => {
+                                       updateSubscriptionNotes.mutate({
+                                         subscriptionId: selectedSubscription?.id,
+                                         notes
+                                       });
+                                       setNotes("");
+                                     }}
+                                   >
+                                     Update Notes
+                                   </Button>
+                                 </div>
                                 <div className="flex gap-2 pt-4 border-t">
                                   <Button
                                     variant="destructive"

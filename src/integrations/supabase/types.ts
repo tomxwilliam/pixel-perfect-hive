@@ -1586,6 +1586,12 @@ export type Database = {
         | "active"
         | "suspended"
         | "cancelled"
+      integration_type:
+        | "xero"
+        | "google_calendar"
+        | "linkedin"
+        | "twitter"
+        | "unlimited_web_hosting"
       payment_status: "pending" | "paid" | "failed" | "refunded"
       project_status:
         | "pending"
@@ -1743,6 +1749,13 @@ export const Constants = {
         "active",
         "suspended",
         "cancelled",
+      ],
+      integration_type: [
+        "xero",
+        "google_calendar",
+        "linkedin",
+        "twitter",
+        "unlimited_web_hosting",
       ],
       payment_status: ["pending", "paid", "failed", "refunded"],
       project_status: [

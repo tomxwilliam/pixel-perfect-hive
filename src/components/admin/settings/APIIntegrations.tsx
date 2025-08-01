@@ -15,13 +15,14 @@ import {
   Settings,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Server
 } from 'lucide-react';
 
 interface APIIntegration {
   id: string;
   integration_name: string;
-  integration_type: 'xero' | 'google_calendar' | 'linkedin' | 'twitter';
+  integration_type: 'xero' | 'google_calendar' | 'linkedin' | 'twitter' | 'unlimited_web_hosting';
   is_connected: boolean;
   access_token: string | null;
   refresh_token: string | null;
@@ -55,7 +56,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       
       // Initialize default integrations if none exist
       const existingTypes = data?.map(i => i.integration_type) || [];
-      const allTypes: APIIntegration['integration_type'][] = ['xero', 'google_calendar', 'linkedin', 'twitter'];
+      const allTypes: APIIntegration['integration_type'][] = ['xero', 'google_calendar', 'linkedin', 'twitter', 'unlimited_web_hosting'];
       const missingTypes = allTypes.filter(type => !existingTypes.includes(type));
       
       if (missingTypes.length > 0) {
@@ -97,7 +98,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       xero: 'Xero Accounting',
       google_calendar: 'Google Calendar',
       linkedin: 'LinkedIn',
-      twitter: 'Twitter'
+      twitter: 'Twitter',
+      unlimited_web_hosting: 'Unlimited Web Hosting UK'
     };
     return names[type];
   };
@@ -107,7 +109,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       xero: <DollarSign className="h-5 w-5" />,
       google_calendar: <Calendar className="h-5 w-5" />,
       linkedin: <Linkedin className="h-5 w-5" />,
-      twitter: <Twitter className="h-5 w-5" />
+      twitter: <Twitter className="h-5 w-5" />,
+      unlimited_web_hosting: <Server className="h-5 w-5" />
     };
     return icons[type];
   };
@@ -117,7 +120,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       xero: 'Automatically sync invoices, quotes, and billing data with Xero accounting software.',
       google_calendar: 'Create calendar events automatically when projects start or deadlines are set.',
       linkedin: 'Post project updates and company announcements directly to your LinkedIn profile.',
-      twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.'
+      twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.',
+      unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.'
     };
     return descriptions[type];
   };
@@ -134,15 +138,41 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
-      // Here you would initiate OAuth flow for each integration
-      // For now, we'll show a placeholder
-      toast({
-        title: "OAuth Flow",
-        description: `Initiating ${integration.integration_name} OAuth flow...`,
-      });
-      
-      // TODO: Implement actual OAuth flows for each service
-      // This would redirect to the service's OAuth page
+      if (integration.integration_type === 'unlimited_web_hosting') {
+        // For hosting provider, show a form to collect API credentials
+        const apiKey = prompt('Enter your Unlimited Web Hosting UK API Key:');
+        const apiUrl = prompt('Enter your Unlimited Web Hosting UK API URL:', 'https://api.unlimitedwebhosting.co.uk');
+        
+        if (apiKey && apiUrl) {
+          const { error } = await supabase
+            .from('api_integrations')
+            .update({
+              is_connected: true,
+              access_token: apiKey,
+              config_data: { api_url: apiUrl },
+              last_sync_at: new Date().toISOString()
+            })
+            .eq('id', integration.id);
+
+          if (error) throw error;
+
+          toast({
+            title: "Connected",
+            description: "Unlimited Web Hosting UK integration connected successfully",
+          });
+
+          fetchIntegrations();
+        }
+      } else {
+        // For other integrations, show OAuth placeholder
+        toast({
+          title: "OAuth Flow",
+          description: `Initiating ${integration.integration_name} OAuth flow...`,
+        });
+        
+        // TODO: Implement actual OAuth flows for each service
+        // This would redirect to the service's OAuth page
+      }
       
     } catch (error) {
       console.error('Error connecting integration:', error);
@@ -399,6 +429,14 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                 <li>• Quick project updates</li>
                 <li>• Scheduled content</li>
                 <li>• Community engagement</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-medium">Unlimited Web Hosting UK</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Automatic cPanel provisioning</li>
+                <li>• Hosting account management</li>
+                <li>• Real-time status monitoring</li>
               </ul>
             </div>
           </div>
