@@ -38,6 +38,13 @@ const Dashboard = () => {
   const { stats, loading: statsLoading } = useCustomerStats();
   const isMobile = useIsMobile();
 
+  // Redirect admins to admin dashboard
+  React.useEffect(() => {
+    if (profile?.role === 'admin') {
+      window.location.href = '/admin';
+    }
+  }, [profile?.role]);
+
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
   };
