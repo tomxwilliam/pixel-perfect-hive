@@ -40,12 +40,8 @@ const Dashboard = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  // Redirect admins to admin dashboard
-  React.useEffect(() => {
-    if (profile?.role === 'admin') {
-      navigate('/admin', { replace: true });
-    }
-  }, [profile?.role, navigate]);
+  // Don't auto-redirect admins - let them access customer view if needed
+  // Admins can use the "Admin Panel" link to go to admin dashboard
 
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
