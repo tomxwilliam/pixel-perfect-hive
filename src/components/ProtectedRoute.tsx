@@ -15,19 +15,22 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, profile, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  // Show loading only when truly loading (no user data at all)
+  if (loading && !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
+  // If we have a user but no profile yet, allow render to continue
+  // The auth hook will handle profile loading
   if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (requireAdmin && profile?.role !== 'admin') {
+  if (requireAdmin && profile && profile.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }
 

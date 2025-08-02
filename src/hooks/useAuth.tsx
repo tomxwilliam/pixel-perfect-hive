@@ -34,9 +34,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!mounted) return;
+        
         console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
@@ -52,20 +56,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      
       console.log('Initial session:', session);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Separate effect to fetch profile when user changes
   useEffect(() => {
+    let mounted = true;
+
     const fetchProfile = async () => {
       if (!user) {
-        setProfile(null);
+        if (mounted) setProfile(null);
         return;
       }
 
@@ -77,11 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .eq('id', user.id)
           .maybeSingle();
         
-        if (error) {
-          console.error('Error fetching profile:', error);
-          // Create a fallback profile based on user email for admin detection
+        if (!mounted) return;
+
+        const createFallbackProfile = (): Profile => {
           const isAdmin = user.email?.includes('@404codelab.com') || false;
-          const fallbackProfile: Profile = {
+          return {
             id: user.id,
             email: user.email || '',
             first_name: user.user_metadata?.first_name || '',
@@ -95,6 +106,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           };
+        };
+        
+        if (error) {
+          console.error('Error fetching profile:', error);
+          const fallbackProfile = createFallbackProfile();
           console.log('Using fallback profile:', fallbackProfile);
           setProfile(fallbackProfile);
         } else if (profileData) {
@@ -102,27 +118,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(profileData);
         } else {
           console.log('No profile found, creating fallback');
-          // Create fallback profile when no profile exists
-          const isAdmin = user.email?.includes('@404codelab.com') || false;
-          const fallbackProfile: Profile = {
-            id: user.id,
-            email: user.email || '',
-            first_name: user.user_metadata?.first_name || '',
-            last_name: user.user_metadata?.last_name || '',
-            role: isAdmin ? 'admin' : 'customer',
-            company_name: null,
-            phone: null,
-            avatar_url: null,
-            email_notifications: true,
-            notification_preferences: { invoices: true, quotes: true, projects: true },
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
+          const fallbackProfile = createFallbackProfile();
           setProfile(fallbackProfile);
         }
       } catch (err) {
+        if (!mounted) return;
+        
         console.error('Profile fetch exception:', err);
-        // Still create fallback profile on exception
         const isAdmin = user.email?.includes('@404codelab.com') || false;
         const fallbackProfile: Profile = {
           id: user.id,
@@ -143,6 +145,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     fetchProfile();
+    
+    return () => {
+      mounted = false;
+    };
   }, [user]);
 
   const signUp = async (email: string, password: string, firstName = '', lastName = '') => {

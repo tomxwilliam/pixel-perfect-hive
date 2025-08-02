@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { CustomerStats } from '@/components/customer/CustomerStats';
 import { useCustomerStats } from '@/hooks/useCustomerStats';
@@ -37,13 +38,14 @@ const Dashboard = () => {
   const { user, profile } = useAuth();
   const { stats, loading: statsLoading } = useCustomerStats();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   // Redirect admins to admin dashboard
   React.useEffect(() => {
     if (profile?.role === 'admin') {
-      window.location.href = '/admin';
+      navigate('/admin', { replace: true });
     }
-  }, [profile?.role]);
+  }, [profile?.role, navigate]);
 
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
