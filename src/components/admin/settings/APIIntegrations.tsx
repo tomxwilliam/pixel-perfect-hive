@@ -16,13 +16,23 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Server
+  Server,
+  MessageSquare,
+  Mail,
+  Users,
+  Video,
+  Code,
+  Ticket,
+  CheckSquare,
+  FileText,
+  Database,
+  Zap
 } from 'lucide-react';
 
 interface APIIntegration {
   id: string;
   integration_name: string;
-  integration_type: 'xero' | 'google_calendar' | 'linkedin' | 'twitter' | 'unlimited_web_hosting';
+  integration_type: string;
   is_connected: boolean;
   access_token: string | null;
   refresh_token: string | null;
@@ -54,35 +64,64 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
       if (error) throw error;
       
-      // Initialize default integrations if none exist
-      const existingTypes = data?.map(i => i.integration_type) || [];
-      const allTypes: APIIntegration['integration_type'][] = ['xero', 'google_calendar', 'linkedin', 'twitter', 'unlimited_web_hosting'];
-      const missingTypes = allTypes.filter(type => !existingTypes.includes(type));
+      // Define all available integrations
+      const allIntegrations = [
+        { type: 'xero', name: 'Xero Accounting' },
+        { type: 'google_calendar', name: 'Google Calendar' },
+        { type: 'linkedin', name: 'LinkedIn' },
+        { type: 'twitter', name: 'Twitter' },
+        { type: 'stripe', name: 'Stripe Payments' },
+        { type: 'paypal', name: 'PayPal' },
+        { type: 'slack', name: 'Slack' },
+        { type: 'discord', name: 'Discord' },
+        { type: 'microsoft_teams', name: 'Microsoft Teams' },
+        { type: 'openai', name: 'OpenAI API' },
+        { type: 'sendgrid', name: 'SendGrid Email' },
+        { type: 'twilio', name: 'Twilio SMS' },
+        { type: 'mailchimp', name: 'Mailchimp' },
+        { type: 'hubspot', name: 'HubSpot CRM' },
+        { type: 'salesforce', name: 'Salesforce' },
+        { type: 'zoom', name: 'Zoom' },
+        { type: 'github', name: 'GitHub' },
+        { type: 'gitlab', name: 'GitLab' },
+        { type: 'jira', name: 'Jira' },
+        { type: 'trello', name: 'Trello' },
+        { type: 'notion', name: 'Notion' },
+        { type: 'airtable', name: 'Airtable' },
+        { type: 'zapier', name: 'Zapier' },
+        { type: 'unlimited_web_hosting', name: 'Unlimited Web Hosting UK' }
+      ];
       
-      if (missingTypes.length > 0) {
-        const newIntegrations = missingTypes.map(type => ({
-          integration_name: getIntegrationName(type),
-          integration_type: type,
-          is_connected: false
-        }));
-        
-        const { error: insertError } = await supabase
-          .from('api_integrations')
-          .insert(newIntegrations);
-          
-        if (insertError) throw insertError;
-        
-        // Refetch after inserting
-        const { data: updatedData, error: refetchError } = await supabase
-          .from('api_integrations')
-          .select('*')
-          .order('integration_type', { ascending: true });
-          
-        if (refetchError) throw refetchError;
-        setIntegrations(updatedData as APIIntegration[] || []);
-      } else {
-        setIntegrations(data as APIIntegration[] || []);
+      // Get existing integration types
+      const existingTypes = data?.map(i => i.integration_type) || [];
+      const missingIntegrations = allIntegrations.filter(integration => 
+        !existingTypes.includes(integration.type)
+      );
+      
+      // Insert missing integrations one by one to handle constraint issues
+      for (const integration of missingIntegrations) {
+        try {
+          await supabase
+            .from('api_integrations')
+            .insert({
+              integration_name: integration.name,
+              integration_type: integration.type,
+              is_connected: false
+            });
+        } catch (insertError) {
+          console.log(`Integration ${integration.type} may already exist or is not supported:`, insertError);
+        }
       }
+      
+      // Refetch all integrations
+      const { data: finalData, error: finalError } = await supabase
+        .from('api_integrations')
+        .select('*')
+        .order('integration_name', { ascending: true });
+        
+      if (finalError) throw finalError;
+      setIntegrations(finalData as APIIntegration[] || []);
+      
     } catch (error) {
       console.error('Error fetching integrations:', error);
       toast({
@@ -93,37 +132,94 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     }
   };
 
-  const getIntegrationName = (type: APIIntegration['integration_type']): string => {
-    const names = {
+  const getIntegrationName = (type: string): string => {
+    const names: Record<string, string> = {
       xero: 'Xero Accounting',
       google_calendar: 'Google Calendar',
       linkedin: 'LinkedIn',
       twitter: 'Twitter',
+      stripe: 'Stripe Payments',
+      paypal: 'PayPal',
+      slack: 'Slack',
+      discord: 'Discord',
+      microsoft_teams: 'Microsoft Teams',
+      openai: 'OpenAI API',
+      sendgrid: 'SendGrid Email',
+      twilio: 'Twilio SMS',
+      mailchimp: 'Mailchimp',
+      hubspot: 'HubSpot CRM',
+      salesforce: 'Salesforce',
+      zoom: 'Zoom',
+      github: 'GitHub',
+      gitlab: 'GitLab',
+      jira: 'Jira',
+      trello: 'Trello',
+      notion: 'Notion',
+      airtable: 'Airtable',
+      zapier: 'Zapier',
       unlimited_web_hosting: 'Unlimited Web Hosting UK'
     };
-    return names[type];
+    return names[type] || type;
   };
 
-  const getIntegrationIcon = (type: APIIntegration['integration_type']) => {
-    const icons = {
+  const getIntegrationIcon = (type: string) => {
+    const icons: Record<string, React.ReactNode> = {
       xero: <DollarSign className="h-5 w-5" />,
       google_calendar: <Calendar className="h-5 w-5" />,
       linkedin: <Linkedin className="h-5 w-5" />,
       twitter: <Twitter className="h-5 w-5" />,
-      unlimited_web_hosting: <Server className="h-5 w-5" />
+      unlimited_web_hosting: <Server className="h-5 w-5" />,
+      stripe: <DollarSign className="h-5 w-5" />,
+      paypal: <DollarSign className="h-5 w-5" />,
+      slack: <MessageSquare className="h-5 w-5" />,
+      discord: <MessageSquare className="h-5 w-5" />,
+      microsoft_teams: <MessageSquare className="h-5 w-5" />,
+      openai: <Settings className="h-5 w-5" />,
+      sendgrid: <Mail className="h-5 w-5" />,
+      twilio: <MessageSquare className="h-5 w-5" />,
+      mailchimp: <Mail className="h-5 w-5" />,
+      hubspot: <Users className="h-5 w-5" />,
+      salesforce: <Users className="h-5 w-5" />,
+      zoom: <Video className="h-5 w-5" />,
+      github: <Code className="h-5 w-5" />,
+      gitlab: <Code className="h-5 w-5" />,
+      jira: <Ticket className="h-5 w-5" />,
+      trello: <CheckSquare className="h-5 w-5" />,
+      notion: <FileText className="h-5 w-5" />,
+      airtable: <Database className="h-5 w-5" />,
+      zapier: <Zap className="h-5 w-5" />
     };
-    return icons[type];
+    return icons[type] || <Link2 className="h-5 w-5" />;
   };
 
-  const getIntegrationDescription = (type: APIIntegration['integration_type']): string => {
-    const descriptions = {
+  const getIntegrationDescription = (type: string): string => {
+    const descriptions: Record<string, string> = {
       xero: 'Automatically sync invoices, quotes, and billing data with Xero accounting software.',
       google_calendar: 'Create calendar events automatically when projects start or deadlines are set.',
       linkedin: 'Post project updates and company announcements directly to your LinkedIn profile.',
       twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.',
-      unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.'
+      unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
+      stripe: 'Process payments securely with Stripe payment gateway integration.',
+      paypal: 'Accept PayPal payments for invoices and project milestones.',
+      slack: 'Send project updates and notifications to your Slack workspace.',
+      discord: 'Connect your Discord server for team collaboration and notifications.',
+      microsoft_teams: 'Integrate with Microsoft Teams for seamless communication.',
+      openai: 'Leverage OpenAI API for AI-powered features and automation.',
+      sendgrid: 'Send transactional emails and notifications via SendGrid.',
+      twilio: 'Send SMS notifications and alerts to customers via Twilio.',
+      mailchimp: 'Manage email marketing campaigns and customer communications.',
+      hubspot: 'Sync customer data and manage relationships with HubSpot CRM.',
+      salesforce: 'Integrate with Salesforce for comprehensive customer management.',
+      zoom: 'Schedule and manage video meetings for client consultations.',
+      github: 'Connect GitHub repositories for project development tracking.',
+      gitlab: 'Integrate GitLab for version control and project management.',
+      jira: 'Track project issues and tasks with Jira integration.',
+      trello: 'Manage project boards and tasks with Trello integration.',
+      notion: 'Sync project documentation and notes with Notion.',
+      airtable: 'Manage project data and workflows with Airtable integration.',
+      zapier: 'Connect hundreds of apps and automate workflows with Zapier.'
     };
-    return descriptions[type];
+    return descriptions[type] || `${type} integration for enhanced workflow automation.`;
   };
 
   const handleConnect = async (integration: APIIntegration) => {
