@@ -89,7 +89,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         { type: 'notion', name: 'Notion' },
         { type: 'airtable', name: 'Airtable' },
         { type: 'zapier', name: 'Zapier' },
-        { type: 'unlimited_web_hosting', name: 'Unlimited Web Hosting UK' }
+        { type: 'unlimited_web_hosting', name: 'Unlimited Web Hosting UK' },
+        { type: 'openprovider', name: 'OpenProvider Domains' }
       ];
       
       // Get existing integration types
@@ -157,7 +158,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       notion: 'Notion',
       airtable: 'Airtable',
       zapier: 'Zapier',
-      unlimited_web_hosting: 'Unlimited Web Hosting UK'
+      unlimited_web_hosting: 'Unlimited Web Hosting UK',
+      openprovider: 'OpenProvider Domains'
     };
     return names[type] || type;
   };
@@ -169,6 +171,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       linkedin: <Linkedin className="h-5 w-5" />,
       twitter: <Twitter className="h-5 w-5" />,
       unlimited_web_hosting: <Server className="h-5 w-5" />,
+      openprovider: <Server className="h-5 w-5" />,
       stripe: <DollarSign className="h-5 w-5" />,
       paypal: <DollarSign className="h-5 w-5" />,
       slack: <MessageSquare className="h-5 w-5" />,
@@ -199,6 +202,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       linkedin: 'Post project updates and company announcements directly to your LinkedIn profile.',
       twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.',
       unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
+      openprovider: 'Register and manage domains through OpenProvider API for automated domain registration and DNS management.',
       stripe: 'Process payments securely with Stripe payment gateway integration.',
       paypal: 'Accept PayPal payments for invoices and project milestones.',
       slack: 'Send project updates and notifications to your Slack workspace.',
@@ -255,6 +259,31 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
           toast({
             title: "Connected",
             description: "Unlimited Web Hosting UK integration connected successfully",
+          });
+
+          fetchIntegrations();
+        }
+      } else if (integration.integration_type === 'openprovider') {
+        // For OpenProvider domains
+        const apiKey = prompt('Enter your OpenProvider API Key:');
+        const apiUrl = prompt('Enter your OpenProvider API URL:', 'https://api.openprovider.eu');
+        
+        if (apiKey && apiUrl) {
+          const { error } = await supabase
+            .from('api_integrations')
+            .update({
+              is_connected: true,
+              access_token: apiKey,
+              config_data: { api_url: apiUrl },
+              last_sync_at: new Date().toISOString()
+            })
+            .eq('id', integration.id);
+
+          if (error) throw error;
+
+          toast({
+            title: "Connected",
+            description: "OpenProvider domain integration connected successfully",
           });
 
           fetchIntegrations();
@@ -459,6 +488,27 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                       </Button>
                     )}
                     
+                    {/* Quick access to management */}
+                    {integration.integration_type === 'unlimited_web_hosting' && integration.is_connected && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open('/admin?section=hosting', '_blank')}
+                      >
+                        Manage Hosting
+                      </Button>
+                    )}
+                    
+                    {integration.integration_type === 'openprovider' && integration.is_connected && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open('/admin?section=domains', '_blank')}
+                      >
+                        Manage Domains
+                      </Button>
+                    )}
+                    
                     {integration.is_connected ? (
                       <Button
                         variant="destructive"
@@ -533,6 +583,14 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                 <li>• Automatic cPanel provisioning</li>
                 <li>• Hosting account management</li>
                 <li>• Real-time status monitoring</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-medium">OpenProvider Domains</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Automated domain registration</li>
+                <li>• DNS management and control</li>
+                <li>• Domain renewals and transfers</li>
               </ul>
             </div>
           </div>
