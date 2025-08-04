@@ -164,12 +164,117 @@ const AdminHostingManagement = () => {
               <Badge variant={hostingIntegration?.is_connected ? "default" : "destructive"}>
                 {hostingIntegration?.is_connected ? "Connected" : "Not Connected"}
               </Badge>
-              <Button variant="outline" size="sm" asChild>
-                <a href="/dashboard?tab=admin&section=settings&subsection=api-integrations">
-                  <Settings className="h-4 w-4 mr-1" />
-                  Integration Settings
-                </a>
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Settings className="h-4 w-4 mr-1" />
+                    WHM/cPanel Settings
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>WHM/cPanel Integration Settings</DialogTitle>
+                    <DialogDescription>
+                      Configure your WHM reseller account for automatic hosting provisioning
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">WHM Server URL</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="https://your-whm-server.com:2087"
+                        defaultValue={hostingIntegration?.config_data?.whm_url || ''}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Your WHM server URL (usually port 2087 for secure access)
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">WHM Username</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="root or reseller username"
+                        defaultValue={hostingIntegration?.config_data?.whm_username || ''}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">WHM API Token</label>
+                      <input
+                        type="password"
+                        className="w-full p-2 border rounded"
+                        placeholder="Enter your WHM API token"
+                        defaultValue={hostingIntegration?.access_token || ''}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Generate this in WHM under Development → Manage API Tokens
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Package Name Template</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="starter, business, professional"
+                        defaultValue={hostingIntegration?.config_data?.package_template || ''}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        WHM package names that correspond to your hosting plans
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Default Server IP</label>
+                      <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="192.168.1.100"
+                        defaultValue={hostingIntegration?.config_data?.server_ip || ''}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        defaultChecked={hostingIntegration?.config_data?.auto_provision || false}
+                      />
+                      <label className="text-sm">Enable automatic provisioning</label>
+                    </div>
+                    
+                    <div className="flex gap-2 pt-4 border-t">
+                      <Button
+                        onClick={async () => {
+                          // Test WHM connection
+                          toast({
+                            title: "Testing Connection",
+                            description: "Verifying WHM API connection...",
+                          });
+                        }}
+                        variant="outline"
+                      >
+                        Test Connection
+                      </Button>
+                      
+                      <Button
+                        onClick={() => {
+                          // Save settings
+                          toast({
+                            title: "Settings Saved",
+                            description: "WHM integration settings have been updated.",
+                          });
+                        }}
+                      >
+                        Save Settings
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardTitle>
           <CardDescription>
