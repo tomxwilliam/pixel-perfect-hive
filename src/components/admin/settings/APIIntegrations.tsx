@@ -90,7 +90,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         { type: 'airtable', name: 'Airtable' },
         { type: 'zapier', name: 'Zapier' },
         { type: 'unlimited_web_hosting', name: 'Unlimited Web Hosting UK' },
-        { type: 'openprovider', name: 'OpenProvider Domains' }
+        { type: 'openprovider', name: 'OpenProvider Domains' },
+        { type: 'whm_cpanel', name: 'WHM/cPanel' }
       ];
       
       // Get existing integration types
@@ -159,7 +160,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       airtable: 'Airtable',
       zapier: 'Zapier',
       unlimited_web_hosting: 'Unlimited Web Hosting UK',
-      openprovider: 'OpenProvider Domains'
+      openprovider: 'OpenProvider Domains',
+      whm_cpanel: 'WHM/cPanel'
     };
     return names[type] || type;
   };
@@ -172,6 +174,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       twitter: <Twitter className="h-5 w-5" />,
       unlimited_web_hosting: <Server className="h-5 w-5" />,
       openprovider: <Server className="h-5 w-5" />,
+      whm_cpanel: <Server className="h-5 w-5" />,
       stripe: <DollarSign className="h-5 w-5" />,
       paypal: <DollarSign className="h-5 w-5" />,
       slack: <MessageSquare className="h-5 w-5" />,
@@ -203,6 +206,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.',
       unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
       openprovider: 'Register and manage domains through OpenProvider API for automated domain registration and DNS management.',
+      whm_cpanel: 'Manage cPanel hosting accounts through WHM (Web Host Manager) reseller interface for complete hosting automation.',
       stripe: 'Process payments securely with Stripe payment gateway integration.',
       paypal: 'Accept PayPal payments for invoices and project milestones.',
       slack: 'Send project updates and notifications to your Slack workspace.',
@@ -284,6 +288,40 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
           toast({
             title: "Connected",
             description: "OpenProvider domain integration connected successfully",
+          });
+
+          fetchIntegrations();
+        }
+      } else if (integration.integration_type === 'whm_cpanel') {
+        // For WHM/cPanel, show comprehensive settings form
+        const whmUrl = prompt('Enter your WHM Server URL:', 'https://your-whm-server.com:2087');
+        const whmUsername = prompt('Enter your WHM Username:', 'root');
+        const whmApiToken = prompt('Enter your WHM API Token:');
+        const packageTemplate = prompt('Enter WHM Package Names (comma-separated):', 'starter,business,professional');
+        const serverIp = prompt('Enter Default Server IP:');
+        
+        if (whmUrl && whmUsername && whmApiToken) {
+          const { error } = await supabase
+            .from('api_integrations')
+            .update({
+              is_connected: true,
+              access_token: whmApiToken,
+              config_data: { 
+                whm_url: whmUrl,
+                whm_username: whmUsername,
+                package_template: packageTemplate,
+                server_ip: serverIp,
+                auto_provision: true
+              },
+              last_sync_at: new Date().toISOString()
+            })
+            .eq('id', integration.id);
+
+          if (error) throw error;
+
+          toast({
+            title: "Connected",
+            description: "WHM/cPanel integration connected successfully",
           });
 
           fetchIntegrations();
