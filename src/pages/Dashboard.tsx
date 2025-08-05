@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import { CustomerProjects } from '@/components/customer/CustomerProjects';
 import { CustomerTickets } from '@/components/customer/CustomerTickets';
 import { CustomerInvoices } from '@/components/customer/CustomerInvoices';
@@ -230,6 +231,7 @@ const Dashboard = () => {
           </MobileTabs>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

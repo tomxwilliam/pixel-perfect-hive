@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminTickets } from '@/components/admin/AdminTickets';
@@ -146,6 +147,7 @@ const AdminDashboard = () => {
           </MobileTabsContent>
         </MobileTabs>
       </div>
+      <Footer />
     </div>
   );
 };
