@@ -47,7 +47,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs defaultValue="overview" className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-12'}>
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -79,10 +79,6 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="social" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Social
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="communications" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Communications
             </MobileTabsTrigger>
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
@@ -128,10 +124,6 @@ const AdminDashboard = () => {
 
           <MobileTabsContent value="social">
             <AdminSocialMedia />
-          </MobileTabsContent>
-
-          <MobileTabsContent value="communications">
-            <AdminCommunications />
           </MobileTabsContent>
 
           <MobileTabsContent value="domains">

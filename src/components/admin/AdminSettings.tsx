@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText } from 'lucide-react';
+import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AdminManagement from './settings/AdminManagement';
 import ServicePricingDefaults from './settings/ServicePricingDefaults';
@@ -9,6 +9,7 @@ import APIIntegrations from './settings/APIIntegrations';
 import AIAgentSettings from './settings/AIAgentSettings';
 import DomainHostingSettings from './settings/DomainHostingSettings';
 import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
+import { AdminCommunications } from './AdminCommunications';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -27,7 +28,7 @@ const AdminSettings = () => {
       </div>
 
       <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Admins
@@ -51,6 +52,10 @@ const AdminSettings = () => {
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Bot className="h-4 w-4" />
             AI Agent
+          </TabsTrigger>
+          <TabsTrigger value="communications" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Communications
           </TabsTrigger>
         </TabsList>
 
@@ -124,6 +129,20 @@ const AdminSettings = () => {
             </CardHeader>
             <CardContent>
               <AIAgentSettings isSuperAdmin={isSuperAdmin} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="communications" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                Communication Center
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AdminCommunications />
             </CardContent>
           </Card>
         </TabsContent>
