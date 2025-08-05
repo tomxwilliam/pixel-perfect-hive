@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Edit, Calendar, PoundSterling, Search, Paperclip, Download } from 'lucide-react';
+import { Eye, Edit, Calendar, PoundSterling, Search, Paperclip, Download, Trash2 } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateProjectDialog } from './forms/CreateProjectDialog';
 import { EnhancedCreateProjectDialog } from './forms/EnhancedCreateProjectDialog';
 import { ProjectEditModal } from './modals/ProjectEditModal';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -156,6 +157,8 @@ export const AdminProjects = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<ProjectWithCustomer | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<ProjectWithCustomer | null>(null);
   const isMobile = useIsMobile();
 
   const fetchProjects = async () => {
@@ -206,6 +209,40 @@ export const AdminProjects = () => {
 
   const handleProjectCreated = () => {
     fetchProjects();
+  };
+
+  const handleDeleteProject = (project: ProjectWithCustomer) => {
+    setProjectToDelete(project);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      // Delete related files first
+      const { error: filesError } = await supabase
+        .from('file_uploads')
+        .delete()
+        .eq('entity_type', 'project')
+        .eq('entity_id', projectToDelete.id);
+
+      if (filesError) throw filesError;
+
+      // Delete the project
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectToDelete.id);
+
+      if (error) throw error;
+      
+      fetchProjects();
+      setDeleteDialogOpen(false);
+      setProjectToDelete(null);
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -332,6 +369,9 @@ export const AdminProjects = () => {
                     <Button variant="ghost" size="sm" onClick={() => { setSelectedProject(project); setIsEditModalOpen(true); }}>
                       <Edit className="h-4 w-4" />
                     </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteProject(project)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                 
@@ -444,6 +484,9 @@ export const AdminProjects = () => {
                       <Button variant="ghost" size="sm" onClick={() => { setSelectedProject(project); setIsEditModalOpen(true); }}>
                         <Edit className="h-4 w-4" />
                       </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleDeleteProject(project)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -461,6 +504,15 @@ export const AdminProjects = () => {
           onProjectUpdated={fetchProjects}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDeleteProject}
+        title="Delete Project"
+        description={`Are you sure you want to delete the project "${projectToDelete?.title}"?`}
+        warningText="This will also delete all associated files and tickets. This action cannot be undone."
+      />
     </Card>
   );
 };

@@ -12,10 +12,12 @@ import {
   Twitter,
   Linkedin,
   Calendar,
-  BarChart3
+  BarChart3,
+  Settings
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { PostManagementModal } from "../modals/PostManagementModal";
 
 interface SocialAccount {
   id: string;
@@ -36,6 +38,10 @@ interface RecentPost {
   engagement_comments: number;
   engagement_shares: number;
   engagement_views: number;
+  character_count: number;
+  ai_generated: boolean;
+  scheduled_for?: string;
+  post_url?: string;
 }
 
 export function SocialMediaDashboard() {
@@ -48,6 +54,8 @@ export function SocialMediaDashboard() {
     reach: 0
   });
   const [loading, setLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState<RecentPost | null>(null);
+  const [postModalOpen, setPostModalOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -246,15 +254,19 @@ export function SocialMediaDashboard() {
               </div>
             ) : (
               recentPosts.map((post) => (
-                <div key={post.id} className="p-3 border rounded-lg space-y-2">
+                  <div key={post.id} className="p-3 border rounded-lg space-y-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                       onClick={() => { setSelectedPost(post); setPostModalOpen(true); }}>
                   <div className="flex items-center justify-between">
                     <Badge variant="outline" className="gap-1">
                       {getPlatformIcon(post.platform)}
                       {post.platform}
                     </Badge>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(post.posted_at).toLocaleDateString()}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(post.posted_at).toLocaleDateString()}
+                      </p>
+                      <Settings className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </div>
                   <p className="text-sm line-clamp-2">{post.content}</p>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -281,6 +293,15 @@ export function SocialMediaDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {selectedPost && (
+        <PostManagementModal
+          post={selectedPost}
+          open={postModalOpen}
+          onOpenChange={setPostModalOpen}
+          onPostUpdated={fetchSocialData}
+        />
+      )}
     </div>
   );
 }

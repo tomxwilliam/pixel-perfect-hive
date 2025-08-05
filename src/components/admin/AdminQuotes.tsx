@@ -21,7 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateQuoteDialog } from "./forms/CreateQuoteDialog";
 import { QuoteManagementModal } from "./modals/QuoteManagementModal";
-import { Search, Filter, DollarSign, FileText, Clock } from "lucide-react";
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
+import { Search, Filter, DollarSign, FileText, Clock, Trash2 } from "lucide-react";
 
 interface Quote {
   id: string;
@@ -61,6 +62,8 @@ export function AdminQuotes() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedQuote, setSelectedQuote] = useState<QuoteWithCustomer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [quoteToDelete, setQuoteToDelete] = useState<QuoteWithCustomer | null>(null);
 
   useEffect(() => {
     fetchQuotes();
@@ -111,6 +114,30 @@ export function AdminQuotes() {
     
     return matchesSearch && matchesStatus;
   });
+
+  const handleDeleteQuote = (quote: QuoteWithCustomer) => {
+    setQuoteToDelete(quote);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteQuote = async () => {
+    if (!quoteToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('quotes')
+        .delete()
+        .eq('id', quoteToDelete.id);
+
+      if (error) throw error;
+      
+      fetchQuotes();
+      setDeleteDialogOpen(false);
+      setQuoteToDelete(null);
+    } catch (error) {
+      console.error('Error deleting quote:', error);
+    }
+  };
 
   const totalValue = quotes.reduce((sum, quote) => sum + quote.amount, 0);
   const pendingQuotes = quotes.filter(q => q.status === "pending").length;
@@ -244,6 +271,13 @@ export function AdminQuotes() {
                     >
                       View
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDeleteQuote(quote)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -260,6 +294,15 @@ export function AdminQuotes() {
           onQuoteUpdated={fetchQuotes}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDeleteQuote}
+        title="Delete Quote"
+        description={`Are you sure you want to delete quote ${quoteToDelete?.quote_number}?`}
+        warningText="This action cannot be undone. The quote will be permanently removed."
+      />
     </div>
   );
 }

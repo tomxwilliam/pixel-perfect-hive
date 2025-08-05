@@ -15,11 +15,15 @@ import {
   XCircle,
   Plus,
   Filter,
-  Settings
+  Settings,
+  Edit,
+  Trash2
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CreateAppointmentDialog } from '@/components/admin/forms/CreateAppointmentDialog';
+import { EditAppointmentModal } from '@/components/admin/modals/EditAppointmentModal';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { AvailabilitySettings } from '@/components/admin/AvailabilitySettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -42,6 +46,9 @@ export const AdminCalendar = () => {
   const [selectedBooking, setSelectedBooking] = useState<CallBooking | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'today' | 'upcoming' | 'completed'>('all');
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<CallBooking | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -105,6 +112,45 @@ export const AdminCalendar = () => {
       toast({
         title: "Error",
         description: "Failed to update booking status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleEditAppointment = (booking: CallBooking) => {
+    setSelectedBooking(booking);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteAppointment = (booking: CallBooking) => {
+    setAppointmentToDelete(booking);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteAppointment = async () => {
+    if (!appointmentToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('call_bookings')
+        .delete()
+        .eq('id', appointmentToDelete.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Appointment deleted successfully",
+      });
+
+      fetchBookings();
+      setDeleteDialogOpen(false);
+      setAppointmentToDelete(null);
+    } catch (error) {
+      console.error('Error deleting appointment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete appointment",
         variant: "destructive"
       });
     }
@@ -316,6 +362,22 @@ export const AdminCalendar = () => {
                           <div className="flex gap-2 ml-4">
                             <Button
                               size="sm"
+                              variant="outline"
+                              onClick={() => handleEditAppointment(booking)}
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteAppointment(booking)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Button>
+                            <Button
+                              size="sm"
                               variant={booking.completed ? "outline" : "default"}
                               onClick={() => markAsCompleted(booking.id, !booking.completed)}
                             >
@@ -357,6 +419,24 @@ export const AdminCalendar = () => {
           <AvailabilitySettings />
         </TabsContent>
       </Tabs>
+
+      {selectedBooking && (
+        <EditAppointmentModal
+          appointment={selectedBooking}
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          onAppointmentUpdated={fetchBookings}
+        />
+      )}
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDeleteAppointment}
+        title="Delete Appointment"
+        description={`Are you sure you want to delete the appointment with ${appointmentToDelete?.name}?`}
+        warningText="This action cannot be undone. The appointment will be permanently removed."
+      />
     </div>
   );
 };
