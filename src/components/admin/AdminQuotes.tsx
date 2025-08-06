@@ -83,10 +83,25 @@ export function AdminQuotes() {
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      setQuotes((data as any) || []);
+      if (error) {
+        console.error("Supabase error:", error);
+        toast({
+          title: "Error",
+          description: `Failed to fetch quotes: ${error.message}`,
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      console.log("Fetched quotes data:", data);
+      setQuotes((data as QuoteWithCustomer[]) || []);
     } catch (error) {
       console.error("Error fetching quotes:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load quotes. Please try refreshing the page.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -228,74 +243,94 @@ export function AdminQuotes() {
 
       {/* Quotes Table */}
       <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Quote #</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Project</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Valid Until</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredQuotes.map((quote) => (
-              <TableRow key={quote.id}>
-                <TableCell className="font-medium">{quote.quote_number}</TableCell>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">
-                      {quote.customer?.first_name} {quote.customer?.last_name}
-                    </div>
-                    <div className="text-sm text-gray-500">{quote.customer?.email}</div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {quote.project?.title || "No Project"}
-                </TableCell>
-                <TableCell>${quote.amount.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Badge className={getStatusColor(quote.status)}>
-                    {quote.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {quote.valid_until 
-                    ? new Date(quote.valid_until).toLocaleDateString()
-                    : "No expiry"
-                  }
-                </TableCell>
-                <TableCell>
-                  {new Date(quote.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        setSelectedQuote(quote);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      View
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDeleteQuote(quote)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
+        {filteredQuotes.length === 0 ? (
+          <CardContent className="py-8">
+            <div className="text-center text-muted-foreground">
+              {quotes.length === 0 ? (
+                <div>
+                  <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium">No quotes found</p>
+                  <p className="text-sm">Create your first quote to get started</p>
+                </div>
+              ) : (
+                <div>
+                  <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg font-medium">No quotes match your search</p>
+                  <p className="text-sm">Try adjusting your search terms or filters</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Quote #</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Project</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Valid Until</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredQuotes.map((quote) => (
+                <TableRow key={quote.id}>
+                  <TableCell className="font-medium">{quote.quote_number}</TableCell>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">
+                        {quote.customer?.first_name} {quote.customer?.last_name}
+                      </div>
+                      <div className="text-sm text-gray-500">{quote.customer?.email}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {quote.project?.title || "No Project"}
+                  </TableCell>
+                  <TableCell>${quote.amount.toLocaleString()}</TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(quote.status)}>
+                      {quote.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {quote.valid_until 
+                      ? new Date(quote.valid_until).toLocaleDateString()
+                      : "No expiry"
+                    }
+                  </TableCell>
+                  <TableCell>
+                    {new Date(quote.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedQuote(quote);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        View
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteQuote(quote)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </Card>
 
       {selectedQuote && (
