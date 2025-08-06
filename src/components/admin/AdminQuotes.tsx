@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -64,6 +65,7 @@ export function AdminQuotes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<QuoteWithCustomer | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchQuotes();
@@ -131,11 +133,21 @@ export function AdminQuotes() {
 
       if (error) throw error;
       
-      fetchQuotes();
+      toast({
+        title: "Success",
+        description: "Quote deleted successfully",
+      });
+
+      await fetchQuotes();
       setDeleteDialogOpen(false);
       setQuoteToDelete(null);
     } catch (error) {
       console.error('Error deleting quote:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete quote",
+        variant: "destructive",
+      });
     }
   };
 

@@ -16,6 +16,7 @@ import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 type Project = Tables<'projects'>;
 type Profile = Tables<'profiles'>;
@@ -160,6 +161,7 @@ export const AdminProjects = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<ProjectWithCustomer | null>(null);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const fetchProjects = async () => {
     try {
@@ -237,11 +239,21 @@ export const AdminProjects = () => {
 
       if (error) throw error;
       
-      fetchProjects();
+      toast({
+        title: "Success",
+        description: "Project deleted successfully",
+      });
+
+      await fetchProjects();
       setDeleteDialogOpen(false);
       setProjectToDelete(null);
     } catch (error) {
       console.error('Error deleting project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete project",
+        variant: "destructive",
+      });
     }
   };
 

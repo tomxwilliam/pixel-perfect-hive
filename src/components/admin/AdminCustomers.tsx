@@ -13,6 +13,7 @@ import { CustomerDetailsModal } from './modals/CustomerDetailsModal';
 import { EditCustomerModal } from './modals/EditCustomerModal';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 type Profile = Tables<'profiles'>;
 
@@ -32,6 +33,7 @@ export const AdminCustomers = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [customerToDelete, setCustomerToDelete] = useState<CustomerWithStats | null>(null);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const fetchCustomers = async () => {
     try {
@@ -116,11 +118,21 @@ export const AdminCustomers = () => {
 
       if (error) throw error;
 
-      fetchCustomers();
+      toast({
+        title: "Success",
+        description: "Customer deleted successfully",
+      });
+
+      await fetchCustomers();
       setDeleteDialogOpen(false);
       setCustomerToDelete(null);
     } catch (error) {
       console.error('Error deleting customer:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete customer",
+        variant: "destructive",
+      });
     }
   };
 
