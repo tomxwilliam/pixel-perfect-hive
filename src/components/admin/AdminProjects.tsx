@@ -222,6 +222,27 @@ export const AdminProjects = () => {
     if (!projectToDelete) return;
 
     try {
+      // Check for related records first
+      const [quotesResult, invoicesResult, ticketsResult] = await Promise.all([
+        supabase.from('quotes').select('id').eq('project_id', projectToDelete.id).limit(1),
+        supabase.from('invoices').select('id').eq('project_id', projectToDelete.id).limit(1),
+        supabase.from('tickets').select('id').eq('project_id', projectToDelete.id).limit(1)
+      ]);
+
+      const hasRelatedRecords = [quotesResult, invoicesResult, ticketsResult]
+        .some(result => result.data && result.data.length > 0);
+
+      if (hasRelatedRecords) {
+        toast({
+          title: "Error",
+          description: "Cannot delete project: has related quotes, invoices, or tickets that must be removed first",
+          variant: "destructive",
+        });
+        setDeleteDialogOpen(false);
+        setProjectToDelete(null);
+        return;
+      }
+
       // Delete related files first
       const { error: filesError } = await supabase
         .from('file_uploads')
@@ -229,7 +250,10 @@ export const AdminProjects = () => {
         .eq('entity_type', 'project')
         .eq('entity_id', projectToDelete.id);
 
-      if (filesError) throw filesError;
+      if (filesError) {
+        console.error('Error deleting files:', filesError);
+        // Continue with project deletion even if file deletion fails
+      }
 
       // Delete the project
       const { error } = await supabase
@@ -237,7 +261,25 @@ export const AdminProjects = () => {
         .delete()
         .eq('id', projectToDelete.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        if (error.code === '23503') {
+          toast({
+            title: "Error",
+            description: "Cannot delete project: has related records that must be removed first",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: `Failed to delete project: ${error.message}`,
+            variant: "destructive",
+          });
+        }
+        setDeleteDialogOpen(false);
+        setProjectToDelete(null);
+        return;
+      }
       
       toast({
         title: "Success",
@@ -247,13 +289,15 @@ export const AdminProjects = () => {
       await fetchProjects();
       setDeleteDialogOpen(false);
       setProjectToDelete(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting project:', error);
       toast({
         title: "Error",
-        description: "Failed to delete project",
+        description: `Failed to delete project: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
+      setDeleteDialogOpen(false);
+      setProjectToDelete(null);
     }
   };
 

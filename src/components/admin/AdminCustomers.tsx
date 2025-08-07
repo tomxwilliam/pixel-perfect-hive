@@ -111,12 +111,52 @@ export const AdminCustomers = () => {
     if (!customerToDelete) return;
 
     try {
+      // Check for related records first
+      const [quotesResult, invoicesResult, projectsResult, ticketsResult] = await Promise.all([
+        supabase.from('quotes').select('id').eq('customer_id', customerToDelete.id).limit(1),
+        supabase.from('invoices').select('id').eq('customer_id', customerToDelete.id).limit(1),
+        supabase.from('projects').select('id').eq('customer_id', customerToDelete.id).limit(1),
+        supabase.from('tickets').select('id').eq('customer_id', customerToDelete.id).limit(1)
+      ]);
+
+      const hasRelatedRecords = [quotesResult, invoicesResult, projectsResult, ticketsResult]
+        .some(result => result.data && result.data.length > 0);
+
+      if (hasRelatedRecords) {
+        toast({
+          title: "Error",
+          description: "Cannot delete customer with existing quotes, invoices, projects, or tickets. Please remove these first.",
+          variant: "destructive",
+        });
+        setDeleteDialogOpen(false);
+        setCustomerToDelete(null);
+        return;
+      }
+
       const { error } = await supabase
         .from('profiles')
         .delete()
         .eq('id', customerToDelete.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        if (error.code === '23503') {
+          toast({
+            title: "Error",
+            description: "Cannot delete customer: has related records that must be removed first",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: `Failed to delete customer: ${error.message}`,
+            variant: "destructive",
+          });
+        }
+        setDeleteDialogOpen(false);
+        setCustomerToDelete(null);
+        return;
+      }
 
       toast({
         title: "Success",
@@ -126,13 +166,15 @@ export const AdminCustomers = () => {
       await fetchCustomers();
       setDeleteDialogOpen(false);
       setCustomerToDelete(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting customer:', error);
       toast({
         title: "Error",
-        description: "Failed to delete customer",
+        description: `Failed to delete customer: ${error.message || 'Unknown error'}`,
         variant: "destructive",
       });
+      setDeleteDialogOpen(false);
+      setCustomerToDelete(null);
     }
   };
 
