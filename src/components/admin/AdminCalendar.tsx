@@ -17,12 +17,16 @@ import {
   Filter,
   Settings,
   Edit,
-  Trash2
+  Trash2,
+  Ban,
+  Info
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CreateAppointmentDialog } from '@/components/admin/forms/CreateAppointmentDialog';
 import { EditAppointmentModal } from '@/components/admin/modals/EditAppointmentModal';
+import { BlockOutDatesModal } from '@/components/admin/modals/BlockOutDatesModal';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { AvailabilitySettings } from '@/components/admin/AvailabilitySettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,22 +44,34 @@ interface CallBooking {
   created_at: string;
 }
 
+interface BlockedDate {
+  id: string;
+  date: string;
+  reason?: string;
+  is_full_day: boolean;
+  start_time?: string;
+  end_time?: string;
+}
+
 export const AdminCalendar = () => {
   const [bookings, setBookings] = useState<CallBooking[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedBooking, setSelectedBooking] = useState<CallBooking | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'today' | 'upcoming' | 'completed'>('all');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [blockOutModalOpen, setBlockOutModalOpen] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState<CallBooking | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBookings();
+    fetchBlockedDates();
 
-    // Set up real-time subscription
-    const channel = supabase
+    // Set up real-time subscription for bookings
+    const bookingsChannel = supabase
       .channel('bookings-changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'call_bookings' }, () => {
         fetchBookings();
@@ -66,8 +82,17 @@ export const AdminCalendar = () => {
       })
       .subscribe();
 
+    // Set up real-time subscription for blocked dates
+    const blockedDatesChannel = supabase
+      .channel('blocked-dates-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blocked_dates' }, () => {
+        fetchBlockedDates();
+      })
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(bookingsChannel);
+      supabase.removeChannel(blockedDatesChannel);
     };
   }, [toast]);
 
@@ -89,6 +114,20 @@ export const AdminCalendar = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBlockedDates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blocked_dates')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+      setBlockedDates(data || []);
+    } catch (error) {
+      console.error('Error fetching blocked dates:', error);
     }
   };
 
@@ -184,6 +223,40 @@ export const AdminCalendar = () => {
     });
   };
 
+  const getBlockedDateForDate = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    return blockedDates.find(blocked => blocked.date === dateString);
+  };
+
+  const isDateBlocked = (date: Date) => {
+    return getBlockedDateForDate(date) !== undefined;
+  };
+
+  const handleDeleteBlockedDate = async (blockedDateId: string) => {
+    try {
+      const { error } = await supabase
+        .from('blocked_dates')
+        .delete()
+        .eq('id', blockedDateId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Blocked date removed successfully",
+      });
+
+      fetchBlockedDates();
+    } catch (error) {
+      console.error('Error deleting blocked date:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove blocked date",
+        variant: "destructive"
+      });
+    }
+  };
+
   const filteredBookings = getFilteredBookings();
 
   if (loading) {
@@ -224,6 +297,10 @@ export const AdminCalendar = () => {
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
+          <Button onClick={() => setBlockOutModalOpen(true)} variant="outline">
+            <Ban className="h-4 w-4 mr-2" />
+            Block Out Dates
+          </Button>
           <CreateAppointmentDialog onAppointmentCreated={fetchBookings} />
         </div>
       </div>
@@ -251,27 +328,65 @@ export const AdminCalendar = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  className="rounded-md border"
-                  modifiers={{
-                    hasBooking: (date) => getBookingsForDate(date).length > 0
-                  }}
-                  modifiersStyles={{
-                    hasBooking: { 
-                      backgroundColor: 'hsl(var(--primary))',
-                      color: 'white',
-                      fontWeight: 'bold'
-                    }
-                  }}
-                />
+                <TooltipProvider>
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    className="rounded-md border"
+                    modifiers={{
+                      hasBooking: (date) => getBookingsForDate(date).length > 0,
+                      blocked: (date) => isDateBlocked(date)
+                    }}
+                    modifiersStyles={{
+                      hasBooking: { 
+                        backgroundColor: 'hsl(var(--primary))',
+                        color: 'white',
+                        fontWeight: 'bold'
+                      },
+                      blocked: {
+                        backgroundColor: 'hsl(var(--destructive))',
+                        color: 'white',
+                        textDecoration: 'line-through'
+                      }
+                    }}
+                  />
+                </TooltipProvider>
                 {selectedDate && (
                   <div className="mt-4">
                     <h4 className="font-semibold mb-2">
                       {selectedDate.toLocaleDateString()} 
                     </h4>
+                    
+                    {/* Show blocked date info */}
+                    {isDateBlocked(selectedDate) && (
+                      <div className="mb-3 p-2 bg-destructive/10 border border-destructive/20 rounded text-sm">
+                        <div className="flex items-center gap-2 text-destructive">
+                          <Ban className="h-4 w-4" />
+                          <span className="font-medium">Date Blocked</span>
+                        </div>
+                        {getBlockedDateForDate(selectedDate)?.reason && (
+                          <div className="text-muted-foreground mt-1">
+                            {getBlockedDateForDate(selectedDate)?.reason}
+                          </div>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-2"
+                          onClick={() => {
+                            const blockedDate = getBlockedDateForDate(selectedDate);
+                            if (blockedDate) {
+                              handleDeleteBlockedDate(blockedDate.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3 mr-1" />
+                          Remove Block
+                        </Button>
+                      </div>
+                    )}
+                    
                     <div className="space-y-2">
                       {getBookingsForDate(selectedDate).map(booking => (
                         <div key={booking.id} className="text-sm p-2 bg-muted rounded">
@@ -284,7 +399,7 @@ export const AdminCalendar = () => {
                           </div>
                         </div>
                       ))}
-                      {getBookingsForDate(selectedDate).length === 0 && (
+                      {getBookingsForDate(selectedDate).length === 0 && !isDateBlocked(selectedDate) && (
                         <p className="text-sm text-muted-foreground">No appointments</p>
                       )}
                     </div>
@@ -428,6 +543,13 @@ export const AdminCalendar = () => {
           onAppointmentUpdated={fetchBookings}
         />
       )}
+
+      <BlockOutDatesModal
+        open={blockOutModalOpen}
+        onOpenChange={setBlockOutModalOpen}
+        onDatesBlocked={fetchBlockedDates}
+        existingBookings={bookings}
+      />
 
       <ConfirmDeleteDialog
         open={deleteDialogOpen}
