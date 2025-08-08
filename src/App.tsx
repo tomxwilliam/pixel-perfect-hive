@@ -21,6 +21,12 @@ import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
 import AIChat from "./pages/dashboard/AIChat";
 import NotFound from "./pages/NotFound";
+import AIIntegration from "./pages/services/AIIntegration";
+import GamesLanding from "./pages/landing/GamesLanding";
+import AppsLanding from "./pages/landing/AppsLanding";
+import WebLanding from "./pages/landing/WebLanding";
+import AILanding from "./pages/landing/AILanding";
+
 
 const queryClient = new QueryClient();
 
@@ -71,8 +77,14 @@ const App = () => (
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/services/ai-integration" element={<AIIntegration />} />
+              <Route path="/l/games" element={<GamesLanding />} />
+              <Route path="/l/apps" element={<AppsLanding />} />
+              <Route path="/l/web" element={<WebLanding />} />
+              <Route path="/l/ai-integration" element={<AILanding />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+
           </BrowserRouter>
         </TooltipProvider>
       </ThemeProvider>
