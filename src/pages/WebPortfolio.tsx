@@ -20,7 +20,7 @@ const WebPortfolio = () => {
             💻 Websites That Work
           </Badge>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[8px]">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[10px]">
             Web Design Portfolio
           </h1>
           
