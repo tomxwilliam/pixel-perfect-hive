@@ -25,11 +25,16 @@ export default function AIIntegration() {
       <Seo title={title} description={description} jsonLd={jsonLd} />
       <Navigation />
       <main>
-        <header className="py-10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Badge variant="secondary" className="mb-4">Service</Badge>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">AI Integration into Apps and Websites</h1>
-            <p className="mt-4 max-w-2xl text-muted-foreground">
+        {/* Hero Section */}
+        <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2">
+              🤖 AI Integration
+            </Badge>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+              AI Integration into Apps and Websites
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               From discovery to deployment, we embed production-ready AI into your product: strategy, model selection, data pipelines,
               safety guardrails, and UX integration. Ship assistants, automation, analytics, and personalisation that measurably move the needle.
             </p>
@@ -39,11 +44,11 @@ export default function AIIntegration() {
               </Button>
             </div>
           </div>
-        </header>
+        </section>
 
-        <section aria-labelledby="features" className="py-8 sm:py-12">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 id="features" className="text-2xl md:text-3xl font-semibold mb-6">What we build</h2>
+        <section aria-labelledby="features" className="py-16 px-4">
+          <div className="max-w-6xl mx-auto">
+            <h2 id="features" className="text-3xl font-bold mb-6 text-primary">What we build</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[
                 { title: "AI Chatbots & Assistants", desc: "24/7 support, lead qualification, onboarding flows, and in-product help." },
@@ -64,9 +69,9 @@ export default function AIIntegration() {
           </div>
         </section>
 
-        <section aria-labelledby="use-cases" className="py-8 sm:py-12">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 id="use-cases" className="text-2xl md:text-3xl font-semibold mb-6">Use cases</h2>
+        <section aria-labelledby="use-cases" className="py-16 px-4">
+          <div className="max-w-6xl mx-auto">
+            <h2 id="use-cases" className="text-3xl font-bold mb-6 text-primary">Use cases</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[
                 {
@@ -108,9 +113,9 @@ export default function AIIntegration() {
           </div>
         </section>
 
-        <section aria-labelledby="cta" className="py-8 sm:py-12">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 id="cta" className="text-2xl md:text-3xl font-semibold">Ready to integrate AI?</h2>
+        <section aria-labelledby="cta" className="py-16 px-4">
+          <div className="max-w-6xl mx-auto text-center">
+            <h2 id="cta" className="text-3xl font-bold">Ready to integrate AI?</h2>
             <p className="mt-3 text-muted-foreground">Speak with 404 Code Lab about your roadmap and opportunities.</p>
             <div className="mt-6">
               <Button asChild>
