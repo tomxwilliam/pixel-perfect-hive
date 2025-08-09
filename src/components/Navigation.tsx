@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
-import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe } from 'lucide-react';
+import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe, Bot } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,10 +37,11 @@ const Navigation = () => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
   };
 
-  const portfolioLinks = [
+  const servicesLinks = [
+    { href: '/services/ai-integration', label: 'AI Integration', icon: Bot },
     { href: '/portfolio/games', label: 'Games', icon: GamepadIcon },
     { href: '/portfolio/apps', label: 'Mobile Apps', icon: Smartphone },
-    { href: '/portfolio/web', label: 'Web Apps', icon: Globe },
+    { href: '/portfolio/web', label: 'Web Dev', icon: Globe },
   ];
 
   return (
@@ -80,11 +81,11 @@ const Navigation = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="text-foreground hover:text-primary px-3 py-2 text-sm font-medium">
                     <Briefcase className="inline-block w-4 h-4 mr-1" />
-                    Portfolio
+                    Services
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {portfolioLinks.map((link) => (
+                  {servicesLinks.map((link) => (
                     <DropdownMenuItem key={link.href} asChild>
                       <Link to={link.href} className="flex items-center">
                         <link.icon className="mr-2 h-4 w-4" />
@@ -194,7 +195,7 @@ const Navigation = () => {
             </Link>
             
             {/* Mobile Portfolio Links */}
-            {portfolioLinks.map((link) => (
+            {servicesLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
