@@ -8,12 +8,9 @@ import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
 const WebPortfolio = () => {
   const navigate = useNavigate();
-  
-  return (
-    <div className="min-h-screen bg-background text-foreground">
+  return <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       
       {/* Hero Section */}
@@ -23,7 +20,7 @@ const WebPortfolio = () => {
             💻 Websites That Work
           </Badge>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[8px]">
             Web Design Portfolio
           </h1>
           
@@ -191,12 +188,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/sparkleclean/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}
-                    >
+                    <a href="https://404codelab.com/sparkleclean/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -245,12 +239,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/fixright-plumbing/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}
-                    >
+                    <a href="https://404codelab.com/fixright-plumbing/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -299,12 +290,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/shear-perfection/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}
-                    >
+                    <a href="https://404codelab.com/shear-perfection/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -353,12 +341,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/padrinos-pizza/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}
-                    >
+                    <a href="https://404codelab.com/padrinos-pizza/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -407,12 +392,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/sweet-crumbs/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}
-                    >
+                    <a href="https://404codelab.com/sweet-crumbs/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -461,12 +443,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/happy-paws/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}
-                    >
+                    <a href="https://404codelab.com/happy-paws/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -515,12 +494,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/crafted-joinery/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}
-                    >
+                    <a href="https://404codelab.com/crafted-joinery/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -569,12 +545,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/ironhouse-gym/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}
-                    >
+                    <a href="https://404codelab.com/ironhouse-gym/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -622,12 +595,9 @@ const WebPortfolio = () => {
                       </div>
                     </div>
                     
-                    <a 
-                      href="https://404codelab.com/inkspire/index.html" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={cn(buttonVariants({ variant: "default" }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}
-                    >
+                    <a href="https://404codelab.com/inkspire/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
+                    variant: "default"
+                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
                       <Globe className="mr-2 h-5 w-5" />
                       View Project
                     </a>
@@ -806,8 +776,6 @@ const WebPortfolio = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default WebPortfolio;
