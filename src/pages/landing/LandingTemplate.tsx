@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
