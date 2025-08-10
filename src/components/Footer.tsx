@@ -75,6 +75,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/services/ai-integration" className="text-muted-foreground hover:text-primary transition-colors">
+                  AI Integration
+                </Link>
+              </li>
+              <li>
                 <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
                   Customer Portal
                 </Link>
