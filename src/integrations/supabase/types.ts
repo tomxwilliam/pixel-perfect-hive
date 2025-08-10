@@ -767,6 +767,9 @@ export type Database = {
           project_id: string | null
           status: Database["public"]["Enums"]["payment_status"]
           stripe_payment_intent_id: string | null
+          tide_payment_link_url: string | null
+          tide_payment_request_id: string | null
+          tide_payment_status: string | null
         }
         Insert: {
           amount: number
@@ -779,6 +782,9 @@ export type Database = {
           project_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           stripe_payment_intent_id?: string | null
+          tide_payment_link_url?: string | null
+          tide_payment_request_id?: string | null
+          tide_payment_status?: string | null
         }
         Update: {
           amount?: number
@@ -791,6 +797,9 @@ export type Database = {
           project_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           stripe_payment_intent_id?: string | null
+          tide_payment_link_url?: string | null
+          tide_payment_request_id?: string | null
+          tide_payment_status?: string | null
         }
         Relationships: [
           {
