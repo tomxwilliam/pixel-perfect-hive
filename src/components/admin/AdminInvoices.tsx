@@ -7,10 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Download, Send, DollarSign, Calendar, Search, Plus } from 'lucide-react';
+import { Eye, Download, Send, DollarSign, Calendar, Search, Plus, Pencil, Trash } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateInvoiceDialog } from './forms/CreateInvoiceDialog';
 import { InvoiceManagementModal } from './modals/InvoiceManagementModal';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { EditInvoiceModal } from './modals/EditInvoiceModal';
+import { toast } from 'sonner';
 
 type Invoice = Tables<'invoices'>;
 type Profile = Tables<'profiles'>;
@@ -27,6 +30,10 @@ export const AdminInvoices = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceWithCustomer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState<InvoiceWithCustomer | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<InvoiceWithCustomer | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   
   const fetchInvoices = async () => {
     try {
@@ -45,7 +52,23 @@ export const AdminInvoices = () => {
     } catch (error) {
       console.error('Error fetching invoices:', error);
     } finally {
-      setLoading(false);
+    setLoading(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    try {
+      const { error } = await supabase.from('invoices').delete().eq('id', deleteTarget.id);
+      if (error) throw error;
+      toast.success('Invoice deleted');
+      await fetchInvoices();
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      toast.error('Failed to delete invoice');
+    } finally {
+      setIsDeleteOpen(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -227,8 +250,14 @@ export const AdminInvoices = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
-                      <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
+                      <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }} aria-label="View invoice">
                         <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setEditingInvoice(invoice); setIsEditOpen(true); }} aria-label="Edit invoice">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setDeleteTarget(invoice); setIsDeleteOpen(true); }} aria-label="Delete invoice">
+                        <Trash className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
@@ -247,6 +276,23 @@ export const AdminInvoices = () => {
           onInvoiceUpdated={fetchInvoices}
         />
       )}
+
+      {editingInvoice && (
+        <EditInvoiceModal
+          invoice={editingInvoice}
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+          onUpdated={fetchInvoices}
+        />
+      )}
+
+      <ConfirmDeleteDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete invoice?"
+        description="This will permanently delete the invoice. This action cannot be undone."
+      />
     </div>
   );
 };

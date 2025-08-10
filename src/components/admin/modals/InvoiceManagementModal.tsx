@@ -281,6 +281,48 @@ export const InvoiceManagementModal: React.FC<InvoiceManagementModalProps> = ({
             </CardContent>
           </Card>
 
+          {/* Payment Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Payment Info</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <label className="font-medium">Stripe Payment Intent</label>
+                  <p className="mt-1 font-mono text-muted-foreground break-all">
+                    {invoice.stripe_payment_intent_id || '—'}
+                  </p>
+                </div>
+                <div>
+                  <label className="font-medium">Tide Payment Status</label>
+                  <p className="mt-1 text-muted-foreground">{invoice.tide_payment_status || '—'}</p>
+                </div>
+                <div>
+                  <label className="font-medium">Tide Payment Link</label>
+                  {invoice.tide_payment_link_url ? (
+                    <a
+                      href={invoice.tide_payment_link_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-block underline text-primary"
+                    >
+                      Open payment link
+                    </a>
+                  ) : (
+                    <p className="mt-1 text-muted-foreground">—</p>
+                  )}
+                </div>
+                <div>
+                  <label className="font-medium">Tide Request ID</label>
+                  <p className="mt-1 font-mono text-muted-foreground break-all">
+                    {invoice.tide_payment_request_id || '—'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Actions */}
           <Card>
             <CardHeader>
