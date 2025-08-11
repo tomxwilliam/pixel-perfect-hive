@@ -10,6 +10,7 @@ import AIAgentSettings from './settings/AIAgentSettings';
 import DomainHostingSettings from './settings/DomainHostingSettings';
 import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
 import { AdminCommunications } from './AdminCommunications';
+import { QuoteTemplateSettings } from './QuoteTemplateSettings';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -28,7 +29,7 @@ const AdminSettings = () => {
       </div>
 
       <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Admins
@@ -36,6 +37,10 @@ const AdminSettings = () => {
           <TabsTrigger value="invoices" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
             Invoices
+          </TabsTrigger>
+          <TabsTrigger value="quotes" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Quotes
           </TabsTrigger>
           <TabsTrigger value="pricing" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
@@ -75,6 +80,10 @@ const AdminSettings = () => {
 
         <TabsContent value="invoices" className="space-y-6">
           <InvoiceTemplateSettings />
+        </TabsContent>
+
+        <TabsContent value="quotes" className="space-y-6">
+          <QuoteTemplateSettings />
         </TabsContent>
 
         <TabsContent value="pricing" className="space-y-6">

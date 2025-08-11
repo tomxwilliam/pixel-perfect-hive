@@ -9,8 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Save, Eye, Palette, Building, Layout } from 'lucide-react';
+import { Save, Eye, Palette, Building, Layout, FileText } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { generateInvoicePDF } from '@/utils/pdfGenerator';
 
 type InvoiceTemplate = Tables<'invoice_templates'>;
 
@@ -336,6 +337,29 @@ export const InvoiceTemplateSettings = () => {
     `;
   };
 
+  const handlePdfPreview = async () => {
+    const sampleInvoice = {
+      invoice_number: 'INV-001',
+      customer_name: 'Sample Customer',
+      customer_email: 'customer@example.com',
+      customer_company: 'Sample Company Ltd',
+      amount: 1250,
+      created_date: new Date().toISOString(),
+      due_date: new Date(Date.now() + 30*24*60*60*1000).toISOString(),
+      project_title: 'Web Development Services',
+      status: 'pending'
+    } as const;
+
+    const blob = await generateInvoicePDF(sampleInvoice as any, {
+      company_details: companyDetails as any,
+      branding: branding as any,
+      layout_settings: layoutSettings as any
+    });
+
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+  };
+
   if (loading) {
     return (
       <Card>
@@ -385,6 +409,10 @@ export const InvoiceTemplateSettings = () => {
           <Button onClick={() => setShowPreview(true)} variant="outline">
             <Eye className="h-4 w-4 mr-2" />
             Preview
+          </Button>
+          <Button onClick={handlePdfPreview} variant="outline">
+            <FileText className="h-4 w-4 mr-2" />
+            PDF Preview
           </Button>
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />

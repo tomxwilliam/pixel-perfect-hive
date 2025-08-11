@@ -7,10 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, MessageSquare, User, Clock, Search } from 'lucide-react';
+import { Eye, MessageSquare, User, Clock, Search, Edit, Trash2 } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateTicketDialog } from './forms/CreateTicketDialog';
 import { TicketDetailsModal } from './modals/TicketDetailsModal';
+import { EditTicketModal } from './modals/EditTicketModal';
+import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 type Ticket = Tables<'tickets'>;
 type Profile = Tables<'profiles'>;
@@ -28,6 +31,11 @@ export const AdminTickets = () => {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [selectedTicket, setSelectedTicket] = useState<TicketWithDetails | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [ticketToEdit, setTicketToEdit] = useState<TicketWithDetails | null>(null);
+  const [ticketToDelete, setTicketToDelete] = useState<TicketWithDetails | null>(null);
+  const { toast } = useToast();
 
   const fetchTickets = async () => {
     try {
@@ -134,6 +142,35 @@ export const AdminTickets = () => {
       ));
     } catch (error) {
       console.error('Error updating ticket status:', error);
+    }
+  };
+
+  const handleEditTicket = (ticket: TicketWithDetails) => {
+    setTicketToEdit(ticket);
+    setEditModalOpen(true);
+  };
+
+  const handleDeleteTicket = (ticket: TicketWithDetails) => {
+    setTicketToDelete(ticket);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteTicket = async () => {
+    if (!ticketToDelete) return;
+    try {
+      const { error } = await supabase
+        .from('tickets')
+        .delete()
+        .eq('id', ticketToDelete.id);
+      if (error) throw error;
+      toast({ title: 'Deleted', description: 'Ticket deleted successfully' });
+      await fetchTickets();
+    } catch (e: any) {
+      console.error('Error deleting ticket:', e);
+      toast({ title: 'Error', description: e.message || 'Failed to delete ticket', variant: 'destructive' });
+    } finally {
+      setDeleteDialogOpen(false);
+      setTicketToDelete(null);
     }
   };
 
@@ -280,6 +317,12 @@ export const AdminTickets = () => {
                     <Button variant="ghost" size="sm" onClick={() => { setSelectedTicket(ticket); setIsModalOpen(true); }}>
                       <Eye className="h-4 w-4" />
                     </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleEditTicket(ticket)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDeleteTicket(ticket)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -296,6 +339,27 @@ export const AdminTickets = () => {
           onTicketUpdated={fetchTickets}
         />
       )}
+
+      {ticketToEdit && (
+        <EditTicketModal
+          ticket={ticketToEdit}
+          open={editModalOpen}
+          onOpenChange={setEditModalOpen}
+          onTicketUpdated={() => {
+            setEditModalOpen(false);
+            fetchTickets();
+          }}
+        />
+      )}
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDeleteTicket}
+        title="Delete Ticket"
+        description={`Are you sure you want to delete "${ticketToDelete?.title}"?`}
+        warningText="This action cannot be undone."
+      />
     </Card>
   );
 };
