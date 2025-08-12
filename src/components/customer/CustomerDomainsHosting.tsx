@@ -307,7 +307,9 @@ export default function CustomerDomainsHosting() {
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <div className="text-sm font-medium">
-                          £{subscription.hosting_packages.monthly_price}/month
+                          {subscription.billing_cycle === 'annual'
+                            ? `£${Number(subscription.hosting_packages.annual_price ?? (subscription.hosting_packages.monthly_price as number) * 12)}/year`
+                            : `£${Number(subscription.hosting_packages.monthly_price)}/month`}
                         </div>
                         {subscription.next_billing_date && <div className="text-xs text-muted-foreground">
                             Next billing: {new Date(subscription.next_billing_date).toLocaleDateString()}

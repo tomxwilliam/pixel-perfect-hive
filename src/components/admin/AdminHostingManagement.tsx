@@ -320,7 +320,9 @@ const AdminHostingManagement = () => {
                         {subscription.hosting_packages?.package_name}
                         <br />
                         <span className="text-sm text-muted-foreground">
-                          £{subscription.hosting_packages?.monthly_price}/month
+                          {subscription.billing_cycle === 'annual'
+                            ? `£${Number(subscription.hosting_packages?.annual_price ?? ((subscription.hosting_packages?.monthly_price || 0) as number) * 12)}/year`
+                            : `£${Number(subscription.hosting_packages?.monthly_price || 0)}/month`}
                         </span>
                       </TableCell>
                       <TableCell>
