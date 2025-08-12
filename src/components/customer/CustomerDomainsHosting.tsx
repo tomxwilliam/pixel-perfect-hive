@@ -25,6 +25,7 @@ export default function CustomerDomainsHosting() {
   const [selectedHosting, setSelectedHosting] = useState<any>(null);
   const [domainModalOpen, setDomainModalOpen] = useState(false);
   const [hostingModalOpen, setHostingModalOpen] = useState(false);
+  const [orderingPlanId, setOrderingPlanId] = useState<string | null>(null);
 
   // Fetch customer's existing domains
   const {
@@ -148,13 +149,17 @@ export default function CustomerDomainsHosting() {
     }
   };
   const handleHostingOrder = async (packageId: string) => {
-    if (!user) return;
+    if (!user) {
+      toast({ title: "Please sign in", description: "You need to be signed in to order hosting.", variant: "destructive" });
+      return;
+    }
     try {
+      setOrderingPlanId(packageId);
       const response = await supabase.functions.invoke('hosting-order', {
         body: {
           packageId: packageId,
           customerId: user.id,
-          billingCycle: 'annual' // Updated to annual billing to match new plans
+          billingCycle: 'annual'
         }
       });
       if (response.error) {
@@ -164,8 +169,6 @@ export default function CustomerDomainsHosting() {
         title: "Hosting Order Created",
         description: "Your hosting order has been created. You will receive an invoice shortly."
       });
-
-      // Refresh hosting subscriptions list
       // The useQuery will automatically refetch
     } catch (error) {
       console.error('Hosting order failed:', error);
@@ -174,6 +177,8 @@ export default function CustomerDomainsHosting() {
         description: "Unable to process hosting order. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setOrderingPlanId(null);
     }
   };
   return <div className="space-y-6">
@@ -373,8 +378,8 @@ export default function CustomerDomainsHosting() {
                     UK-Based Support
                   </li>
                 </ul>
-                <Button className="w-full" variant="outline" onClick={() => handleHostingOrder('11111111-1111-1111-1111-111111111111')}>
-                  Choose Plan
+                <Button className="w-full" variant="outline" onClick={() => handleHostingOrder('11111111-1111-1111-1111-111111111111')} disabled={orderingPlanId === '11111111-1111-1111-1111-111111111111'} aria-busy={orderingPlanId === '11111111-1111-1111-1111-111111111111'}>
+                  {orderingPlanId === '11111111-1111-1111-1111-111111111111' ? 'Ordering...' : 'Choose Plan'}
                 </Button>
               </CardContent>
             </Card>
@@ -425,8 +430,8 @@ export default function CustomerDomainsHosting() {
                     Priority UK Support
                   </li>
                 </ul>
-                <Button className="w-full" onClick={() => handleHostingOrder('22222222-2222-2222-2222-222222222222')}>
-                  Choose Plan
+                <Button className="w-full" onClick={() => handleHostingOrder('22222222-2222-2222-2222-222222222222')} disabled={orderingPlanId === '22222222-2222-2222-2222-222222222222'} aria-busy={orderingPlanId === '22222222-2222-2222-2222-222222222222'}>
+                  {orderingPlanId === '22222222-2222-2222-2222-222222222222' ? 'Ordering...' : 'Choose Plan'}
                 </Button>
               </CardContent>
             </Card>
@@ -475,8 +480,8 @@ export default function CustomerDomainsHosting() {
                   </li>
                   
                 </ul>
-                <Button className="w-full" variant="outline" onClick={() => handleHostingOrder('33333333-3333-3333-3333-333333333333')}>
-                  Choose Plan
+                <Button className="w-full" variant="outline" onClick={() => handleHostingOrder('33333333-3333-3333-3333-333333333333')} disabled={orderingPlanId === '33333333-3333-3333-3333-333333333333'} aria-busy={orderingPlanId === '33333333-3333-3333-3333-333333333333'}>
+                  {orderingPlanId === '33333333-3333-3333-3333-333333333333' ? 'Ordering...' : 'Choose Plan'}
                 </Button>
               </CardContent>
             </Card>
