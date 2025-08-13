@@ -234,16 +234,16 @@ export const CustomerTicketDetailsModal: React.FC<CustomerTicketDetailsModalProp
                       key={message.id} 
                       className={`border rounded-lg p-4 ${
                         message.sender?.role === 'admin' 
-                          ? 'bg-blue-50 border-blue-200' 
-                          : 'bg-green-50 border-green-200'
+                          ? 'bg-primary/5 border-primary/20 dark:bg-primary/10 dark:border-primary/30' 
+                          : 'bg-accent/5 border-accent/20 dark:bg-accent/10 dark:border-accent/30'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2">
                           <div className={`p-1 rounded-full ${
                             message.sender?.role === 'admin' 
-                              ? 'bg-blue-100' 
-                              : 'bg-green-100'
+                              ? 'bg-primary/20 dark:bg-primary/30' 
+                              : 'bg-accent/20 dark:bg-accent/30'
                           }`}>
                             <User className="h-3 w-3" />
                           </div>

@@ -1477,40 +1477,302 @@ export type Database = {
           },
         ]
       }
+      ticket_attachments: {
+        Row: {
+          created_at: string
+          file_path: string
+          file_size: number
+          id: string
+          mime_type: string
+          original_filename: string
+          ticket_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          file_size: number
+          id?: string
+          mime_type: string
+          original_filename: string
+          ticket_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          file_size?: number
+          id?: string
+          mime_type?: string
+          original_filename?: string
+          ticket_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_attachments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_categories: {
+        Row: {
+          auto_assign_to: string | null
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sla_hours: number | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          auto_assign_to?: string | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sla_hours?: number | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          auto_assign_to?: string | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sla_hours?: number | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ticket_internal_notes: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          ticket_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          ticket_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_internal_notes_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_templates: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          created_by: string
+          description_template: string
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: string | null
+          title_template: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          created_by: string
+          description_template: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority?: string | null
+          title_template: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          created_by?: string
+          description_template?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: string | null
+          title_template?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_templates_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_time_logs: {
+        Row: {
+          billable: boolean | null
+          created_at: string
+          description: string | null
+          hours_logged: number
+          id: string
+          ticket_id: string
+          user_id: string
+        }
+        Insert: {
+          billable?: boolean | null
+          created_at?: string
+          description?: string | null
+          hours_logged: number
+          id?: string
+          ticket_id: string
+          user_id: string
+        }
+        Update: {
+          billable?: boolean | null
+          created_at?: string
+          description?: string | null
+          hours_logged?: number
+          id?: string
+          ticket_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_time_logs_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_watchers: {
+        Row: {
+          added_by: string
+          created_at: string
+          id: string
+          ticket_id: string
+          user_id: string
+        }
+        Insert: {
+          added_by: string
+          created_at?: string
+          id?: string
+          ticket_id: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string
+          created_at?: string
+          id?: string
+          ticket_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_watchers_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tickets: {
         Row: {
           assigned_to: string | null
+          category_id: string | null
           created_at: string
           customer_id: string
           description: string
+          due_date: string | null
+          escalated_at: string | null
+          first_response_at: string | null
           id: string
+          is_escalated: boolean | null
           priority: Database["public"]["Enums"]["ticket_priority"]
           project_id: string | null
+          resolution_time_hours: number | null
+          resolved_at: string | null
+          satisfaction_feedback: string | null
+          satisfaction_rating: number | null
+          source: string | null
           status: Database["public"]["Enums"]["ticket_status"]
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
           assigned_to?: string | null
+          category_id?: string | null
           created_at?: string
           customer_id: string
           description: string
+          due_date?: string | null
+          escalated_at?: string | null
+          first_response_at?: string | null
           id?: string
+          is_escalated?: boolean | null
           priority?: Database["public"]["Enums"]["ticket_priority"]
           project_id?: string | null
+          resolution_time_hours?: number | null
+          resolved_at?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          source?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
           assigned_to?: string | null
+          category_id?: string | null
           created_at?: string
           customer_id?: string
           description?: string
+          due_date?: string | null
+          escalated_at?: string | null
+          first_response_at?: string | null
           id?: string
+          is_escalated?: boolean | null
           priority?: Database["public"]["Enums"]["ticket_priority"]
           project_id?: string | null
+          resolution_time_hours?: number | null
+          resolved_at?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          source?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
@@ -1520,6 +1782,13 @@ export type Database = {
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_categories"
             referencedColumns: ["id"]
           },
           {
