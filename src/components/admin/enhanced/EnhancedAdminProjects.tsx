@@ -90,7 +90,6 @@ const EnhancedAdminProjects = () => {
           customer:profiles!projects_customer_id_fkey(first_name, last_name, company_name),
           project_manager:profiles!projects_project_manager_id_fkey(first_name, last_name)
         `)
-        .single()
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -127,7 +126,7 @@ const EnhancedAdminProjects = () => {
         })
       );
 
-      setProjects(enhancedProjects);
+      setProjects(enhancedProjects as any);
     } catch (error) {
       console.error('Error fetching projects:', error);
       toast({

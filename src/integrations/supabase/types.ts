@@ -821,18 +821,70 @@ export type Database = {
           },
         ]
       }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          lead_id: string
+          scheduled_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          lead_id: string
+          scheduled_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          lead_id?: string
+          scheduled_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           company: string | null
           converted_to_customer: boolean | null
           created_at: string
           customer_id: string | null
+          deal_value: number | null
           email: string
+          expected_close_date: string | null
           id: string
+          last_activity_at: string | null
           lead_score: number | null
           name: string | null
           notes: string | null
           phone: string | null
+          pipeline_stage_id: string | null
+          probability: number | null
           source: string | null
           updated_at: string
         }
@@ -841,12 +893,17 @@ export type Database = {
           converted_to_customer?: boolean | null
           created_at?: string
           customer_id?: string | null
+          deal_value?: number | null
           email: string
+          expected_close_date?: string | null
           id?: string
+          last_activity_at?: string | null
           lead_score?: number | null
           name?: string | null
           notes?: string | null
           phone?: string | null
+          pipeline_stage_id?: string | null
+          probability?: number | null
           source?: string | null
           updated_at?: string
         }
@@ -855,12 +912,17 @@ export type Database = {
           converted_to_customer?: boolean | null
           created_at?: string
           customer_id?: string | null
+          deal_value?: number | null
           email?: string
+          expected_close_date?: string | null
           id?: string
+          last_activity_at?: string | null
           lead_score?: number | null
           name?: string | null
           notes?: string | null
           phone?: string | null
+          pipeline_stage_id?: string | null
+          probability?: number | null
           source?: string | null
           updated_at?: string
         }
@@ -870,6 +932,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_pipeline_stage_id_fkey"
+            columns: ["pipeline_stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
             referencedColumns: ["id"]
           },
         ]
@@ -970,6 +1039,39 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      pipeline_stages: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          stage_order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          stage_order: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          stage_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

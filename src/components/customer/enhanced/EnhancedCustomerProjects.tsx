@@ -116,7 +116,6 @@ const EnhancedCustomerProjects = () => {
           *,
           project_manager:profiles!projects_project_manager_id_fkey(first_name, last_name, avatar_url)
         `)
-        .single()
         .eq('customer_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -180,9 +179,9 @@ const EnhancedCustomerProjects = () => {
         })
       );
 
-      setProjects(enhancedProjects);
+      setProjects(enhancedProjects as any);
       if (enhancedProjects.length > 0 && !selectedProject) {
-        setSelectedProject(enhancedProjects[0]);
+        setSelectedProject(enhancedProjects[0] as any);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);

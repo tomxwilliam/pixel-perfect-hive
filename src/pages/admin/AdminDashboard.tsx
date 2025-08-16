@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminTickets } from '@/components/admin/AdminTickets';
+import { CRMDashboard } from '@/components/admin/CRMDashboard';
 import { AdminInvoices } from '@/components/admin/AdminInvoices';
 import { AdminQuotes } from '@/components/admin/AdminQuotes';
 import { AdminOverview } from '@/components/admin/AdminOverview';
@@ -47,10 +47,14 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs defaultValue="overview" className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11'}>
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-12'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="crm" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              CRM
             </MobileTabsTrigger>
             <MobileTabsTrigger value="customers" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
@@ -96,6 +100,10 @@ const AdminDashboard = () => {
 
           <MobileTabsContent value="overview">
             <AdminOverview />
+          </MobileTabsContent>
+
+          <MobileTabsContent value="crm">
+            <CRMDashboard />
           </MobileTabsContent>
 
           <MobileTabsContent value="customers">

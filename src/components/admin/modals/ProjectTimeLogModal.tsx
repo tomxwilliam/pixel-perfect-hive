@@ -113,7 +113,7 @@ const ProjectTimeLogModal = ({
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTimeLogs(data || []);
+      setTimeLogs(data as any || []);
     } catch (error) {
       console.error('Error fetching time logs:', error);
       toast({
@@ -137,7 +137,7 @@ const ProjectTimeLogModal = ({
         .is('left_at', null);
 
       if (error) throw error;
-      setTeamMembers(data || []);
+      setTeamMembers(data as any || []);
     } catch (error) {
       console.error('Error fetching team members:', error);
     }
