@@ -28,76 +28,62 @@ interface ProjectTimeLogModalProps {
 interface TimeLog {
   id: string;
   user_id: string;
-  task_id: string | null;
-  hours_logged: number;
-  description: string;
+  project_id: string;
+  task_id?: string;
   work_date: string;
+  hours_logged: number;
+  hourly_rate?: number;
+  total_cost?: number;
+  description?: string;
   is_billable: boolean;
   is_approved: boolean;
-  hourly_rate: number;
-  total_cost: number;
-  user: {
-    first_name: string;
-    last_name: string;
+  approved_by?: string;
+  approved_at?: string;
+  invoice_id?: string;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    first_name: string | null;
+    last_name: string | null;
   };
-  task: {
+  task?: {
     title: string;
-  } | null;
+  };
 }
 
 interface TeamMember {
   id: string;
   user_id: string;
-  hourly_rate: number;
+  project_id: string;
+  role: string;
+  hourly_rate?: number;
   can_log_time: boolean;
-  user: {
-    first_name: string;
-    last_name: string;
+  user?: {
+    first_name: string | null;
+    last_name: string | null;
   };
 }
 
-interface Task {
-  id: string;
-  title: string;
-  status: string;
-}
-
-const ProjectTimeLogModal = ({ 
-  open, 
-  onOpenChange, 
-  projectId, 
-  taskId, 
-  onTimeLogged 
-}: ProjectTimeLogModalProps) => {
+export const ProjectTimeLogModal: React.FC<ProjectTimeLogModalProps> = ({
+  open,
+  onOpenChange,
+  projectId,
+  taskId,
+  onTimeLogged
+}) => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
   const [timeLogs, setTimeLogs] = useState<TimeLog[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [editingLog, setEditingLog] = useState<string | null>(null);
-
-  // Form state
-  const [selectedUserId, setSelectedUserId] = useState<string>("");
-  const [selectedTaskId, setSelectedTaskId] = useState<string>(taskId || "");
-  const [hoursLogged, setHoursLogged] = useState<string>("");
-  const [description, setDescription] = useState("");
-  const [workDate, setWorkDate] = useState<Date>(new Date());
-  const [isBillable, setIsBillable] = useState(true);
-  const [hourlyRate, setHourlyRate] = useState<string>("");
-
-  useEffect(() => {
-    if (open) {
-      fetchData();
-    }
-  }, [open, projectId]);
-
-  const fetchData = async () => {
-    await Promise.all([
-      fetchTimeLogs(),
-      fetchTeamMembers(),
-      fetchTasks()
-    ]);
-  };
+  const [loading, setLoading] = useState(false);
+  const [showNewLogForm, setShowNewLogForm] = useState(false);
+  const [newLog, setNewLog] = useState({
+    work_date: new Date(),
+    hours_logged: '',
+    description: '',
+    is_billable: true,
+    task_id: taskId || '',
+    user_id: user?.id || ''
+  });
 
   const fetchTimeLogs = async () => {
     try {
@@ -143,83 +129,70 @@ const ProjectTimeLogModal = ({
     }
   };
 
-  const fetchTasks = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('project_tasks')
-        .select('id, title, status')
-        .eq('project_id', projectId)
-        .in('status', ['todo', 'in_progress', 'review'])
-        .order('title');
-
-      if (error) throw error;
-      setTasks(data || []);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
+  useEffect(() => {
+    if (open && projectId) {
+      fetchTimeLogs();
+      fetchTeamMembers();
     }
-  };
+  }, [open, projectId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedUserId || !hoursLogged || !workDate) {
+  const handleLogTime = async () => {
+    if (!newLog.hours_logged || !newLog.work_date) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Please fill in required fields",
         variant: "destructive"
       });
       return;
     }
 
-    setLoading(true);
     try {
-      const selectedMember = teamMembers.find(m => m.user_id === selectedUserId);
-      const rate = hourlyRate ? parseFloat(hourlyRate) : (selectedMember?.hourly_rate || 0);
-      const hours = parseFloat(hoursLogged);
-      const totalCost = isBillable ? hours * rate : 0;
+      setLoading(true);
 
-      const timeLogData = {
-        project_id: projectId,
-        task_id: selectedTaskId || null,
-        user_id: selectedUserId,
-        hours_logged: hours,
-        hourly_rate: rate,
-        total_cost: totalCost,
-        description,
-        work_date: format(workDate, 'yyyy-MM-dd'),
-        is_billable: isBillable
-      };
+      // Get hourly rate for the user
+      const selectedMember = teamMembers.find(m => m.user_id === newLog.user_id);
+      const hourlyRate = selectedMember?.hourly_rate || 0;
+      const hours = parseFloat(newLog.hours_logged);
+      const totalCost = newLog.is_billable ? hourlyRate * hours : 0;
 
-      if (editingLog) {
-        const { error } = await supabase
-          .from('project_time_logs')
-          .update(timeLogData)
-          .eq('id', editingLog);
-
-        if (error) throw error;
-        toast({
-          title: "Success",
-          description: "Time log updated successfully"
+      const { error } = await supabase
+        .from('project_time_logs')
+        .insert({
+          project_id: projectId,
+          task_id: newLog.task_id || null,
+          user_id: newLog.user_id,
+          work_date: format(newLog.work_date, 'yyyy-MM-dd'),
+          hours_logged: hours,
+          hourly_rate: hourlyRate,
+          total_cost: totalCost,
+          description: newLog.description,
+          is_billable: newLog.is_billable,
+          is_approved: false
         });
-      } else {
-        const { error } = await supabase
-          .from('project_time_logs')
-          .insert([timeLogData]);
 
-        if (error) throw error;
-        toast({
-          title: "Success",
-          description: "Time logged successfully"
-        });
-      }
+      if (error) throw error;
 
-      resetForm();
+      toast({
+        title: "Success",
+        description: "Time logged successfully",
+      });
+
+      setNewLog({
+        work_date: new Date(),
+        hours_logged: '',
+        description: '',
+        is_billable: true,
+        task_id: taskId || '',
+        user_id: user?.id || ''
+      });
+      setShowNewLogForm(false);
       fetchTimeLogs();
       onTimeLogged?.();
     } catch (error) {
-      console.error('Error saving time log:', error);
+      console.error('Error logging time:', error);
       toast({
         title: "Error",
-        description: "Failed to save time log",
+        description: "Failed to log time",
         variant: "destructive"
       });
     } finally {
@@ -227,304 +200,240 @@ const ProjectTimeLogModal = ({
     }
   };
 
-  const handleDelete = async (logId: string) => {
+  const handleApproveLog = async (logId: string) => {
     try {
       const { error } = await supabase
         .from('project_time_logs')
-        .delete()
+        .update({
+          is_approved: true,
+          approved_by: user?.id,
+          approved_at: new Date().toISOString()
+        })
         .eq('id', logId);
 
       if (error) throw error;
-      
+
       toast({
         title: "Success",
-        description: "Time log deleted successfully"
+        description: "Time log approved",
       });
-      
+
       fetchTimeLogs();
-      onTimeLogged?.();
     } catch (error) {
-      console.error('Error deleting time log:', error);
+      console.error('Error approving log:', error);
       toast({
         title: "Error",
-        description: "Failed to delete time log",
+        description: "Failed to approve time log",
         variant: "destructive"
       });
     }
   };
 
-  const handleEdit = (log: TimeLog) => {
-    setEditingLog(log.id);
-    setSelectedUserId(log.user_id);
-    setSelectedTaskId(log.task_id || "");
-    setHoursLogged(log.hours_logged.toString());
-    setDescription(log.description);
-    setWorkDate(new Date(log.work_date));
-    setIsBillable(log.is_billable);
-    setHourlyRate(log.hourly_rate.toString());
-  };
-
-  const resetForm = () => {
-    setEditingLog(null);
-    setSelectedUserId("");
-    setSelectedTaskId(taskId || "");
-    setHoursLogged("");
-    setDescription("");
-    setWorkDate(new Date());
-    setIsBillable(true);
-    setHourlyRate("");
-  };
-
-  const selectedMember = teamMembers.find(m => m.user_id === selectedUserId);
-  const calculatedRate = hourlyRate ? parseFloat(hourlyRate) : (selectedMember?.hourly_rate || 0);
-  const calculatedCost = isBillable && hoursLogged ? parseFloat(hoursLogged) * calculatedRate : 0;
-
   const totalHours = timeLogs.reduce((sum, log) => sum + log.hours_logged, 0);
-  const totalCost = timeLogs.reduce((sum, log) => sum + (log.is_billable ? log.total_cost : 0), 0);
+  const totalCost = timeLogs.reduce((sum, log) => sum + (log.total_cost || 0), 0);
+  const billableHours = timeLogs.filter(log => log.is_billable).reduce((sum, log) => sum + log.hours_logged, 0);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
-            Project Time Tracking
-          </DialogTitle>
+          <DialogTitle>Project Time Tracking</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Time Log Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                {editingLog ? 'Edit Time Log' : 'Log Time'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="user">Team Member *</Label>
-                  <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select team member" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teamMembers.map((member) => (
-                        <SelectItem key={member.user_id} value={member.user_id}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>
-                              {member.user.first_name} {member.user.last_name}
-                            </span>
-                            {member.hourly_rate && (
-                              <span className="text-muted-foreground ml-2">
-                                £{member.hourly_rate}/hr
-                              </span>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+        <div className="space-y-6">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-4 w-4 text-blue-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Hours</p>
+                    <p className="text-lg font-bold">{totalHours.toFixed(1)}</p>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-2">
-                  <Label htmlFor="task">Task (Optional)</Label>
-                  <Select value={selectedTaskId} onValueChange={setSelectedTaskId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select task (optional)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">No specific task</SelectItem>
-                      {tasks.map((task) => (
-                        <SelectItem key={task.id} value={task.id}>
-                          {task.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <DollarSign className="h-4 w-4 text-green-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Cost</p>
+                    <p className="text-lg font-bold">£{totalCost.toFixed(2)}</p>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="grid grid-cols-2 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <User className="h-4 w-4 text-purple-600" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Billable Hours</p>
+                    <p className="text-lg font-bold">{billableHours.toFixed(1)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* New Time Log Form */}
+          {showNewLogForm ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Log New Time Entry</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="hours">Hours Logged *</Label>
+                    <Label>Team Member</Label>
+                    <Select value={newLog.user_id} onValueChange={(value) => setNewLog({...newLog, user_id: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select team member" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teamMembers.map(member => (
+                          <SelectItem key={member.user_id} value={member.user_id}>
+                            {`${member.user?.first_name || ''} ${member.user?.last_name || ''}`.trim()} ({member.role})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Work Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start text-left font-normal">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {format(newLog.work_date, 'PPP')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newLog.work_date}
+                          onSelect={(date) => date && setNewLog({...newLog, work_date: date})}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Hours Worked</Label>
                     <Input
-                      id="hours"
                       type="number"
                       step="0.25"
-                      min="0.25"
-                      max="24"
-                      value={hoursLogged}
-                      onChange={(e) => setHoursLogged(e.target.value)}
                       placeholder="8.5"
+                      value={newLog.hours_logged}
+                      onChange={(e) => setNewLog({...newLog, hours_logged: e.target.value})}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="rate">Hourly Rate (£)</Label>
-                    <Input
-                      id="rate"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={hourlyRate}
-                      onChange={(e) => setHourlyRate(e.target.value)}
-                      placeholder={selectedMember?.hourly_rate?.toString() || "0"}
+                  <div className="flex items-center space-x-2 pt-6">
+                    <Switch
+                      id="billable"
+                      checked={newLog.is_billable}
+                      onCheckedChange={(checked) => setNewLog({...newLog, is_billable: checked})}
                     />
+                    <Label htmlFor="billable">Billable Time</Label>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="workDate">Work Date *</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !workDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {workDate ? format(workDate, "PPP") : "Pick a date"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={workDate}
-                        onSelect={(date) => date && setWorkDate(date)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label>Description</Label>
                   <Textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="What work was performed?"
-                    rows={3}
+                    placeholder="Describe the work performed..."
+                    value={newLog.description}
+                    onChange={(e) => setNewLog({...newLog, description: e.target.value})}
                   />
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="billable"
-                      checked={isBillable}
-                      onCheckedChange={setIsBillable}
-                    />
-                    <Label htmlFor="billable">Billable</Label>
-                  </div>
-                  {hoursLogged && calculatedRate > 0 && (
-                    <div className="text-sm text-muted-foreground">
-                      Cost: £{calculatedCost.toFixed(2)}
-                    </div>
-                  )}
-                </div>
-
                 <div className="flex gap-2">
-                  {editingLog && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={resetForm}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                  <Button type="submit" disabled={loading} className="flex-1">
-                    {loading ? "Saving..." : editingLog ? "Update" : "Log Time"}
+                  <Button onClick={handleLogTime} disabled={loading}>
+                    {loading ? 'Logging...' : 'Log Time'}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowNewLogForm(false)}>
+                    Cancel
                   </Button>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <Button onClick={() => setShowNewLogForm(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Log New Time
+            </Button>
+          )}
 
-          {/* Time Logs List */}
+          {/* Time Logs Table */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center justify-between">
-                Recent Time Logs
-                <div className="text-sm text-muted-foreground">
-                  Total: {totalHours}h | £{totalCost.toFixed(2)}
-                </div>
-              </CardTitle>
+              <CardTitle>Time Log History</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {timeLogs.map((log) => (
-                  <div key={log.id} className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Badge variant="secondary">
-                            {log.hours_logged}h
-                          </Badge>
-                          <span className="text-sm font-medium">
-                            {log.user.first_name} {log.user.last_name}
+              <div className="space-y-3">
+                {timeLogs.length > 0 ? (
+                  timeLogs.map(log => (
+                    <div key={log.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium">
+                            {`${log.user?.first_name || ''} ${log.user?.last_name || ''}`.trim()}
                           </span>
-                          {log.is_billable && (
+                          <span className="text-sm text-muted-foreground">
+                            {format(new Date(log.work_date), 'MMM dd, yyyy')}
+                          </span>
+                          {log.task?.title && (
                             <Badge variant="outline" className="text-xs">
-                              £{log.total_cost.toFixed(2)}
+                              {log.task.title}
                             </Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground mb-1">
-                          {format(new Date(log.work_date), 'MMM dd, yyyy')}
-                        </p>
-                        {log.task && (
-                          <p className="text-sm text-muted-foreground mb-1">
-                            Task: {log.task.title}
-                          </p>
-                        )}
-                        {log.description && (
-                          <p className="text-sm">{log.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-2">
-                          {log.is_billable ? (
-                            <Badge variant="default" className="text-xs">Billable</Badge>
-                          ) : (
-                            <Badge variant="secondary" className="text-xs">Non-billable</Badge>
+                        <p className="text-sm text-muted-foreground">{log.description}</p>
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <div className="font-medium">{log.hours_logged}h</div>
+                          {log.is_billable && (
+                            <div className="text-sm text-green-600">£{(log.total_cost || 0).toFixed(2)}</div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          {log.is_billable && (
+                            <Badge variant="secondary" className="text-xs">Billable</Badge>
                           )}
                           {log.is_approved ? (
-                            <Badge variant="default" className="text-xs bg-green-100 text-green-800">
-                              Approved
-                            </Badge>
+                            <Badge variant="default" className="text-xs bg-green-600">Approved</Badge>
                           ) : (
-                            <Badge variant="outline" className="text-xs">Pending</Badge>
+                            <div className="flex gap-1">
+                              <Badge variant="outline" className="text-xs">Pending</Badge>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleApproveLog(log.id)}
+                                className="h-6 px-2"
+                              >
+                                Approve
+                              </Button>
+                            </div>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 ml-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(log)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDelete(log.id)}
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
                     </div>
-                  </div>
-                ))}
-                {timeLogs.length === 0 && (
-                  <div className="text-center py-8">
-                    <Clock className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">No time logs yet</p>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No time logs found for this project
                   </div>
                 )}
               </div>
@@ -535,5 +444,3 @@ const ProjectTimeLogModal = ({
     </Dialog>
   );
 };
-
-export default ProjectTimeLogModal;
