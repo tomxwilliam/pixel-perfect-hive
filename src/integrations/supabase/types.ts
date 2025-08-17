@@ -498,6 +498,42 @@ export type Database = {
           },
         ]
       }
+      email_templates: {
+        Row: {
+          body_html: string
+          body_text: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          subject: string
+          template_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          body_html: string
+          body_text?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          subject: string
+          template_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          body_html?: string
+          body_text?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          subject?: string
+          template_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       file_uploads: {
         Row: {
           entity_id: string | null
@@ -817,6 +853,62 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_base_articles: {
+        Row: {
+          category_id: string | null
+          content: string
+          created_at: string | null
+          created_by: string
+          helpful_count: number | null
+          id: string
+          is_published: boolean | null
+          not_helpful_count: number | null
+          search_keywords: string[] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          category_id?: string | null
+          content: string
+          created_at?: string | null
+          created_by: string
+          helpful_count?: number | null
+          id?: string
+          is_published?: boolean | null
+          not_helpful_count?: number | null
+          search_keywords?: string[] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          category_id?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          helpful_count?: number | null
+          id?: string
+          is_published?: boolean | null
+          not_helpful_count?: number | null
+          search_keywords?: string[] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_base_articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -2122,6 +2214,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sla_policies: {
+        Row: {
+          created_at: string | null
+          first_response_hours: number
+          id: string
+          is_active: boolean | null
+          name: string
+          priority: string
+          resolution_hours: number
+        }
+        Insert: {
+          created_at?: string | null
+          first_response_hours: number
+          id?: string
+          is_active?: boolean | null
+          name: string
+          priority: string
+          resolution_hours: number
+        }
+        Update: {
+          created_at?: string | null
+          first_response_hours?: number
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          priority?: string
+          resolution_hours?: number
+        }
+        Relationships: []
+      }
       social_accounts: {
         Row: {
           access_token: string
@@ -2475,6 +2597,38 @@ export type Database = {
           },
         ]
       }
+      ticket_surveys: {
+        Row: {
+          feedback: string | null
+          id: string
+          rating: number | null
+          submitted_at: string | null
+          ticket_id: string | null
+        }
+        Insert: {
+          feedback?: string | null
+          id?: string
+          rating?: number | null
+          submitted_at?: string | null
+          ticket_id?: string | null
+        }
+        Update: {
+          feedback?: string | null
+          id?: string
+          rating?: number | null
+          submitted_at?: string | null
+          ticket_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_surveys_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ticket_templates: {
         Row: {
           category_id: string | null
@@ -2613,6 +2767,7 @@ export type Database = {
           source: string | null
           status: Database["public"]["Enums"]["ticket_status"]
           tags: string[] | null
+          ticket_number: number | null
           title: string
           updated_at: string
         }
@@ -2636,6 +2791,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
           tags?: string[] | null
+          ticket_number?: number | null
           title: string
           updated_at?: string
         }
@@ -2659,6 +2815,7 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["ticket_status"]
           tags?: string[] | null
+          ticket_number?: number | null
           title?: string
           updated_at?: string
         }
