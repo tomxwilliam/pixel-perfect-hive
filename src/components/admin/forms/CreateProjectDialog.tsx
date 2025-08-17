@@ -96,7 +96,25 @@ export const CreateProjectDialog = ({ onProjectCreated }: CreateProjectDialogPro
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const { error } = await supabase
+      // Get customer details for lead creation
+      const { data: customer } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', values.customer_id)
+        .single();
+
+      // Get the "Qualified" or "Project Created" pipeline stage
+      const { data: projectStage } = await supabase
+        .from('pipeline_stages')
+        .select('id')
+        .eq('is_active', true)
+        .ilike('name', '%qualified%')
+        .order('stage_order')
+        .limit(1)
+        .maybeSingle();
+
+      // Create project
+      const { data: projectData, error: projectError } = await supabase
         .from('projects')
         .insert({
           title: values.title,
@@ -106,9 +124,29 @@ export const CreateProjectDialog = ({ onProjectCreated }: CreateProjectDialogPro
           status: values.status as any,
           budget: values.budget ? parseFloat(values.budget) : null,
           estimated_completion_date: values.estimated_completion_date?.toISOString().split('T')[0] || null,
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (projectError) throw projectError;
+
+      // Create lead for this project if customer exists
+      if (customer && projectData) {
+        await supabase
+          .from('leads')
+          .insert({
+            name: `${customer.first_name} ${customer.last_name}`,
+            email: customer.email,
+            company: null,
+            source: 'project_creation',
+            pipeline_stage_id: projectStage?.id || null,
+            deal_value: values.budget ? parseFloat(values.budget) : 0,
+            probability: 75, // High probability since project is already created
+            notes: `Lead created from project: ${values.title}`,
+            converted_to_customer: true,
+            customer_id: values.customer_id
+          });
+      }
 
       toast.success('Project created successfully');
       setOpen(false);

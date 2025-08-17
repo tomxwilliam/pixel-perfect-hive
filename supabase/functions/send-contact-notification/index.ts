@@ -33,6 +33,15 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Get the first pipeline stage (typically "New Lead")
+    const { data: firstStage } = await supabase
+      .from('pipeline_stages')
+      .select('id')
+      .eq('is_active', true)
+      .order('stage_order')
+      .limit(1)
+      .single();
+
     // Create a lead entry first
     const { data: leadData, error: leadError } = await supabase
       .from('leads')
@@ -42,6 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
         phone: phoneNumber,
         company: null,
         source: 'contact_form',
+        pipeline_stage_id: firstStage?.id || null,
         notes: `Contact form submission - Category: ${category}, Subject: ${subject}, Message: ${message}`
       })
       .select()
