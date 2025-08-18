@@ -190,8 +190,8 @@ export const SupportTicketModal: React.FC<SupportTicketModalProps> = ({
         .from('ticket_internal_notes')
         .insert({
           ticket_id: ticket.id,
-          user_id: user!.id,
-          note: internalNote
+          created_by: user!.id,
+          content: internalNote
         });
 
       if (error) throw error;

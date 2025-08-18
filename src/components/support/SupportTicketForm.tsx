@@ -14,8 +14,8 @@ import { Tables } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 
 type Category = Tables<'ticket_categories'>;
-type Project = Tables<'projects'>;
-type KnowledgeArticle = Tables<'knowledge_base_articles'>;
+type Project = { id: string; title: string; };
+type KnowledgeArticle = { id: string; title: string; content: string; };
 
 interface UploadedFile {
   id: string;

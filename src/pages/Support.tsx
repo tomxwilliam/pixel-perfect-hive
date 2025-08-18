@@ -1,6 +1,6 @@
 import React from 'react';
 import { SupportDashboard } from '@/components/support/SupportDashboard';
-import { Seo } from '@/components/Seo';
+import Seo from '@/components/Seo';
 
 const Support = () => {
   return (
