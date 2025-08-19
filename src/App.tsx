@@ -26,6 +26,7 @@ import GamesLanding from "./pages/landing/GamesLanding";
 import AppsLanding from "./pages/landing/AppsLanding";
 import WebLanding from "./pages/landing/WebLanding";
 import AILanding from "./pages/landing/AILanding";
+import ProjectManagement from "./pages/ProjectManagement";
 
 
 const queryClient = new QueryClient();
@@ -74,6 +75,11 @@ const App = () => (
               <Route path="/dashboard/chat" element={
                 <ProtectedRoute>
                   <AIChat />
+                </ProtectedRoute>
+              } />
+              <Route path="/projects" element={
+                <ProtectedRoute>
+                  <ProjectManagement />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

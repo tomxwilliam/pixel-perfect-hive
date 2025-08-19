@@ -18,7 +18,14 @@ import {
   Search
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Seo from '@/components/Seo';
+import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
+import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
+import GanttChart from '@/components/project/GanttChart';
+import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
+import NotificationCenter from '@/components/project/NotificationCenter';
+import TeamManagement from '@/components/project/TeamManagement';
 
 // Mock data for demonstration
 const mockProjects = [
@@ -142,6 +149,67 @@ const getTaskStatusColor = (status: string) => {
 const ProjectManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [showCreateProject, setShowCreateProject] = useState(false);
+  const [showCreateTask, setShowCreateTask] = useState(false);
+
+  // Mock analytics data
+  const analyticsData = {
+    projects: {
+      total: 12,
+      active: 8,
+      completed: 3,
+      overdue: 1,
+      onTrack: 7
+    },
+    tasks: {
+      total: 45,
+      completed: 28,
+      inProgress: 12,
+      todo: 5,
+      overdue: 3
+    },
+    time: {
+      totalHours: 1240,
+      billableHours: 980,
+      averageHoursPerProject: 35,
+      efficiency: 87
+    },
+    budget: {
+      totalBudget: 125000,
+      spent: 78000,
+      remaining: 47000,
+      roi: 15.2
+    },
+    trends: {
+      projectsOverTime: [
+        { month: 'Jan', projects: 8, tasks: 32 },
+        { month: 'Feb', projects: 10, tasks: 38 },
+        { month: 'Mar', projects: 12, tasks: 45 },
+        { month: 'Apr', projects: 11, tasks: 42 },
+        { month: 'May', projects: 12, tasks: 48 },
+        { month: 'Jun', projects: 14, tasks: 52 }
+      ],
+      timeUtilization: [
+        { week: 'W1', hours: 180, efficiency: 85 },
+        { week: 'W2', hours: 195, efficiency: 88 },
+        { week: 'W3', hours: 210, efficiency: 92 },
+        { week: 'W4', hours: 175, efficiency: 82 }
+      ]
+    },
+    performance: {
+      teamProductivity: [
+        { name: 'John', hours: 45, tasks: 12 },
+        { name: 'Sarah', hours: 38, tasks: 8 },
+        { name: 'Mike', hours: 42, tasks: 10 },
+        { name: 'Emma', hours: 35, tasks: 7 }
+      ],
+      projectStatus: [
+        { name: 'Active', value: 8, color: '#3b82f6' },
+        { name: 'Completed', value: 3, color: '#10b981' },
+        { name: 'On Hold', value: 1, color: '#f59e0b' }
+      ]
+    }
+  };
   
   const filteredProjects = mockProjects.filter(project =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -168,10 +236,45 @@ const ProjectManagement = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Project
-            </Button>
+            <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Project
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create New Project</DialogTitle>
+                </DialogHeader>
+                <CreateProjectForm 
+                  onSuccess={() => setShowCreateProject(false)}
+                  onCancel={() => setShowCreateProject(false)}
+                />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={showCreateTask} onOpenChange={setShowCreateTask}>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Task
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create New Task</DialogTitle>
+                </DialogHeader>
+                <CreateTaskForm 
+                  availableProjects={[
+                    { id: '1', title: 'E-commerce Website Redesign' },
+                    { id: '2', title: 'Mobile App Development' },
+                    { id: '3', title: 'API Integration Project' }
+                  ]}
+                  onSuccess={() => setShowCreateTask(false)}
+                  onCancel={() => setShowCreateTask(false)}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -257,12 +360,14 @@ const ProjectManagement = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7 md:grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="kanban">Kanban</TabsTrigger>
             <TabsTrigger value="gantt">Gantt</TabsTrigger>
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="team">Team</TabsTrigger>
+            <TabsTrigger value="notifications">Alerts</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -412,18 +517,34 @@ const ProjectManagement = () => {
           </TabsContent>
 
           <TabsContent value="gantt">
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Gantt Chart</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Visualize project timelines, dependencies, and critical paths
-                  </p>
-                  <Button>Open Gantt Chart</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <GanttChart 
+              projects={[
+                {
+                  id: '1',
+                  title: 'E-commerce Website Redesign',
+                  start_date: '2024-11-01',
+                  end_date: '2024-12-15',
+                  tasks: mockTasks.filter(t => t.projectId === '1').map(t => ({
+                    ...t,
+                    start_date: '2024-11-05',
+                    due_date: t.dueDate,
+                    progress: t.status === 'completed' ? 100 : t.status === 'in_progress' ? 60 : 0
+                  }))
+                },
+                {
+                  id: '2', 
+                  title: 'Mobile App Development',
+                  start_date: '2024-11-15',
+                  end_date: '2025-02-28',
+                  tasks: mockTasks.filter(t => t.projectId === '2').map(t => ({
+                    ...t,
+                    start_date: '2024-11-20',
+                    due_date: t.dueDate,
+                    progress: t.status === 'completed' ? 100 : t.status === 'review' ? 80 : 25
+                  }))
+                }
+              ]}
+            />
           </TabsContent>
 
           <TabsContent value="calendar">
@@ -441,19 +562,43 @@ const ProjectManagement = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="reports">
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <TrendingUp className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Analytics & Reports</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Generate insights on project progress, team productivity, and timelines
-                  </p>
-                  <Button>View Reports</Button>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="analytics">
+            <AnalyticsDashboard data={analyticsData} />
+          </TabsContent>
+
+          <TabsContent value="team">
+            <TeamManagement />
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <NotificationCenter />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notification Settings</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Project Updates</span>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Task Assignments</span>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Deadline Reminders</span>
+                      <input type="checkbox" defaultChecked className="rounded" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Team Activity</span>
+                      <input type="checkbox" className="rounded" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

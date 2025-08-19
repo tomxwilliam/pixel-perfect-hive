@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
-import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe, Bot } from 'lucide-react';
+import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe, Bot, FolderKanban } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -137,6 +137,12 @@ const Navigation = () => {
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/projects" className="flex items-center">
+                      <FolderKanban className="mr-2 h-4 w-4" />
+                      Project Management
+                    </Link>
+                  </DropdownMenuItem>
                   {profile?.role === 'admin' && (
                     <DropdownMenuItem asChild>
                       <Link to="/admin" className="flex items-center">
@@ -225,6 +231,14 @@ const Navigation = () => {
                 >
                   <User className="inline-block w-4 h-4 mr-2" />
                   Dashboard
+                </Link>
+                <Link
+                  to="/projects"
+                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <FolderKanban className="inline-block w-4 h-4 mr-2" />
+                  Project Management
                 </Link>
                 {profile?.role === 'admin' && (
                   <Link
