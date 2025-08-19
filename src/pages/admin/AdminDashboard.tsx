@@ -107,12 +107,6 @@ const AdminDashboard = () => {
               <Server className="h-4 w-4" />
               Hosting
             </MobileTabsTrigger>
-            {user?.email?.endsWith('@404codelab.com') && (
-              <MobileTabsTrigger value="settings" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                Settings
-              </MobileTabsTrigger>
-            )}
           </MobileTabsList>
 
           <MobileTabsContent value="overview">
@@ -187,13 +181,6 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
           
-          {user?.email?.endsWith('@404codelab.com') && (
-            <MobileTabsContent value="settings">
-              <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-                <AdminSettings />
-              </React.Suspense>
-            </MobileTabsContent>
-          )}
         </MobileTabs>
       </div>
       <Footer />
