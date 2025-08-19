@@ -170,7 +170,8 @@ const Navigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsOpen(!isOpen)}
-                aria-expanded="false"
+                aria-expanded={isOpen}
+                className="min-h-[44px] min-w-[44px] p-2"
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -182,21 +183,21 @@ const Navigation = () => {
       {/* Mobile Navigation */}
       {isOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background border-b border-border">
+          <div className="px-4 pt-4 pb-6 space-y-2 bg-background border-b border-border shadow-lg">
             <Link
               to="/"
-              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
               onClick={() => setIsOpen(false)}
             >
-              <Home className="inline-block w-4 h-4 mr-2" />
+              <Home className="inline-block w-5 h-5 mr-3" />
               Home
             </Link>
             <Link
               to="/about"
-              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
               onClick={() => setIsOpen(false)}
             >
-              <Info className="inline-block w-4 h-4 mr-2" />
+              <Info className="inline-block w-5 h-5 mr-3" />
               About
             </Link>
             
@@ -205,59 +206,61 @@ const Navigation = () => {
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium pl-6"
+                className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center ml-4"
                 onClick={() => setIsOpen(false)}
               >
-                <link.icon className="inline-block w-4 h-4 mr-2" />
+                <link.icon className="inline-block w-5 h-5 mr-3" />
                 {link.label}
               </Link>
             ))}
             
             <Link
               to="/contact"
-              className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+              className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
               onClick={() => setIsOpen(false)}
             >
-              <Mail className="inline-block w-4 h-4 mr-2" />
+              <Mail className="inline-block w-5 h-5 mr-3" />
               Contact
             </Link>
             
             {user && (
               <>
+                <div className="border-t border-border my-2"></div>
                 <Link
                   to="/dashboard"
-                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                  className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
                   onClick={() => setIsOpen(false)}
                 >
-                  <User className="inline-block w-4 h-4 mr-2" />
+                  <User className="inline-block w-5 h-5 mr-3" />
                   Dashboard
                 </Link>
                 <Link
                   to="/projects"
-                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                  className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
                   onClick={() => setIsOpen(false)}
                 >
-                  <FolderKanban className="inline-block w-4 h-4 mr-2" />
+                  <FolderKanban className="inline-block w-5 h-5 mr-3" />
                   Project Management
                 </Link>
                 {profile?.role === 'admin' && (
                   <Link
                     to="/admin"
-                    className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium"
+                    className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Settings className="inline-block w-4 h-4 mr-2" />
+                    <Settings className="inline-block w-5 h-5 mr-3" />
                     Admin Panel
                   </Link>
                 )}
+                <div className="border-t border-border my-2"></div>
                 <button
                   onClick={() => {
                     handleSignOut();
                     setIsOpen(false);
                   }}
-                  className="text-foreground hover:text-primary block px-3 py-2 text-base font-medium w-full text-left"
+                  className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center w-full text-left"
                 >
-                  <LogOut className="inline-block w-4 h-4 mr-2" />
+                  <LogOut className="inline-block w-5 h-5 mr-3" />
                   Sign Out
                 </button>
               </>

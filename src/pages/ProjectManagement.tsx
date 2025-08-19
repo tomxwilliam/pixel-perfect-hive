@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
 import { 
   Calendar, 
   KanbanSquare, 
@@ -189,19 +189,19 @@ const ProjectManagement = () => {
       <Navigation />
 
       {/* Main Content */}
-      <main className="container mx-auto p-6 space-y-6 pt-24">
+      <main className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6 pt-20 md:pt-24">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 md:mb-8">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Project Overview</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight">Project Overview</h2>
+            <p className="text-sm md:text-base text-muted-foreground">
               Monitor and manage all your active projects
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Dialog open={showCreateProject} onOpenChange={setShowCreateProject}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="w-full sm:w-auto min-h-[44px]">
                   <Plus className="h-4 w-4 mr-2" />
                   New Project
                 </Button>
@@ -218,7 +218,7 @@ const ProjectManagement = () => {
             </Dialog>
             <Dialog open={showCreateTask} onOpenChange={setShowCreateTask}>
               <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
                   <Plus className="h-4 w-4 mr-2" />
                   New Task
                 </Button>
@@ -318,20 +318,41 @@ const ProjectManagement = () => {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 md:grid-cols-7">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="kanban">Kanban</TabsTrigger>
-            <TabsTrigger value="gantt">Gantt</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="team">Team</TabsTrigger>
-            <TabsTrigger value="notifications">Alerts</TabsTrigger>
-          </TabsList>
+        <MobileTabs defaultValue="overview" className="w-full">
+          <MobileTabsList className="grid w-full grid-cols-4 md:grid-cols-7">
+            <MobileTabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Overview</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="kanban" className="flex items-center gap-2">
+              <KanbanSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Kanban</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="gantt" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              <span className="hidden sm:inline">Gantt</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="hidden sm:inline">Calendar</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="analytics" className="flex items-center gap-2 hidden md:flex">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="team" className="flex items-center gap-2 hidden md:flex">
+              <Users className="h-4 w-4" />
+              Team
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="notifications" className="flex items-center gap-2 hidden md:flex">
+              <AlertCircle className="h-4 w-4" />
+              Alerts
+            </MobileTabsTrigger>
+          </MobileTabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <MobileTabsContent value="overview" className="space-y-6">
             {/* Projects Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
               {filteredProjects.map((project) => (
                 <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
                   <CardHeader className="pb-3">
@@ -399,7 +420,7 @@ const ProjectManagement = () => {
             </div>
 
             {/* Recent Tasks and Upcoming Deadlines */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
               {/* Recent Tasks */}
               <Card>
                 <CardHeader>
@@ -461,15 +482,15 @@ const ProjectManagement = () => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="kanban" className="space-y-6">
+          <MobileTabsContent value="kanban" className="space-y-6">
             <div className="h-[800px]">
               <KanbanBoard />
             </div>
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="gantt" className="space-y-6">
+          <MobileTabsContent value="gantt" className="space-y-6">
             <div className="h-[800px]">
               <InteractiveGanttChart 
                 projects={projects.map(p => ({
@@ -496,9 +517,9 @@ const ProjectManagement = () => {
                 }))}
               />
             </div>
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="calendar">
+          <MobileTabsContent value="calendar">
             {showCalendar ? (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -523,9 +544,9 @@ const ProjectManagement = () => {
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="analytics">
+          <MobileTabsContent value="analytics">
             {analyticsLoading ? (
               <Card>
                 <CardContent className="p-6">
@@ -547,13 +568,13 @@ const ProjectManagement = () => {
                 </CardContent>
               </Card>
             )}
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="team">
+          <MobileTabsContent value="team">
             <TeamManagement />
-          </TabsContent>
+          </MobileTabsContent>
 
-          <TabsContent value="notifications">
+          <MobileTabsContent value="notifications">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <NotificationCenter />
               <Card>
@@ -582,8 +603,8 @@ const ProjectManagement = () => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-        </Tabs>
+          </MobileTabsContent>
+        </MobileTabs>
       </main>
 
       <Footer />

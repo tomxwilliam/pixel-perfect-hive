@@ -13,30 +13,52 @@ interface MobileTabsListProps extends React.ComponentPropsWithoutRef<typeof Tabs
   children: React.ReactNode
 }
 
+interface MobileTabsListProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> {
+  children: React.ReactNode
+  onMobileClose?: () => void
+}
+
 const MobileTabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   MobileTabsListProps
->(({ className, children, ...props }, ref) => {
+>(({ className, children, onMobileClose, ...props }, ref) => {
   const isMobile = useIsMobile()
   const [isOpen, setIsOpen] = React.useState(false)
+  
+  const handleClose = () => {
+    setIsOpen(false)
+    if (onMobileClose) {
+      onMobileClose()
+    }
+  }
   
   if (isMobile) {
     return (
       <div className="flex items-center justify-between p-4 border-b">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <Sheet open={isOpen} onOpenChange={handleClose}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2 min-h-[44px] px-4">
               <Menu className="h-4 w-4" />
-              Navigation
+              <span className="font-medium">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80">
+          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
+            <div className="p-6 border-b">
+              <h2 className="text-lg font-semibold">Navigation</h2>
+            </div>
             <TabsPrimitive.List
               ref={ref}
-              className="flex flex-col space-y-2 mt-6"
+              className="flex flex-col space-y-1 p-4"
               {...props}
             >
-              {children}
+              {React.Children.map(children, (child) => {
+                if (React.isValidElement(child)) {
+                  return React.cloneElement(child, {
+                    onMobileClick: handleClose
+                  } as any)
+                }
+                return child
+              })}
             </TabsPrimitive.List>
           </SheetContent>
         </Sheet>
@@ -59,24 +81,23 @@ const MobileTabsList = React.forwardRef<
 })
 MobileTabsList.displayName = "MobileTabsList"
 
+interface MobileTabsTriggerProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> {
+  onMobileClick?: () => void
+}
+
 const MobileTabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, children, onClick, ...props }, ref) => {
+  MobileTabsTriggerProps
+>(({ className, children, onClick, onMobileClick, ...props }, ref) => {
   const isMobile = useIsMobile()
-  const [, setIsOpen] = React.useState(false)
   
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(event)
     }
     // Close the sheet when a tab is selected on mobile
-    if (isMobile) {
-      // Find the closest Sheet component and close it
-      const sheetTrigger = document.querySelector('[data-state="open"]')
-      if (sheetTrigger) {
-        setIsOpen(false)
-      }
+    if (isMobile && onMobileClick) {
+      onMobileClick()
     }
   }
   
@@ -85,7 +106,7 @@ const MobileTabsTrigger = React.forwardRef<
       <TabsPrimitive.Trigger
         ref={ref}
         className={cn(
-          "flex w-full items-center justify-start gap-3 rounded-md px-3 py-2 text-sm font-medium ring-offset-background transition-all hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+          "flex w-full items-center justify-start gap-3 rounded-lg px-4 py-3 text-sm font-medium ring-offset-background transition-all hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm min-h-[44px]",
           className
         )}
         onClick={handleClick}
