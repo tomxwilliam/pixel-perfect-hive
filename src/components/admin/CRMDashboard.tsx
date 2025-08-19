@@ -8,6 +8,7 @@ import { Users, TrendingUp, Calendar, Activity, DollarSign, Target, Phone, Mail 
 import { useToast } from '@/hooks/use-toast';
 import { CRMPipeline } from './CRMPipeline';
 import { AdminCustomers } from './AdminCustomers';
+import { CRMAnalytics } from './analytics/CRMAnalytics';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CRMStats {
@@ -306,25 +307,9 @@ export const CRMDashboard = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>CRM Analytics</CardTitle>
-              <CardDescription>Detailed insights and reports</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <Activity className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Analytics Coming Soon</h3>
-                <p className="text-muted-foreground mb-4">
-                  Advanced analytics and reporting features will be available in the next update.
-                </p>
-                <Button variant="outline">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  View Basic Stats
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+            <CRMAnalytics />
+          </React.Suspense>
         </TabsContent>
       </Tabs>
     </div>
