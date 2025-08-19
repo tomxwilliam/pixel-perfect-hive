@@ -11,6 +11,7 @@ import { Plus, Phone, Mail, DollarSign, Calendar, Activity, TrendingUp } from 'l
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
+import { LeadConversion } from './LeadConversion';
 
 type Lead = Tables<'leads'>;
 type PipelineStage = Tables<'pipeline_stages'>;
@@ -497,9 +498,14 @@ export const CRMPipeline = () => {
                       <Badge variant="outline" className="text-xs">
                         Score: {lead.lead_score || 0}
                       </Badge>
-                    </div>
-                  </div>
-                </Card>
+                     </div>
+                     {!lead.converted_to_customer && (
+                       <div className="mt-2">
+                         <LeadConversion lead={lead} onConversionComplete={fetchData} />
+                       </div>
+                     )}
+                   </div>
+                 </Card>
               ))}
             </div>
           </div>

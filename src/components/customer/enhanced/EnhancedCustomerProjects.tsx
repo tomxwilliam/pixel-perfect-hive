@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { ProjectRequestForm } from '../ProjectRequestForm';
 
 interface EnhancedProject {
   id: string;
@@ -282,10 +283,7 @@ const EnhancedCustomerProjects = () => {
             <p className="text-muted-foreground mb-4">
               You don't have any projects assigned to you yet.
             </p>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Request New Project
-            </Button>
+            <ProjectRequestForm onProjectRequested={fetchProjects} />
           </CardContent>
         </Card>
       </div>

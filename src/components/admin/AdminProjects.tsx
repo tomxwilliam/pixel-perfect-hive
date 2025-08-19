@@ -14,6 +14,7 @@ import { EnhancedCreateProjectDialog } from './forms/EnhancedCreateProjectDialog
 import { ProjectEditModal } from './modals/ProjectEditModal';
 import { ConfirmDeleteDialog } from '@/components/ui/confirm-delete-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ProjectApprovalDashboard } from './ProjectApprovalDashboard';
 import { useFileUpload } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
@@ -350,7 +351,10 @@ export const AdminProjects = () => {
   }
 
   return (
-    <Card>
+    <div className="space-y-6">
+      <ProjectApprovalDashboard />
+      
+      <Card>
       <CardHeader>
         <CardTitle>Project Management</CardTitle>
         <CardDescription>
@@ -569,6 +573,7 @@ export const AdminProjects = () => {
         description={`Are you sure you want to delete the project "${projectToDelete?.title}"?`}
         warningText="This will also delete all associated files and tickets. This action cannot be undone."
       />
-    </Card>
+      </Card>
+    </div>
   );
 };

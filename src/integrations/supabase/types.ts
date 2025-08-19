@@ -2071,6 +2071,11 @@ export type Database = {
         Row: {
           actual_completion_date: string | null
           actual_start_date: string | null
+          approval_notes: string | null
+          approval_requested_at: string | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
           budget: number | null
           client_visible: boolean | null
           completion_percentage: number | null
@@ -2100,6 +2105,11 @@ export type Database = {
         Insert: {
           actual_completion_date?: string | null
           actual_start_date?: string | null
+          approval_notes?: string | null
+          approval_requested_at?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           budget?: number | null
           client_visible?: boolean | null
           completion_percentage?: number | null
@@ -2129,6 +2139,11 @@ export type Database = {
         Update: {
           actual_completion_date?: string | null
           actual_start_date?: string | null
+          approval_notes?: string | null
+          approval_requested_at?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           budget?: number | null
           client_visible?: boolean | null
           completion_percentage?: number | null
@@ -3139,6 +3154,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_project: {
+        Args: {
+          approval_decision: string
+          approval_notes_param?: string
+          project_id_param: string
+        }
+        Returns: boolean
+      }
       calculate_project_completion: {
         Args: { project_id_param: string }
         Returns: number
@@ -3146,6 +3169,16 @@ export type Database = {
       calculate_project_completion_enhanced: {
         Args: { project_id_param: string }
         Returns: number
+      }
+      convert_lead_to_project: {
+        Args: {
+          estimated_budget?: number
+          lead_id_param: string
+          project_description?: string
+          project_title: string
+          project_type?: string
+        }
+        Returns: string
       }
       is_admin_user: {
         Args: Record<PropertyKey, never>
