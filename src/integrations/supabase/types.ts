@@ -3143,6 +3143,10 @@ export type Database = {
         Args: { project_id_param: string }
         Returns: number
       }
+      calculate_project_completion_enhanced: {
+        Args: { project_id_param: string }
+        Returns: number
+      }
       is_admin_user: {
         Args: Record<PropertyKey, never>
         Returns: boolean
