@@ -19,7 +19,7 @@ const AdminDomainManagement = () => {
   const [selectedDomain, setSelectedDomain] = useState<any>(null);
   const [notes, setNotes] = useState("");
 
-  // Fetch all domains
+  // Fetch all domains with simplified query for faster loading
   const { data: domains, isLoading: domainsLoading } = useQuery({
     queryKey: ['admin-domains'],
     queryFn: async () => {
@@ -27,33 +27,41 @@ const AdminDomainManagement = () => {
         .from('domains')
         .select(`
           *,
-          profiles!domains_customer_id_fkey(first_name, last_name, email),
-          invoices!domains_invoice_id_fkey(status, amount, invoice_number)
+          profiles:customer_id(first_name, last_name, email)
         `)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50); // Limit for faster loading
       
       if (error) throw error;
-      return data;
-    }
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Fetch provisioning requests
+  // Fetch provisioning requests (disabled if table doesn't exist)
   const { data: provisioningRequests, isLoading: requestsLoading } = useQuery({
     queryKey: ['provisioning-requests'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('provisioning_requests')
-        .select(`
-          *,
-          profiles!provisioning_requests_customer_id_fkey(first_name, last_name, email),
-          domains!provisioning_requests_entity_id_fkey(domain_name, tld)
-        `)
-        .eq('request_type', 'domain_registration')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    }
+      try {
+        const { data, error } = await supabase
+          .from('provisioning_requests')
+          .select(`
+            *,
+            profiles:customer_id(first_name, last_name, email)
+          `)
+          .eq('request_type', 'domain_registration')
+          .order('created_at', { ascending: false })
+          .limit(20);
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.warn('Provisioning requests table not available:', error);
+        return [];
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false, // Don't retry if table doesn't exist
   });
 
   // Update domain status
@@ -121,13 +129,19 @@ const AdminDomainManagement = () => {
     }
   };
 
-  if (domainsLoading || requestsLoading) {
+  if (domainsLoading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Domain Management</CardTitle>
           <CardDescription>Loading domain data...</CardDescription>
         </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-2">Loading domains...</span>
+          </div>
+        </CardContent>
       </Card>
     );
   }

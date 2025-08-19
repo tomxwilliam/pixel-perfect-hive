@@ -20,22 +20,27 @@ const AdminHostingManagement = () => {
   const [notes, setNotes] = useState("");
   const [hostingIntegration, setHostingIntegration] = useState<any>(null);
 
-  // Fetch hosting integration status
+  // Fetch hosting integration status with error handling
   useEffect(() => {
     const fetchHostingIntegration = async () => {
-      const { data } = await supabase
-        .from('api_integrations')
-        .select('*')
-        .eq('integration_type', 'unlimited_web_hosting')
-        .single();
-      
-      setHostingIntegration(data);
+      try {
+        const { data } = await supabase
+          .from('api_integrations')
+          .select('*')
+          .eq('integration_type', 'unlimited_web_hosting')
+          .maybeSingle();
+        
+        setHostingIntegration(data || { is_connected: false });
+      } catch (error) {
+        console.warn('API integrations table not available:', error);
+        setHostingIntegration({ is_connected: false });
+      }
     };
     
     fetchHostingIntegration();
   }, []);
 
-  // Fetch all hosting subscriptions
+  // Fetch all hosting subscriptions with simplified query
   const { data: subscriptions, isLoading: subscriptionsLoading } = useQuery({
     queryKey: ['admin-hosting-subscriptions'],
     queryFn: async () => {
@@ -43,38 +48,43 @@ const AdminHostingManagement = () => {
         .from('hosting_subscriptions')
         .select(`
           *,
-          hosting_packages!hosting_subscriptions_package_id_fkey(*),
-          profiles!hosting_subscriptions_customer_id_fkey(first_name, last_name, email),
-          invoices!hosting_subscriptions_invoice_id_fkey(status, amount, invoice_number),
-          domains!hosting_subscriptions_domain_id_fkey(domain_name, tld)
+          hosting_packages:package_id(*),
+          profiles:customer_id(first_name, last_name, email),
+          domains:domain_id(domain_name, tld)
         `)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50); // Limit for faster loading
       
       if (error) throw error;
-      return data;
-    }
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Fetch hosting provisioning requests
+  // Fetch hosting provisioning requests with error handling
   const { data: hostingRequests, isLoading: requestsLoading } = useQuery({
     queryKey: ['hosting-provisioning-requests'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('provisioning_requests')
-        .select(`
-          *,
-          profiles!provisioning_requests_customer_id_fkey(first_name, last_name, email),
-          hosting_subscriptions!provisioning_requests_entity_id_fkey(
+      try {
+        const { data, error } = await supabase
+          .from('provisioning_requests')
+          .select(`
             *,
-            hosting_packages(package_name)
-          )
-        `)
-        .eq('request_type', 'hosting_setup')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    }
+            profiles:customer_id(first_name, last_name, email)
+          `)
+          .eq('request_type', 'hosting_setup')
+          .order('created_at', { ascending: false })
+          .limit(20);
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.warn('Provisioning requests table not available:', error);
+        return [];
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false, // Don't retry if table doesn't exist
   });
 
   // Provision hosting account
@@ -140,13 +150,19 @@ const AdminHostingManagement = () => {
     }
   };
 
-  if (subscriptionsLoading || requestsLoading) {
+  if (subscriptionsLoading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Hosting Management</CardTitle>
           <CardDescription>Loading hosting data...</CardDescription>
         </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span className="ml-2">Loading hosting subscriptions...</span>
+          </div>
+        </CardContent>
       </Card>
     );
   }
