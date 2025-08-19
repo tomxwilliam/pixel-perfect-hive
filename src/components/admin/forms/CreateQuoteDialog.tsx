@@ -203,7 +203,7 @@ export function CreateQuoteDialog({ onQuoteCreated }: CreateQuoteDialogProps) {
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Amount ($)</FormLabel>
+                    <FormLabel>Amount (£)</FormLabel>
                     <FormControl>
                       <Input {...field} type="number" step="0.01" min="0" />
                     </FormControl>

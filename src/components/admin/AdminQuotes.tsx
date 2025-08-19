@@ -188,7 +188,7 @@ export function AdminQuotes() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalValue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">£{totalValue.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -290,7 +290,7 @@ export function AdminQuotes() {
                   <TableCell>
                     {quote.project?.title || "No Project"}
                   </TableCell>
-                  <TableCell>${quote.amount.toLocaleString()}</TableCell>
+                  <TableCell>£{quote.amount.toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(quote.status)}>
                       {quote.status}

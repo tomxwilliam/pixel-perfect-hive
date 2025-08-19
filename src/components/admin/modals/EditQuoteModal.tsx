@@ -165,7 +165,7 @@ export const EditQuoteModal: React.FC<EditQuoteModalProps> = ({
               <Input value={quote.quote_number} disabled className="mt-1" />
             </div>
             <div>
-              <label className="text-sm font-medium">Amount ($)</label>
+              <label className="text-sm font-medium">Amount (£)</label>
               <Input
                 type="number"
                 step="0.01"
