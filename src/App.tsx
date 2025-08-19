@@ -78,7 +78,7 @@ const App = () => (
                 </ProtectedRoute>
               } />
               <Route path="/projects" element={
-                <ProtectedRoute>
+                <ProtectedRoute requireCodeLabEmail={true}>
                   <ProjectManagement />
                 </ProtectedRoute>
               } />

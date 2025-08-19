@@ -6,11 +6,13 @@ import { Loader2 } from 'lucide-react';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  requireCodeLabEmail?: boolean;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requireAdmin = false 
+  requireAdmin = false,
+  requireCodeLabEmail = false 
 }) => {
   const { user, profile, loading } = useAuth();
   const location = useLocation();
@@ -31,6 +33,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (requireAdmin && profile && profile.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (requireCodeLabEmail && user && !user.email?.endsWith('@404codelab.com')) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -19,6 +19,7 @@ import { AdminSocialMedia } from '@/components/admin/AdminSocialMedia';
 import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
 import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
+import { AdminAccounting } from '@/components/admin/AdminAccounting';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -75,6 +76,10 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Quotes
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
+              <Calculator className="h-4 w-4" />
+              Accounting
             </MobileTabsTrigger>
             <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -137,6 +142,12 @@ const AdminDashboard = () => {
           <MobileTabsContent value="quotes">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminQuotes />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="accounting">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminAccounting />
             </React.Suspense>
           </MobileTabsContent>
 
