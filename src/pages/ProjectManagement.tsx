@@ -413,7 +413,10 @@ const ProjectManagement = () => {
                        </div>
                        <div>
                          <p className="text-muted-foreground">Hours</p>
-                         <p className="font-medium">{project.total_hours_logged || 0}/{project.estimated_hours || 0}</p>
+                         <p className="font-medium">
+                           {project.total_hours_logged || 0}/
+                           {tasks.filter(t => t.project_id === project.id).reduce((sum, task) => sum + (task.estimated_hours || 0), 0) || 0}
+                         </p>
                        </div>
                      </div>
 
