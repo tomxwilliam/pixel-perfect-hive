@@ -28,6 +28,8 @@ import GanttChart from '@/components/project/GanttChart';
 import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
 import NotificationCenter from '@/components/project/NotificationCenter';
 import TeamManagement from '@/components/project/TeamManagement';
+import KanbanBoard from '@/components/project/KanbanBoard';
+import { useProjects } from '@/hooks/useProjects';
 import { useProjectAnalytics } from '@/hooks/useProjectAnalytics';
 
 // Mock data for demonstration
@@ -150,6 +152,7 @@ const getTaskStatusColor = (status: string) => {
 };
 
 const ProjectManagement = () => {
+  const { projects, tasks, loading } = useProjects();
   const { analytics } = useProjectAnalytics();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -215,14 +218,14 @@ const ProjectManagement = () => {
     }
   };
   
-  const filteredProjects = mockProjects.filter(project =>
+  const filteredProjects = projects.filter(project =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+    (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const upcomingDeadlines = mockTasks
-    .filter(task => new Date(task.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  const upcomingDeadlines = tasks
+    .filter(task => task.due_date && new Date(task.due_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
+    .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime());
 
   const unreadNotifications = 7; // Mock notification count
 
@@ -275,11 +278,7 @@ const ProjectManagement = () => {
                   <DialogTitle>Create New Task</DialogTitle>
                 </DialogHeader>
                 <CreateTaskForm 
-                  availableProjects={[
-                    { id: '1', title: 'E-commerce Website Redesign' },
-                    { id: '2', title: 'Mobile App Development' },
-                    { id: '3', title: 'API Integration Project' }
-                  ]}
+                  availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
                   onSuccess={() => setShowCreateTask(false)}
                   onCancel={() => setShowCreateTask(false)}
                 />
@@ -299,7 +298,7 @@ const ProjectManagement = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Active Projects</p>
                   <p className="text-2xl font-bold">
-                    {mockProjects.filter(p => p.status === 'active').length}
+                    {projects.filter(p => p.status === 'in_progress').length}
                   </p>
                 </div>
               </div>
@@ -314,7 +313,7 @@ const ProjectManagement = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total Tasks</p>
-                  <p className="text-2xl font-bold">{mockTasks.length}</p>
+                  <p className="text-2xl font-bold">{tasks.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -343,7 +342,7 @@ const ProjectManagement = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Avg Progress</p>
                   <p className="text-2xl font-bold">
-                    {Math.round(mockProjects.reduce((acc, p) => acc + p.progress, 0) / mockProjects.length)}%
+                    {projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + (p.completion_percentage || 0), 0) / projects.length) : 0}%
                   </p>
                 </div>
               </div>
@@ -397,40 +396,40 @@ const ProjectManagement = () => {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Progress */}
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>{project.progress}%</span>
-                      </div>
-                      <Progress value={project.progress} className="h-2" />
-                    </div>
+                     {/* Progress */}
+                     <div className="space-y-2">
+                       <div className="flex justify-between text-sm">
+                         <span>Progress</span>
+                         <span>{project.completion_percentage || 0}%</span>
+                       </div>
+                       <Progress value={project.completion_percentage || 0} className="h-2" />
+                     </div>
 
-                    {/* Stats */}
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Tasks</p>
-                        <p className="font-medium">{project.tasksCompleted}/{project.tasksTotal}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Hours</p>
-                        <p className="font-medium">{project.actualHours}/{project.estimatedHours}</p>
-                      </div>
-                    </div>
+                     {/* Stats */}
+                     <div className="grid grid-cols-2 gap-4 text-sm">
+                       <div>
+                         <p className="text-muted-foreground">Tasks</p>
+                         <p className="font-medium">{tasks.filter(t => t.project_id === project.id && t.status === 'completed').length}/{tasks.filter(t => t.project_id === project.id).length}</p>
+                       </div>
+                       <div>
+                         <p className="text-muted-foreground">Hours</p>
+                         <p className="font-medium">{project.total_hours_logged || 0}/{project.estimated_hours || 0}</p>
+                       </div>
+                     </div>
 
-                    {/* Team and Due Date */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{project.team.length} members</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">
-                          {new Date(project.dueDate).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
+                     {/* Team and Due Date */}
+                     <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2">
+                         <Users className="h-4 w-4 text-muted-foreground" />
+                         <span className="text-sm">Project Team</span>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <Clock className="h-4 w-4 text-muted-foreground" />
+                         <span className="text-sm">
+                           {project.estimated_completion_date ? new Date(project.estimated_completion_date).toLocaleDateString() : 'No deadline'}
+                         </span>
+                       </div>
+                     </div>
 
                     {/* Priority Badge */}
                     <div className="flex justify-between items-center">
@@ -458,20 +457,20 @@ const ProjectManagement = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {mockTasks.slice(0, 5).map((task) => (
+                    {tasks.slice(0, 5).map((task) => (
                       <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex-1">
                           <h4 className="font-medium text-sm">{task.title}</h4>
-                          <p className="text-xs text-muted-foreground">
-                            Assigned to {task.assignee}
+                           <p className="text-xs text-muted-foreground">
+                            Assigned to {task.assignee_id || 'Unassigned'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline" className={getTaskStatusColor(task.status)}>
-                            {task.status.replace('_', ' ')}
+                           <Badge variant="outline" className={getTaskStatusColor(task.status || 'todo')}>
+                            {(task.status || 'todo').replace('_', ' ')}
                           </Badge>
-                          <Badge variant={getPriorityColor(task.priority)}>
-                            {task.priority}
+                          <Badge variant={getPriorityColor(task.priority || 'medium')}>
+                            {task.priority || 'medium'}
                           </Badge>
                         </div>
                       </div>
@@ -494,13 +493,13 @@ const ProjectManagement = () => {
                       <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex-1">
                           <h4 className="font-medium text-sm">{task.title}</h4>
-                          <p className="text-xs text-muted-foreground">
-                            Due {new Date(task.dueDate).toLocaleDateString()}
+                           <p className="text-xs text-muted-foreground">
+                            Due {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant={getPriorityColor(task.priority)}>
-                            {task.priority}
+                          <Badge variant={getPriorityColor(task.priority || 'medium')}>
+                            {task.priority || 'medium'}
                           </Badge>
                         </div>
                       </div>

@@ -1788,6 +1788,48 @@ export type Database = {
           },
         ]
       }
+      project_task_templates: {
+        Row: {
+          created_at: string | null
+          estimated_hours: number | null
+          id: string
+          is_milestone: boolean | null
+          order_sequence: number | null
+          project_type: string
+          task_description: string | null
+          task_priority: string | null
+          task_status: string | null
+          task_title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          estimated_hours?: number | null
+          id?: string
+          is_milestone?: boolean | null
+          order_sequence?: number | null
+          project_type: string
+          task_description?: string | null
+          task_priority?: string | null
+          task_status?: string | null
+          task_title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          estimated_hours?: number | null
+          id?: string
+          is_milestone?: boolean | null
+          order_sequence?: number | null
+          project_type?: string
+          task_description?: string | null
+          task_priority?: string | null
+          task_status?: string | null
+          task_title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       project_tasks: {
         Row: {
           actual_hours: number | null
@@ -3177,6 +3219,21 @@ export type Database = {
           project_description?: string
           project_title: string
           project_type?: string
+        }
+        Returns: string
+      }
+      create_default_project_tasks: {
+        Args: { project_id_param: string; project_type_param: string }
+        Returns: undefined
+      }
+      create_project_request: {
+        Args: {
+          estimated_budget?: number
+          estimated_completion_date?: string
+          project_description: string
+          project_title: string
+          project_type_param: string
+          requirements_json?: Json
         }
         Returns: string
       }

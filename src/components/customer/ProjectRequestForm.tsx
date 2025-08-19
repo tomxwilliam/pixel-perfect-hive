@@ -52,20 +52,14 @@ export const ProjectRequestForm = ({ onProjectRequested }: { onProjectRequested?
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from('projects')
-        .insert({
-          customer_id: user.id,
-          title: projectRequest.title,
-          description: projectRequest.description,
-          project_type: projectRequest.project_type,
-          budget: parseFloat(projectRequest.budget) || null,
-          estimated_completion_date: projectRequest.timeline ? new Date(projectRequest.timeline).toISOString().split('T')[0] : null,
-          requirements: projectRequest.requirements,
-          status: 'pending',
-          approval_status: 'pending',
-          priority: 'medium'
-        });
+      const { error } = await supabase.rpc('create_project_request', {
+        project_title: projectRequest.title,
+        project_description: projectRequest.description,
+        project_type_param: projectRequest.project_type,
+        estimated_budget: parseFloat(projectRequest.budget) || null,
+        estimated_completion_date: projectRequest.timeline ? new Date(projectRequest.timeline).toISOString().split('T')[0] : null,
+        requirements_json: projectRequest.requirements
+      });
 
       if (error) throw error;
 
