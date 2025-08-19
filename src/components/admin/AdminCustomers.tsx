@@ -37,49 +37,71 @@ export const AdminCustomers = () => {
 
   const fetchCustomers = async () => {
     try {
-      // Fetch customers with basic info
+      // Fetch customers with basic info first for instant loading
       const { data: profiles } = await supabase
         .from('profiles')
         .select('*')
-        .eq('role', 'customer');
+        .eq('role', 'customer')
+        .limit(100); // Limit for performance
 
       if (!profiles) return;
 
-      // Fetch additional stats for each customer
+      // Set basic customer data immediately
+      const basicCustomers = profiles.map(profile => ({
+        ...profile,
+        project_count: 0,
+        ticket_count: 0,
+        total_spent: 0
+      })) as CustomerWithStats[];
+      
+      setCustomers(basicCustomers);
+      setLoading(false); // Show customers immediately
+
+      // Fetch additional stats in background
       const customersWithStats = await Promise.all(
-        profiles.map(async (profile) => {
-          const [projectsResult, ticketsResult, invoicesResult] = await Promise.all([
-            supabase
-              .from('projects')
-              .select('*', { count: 'exact', head: true })
-              .eq('customer_id', profile.id),
-            supabase
-              .from('tickets')
-              .select('*', { count: 'exact', head: true })
-              .eq('customer_id', profile.id),
-            supabase
-              .from('invoices')
-              .select('amount, status')
-              .eq('customer_id', profile.id)
-          ]);
+        profiles.slice(0, 20).map(async (profile) => { // Limit concurrent requests
+          try {
+            const [projectsResult, ticketsResult, invoicesResult] = await Promise.all([
+              supabase
+                .from('projects')
+                .select('*', { count: 'exact', head: true })
+                .eq('customer_id', profile.id),
+              supabase
+                .from('tickets')
+                .select('*', { count: 'exact', head: true })
+                .eq('customer_id', profile.id),
+              supabase
+                .from('invoices')
+                .select('amount, status')
+                .eq('customer_id', profile.id)
+                .eq('status', 'paid') // Only paid invoices for performance
+            ]);
 
-          const totalSpent = invoicesResult.data
-            ?.filter(inv => inv.status === 'paid')
-            .reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+            const totalSpent = invoicesResult.data
+              ?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
 
-          return {
-            ...profile,
-            project_count: projectsResult.count || 0,
-            ticket_count: ticketsResult.count || 0,
-            total_spent: totalSpent
-          } as CustomerWithStats;
+            return {
+              ...profile,
+              project_count: projectsResult.count || 0,
+              ticket_count: ticketsResult.count || 0,
+              total_spent: totalSpent
+            } as CustomerWithStats;
+          } catch (error) {
+            console.warn('Error fetching stats for customer:', profile.id, error);
+            return {
+              ...profile,
+              project_count: 0,
+              ticket_count: 0,
+              total_spent: 0
+            } as CustomerWithStats;
+          }
         })
       );
 
+      // Update with stats
       setCustomers(customersWithStats);
     } catch (error) {
       console.error('Error fetching customers:', error);
-    } finally {
       setLoading(false);
     }
   };

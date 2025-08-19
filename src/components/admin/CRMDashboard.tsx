@@ -45,76 +45,97 @@ export const CRMDashboard = () => {
     try {
       setLoading(true);
 
-      // Fetch leads data
-      const { data: leads } = await supabase
-        .from('leads')
-        .select('*');
+      // Fetch basic data first for faster initial load
+      const basicStatsPromise = Promise.all([
+        supabase.from('leads').select('*', { count: 'exact', head: true }),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer')
+      ]);
 
-      // Fetch customers data
-      const { data: customers } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('role', 'customer');
+      const [leadsCount, customersCount] = await basicStatsPromise;
 
-      // Fetch recent activities
-      const { data: activities } = await supabase
-        .from('lead_activities')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
+      // Set basic stats immediately
+      setStats(prev => ({
+        ...prev,
+        totalLeads: leadsCount.count || 0,
+        totalCustomers: customersCount.count || 0
+      }));
+      setLoading(false); // Show basic stats immediately
 
-      if (leads && customers) {
-        const currentMonth = new Date().getMonth();
-        const thisMonthLeads = leads.filter(lead => 
-          new Date(lead.created_at).getMonth() === currentMonth
-        ).length;
+      // Fetch detailed data in background
+      try {
+        let activitiesData = [];
+        try {
+          const activitiesResult = await supabase
+            .from('lead_activities')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10);
+          activitiesData = activitiesResult.data || [];
+        } catch (activitiesError) {
+          console.warn('Lead activities table not available:', activitiesError);
+        }
 
-        const totalPipelineValue = leads.reduce((sum, lead) => 
-          sum + (lead.deal_value || 0), 0
-        );
+        const [leadsData, customersData] = await Promise.all([
+          supabase.from('leads').select('*').limit(100),
+          supabase.from('profiles').select('*').eq('role', 'customer').limit(50)
+        ]);
 
-        const convertedLeads = leads.filter(lead => lead.converted_to_customer).length;
-        const conversionRate = leads.length > 0 ? (convertedLeads / leads.length) * 100 : 0;
+        const leads = leadsData.data || [];
+        const customers = customersData.data || [];
 
-        const avgDealSize = leads.length > 0 ? totalPipelineValue / leads.length : 0;
+        if (leads.length > 0) {
+          const currentMonth = new Date().getMonth();
+          const thisMonthLeads = leads.filter(lead => 
+            new Date(lead.created_at).getMonth() === currentMonth
+          ).length;
 
-        // Calculate top sources
-        const sourceCount: { [key: string]: number } = {};
-        leads.forEach(lead => {
-          if (lead.source) {
-            sourceCount[lead.source] = (sourceCount[lead.source] || 0) + 1;
-          }
-        });
+          const totalPipelineValue = leads.reduce((sum, lead) => 
+            sum + (lead.deal_value || 0), 0
+          );
 
-        const topSources = Object.entries(sourceCount)
-          .map(([source, count]) => ({ source, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5);
+          const convertedLeads = leads.filter(lead => lead.converted_to_customer).length;
+          const conversionRate = leads.length > 0 ? (convertedLeads / leads.length) * 100 : 0;
+          const avgDealSize = leads.length > 0 ? totalPipelineValue / leads.length : 0;
 
-        setStats({
-          totalLeads: leads.length,
-          totalCustomers: customers.length,
-          totalPipelineValue,
-          thisMonthLeads,
-          conversionRate,
-          avgDealSize,
-          topSources,
-          recentActivities: (activities || []).map(activity => ({
-            id: activity.id,
-            type: activity.activity_type,
-            description: activity.description || activity.title,
-            created_at: activity.created_at
-          }))
-        });
+          // Calculate top sources
+          const sourceCount: { [key: string]: number } = {};
+          leads.forEach(lead => {
+            if (lead.source) {
+              sourceCount[lead.source] = (sourceCount[lead.source] || 0) + 1;
+            }
+          });
+
+          const topSources = Object.entries(sourceCount)
+            .map(([source, count]) => ({ source, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+
+          setStats({
+            totalLeads: leads.length,
+            totalCustomers: customers.length,
+            totalPipelineValue,
+            thisMonthLeads,
+            conversionRate,
+            avgDealSize,
+            topSources,
+            recentActivities: activitiesData.map(activity => ({
+              id: activity.id,
+              type: activity.activity_type,
+              description: activity.description || activity.title,
+              created_at: activity.created_at
+            }))
+          });
+        }
+      } catch (error) {
+        console.warn('Error fetching detailed CRM stats:', error);
       }
     } catch (error) {
-      console.error('Error fetching CRM stats:', error);
+      console.error('Error fetching basic CRM stats:', error);
       toast({
         title: "Error",
         description: "Failed to load CRM statistics",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };

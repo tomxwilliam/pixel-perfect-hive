@@ -99,51 +99,75 @@ const AdminDashboard = () => {
           </MobileTabsList>
 
           <MobileTabsContent value="overview">
-            <AdminOverview />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminOverview />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="crm">
-            <CRMDashboard />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <CRMDashboard />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="customers">
-            <AdminCustomers />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminCustomers />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="projects">
-            <AdminProjects />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminProjects />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="tickets">
-            <AdminTickets />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminTickets />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="invoices">
-            <AdminInvoices />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminInvoices />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="quotes">
-            <AdminQuotes />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminQuotes />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="calendar">
-            <AdminCalendar />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminCalendar />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="social">
-            <AdminSocialMedia />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminSocialMedia />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="domains">
-            <AdminDomainManagement />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminDomainManagement />
+            </React.Suspense>
           </MobileTabsContent>
 
           <MobileTabsContent value="hosting">
-            <AdminHostingManagement />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminHostingManagement />
+            </React.Suspense>
           </MobileTabsContent>
           
           <MobileTabsContent value="settings">
-            <AdminSettings />
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminSettings />
+            </React.Suspense>
           </MobileTabsContent>
         </MobileTabs>
       </div>

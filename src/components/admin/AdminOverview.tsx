@@ -60,38 +60,43 @@ export const AdminOverview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Fetch customer count
-        const { count: customerCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('role', 'customer');
+        // Fetch basic counts first for instant display
+        const basicCounts = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
+          supabase.from('projects').select('*', { count: 'exact', head: true }),
+          supabase.from('tickets').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress'])
+        ]);
 
-        // Fetch project counts
-        const { count: projectCount } = await supabase
-          .from('projects')
-          .select('*', { count: 'exact', head: true });
+        // Set basic stats immediately
+        setStats(prev => ({
+          ...prev,
+          totalCustomers: basicCounts[0].count || 0,
+          totalProjects: basicCounts[1].count || 0,
+          openTickets: basicCounts[2].count || 0
+        }));
+        setLoading(false); // Show basic stats immediately
 
-        const { count: activeProjectCount } = await supabase
-          .from('projects')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'in_progress');
+        // Fetch detailed data in background
+        try {
+          let todayBookingCount = 0;
+          try {
+            const bookingsResult = await supabase.from('call_bookings').select('*', { count: 'exact', head: true })
+              .gte('scheduled_at', `${new Date().toISOString().split('T')[0]}T00:00:00`)
+              .lt('scheduled_at', `${new Date().toISOString().split('T')[0]}T23:59:59`);
+            todayBookingCount = bookingsResult.count || 0;
+          } catch (bookingError) {
+            console.warn('Call bookings table not available:', bookingError);
+          }
 
-        // Fetch ticket counts
-        const { count: openTicketCount } = await supabase
-          .from('tickets')
-          .select('*', { count: 'exact', head: true })
-          .in('status', ['open', 'in_progress']);
-
-        const { count: urgentTicketCount } = await supabase
-          .from('tickets')
-          .select('*', { count: 'exact', head: true })
-          .eq('priority', 'high')
-          .in('status', ['open', 'in_progress']);
-
-        // Fetch invoice data
-        const { data: invoices } = await supabase
-          .from('invoices')
-          .select('amount, status, created_at');
+          const [
+            { count: activeProjectCount },
+            { count: urgentTicketCount },
+            { data: invoices }
+          ] = await Promise.all([
+            supabase.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
+            supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('priority', 'high').in('status', ['open', 'in_progress']),
+            supabase.from('invoices').select('amount, status, created_at').limit(100)
+          ]);
 
         const totalRevenue = invoices
           ?.filter(inv => inv.status === 'paid')
@@ -100,30 +105,22 @@ export const AdminOverview = () => {
         const pendingInvoices = invoices
           ?.filter(inv => inv.status === 'pending').length || 0;
 
-        // Fetch today's bookings
-        const today = new Date().toISOString().split('T')[0];
-        const { count: todayBookingCount } = await supabase
-          .from('call_bookings')
-          .select('*', { count: 'exact', head: true })
-          .gte('scheduled_at', `${today}T00:00:00`)
-          .lt('scheduled_at', `${today}T23:59:59`);
-
-        setStats({
-          totalCustomers: customerCount || 0,
-          totalProjects: projectCount || 0,
-          openTickets: openTicketCount || 0,
+        setStats(prev => ({
+          ...prev,
+          activeProjects: activeProjectCount || 0,
+          urgentTickets: urgentTicketCount || 0,
           totalRevenue,
           pendingInvoices,
-          activeProjects: activeProjectCount || 0,
-          todayBookings: todayBookingCount || 0,
-          urgentTickets: urgentTicketCount || 0
-        });
+          todayBookings: todayBookingCount
+        }));
 
-        // Fetch recent activity
+        // Fetch recent activity and generate chart data
         await fetchRecentActivity();
-        
-        // Generate chart data
         generateChartData(invoices || []);
+
+        } catch (detailedError) {
+          console.warn('Error fetching detailed stats:', detailedError);
+        }
 
       } catch (error) {
         console.error('Error fetching dashboard stats:', error);
@@ -132,7 +129,6 @@ export const AdminOverview = () => {
           description: "Failed to load dashboard data",
           variant: "destructive"
         });
-      } finally {
         setLoading(false);
       }
     };
