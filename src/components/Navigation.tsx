@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
-import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe, Bot, FolderKanban } from 'lucide-react';
+import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIcon, Smartphone, Globe, Bot, FolderKanban, Calculator } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -151,6 +151,12 @@ const Navigation = () => {
                           Settings
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin?tab=accounting" className="flex items-center">
+                          <Calculator className="mr-2 h-4 w-4" />
+                          Accounting
+                        </Link>
+                      </DropdownMenuItem>
                     </>
                   )}
                   {profile?.role === 'admin' && (
@@ -261,6 +267,14 @@ const Navigation = () => {
                     >
                       <Settings className="inline-block w-5 h-5 mr-3" />
                       Settings
+                    </Link>
+                    <Link
+                      to="/admin?tab=accounting"
+                      className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Calculator className="inline-block w-5 h-5 mr-3" />
+                      Accounting
                     </Link>
                   </>
                 )}

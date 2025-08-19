@@ -58,7 +58,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11'}>
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-10'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -86,10 +86,6 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Quotes
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
-              <Calculator className="h-4 w-4" />
-              Accounting
             </MobileTabsTrigger>
             <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -151,11 +147,21 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
 
-          <MobileTabsContent value="accounting">
-            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-              <AdminAccounting />
-            </React.Suspense>
-          </MobileTabsContent>
+          {user?.email?.endsWith('@404codelab.com') && (
+            <MobileTabsContent value="accounting">
+              <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <AdminAccounting />
+              </React.Suspense>
+            </MobileTabsContent>
+          )}
+
+          {user?.email?.endsWith('@404codelab.com') && (
+            <MobileTabsContent value="settings">
+              <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <AdminSettings />
+              </React.Suspense>
+            </MobileTabsContent>
+          )}
 
           <MobileTabsContent value="calendar">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
