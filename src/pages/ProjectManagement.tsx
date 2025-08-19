@@ -35,6 +35,7 @@ import ResourceManagement from '@/components/project/ResourceManagement';
 import ProjectCalendar from '@/components/project/ProjectCalendar';
 import { useProjects } from '@/hooks/useProjects';
 import { useProjectAnalytics } from '@/hooks/useProjectAnalytics';
+import { useProjectManagementAnalytics } from '@/hooks/useProjectManagementAnalytics';
 import { useRealtimeCollaboration } from '@/hooks/useRealtimeCollaboration';
 
 // Mock data for demonstration
@@ -159,70 +160,13 @@ const getTaskStatusColor = (status: string) => {
 const ProjectManagement = () => {
   const { projects, tasks, loading } = useProjects();
   const { analytics } = useProjectAnalytics();
+  const { analytics: realAnalytics, loading: analyticsLoading } = useProjectManagementAnalytics();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
 
-  // Mock analytics data
-  const analyticsData = {
-    projects: {
-      total: 12,
-      active: 8,
-      completed: 3,
-      overdue: 1,
-      onTrack: 7
-    },
-    tasks: {
-      total: 45,
-      completed: 28,
-      inProgress: 12,
-      todo: 5,
-      overdue: 3
-    },
-    time: {
-      totalHours: 1240,
-      billableHours: 980,
-      averageHoursPerProject: 35,
-      efficiency: 87
-    },
-    budget: {
-      totalBudget: 125000,
-      spent: 78000,
-      remaining: 47000,
-      roi: 15.2
-    },
-    trends: {
-      projectsOverTime: [
-        { month: 'Jan', projects: 8, tasks: 32 },
-        { month: 'Feb', projects: 10, tasks: 38 },
-        { month: 'Mar', projects: 12, tasks: 45 },
-        { month: 'Apr', projects: 11, tasks: 42 },
-        { month: 'May', projects: 12, tasks: 48 },
-        { month: 'Jun', projects: 14, tasks: 52 }
-      ],
-      timeUtilization: [
-        { week: 'W1', hours: 180, efficiency: 85 },
-        { week: 'W2', hours: 195, efficiency: 88 },
-        { week: 'W3', hours: 210, efficiency: 92 },
-        { week: 'W4', hours: 175, efficiency: 82 }
-      ]
-    },
-    performance: {
-      teamProductivity: [
-        { name: 'John', hours: 45, tasks: 12 },
-        { name: 'Sarah', hours: 38, tasks: 8 },
-        { name: 'Mike', hours: 42, tasks: 10 },
-        { name: 'Emma', hours: 35, tasks: 7 }
-      ],
-      projectStatus: [
-        { name: 'Active', value: 8, color: '#3b82f6' },
-        { name: 'Completed', value: 3, color: '#10b981' },
-        { name: 'On Hold', value: 1, color: '#f59e0b' }
-      ]
-    }
-  };
   
   const filteredProjects = projects.filter(project =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -582,8 +526,16 @@ const ProjectManagement = () => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            {analytics ? (
-              <AnalyticsDashboard data={analytics} />
+            {analyticsLoading ? (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <p className="text-muted-foreground">Loading analytics...</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : realAnalytics ? (
+              <AnalyticsDashboard data={realAnalytics} />
             ) : (
               <Card>
                 <CardContent className="p-6">
