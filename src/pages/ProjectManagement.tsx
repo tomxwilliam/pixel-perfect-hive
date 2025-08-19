@@ -24,7 +24,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
 import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
-import GanttChart from '@/components/project/GanttChart';
+import InteractiveGanttChart from '@/components/project/InteractiveGanttChart';
 import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
 import NotificationCenter from '@/components/project/NotificationCenter';
 import TeamManagement from '@/components/project/TeamManagement';
@@ -513,50 +513,39 @@ const ProjectManagement = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="kanban">
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <KanbanSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Kanban Board</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Drag and drop tasks between columns to update their status
-                  </p>
-                  <Button>Open Kanban Board</Button>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="kanban" className="space-y-6">
+            <div className="h-[800px]">
+              <KanbanBoard />
+            </div>
           </TabsContent>
 
-          <TabsContent value="gantt">
-            <GanttChart 
-              projects={[
-                {
-                  id: '1',
-                  title: 'E-commerce Website Redesign',
-                  start_date: '2024-11-01',
-                  end_date: '2024-12-15',
-                  tasks: mockTasks.filter(t => t.projectId === '1').map(t => ({
-                    ...t,
-                    start_date: '2024-11-05',
-                    due_date: t.dueDate,
-                    progress: t.status === 'completed' ? 100 : t.status === 'in_progress' ? 60 : 0
-                  }))
-                },
-                {
-                  id: '2', 
-                  title: 'Mobile App Development',
-                  start_date: '2024-11-15',
-                  end_date: '2025-02-28',
-                  tasks: mockTasks.filter(t => t.projectId === '2').map(t => ({
-                    ...t,
-                    start_date: '2024-11-20',
-                    due_date: t.dueDate,
-                    progress: t.status === 'completed' ? 100 : t.status === 'review' ? 80 : 25
-                  }))
-                }
-              ]}
-            />
+          <TabsContent value="gantt" className="space-y-6">
+            <div className="h-[800px]">
+              <InteractiveGanttChart 
+                projects={projects.map(p => ({
+                  id: p.id,
+                  title: p.title,
+                  startDate: new Date(p.created_at),
+                  endDate: p.estimated_completion_date ? new Date(p.estimated_completion_date) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                  tasks: tasks
+                    .filter(t => t.project_id === p.id)
+                    .map(t => ({
+                      id: t.id,
+                      title: t.title,
+                      startDate: t.start_date ? new Date(t.start_date) : new Date(t.created_at),
+                      endDate: t.due_date ? new Date(t.due_date) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                      status: t.status || 'todo',
+                      priority: t.priority || 'medium',
+                      assignee: t.assignee_id || 'Unassigned',
+                      progress: t.status === 'completed' ? 100 : t.status === 'in_progress' ? 50 : 0,
+                      dependencies: [],
+                      project_id: t.project_id,
+                      estimated_hours: t.estimated_hours,
+                      actual_hours: t.actual_hours
+                    }))
+                }))}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="calendar">
