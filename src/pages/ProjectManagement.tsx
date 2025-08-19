@@ -20,7 +20,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Seo from '@/components/Seo';
-import { ProjectManagementHeader, ProjectManagementFooter } from '@/components/project/ProjectManagementLayout';
+import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
 import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
 import GanttChart from '@/components/project/GanttChart';
@@ -230,10 +231,7 @@ const ProjectManagement = () => {
         description="Professional project management system with Kanban boards, Gantt charts, team collaboration, and comprehensive reporting for 404 Code Lab."
       />
       
-      {/* Header */}
-      <ProjectManagementHeader 
-        notificationCount={unreadNotifications}
-      />
+      <Navigation />
 
       {/* Main Content */}
       <main className="container mx-auto p-6 space-y-6">
@@ -613,8 +611,7 @@ const ProjectManagement = () => {
         </Tabs>
       </main>
 
-      {/* Footer */}
-      <ProjectManagementFooter />
+      <Footer />
     </div>
   );
 };
