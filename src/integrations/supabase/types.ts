@@ -2368,6 +2368,7 @@ export type Database = {
           price_range_min: number | null
           service_name: string
           service_type: string
+          tide_payment_link: string | null
           updated_at: string
         }
         Insert: {
@@ -2381,6 +2382,7 @@ export type Database = {
           price_range_min?: number | null
           service_name: string
           service_type: string
+          tide_payment_link?: string | null
           updated_at?: string
         }
         Update: {
@@ -2394,6 +2396,7 @@ export type Database = {
           price_range_min?: number | null
           service_name?: string
           service_type?: string
+          tide_payment_link?: string | null
           updated_at?: string
         }
         Relationships: []

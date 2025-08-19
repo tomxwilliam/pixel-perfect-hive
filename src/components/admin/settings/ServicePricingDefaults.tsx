@@ -21,6 +21,7 @@ interface ServicePricing {
   price_range_max: number | null;
   hourly_rate: number | null;
   currency: string;
+  tide_payment_link: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -42,6 +43,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
     price_range_min: '',
     price_range_max: '',
     hourly_rate: '',
+    tide_payment_link: '',
     is_active: true
   });
 
@@ -88,6 +90,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
         price_range_min: formData.price_range_min ? parseFloat(formData.price_range_min) : null,
         price_range_max: formData.price_range_max ? parseFloat(formData.price_range_max) : null,
         hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : null,
+        tide_payment_link: formData.tide_payment_link || null,
         is_active: formData.is_active
       };
 
@@ -138,6 +141,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
       price_range_min: service.price_range_min?.toString() || '',
       price_range_max: service.price_range_max?.toString() || '',
       hourly_rate: service.hourly_rate?.toString() || '',
+      tide_payment_link: service.tide_payment_link || '',
       is_active: service.is_active
     });
     setIsDialogOpen(true);
@@ -151,6 +155,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
       price_range_min: '',
       price_range_max: '',
       hourly_rate: '',
+      tide_payment_link: '',
       is_active: true
     });
     setEditingService(null);
@@ -283,6 +288,15 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
                     placeholder="800.00"
                   />
                 </div>
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="tide_payment_link">Tide Payment Link (Optional)</Label>
+                  <Input
+                    id="tide_payment_link"
+                    value={formData.tide_payment_link}
+                    onChange={(e) => setFormData(prev => ({ ...prev, tide_payment_link: e.target.value }))}
+                    placeholder="https://link.tide.com/..."
+                  />
+                </div>
                 <div className="col-span-2 flex items-center space-x-2">
                   <Switch
                     id="is_active"
@@ -323,6 +337,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
                   <TableHead>Default Price</TableHead>
                   <TableHead>Price Range</TableHead>
                   <TableHead>Hourly Rate</TableHead>
+                  <TableHead>Payment Link</TableHead>
                   <TableHead>Status</TableHead>
                   {isSuperAdmin && <TableHead>Actions</TableHead>}
                 </TableRow>
@@ -340,6 +355,15 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
                     <TableCell>{formatPrice(service.default_price)}</TableCell>
                     <TableCell>{formatPriceRange(service.price_range_min, service.price_range_max)}</TableCell>
                     <TableCell>{formatPrice(service.hourly_rate)}</TableCell>
+                    <TableCell>
+                      {service.tide_payment_link ? (
+                        <Badge variant="outline" className="text-xs">
+                          Link Available
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">N/A</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant={service.is_active ? "default" : "secondary"}>
                         {service.is_active ? 'Active' : 'Inactive'}
