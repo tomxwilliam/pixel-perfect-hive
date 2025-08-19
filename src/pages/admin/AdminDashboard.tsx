@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator } from 'lucide-react';
@@ -25,6 +25,16 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const AdminDashboard = () => {
   const { user, profile, loading } = useAuth();
   const isMobile = useIsMobile();
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = React.useState('overview');
+
+  // Handle URL params for tab navigation
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   if (loading) {
     return (
@@ -47,8 +57,8 @@ const AdminDashboard = () => {
           <p className="text-muted-foreground mt-2">Comprehensive business management and control center</p>
         </div>
 
-        <MobileTabs defaultValue="overview" className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-12'}>
+        <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               Overview
@@ -97,10 +107,12 @@ const AdminDashboard = () => {
               <Server className="h-4 w-4" />
               Hosting
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="settings" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Settings
-            </MobileTabsTrigger>
+            {user?.email?.endsWith('@404codelab.com') && (
+              <MobileTabsTrigger value="settings" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </MobileTabsTrigger>
+            )}
           </MobileTabsList>
 
           <MobileTabsContent value="overview">
@@ -175,11 +187,13 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
           
-          <MobileTabsContent value="settings">
-            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-              <AdminSettings />
-            </React.Suspense>
-          </MobileTabsContent>
+          {user?.email?.endsWith('@404codelab.com') && (
+            <MobileTabsContent value="settings">
+              <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <AdminSettings />
+              </React.Suspense>
+            </MobileTabsContent>
+          )}
         </MobileTabs>
       </div>
       <Footer />

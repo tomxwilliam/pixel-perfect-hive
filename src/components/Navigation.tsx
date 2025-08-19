@@ -138,12 +138,20 @@ const Navigation = () => {
                     </Link>
                   </DropdownMenuItem>
                   {user.email?.endsWith('@404codelab.com') && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/projects" className="flex items-center">
-                        <FolderKanban className="mr-2 h-4 w-4" />
-                        Project Management
-                      </Link>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/projects" className="flex items-center">
+                          <FolderKanban className="mr-2 h-4 w-4" />
+                          Project Management
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin?tab=settings" className="flex items-center">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   {profile?.role === 'admin' && (
                     <DropdownMenuItem asChild>
@@ -237,14 +245,24 @@ const Navigation = () => {
                   Dashboard
                 </Link>
                 {user.email?.endsWith('@404codelab.com') && (
-                  <Link
-                    to="/projects"
-                    className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <FolderKanban className="inline-block w-5 h-5 mr-3" />
-                    Project Management
-                  </Link>
+                  <>
+                    <Link
+                      to="/projects"
+                      className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FolderKanban className="inline-block w-5 h-5 mr-3" />
+                      Project Management
+                    </Link>
+                    <Link
+                      to="/admin?tab=settings"
+                      className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Settings className="inline-block w-5 h-5 mr-3" />
+                      Settings
+                    </Link>
+                  </>
                 )}
                 {profile?.role === 'admin' && (
                   <Link
