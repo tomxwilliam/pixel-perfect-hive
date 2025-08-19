@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Seo from '@/components/Seo';
+import { ProjectManagementHeader, ProjectManagementFooter } from '@/components/project/ProjectManagementLayout';
 import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
 import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
 import GanttChart from '@/components/project/GanttChart';
@@ -220,19 +221,28 @@ const ProjectManagement = () => {
     .filter(task => new Date(task.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
     .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
+  const unreadNotifications = 7; // Mock notification count
+
   return (
-    <>
+    <div className="min-h-screen bg-background">
       <Seo 
         title="Project Management - 404 Code Lab"
         description="Professional project management system with Kanban boards, Gantt charts, team collaboration, and comprehensive reporting for 404 Code Lab."
       />
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      
+      {/* Header */}
+      <ProjectManagementHeader 
+        notificationCount={unreadNotifications}
+      />
+
+      {/* Main Content */}
+      <main className="container mx-auto p-6 space-y-6">
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Project Management</h1>
+            <h2 className="text-2xl font-bold tracking-tight">Project Overview</h2>
             <p className="text-muted-foreground">
-              Manage projects, tasks, and team collaboration efficiently
+              Monitor and manage all your active projects
             </p>
           </div>
           <div className="flex gap-2">
@@ -601,8 +611,11 @@ const ProjectManagement = () => {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </>
+      </main>
+
+      {/* Footer */}
+      <ProjectManagementFooter />
+    </div>
   );
 };
 
