@@ -164,10 +164,18 @@ export const CustomerTickets = () => {
                   </div>
                   <div className="flex items-center gap-4">
                     <span>Updated: {new Date(ticket.updated_at).toLocaleDateString()}</span>
-                    <div className="flex items-center gap-1 text-primary">
-                      <MessageSquare className="h-4 w-4" />
-                      <span className="text-xs">View & Reply</span>
-                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="h-7 px-2 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTicketClick(ticket);
+                      }}
+                    >
+                      <MessageSquare className="h-3 w-3 mr-1" />
+                      View & Reply
+                    </Button>
                   </div>
                 </div>
               </div>
