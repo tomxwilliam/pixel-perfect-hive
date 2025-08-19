@@ -17,10 +17,32 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Auth: only admins can call provisioning
+    const supabaseAuth = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } }
+    );
+
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role !== 'admin') {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
 
     const { subscriptionId, action }: HostingProvisionRequest = await req.json();
 
@@ -274,12 +296,34 @@ async function terminateHostingAccount(apiUrl: string, apiKey: string, accountId
 }
 
 function generateRandomPassword(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  // Use Web Crypto for strong randomness and enforce complexity
+  const length = 20;
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower = 'abcdefghijkmnpqrstuvwxyz';
+  const digits = '23456789';
+  const symbols = '!@#$%^&*()-_=+';
+  const all = upper + lower + digits + symbols;
+
+  const getRand = (n: number) => {
+    const buf = new Uint32Array(n);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, x => x % all.length);
+  };
+
+  // Ensure at least one of each required character type
+  const pick = (set: string) => set[Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % set.length)];
+  let password = pick(upper) + pick(lower) + pick(digits) + pick(symbols);
+
+  const idxs = getRand(length - 4);
+  for (let i = 0; i < idxs.length; i++) password += all[idxs[i]];
+
+  // Shuffle password
+  const chars = password.split('');
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1));
+    [chars[i], chars[j]] = [chars[j], chars[i]];
   }
-  return password;
+  return chars.join('');
 }
 
 serve(handler);

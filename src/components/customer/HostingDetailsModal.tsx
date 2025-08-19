@@ -170,14 +170,7 @@ export const HostingDetailsModal: React.FC<HostingDetailsModalProps> = ({
                       </div>
                     </div>
                   )}
-                  {subscription.cpanel_password && (
-                    <div>
-                      <label className="text-sm font-medium">cPanel Password:</label>
-                      <div className="bg-muted/50 rounded-lg p-3 font-mono text-sm mt-1">
-                        {maskPassword(subscription.cpanel_password)}
-                      </div>
-                    </div>
-                  )}
+                  {/* For security, we do not expose passwords in the client */}
                   {subscription.cpanel_username && subscription.server_ip && (
                     <Button onClick={handleCPanelAccess} className="w-full">
                       <ExternalLink className="h-4 w-4 mr-2" />

@@ -55,7 +55,9 @@ export default function CustomerDomainsHosting() {
         data,
         error
       } = await supabase.from('hosting_subscriptions').select(`
-          *,
+          id, customer_id, package_id, domain_id, status, next_billing_date, invoice_id,
+          provisioned_at, expires_at, created_at, updated_at, billing_cycle,
+          cpanel_username, server_ip, notes,
           hosting_packages(*),
           domains(domain_name)
         `).order('created_at', {
