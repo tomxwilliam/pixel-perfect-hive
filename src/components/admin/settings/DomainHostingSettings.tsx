@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Server, Settings, Save, Plus, Trash2 } from "lucide-react";
+import { Globe, Server, Settings, Save, Plus, Trash2, Mail, Send, Eye } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface DomainHostingSettingsProps {
   isSuperAdmin: boolean;
@@ -19,6 +20,8 @@ interface DomainHostingSettingsProps {
 export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSettingsProps) {
   const [newTld, setNewTld] = useState("");
   const [newTldPrice, setNewTldPrice] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [testEmail, setTestEmail] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -103,6 +106,77 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     
     updateSettingsMutation.mutate({ email_templates: updatedTemplates });
   };
+
+  const handleSendTestEmail = async () => {
+    if (!selectedTemplate || !testEmail) {
+      toast({
+        title: "Missing fields",
+        description: "Please select a template and enter an email address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.functions.invoke('send-domain-hosting-email', {
+        body: {
+          to: testEmail,
+          template: selectedTemplate,
+          data: {
+            customer_name: "Test Customer",
+            domain_name: "example.com",
+            hosting_package: "Premium Hosting",
+            expiry_date: "2024-12-31",
+            invoice_number: "INV-12345",
+            amount: "£29.99",
+            usage_percentage: 85,
+            ticket_number: "12345",
+            ticket_subject: "Test Support Request"
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Test email sent",
+        description: `Test email successfully sent to ${testEmail}`
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to send email",
+        description: "Unable to send test email. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const emailTemplates = [
+    { value: 'domain-registration-confirmation', label: 'Domain Registration Confirmation' },
+    { value: 'domain-transfer-initiated', label: 'Domain Transfer Initiated' },
+    { value: 'domain-transfer-completed', label: 'Domain Transfer Completed' },
+    { value: 'domain-renewal-reminder-30', label: 'Domain Renewal Reminder (30 days)' },
+    { value: 'domain-renewal-reminder-7', label: 'Domain Renewal Reminder (7 days)' },
+    { value: 'domain-expired', label: 'Domain Expired Notice' },
+    { value: 'domain-redemption', label: 'Domain Redemption Notice' },
+    { value: 'hosting-account-setup', label: 'Hosting Account Setup' },
+    { value: 'hosting-renewal-reminder-30', label: 'Hosting Renewal Reminder (30 days)' },
+    { value: 'hosting-renewal-reminder-7', label: 'Hosting Renewal Reminder (7 days)' },
+    { value: 'hosting-expired', label: 'Hosting Expired Notice' },
+    { value: 'resource-usage-alert', label: 'Resource Usage Alert' },
+    { value: 'nameserver-update', label: 'Nameserver Update Confirmation' },
+    { value: 'email-hosting-setup', label: 'Email Hosting Setup' },
+    { value: 'invoice-payment-receipt', label: 'Invoice Payment Receipt' },
+    { value: 'failed-payment-retry', label: 'Failed Payment Retry' },
+    { value: 'auto-renewal-confirmation', label: 'Auto-Renewal Confirmation' },
+    { value: 'account-verification', label: 'Account Verification' },
+    { value: 'password-reset', label: 'Password Reset' },
+    { value: 'hosting-suspension', label: 'Hosting Suspension Notice' },
+    { value: 'hosting-termination', label: 'Hosting Termination Notice' },
+    { value: 'support-ticket-opened', label: 'Support Ticket Opened' },
+    { value: 'support-ticket-update', label: 'Support Ticket Update' },
+    { value: 'support-ticket-closed', label: 'Support Ticket Closed' }
+  ];
 
   if (isLoading) {
     return <div>Loading settings...</div>;
@@ -285,69 +359,101 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         <TabsContent value="emails" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Domain Welcome Email</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Professional Email Templates
+              </CardTitle>
               <CardDescription>
-                Customize the email sent when a domain is successfully registered
+                Manage all domain and hosting email templates. These are professionally designed React Email templates that are automatically sent for various events.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="domain-subject">Subject Line</Label>
-                <Input
-                  id="domain-subject"
-                  value={((settings?.email_templates as any)?.domain_welcome?.subject) || ''}
-                  onChange={(e) => 
-                    handleEmailTemplateUpdate('domain_welcome', 'subject', e.target.value)
-                  }
-                  placeholder="Email subject..."
-                />
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Test Email Templates</Label>
+                  <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a template to test" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="" disabled>Choose Template</SelectItem>
+                      {emailTemplates.map((template) => (
+                        <SelectItem key={template.value} value={template.value}>
+                          {template.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Test Email Address</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="email"
+                      placeholder="test@example.com"
+                      value={testEmail}
+                      onChange={(e) => setTestEmail(e.target.value)}
+                    />
+                    <Button 
+                      onClick={handleSendTestEmail}
+                      disabled={!selectedTemplate || !testEmail}
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Test
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="domain-template">Email Template</Label>
-                <Textarea
-                  id="domain-template"
-                  value={((settings?.email_templates as any)?.domain_welcome?.template) || ''}
-                  onChange={(e) => 
-                    handleEmailTemplateUpdate('domain_welcome', 'template', e.target.value)
-                  }
-                  placeholder="Email template... Use {{domain_name}} for dynamic content"
-                  rows={4}
-                />
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Hosting Welcome Email</CardTitle>
-              <CardDescription>
-                Customize the email sent when hosting is provisioned
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="hosting-subject">Subject Line</Label>
-                <Input
-                  id="hosting-subject"
-                  value={((settings?.email_templates as any)?.hosting_welcome?.subject) || ''}
-                  onChange={(e) => 
-                    handleEmailTemplateUpdate('hosting_welcome', 'subject', e.target.value)
-                  }
-                  placeholder="Email subject..."
-                />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium">Available Email Templates</h4>
+                  <Badge variant="secondary">{emailTemplates.length} Templates</Badge>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { category: 'Domain Management', templates: emailTemplates.slice(0, 7), color: 'bg-blue-50 dark:bg-blue-950' },
+                    { category: 'Hosting Services', templates: emailTemplates.slice(7, 12), color: 'bg-green-50 dark:bg-green-950' },
+                    { category: 'Technical & DNS', templates: emailTemplates.slice(12, 14), color: 'bg-purple-50 dark:bg-purple-950' },
+                    { category: 'Billing & Payments', templates: emailTemplates.slice(14, 17), color: 'bg-orange-50 dark:bg-orange-950' },
+                    { category: 'Security & Support', templates: emailTemplates.slice(17), color: 'bg-red-50 dark:bg-red-950' }
+                  ].map((category) => (
+                    <Card key={category.category} className={category.color}>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-sm font-medium">{category.category}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {category.templates.map((template) => (
+                          <div key={template.value} className="flex items-center justify-between p-2 bg-background/60 rounded text-xs">
+                            <span className="font-medium">{template.label}</span>
+                            <Badge variant="outline" className="text-xs">
+                              <Eye className="h-3 w-3 mr-1" />
+                              Ready
+                            </Badge>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="hosting-template">Email Template</Label>
-                <Textarea
-                  id="hosting-template"
-                  value={((settings?.email_templates as any)?.hosting_welcome?.template) || ''}
-                  onChange={(e) => 
-                    handleEmailTemplateUpdate('hosting_welcome', 'template', e.target.value)
-                  }
-                  placeholder="Email template... Use {{cpanel_username}}, {{cpanel_password}} for dynamic content"
-                  rows={4}
-                />
-              </div>
+
+              <Card className="border-2 border-dashed">
+                <CardContent className="flex flex-col items-center justify-center py-8 text-center">
+                  <Mail className="h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="font-semibold mb-2">Professional Email Templates Ready</h3>
+                  <p className="text-muted-foreground mb-4 max-w-md">
+                    All email templates are professionally designed React Email components that automatically send beautiful, branded emails for domain and hosting events.
+                  </p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    <Badge variant="secondary">✅ Responsive Design</Badge>
+                    <Badge variant="secondary">✅ Dark Mode Support</Badge>
+                    <Badge variant="secondary">✅ Brand Customizable</Badge>
+                    <Badge variant="secondary">✅ Dynamic Content</Badge>
+                  </div>
+                </CardContent>
+              </Card>
             </CardContent>
           </Card>
         </TabsContent>
