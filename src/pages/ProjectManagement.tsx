@@ -234,7 +234,7 @@ const ProjectManagement = () => {
       <Navigation />
 
       {/* Main Content */}
-      <main className="container mx-auto p-6 space-y-6">
+      <main className="container mx-auto p-6 space-y-6 pt-24">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
