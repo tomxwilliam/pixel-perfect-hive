@@ -97,7 +97,7 @@ function generateOAuthHeader(method: string, url: string): string {
   );
 }
 
-const BASE_URL = "https://api.x.com/2";
+const BASE_URL = "https://api.twitter.com/2";
 
 async function sendTweet(tweetText: string): Promise<any> {
   const url = `${BASE_URL}/tweets`;
@@ -129,7 +129,7 @@ async function sendTweet(tweetText: string): Promise<any> {
 }
 
 async function getUserProfile(): Promise<any> {
-  const url = `${BASE_URL}/users/me?user.fields=public_metrics,profile_image_url`;
+  const url = `https://api.twitter.com/1.1/account/verify_credentials.json?include_entities=false&skip_status=true&include_email=false`;
   const method = "GET";
   const oauthHeader = generateOAuthHeader(method, url);
 
@@ -185,25 +185,31 @@ async function saveSocialPost(postData: any, tweetResponse: any) {
 
 async function updateTwitterAccount(userProfile: any) {
   try {
+    const username = userProfile.screen_name;
+    const displayName = userProfile.name;
+    const followers = userProfile.followers_count || 0;
+    const following = userProfile.friends_count || 0;
+    const avatar = userProfile.profile_image_url_https || userProfile.profile_image_url;
+
     const { data: existingAccount } = await supabase
       .from('social_accounts')
       .select('*')
       .eq('platform', 'twitter')
-      .eq('account_username', userProfile.data.username)
-      .single();
+      .eq('account_username', username)
+      .maybeSingle();
 
     const accountData = {
       platform: 'twitter',
-      account_username: userProfile.data.username,
-      account_display_name: userProfile.data.name,
-      follower_count: userProfile.data.public_metrics?.followers_count || 0,
-      following_count: userProfile.data.public_metrics?.following_count || 0,
+      account_username: username,
+      account_display_name: displayName,
+      follower_count: followers,
+      following_count: following,
       is_active: true,
-      profile_image_url: userProfile.data.profile_image_url,
+      profile_image_url: avatar,
       last_sync_at: new Date().toISOString()
-    };
+    } as any;
 
-    if (existingAccount) {
+    if (existingAccount && existingAccount.id) {
       await supabase
         .from('social_accounts')
         .update(accountData)
