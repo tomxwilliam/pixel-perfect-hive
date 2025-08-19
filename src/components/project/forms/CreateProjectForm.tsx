@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 const projectSchema = z.object({
   title: z.string().min(1, 'Project title is required'),
   description: z.string().optional(),
-  status: z.enum(['planning', 'active', 'on_hold', 'completed', 'cancelled']),
+  status: z.enum(['pending', 'in_progress', 'completed', 'cancelled', 'on_hold']),
   priority: z.enum(['lowest', 'low', 'medium', 'high', 'highest']),
   start_date: z.date().optional(),
   end_date: z.date().optional(),
@@ -40,9 +40,9 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      status: 'planning',
+      status: 'pending',
       priority: 'medium',
-      project_type: 'web_development',
+      project_type: 'web',
     },
   });
 
@@ -51,18 +51,20 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Create project
+      // Create project with correct database fields and enum values
       const { error: projectError } = await supabase
         .from('projects')
         .insert({
-          title: data.title,
-          description: data.description,
-          status: data.status,
-          priority: data.priority,
-          project_type: data.project_type,
-          estimated_hours: data.estimated_hours,
-          budget: data.budget,
+          title: data.title, // This field is required in the database
           customer_id: user.id,
+          description: data.description,
+          project_type: data.project_type as 'web' | 'app' | 'game',
+          status: data.status as 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold',
+          budget: data.budget,
+          priority: data.priority,
+          start_date: data.start_date?.toISOString().split('T')[0],
+          deadline: data.end_date?.toISOString().split('T')[0],
+          estimated_completion_date: data.end_date?.toISOString().split('T')[0],
         });
 
       if (projectError) throw projectError;
@@ -115,12 +117,9 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="web_development">Web Development</SelectItem>
-                    <SelectItem value="mobile_development">Mobile Development</SelectItem>
-                    <SelectItem value="game_development">Game Development</SelectItem>
-                    <SelectItem value="ai_integration">AI Integration</SelectItem>
-                    <SelectItem value="consulting">Consulting</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="web">Web Development</SelectItem>
+                    <SelectItem value="app">Mobile App Development</SelectItem>
+                    <SelectItem value="game">Game Development</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -161,8 +160,8 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="planning">Planning</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
                     <SelectItem value="on_hold">On Hold</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>

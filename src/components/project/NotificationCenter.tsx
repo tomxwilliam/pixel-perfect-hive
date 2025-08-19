@@ -153,8 +153,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     }
   };
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
+  const getNotificationIcon = (notificationType: string) => {
+    switch (notificationType) {
       case 'success':
         return <Check className="h-4 w-4 text-green-500" />;
       case 'warning':
@@ -166,8 +166,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
+  const getTypeColor = (notificationType: string) => {
+    switch (notificationType) {
       case 'success': return 'border-l-green-500';
       case 'warning': return 'border-l-orange-500';
       case 'error': return 'border-l-red-500';
@@ -231,14 +231,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               {filteredNotifications.map((notification, index) => (
                 <div key={notification.id}>
                   <div
-                    className={`p-4 border-l-4 ${getTypeColor(notification.type)} ${
+                    className={`p-4 border-l-4 ${getTypeColor(notification.notification_type)} ${
                       !notification.is_read ? 'bg-muted/30' : ''
                     } hover:bg-muted/50 transition-colors cursor-pointer`}
                     onClick={() => !notification.is_read && markAsRead(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">
-                        {getNotificationIcon(notification.type)}
+                        {getNotificationIcon(notification.notification_type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between">
@@ -258,11 +258,9 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         <p className="text-sm text-muted-foreground mt-1">
                           {notification.message}
                         </p>
-                        {notification.category && (
-                          <Badge variant="outline" className="mt-2 text-xs">
-                            {notification.category}
-                          </Badge>
-                        )}
+                        <Badge variant="outline" className="mt-2 text-xs">
+                          {notification.notification_type}
+                        </Badge>
                       </div>
                     </div>
                   </div>

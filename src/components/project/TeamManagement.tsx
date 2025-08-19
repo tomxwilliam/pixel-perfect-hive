@@ -82,7 +82,7 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
         .from('project_team_members')
         .select(`
           *,
-          profiles:user_id (
+          profiles!inner (
             first_name,
             last_name,
             email,
@@ -98,9 +98,10 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
       const { data, error } = await query;
       if (error) throw error;
 
-      setTeamMembers(data || []);
+      setTeamMembers((data as any) || []);
     } catch (error) {
       console.error('Error fetching team members:', error);
+      setTeamMembers([]); // Set empty array on error
     } finally {
       setLoading(false);
     }
