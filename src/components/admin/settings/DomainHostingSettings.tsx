@@ -376,7 +376,6 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                       <SelectValue placeholder="Select a template to test" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="" disabled>Choose Template</SelectItem>
                       {emailTemplates.map((template) => (
                         <SelectItem key={template.value} value={template.value}>
                           {template.label}
