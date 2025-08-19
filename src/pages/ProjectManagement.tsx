@@ -29,8 +29,12 @@ import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
 import NotificationCenter from '@/components/project/NotificationCenter';
 import TeamManagement from '@/components/project/TeamManagement';
 import KanbanBoard from '@/components/project/KanbanBoard';
+import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
+import AdvancedProjectAnalytics from '@/components/project/AdvancedProjectAnalytics';
+import ResourceManagement from '@/components/project/ResourceManagement';
 import { useProjects } from '@/hooks/useProjects';
 import { useProjectAnalytics } from '@/hooks/useProjectAnalytics';
+import { useRealtimeCollaboration } from '@/hooks/useRealtimeCollaboration';
 
 // Mock data for demonstration
 const mockProjects = [
