@@ -109,7 +109,7 @@ export const Footer = () => {
           </p>
           <div className="flex items-center space-x-2 text-muted-foreground text-sm mt-4 md:mt-0">
             <Coffee className="h-4 w-4" />
-            <span>Page not found? Neither are we... we're coding! 🚀</span>
+            <span>404, Not Here! 💻</span>
           </div>
         </div>
       </div>
