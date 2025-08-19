@@ -35,7 +35,7 @@ const MobileTabsList = React.forwardRef<
   if (isMobile) {
     return (
       <div className="flex items-center justify-between p-4 border-b">
-        <Sheet open={isOpen} onOpenChange={handleClose}>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2 min-h-[44px] px-4">
               <Menu className="h-4 w-4" />
