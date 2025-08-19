@@ -66,11 +66,11 @@ const ProjectCalendar = () => {
 
     // Add project deadlines as events
     projects.forEach(project => {
-      if (project.due_date) {
+      if (project.deadline) {
         calendarEvents.push({
           id: `project-${project.id}`,
           title: `Project Deadline: ${project.title}`,
-          date: project.due_date.split('T')[0], // Get date part only
+          date: project.deadline.split('T')[0], // Get date part only
           type: 'deadline',
           project: project.title,
           color: 'bg-red-500'

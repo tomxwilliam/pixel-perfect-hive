@@ -44,14 +44,13 @@ const initialColumns: Column[] = [
 ];
 
 const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'highest': return 'destructive';
-    case 'high': return 'destructive';
-    case 'medium': return 'default';
-    case 'low': return 'secondary';
-    case 'lowest': return 'outline';
-    default: return 'default';
-  }
+  if (!priority) return 'outline';
+  const p = priority.toLowerCase();
+  if (p.includes('highest') || p.includes('critical')) return 'destructive';
+  if (p.includes('high')) return 'destructive';
+  if (p.includes('medium')) return 'default';
+  if (p.includes('low')) return 'secondary';
+  return 'outline';
 };
 
 const getInitials = (name: string) => {
@@ -63,12 +62,24 @@ const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [showCreateTask, setShowCreateTask] = useState(false);
 
-  // Organize tasks into columns
+  // Organize tasks into columns based on status
   useEffect(() => {
     const tasksByStatus = tasks.reduce((acc, task) => {
-      const status = task.status;
-      if (!acc[status]) acc[status] = [];
-      acc[status].push(task);
+      let columnId = task.status;
+      
+      // Map task status to column IDs
+      if (task.status === 'todo' || task.status === 'pending') {
+        columnId = 'todo';
+      } else if (task.status === 'in_progress') {
+        columnId = 'in_progress';
+      } else if (task.status === 'review' || task.status === 'testing') {
+        columnId = 'review';
+      } else if (task.status === 'completed' || task.status === 'done') {
+        columnId = 'completed';
+      }
+      
+      if (!acc[columnId]) acc[columnId] = [];
+      acc[columnId].push(task);
       return acc;
     }, {} as Record<string, Task[]>);
 
@@ -103,7 +114,19 @@ const KanbanBoard = () => {
 
     // Update task status in database if moving between columns
     if (source.droppableId !== destination.droppableId) {
-      const newStatus = destination.droppableId as Task['status'];
+      let newStatus = destination.droppableId;
+      
+      // Map column IDs back to actual status values
+      if (destination.droppableId === 'todo') {
+        newStatus = 'todo';
+      } else if (destination.droppableId === 'in_progress') {
+        newStatus = 'in_progress';
+      } else if (destination.droppableId === 'review') {
+        newStatus = 'review';
+      } else if (destination.droppableId === 'completed') {
+        newStatus = 'completed';
+      }
+      
       await updateTask(sourceTask.id, { status: newStatus });
     }
 
@@ -114,7 +137,7 @@ const KanbanBoard = () => {
     const newDestTasks = Array.from(destColumn.tasks);
     newDestTasks.splice(destination.index, 0, {
       ...sourceTask,
-      status: destination.droppableId as Task['status']
+      status: destination.droppableId
     });
 
     const newColumns = columns.map(col => {

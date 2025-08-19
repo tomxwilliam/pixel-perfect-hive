@@ -2,38 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from '@/components/ui/use-toast';
+import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
-export interface Project {
-  id: string;
-  title: string;
-  description?: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'on_hold' | 'cancelled';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  deadline?: string;
-  completion_percentage: number;
-  customer_id: string;
-  budget?: number;
-  actual_hours?: number;
-  estimated_hours?: number;
-  created_at: string;
-  updated_at: string;
-  project_type: string;
-}
-
-export interface Task {
-  id: string;
-  project_id: string;
-  title: string;
-  description?: string;
-  status: string;
-  priority: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
-  assignee_id?: string;
-  due_date?: string;
-  estimated_hours?: number;
-  actual_hours?: number;
-  created_at: string;
-  updated_at: string;
-}
+export type Project = Tables<'projects'>;
+export type Task = Tables<'project_tasks'>;
+export type ProjectInsert = TablesInsert<'projects'>;
+export type ProjectUpdate = TablesUpdate<'projects'>;
+export type TaskInsert = TablesInsert<'project_tasks'>;
+export type TaskUpdate = TablesUpdate<'project_tasks'>;
 
 export const useProjects = () => {
   const { user, profile } = useAuth();
@@ -85,7 +61,7 @@ export const useProjects = () => {
     }
   };
 
-  const createProject = async (projectData: Partial<Project>) => {
+  const createProject = async (projectData: Partial<ProjectInsert>) => {
     if (!user) return null;
 
     try {
@@ -94,7 +70,8 @@ export const useProjects = () => {
         .insert([{
           ...projectData,
           customer_id: user.id,
-          project_type: projectData.project_type || 'web',
+          project_type: (projectData.project_type as any) || 'web',
+          title: projectData.title || 'Untitled Project',
         }])
         .select()
         .single();
@@ -119,7 +96,7 @@ export const useProjects = () => {
     }
   };
 
-  const updateProject = async (id: string, updates: Partial<Project>) => {
+  const updateProject = async (id: string, updates: Partial<ProjectUpdate>) => {
     try {
       const { error } = await supabase
         .from('projects')
@@ -144,7 +121,7 @@ export const useProjects = () => {
     }
   };
 
-  const createTask = async (taskData: Partial<Task>) => {
+  const createTask = async (taskData: Partial<TaskInsert>) => {
     if (!user) return null;
 
     try {
@@ -179,7 +156,7 @@ export const useProjects = () => {
     }
   };
 
-  const updateTask = async (id: string, updates: Partial<Task>) => {
+  const updateTask = async (id: string, updates: Partial<TaskUpdate>) => {
     try {
       const { error } = await supabase
         .from('project_tasks')
