@@ -32,6 +32,7 @@ import KanbanBoard from '@/components/project/KanbanBoard';
 import RealtimeCollaboration from '@/components/project/RealtimeCollaboration';
 import AdvancedProjectAnalytics from '@/components/project/AdvancedProjectAnalytics';
 import ResourceManagement from '@/components/project/ResourceManagement';
+import ProjectCalendar from '@/components/project/ProjectCalendar';
 import { useProjects } from '@/hooks/useProjects';
 import { useProjectAnalytics } from '@/hooks/useProjectAnalytics';
 import { useRealtimeCollaboration } from '@/hooks/useRealtimeCollaboration';
@@ -162,6 +163,7 @@ const ProjectManagement = () => {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Mock analytics data
   const analyticsData = {
@@ -553,18 +555,30 @@ const ProjectManagement = () => {
           </TabsContent>
 
           <TabsContent value="calendar">
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Calendar View</h3>
-                  <p className="text-muted-foreground mb-4">
-                    View deadlines, meetings, and milestones in calendar format
-                  </p>
-                  <Button>Open Calendar</Button>
+            {showCalendar ? (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium">Project Calendar</h3>
+                  <Button variant="outline" onClick={() => setShowCalendar(false)}>
+                    Back to Summary
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
+                <ProjectCalendar />
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center py-12">
+                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">Calendar View</h3>
+                    <p className="text-muted-foreground mb-4">
+                      View deadlines, meetings, and milestones in calendar format
+                    </p>
+                    <Button onClick={() => setShowCalendar(true)}>Open Calendar</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="analytics">
