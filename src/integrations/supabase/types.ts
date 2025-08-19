@@ -1488,6 +1488,54 @@ export type Database = {
           },
         ]
       }
+      project_discussions: {
+        Row: {
+          created_at: string | null
+          id: string
+          mentions: string[] | null
+          message: string
+          project_id: string
+          reply_to: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          mentions?: string[] | null
+          message: string
+          project_id: string
+          reply_to?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          mentions?: string[] | null
+          message?: string
+          project_id?: string
+          reply_to?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_discussions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_discussions_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "project_discussions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_milestones: {
         Row: {
           approval_required: boolean | null
@@ -1549,6 +1597,60 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          notification_type: string
+          project_id: string | null
+          task_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          notification_type: string
+          project_id?: string | null
+          task_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          notification_type?: string
+          project_id?: string | null
+          task_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_notifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "project_tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -1690,7 +1792,9 @@ export type Database = {
         Row: {
           actual_hours: number | null
           assigned_to: string | null
+          assignee_id: string | null
           completed_at: string | null
+          completion_percentage: number | null
           created_at: string
           created_by: string
           dependencies: string[] | null
@@ -1699,9 +1803,13 @@ export type Database = {
           estimated_hours: number | null
           id: string
           is_milestone: boolean | null
+          is_recurring: boolean | null
+          milestone_id: string | null
           parent_task_id: string | null
+          position: number | null
           priority: string
           project_id: string
+          recurring_pattern: Json | null
           sort_order: number | null
           start_date: string | null
           status: string
@@ -1712,7 +1820,9 @@ export type Database = {
         Insert: {
           actual_hours?: number | null
           assigned_to?: string | null
+          assignee_id?: string | null
           completed_at?: string | null
+          completion_percentage?: number | null
           created_at?: string
           created_by: string
           dependencies?: string[] | null
@@ -1721,9 +1831,13 @@ export type Database = {
           estimated_hours?: number | null
           id?: string
           is_milestone?: boolean | null
+          is_recurring?: boolean | null
+          milestone_id?: string | null
           parent_task_id?: string | null
+          position?: number | null
           priority?: string
           project_id: string
+          recurring_pattern?: Json | null
           sort_order?: number | null
           start_date?: string | null
           status?: string
@@ -1734,7 +1848,9 @@ export type Database = {
         Update: {
           actual_hours?: number | null
           assigned_to?: string | null
+          assignee_id?: string | null
           completed_at?: string | null
+          completion_percentage?: number | null
           created_at?: string
           created_by?: string
           dependencies?: string[] | null
@@ -1743,9 +1859,13 @@ export type Database = {
           estimated_hours?: number | null
           id?: string
           is_milestone?: boolean | null
+          is_recurring?: boolean | null
+          milestone_id?: string | null
           parent_task_id?: string | null
+          position?: number | null
           priority?: string
           project_id?: string
+          recurring_pattern?: Json | null
           sort_order?: number | null
           start_date?: string | null
           status?: string
@@ -1754,6 +1874,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "project_tasks_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "project_milestones"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "project_tasks_parent_task_id_fkey"
             columns: ["parent_task_id"]
@@ -2481,6 +2608,127 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_attachments: {
+        Row: {
+          created_at: string | null
+          file_id: string
+          id: string
+          task_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_id: string
+          id?: string
+          task_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string | null
+          file_id?: string
+          id?: string
+          task_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_attachments_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "file_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_attachments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "project_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          mentions: string[] | null
+          task_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          mentions?: string[] | null
+          task_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          mentions?: string[] | null
+          task_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "project_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_time_entries: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          is_billable: boolean | null
+          start_time: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          is_billable?: boolean | null
+          start_time: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          is_billable?: boolean | null
+          start_time?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_time_entries_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "project_tasks"
             referencedColumns: ["id"]
           },
         ]
