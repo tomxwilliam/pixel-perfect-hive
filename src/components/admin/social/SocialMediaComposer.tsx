@@ -153,29 +153,74 @@ export function SocialMediaComposer() {
     setLoading(true);
     try {
       const postData = {
-        content: content.trim(),
+        content: content.trim() + (hashtags.length > 0 ? ' ' + hashtags.map(h => `#${h}`).join(' ') : ''),
         hashtags,
         media_urls: [], // Will be populated after file upload
         scheduled_for: isScheduled ? new Date(`${scheduledDate}T${scheduledTime}`).toISOString() : null,
-        platforms: Object.entries(platforms).filter(([_, enabled]) => enabled).map(([platform, _]) => platform)
+        platforms: Object.entries(platforms).filter(([_, enabled]) => enabled).map(([platform, _]) => platform),
+        ai_generated: false
       };
 
-      // TODO: Implement actual post creation logic
-      console.log('Creating post:', postData);
+      let successfulPosts = 0;
+      let errors: string[] = [];
 
-      toast({
-        title: "Success",
-        description: isScheduled ? "Post scheduled successfully" : "Post published successfully",
-      });
+      // Post to Twitter if selected
+      if (platforms.twitter) {
+        try {
+          const { data, error } = await supabase.functions.invoke('twitter-integration/post', {
+            body: postData
+          });
 
-      // Reset form
-      setContent("");
-      setHashtags([]);
-      setMediaFiles([]);
-      setLinkUrl("");
-      setIsScheduled(false);
-      setScheduledDate("");
-      setScheduledTime("");
+          if (error) throw error;
+          
+          if (data.success) {
+            successfulPosts++;
+            console.log('Twitter post successful:', data);
+          } else {
+            errors.push(`Twitter: ${data.error || 'Unknown error'}`);
+          }
+        } catch (error) {
+          console.error('Twitter posting error:', error);
+          errors.push(`Twitter: ${error.message || 'Failed to post'}`);
+        }
+      }
+
+      // LinkedIn posting would go here when implemented
+      if (platforms.linkedin) {
+        // TODO: Implement LinkedIn posting
+        errors.push('LinkedIn: Not yet implemented');
+      }
+
+      // Show appropriate toast message
+      if (successfulPosts > 0 && errors.length === 0) {
+        toast({
+          title: "Success",
+          description: isScheduled ? "Post scheduled successfully" : "Post published successfully",
+        });
+      } else if (successfulPosts > 0 && errors.length > 0) {
+        toast({
+          title: "Partial Success",
+          description: `Posted to ${successfulPosts} platform(s). Errors: ${errors.join(', ')}`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to post: ${errors.join(', ')}`,
+          variant: "destructive",
+        });
+      }
+
+      // Reset form only if at least one post was successful
+      if (successfulPosts > 0) {
+        setContent("");
+        setHashtags([]);
+        setMediaFiles([]);
+        setLinkUrl("");
+        setIsScheduled(false);
+        setScheduledDate("");
+        setScheduledTime("");
+      }
 
     } catch (error) {
       console.error('Error creating post:', error);

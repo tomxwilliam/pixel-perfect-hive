@@ -326,6 +326,41 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
           fetchIntegrations();
         }
+      } else if (integration.integration_type === 'twitter') {
+        // For Twitter, test the connection using stored credentials
+        try {
+          const { data, error } = await supabase.functions.invoke('twitter-integration/connect');
+          
+          if (error) throw error;
+          
+          if (data.success) {
+            const { error: updateError } = await supabase
+              .from('api_integrations')
+              .update({
+                is_connected: true,
+                last_sync_at: new Date().toISOString()
+              })
+              .eq('id', integration.id);
+
+            if (updateError) throw updateError;
+
+            toast({
+              title: "Connected",
+              description: "Twitter integration connected successfully",
+            });
+
+            fetchIntegrations();
+          } else {
+            throw new Error(data.error || 'Failed to connect to Twitter');
+          }
+        } catch (error) {
+          console.error('Twitter connection error:', error);
+          toast({
+            title: "Connection Failed",
+            description: `Failed to connect Twitter: ${error.message}`,
+            variant: "destructive",
+          });
+        }
       } else {
         // For other integrations, show OAuth placeholder
         toast({
