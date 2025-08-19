@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { useProjects } from '@/hooks/useProjects';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import CreateTaskForm from './forms/CreateTaskForm';
 
 interface CalendarEvent {
   id: string;
@@ -13,44 +16,13 @@ interface CalendarEvent {
   color: string;
 }
 
-const mockEvents: CalendarEvent[] = [
-  {
-    id: '1',
-    title: 'Project Deadline - E-commerce',
-    date: '2024-12-15',
-    type: 'deadline',
-    project: 'E-commerce Website',
-    color: 'bg-red-500'
-  },
-  {
-    id: '2',
-    title: 'Client Meeting',
-    date: '2024-11-25',
-    type: 'meeting',
-    project: 'Mobile App',
-    color: 'bg-blue-500'
-  },
-  {
-    id: '3',
-    title: 'Milestone: Design Complete',
-    date: '2024-11-22',
-    type: 'milestone',
-    project: 'E-commerce Website',
-    color: 'bg-green-500'
-  },
-  {
-    id: '4',
-    title: 'Task: Setup Payment Gateway',
-    date: '2024-11-30',
-    type: 'task',
-    project: 'E-commerce Website',
-    color: 'bg-orange-500'
-  }
-];
 
 const ProjectCalendar = () => {
+  const { projects, tasks } = useProjects();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [showCreateTask, setShowCreateTask] = useState(false);
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -73,11 +45,47 @@ const ProjectCalendar = () => {
     return days;
   };
 
+  // Convert tasks and projects to calendar events
+  useEffect(() => {
+    const calendarEvents: CalendarEvent[] = [];
+
+    // Add task deadlines as events
+    tasks.forEach(task => {
+      if (task.due_date) {
+        const project = projects.find(p => p.id === task.project_id);
+        calendarEvents.push({
+          id: task.id,
+          title: `Task: ${task.title}`,
+          date: task.due_date.split('T')[0], // Get date part only
+          type: 'task',
+          project: project?.title,
+          color: 'bg-orange-500'
+        });
+      }
+    });
+
+    // Add project deadlines as events
+    projects.forEach(project => {
+      if (project.due_date) {
+        calendarEvents.push({
+          id: `project-${project.id}`,
+          title: `Project Deadline: ${project.title}`,
+          date: project.due_date.split('T')[0], // Get date part only
+          type: 'deadline',
+          project: project.title,
+          color: 'bg-red-500'
+        });
+      }
+    });
+
+    setEvents(calendarEvents);
+  }, [tasks, projects]);
+
   const getEventsForDate = (day: number) => {
     if (!day) return [];
     
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return mockEvents.filter(event => event.date === dateStr);
+    return events.filter(event => event.date === dateStr);
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -142,7 +150,7 @@ const ProjectCalendar = () => {
             </Button>
           </div>
         </div>
-        <Button>
+        <Button onClick={() => setShowCreateTask(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Event
         </Button>
@@ -228,7 +236,7 @@ const ProjectCalendar = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mockEvents
+              {events
                 .filter(event => new Date(event.date) >= new Date())
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                 .slice(0, 5)
@@ -254,6 +262,11 @@ const ProjectCalendar = () => {
                     )}
                   </div>
                 ))}
+              {events.length === 0 && (
+                <p className="text-center text-muted-foreground text-sm">
+                  No upcoming events
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -283,6 +296,21 @@ const ProjectCalendar = () => {
           </Card>
         </div>
       </div>
+
+      {/* Create Task Dialog */}
+      <Dialog open={showCreateTask} onOpenChange={setShowCreateTask}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create New Task</DialogTitle>
+          </DialogHeader>
+          <CreateTaskForm 
+            projectId=""
+            onSuccess={() => setShowCreateTask(false)}
+            onCancel={() => setShowCreateTask(false)}
+            availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

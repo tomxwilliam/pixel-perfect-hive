@@ -1,24 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Plus, Calendar, MessageSquare, Paperclip, Clock } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  assignee?: string;
-  priority: 'lowest' | 'low' | 'medium' | 'high' | 'highest';
-  dueDate?: string;
-  tags?: string[];
-  comments?: number;
-  attachments?: number;
-  estimatedHours?: number;
-  actualHours?: number;
-}
+import { useProjects, Task } from '@/hooks/useProjects';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import CreateTaskForm from './forms/CreateTaskForm';
 
 interface Column {
   id: string;
@@ -27,97 +16,30 @@ interface Column {
   color: string;
 }
 
-const initialData: Column[] = [
+const initialColumns: Column[] = [
   {
     id: 'todo',
     title: 'To Do',
     color: 'bg-gray-100 dark:bg-gray-800',
-    tasks: [
-      {
-        id: 'task-1',
-        title: 'Setup payment gateway',
-        description: 'Integrate Stripe payment processing',
-        assignee: 'Mike Johnson',
-        priority: 'high',
-        dueDate: '2024-11-30',
-        tags: ['backend', 'payment'],
-        comments: 2,
-        attachments: 1,
-        estimatedHours: 8
-      },
-      {
-        id: 'task-2',
-        title: 'Database optimization',
-        description: 'Optimize database queries for better performance',
-        assignee: 'Alex Chen',
-        priority: 'medium',
-        dueDate: '2024-12-05',
-        tags: ['database', 'performance'],
-        comments: 0,
-        attachments: 0,
-        estimatedHours: 12
-      }
-    ]
+    tasks: []
   },
   {
     id: 'in_progress',
     title: 'In Progress',
     color: 'bg-blue-100 dark:bg-blue-800',
-    tasks: [
-      {
-        id: 'task-3',
-        title: 'User authentication system',
-        description: 'Implement secure user login and registration',
-        assignee: 'John Doe',
-        priority: 'highest',
-        dueDate: '2024-11-25',
-        tags: ['auth', 'security'],
-        comments: 5,
-        attachments: 2,
-        estimatedHours: 16,
-        actualHours: 8
-      }
-    ]
+    tasks: []
   },
   {
     id: 'review',
     title: 'In Review',
     color: 'bg-orange-100 dark:bg-orange-800',
-    tasks: [
-      {
-        id: 'task-4',
-        title: 'Homepage redesign',
-        description: 'Create new homepage design mockups',
-        assignee: 'Sarah Wilson',
-        priority: 'medium',
-        dueDate: '2024-11-22',
-        tags: ['design', 'ui'],
-        comments: 3,
-        attachments: 5,
-        estimatedHours: 20,
-        actualHours: 18
-      }
-    ]
+    tasks: []
   },
   {
     id: 'completed',
     title: 'Completed',
     color: 'bg-green-100 dark:bg-green-800',
-    tasks: [
-      {
-        id: 'task-5',
-        title: 'Project setup',
-        description: 'Initialize project structure and dependencies',
-        assignee: 'Jane Smith',
-        priority: 'high',
-        dueDate: '2024-11-15',
-        tags: ['setup', 'infrastructure'],
-        comments: 1,
-        attachments: 0,
-        estimatedHours: 4,
-        actualHours: 3
-      }
-    ]
+    tasks: []
   }
 ];
 
@@ -137,9 +59,28 @@ const getInitials = (name: string) => {
 };
 
 const KanbanBoard = () => {
-  const [columns, setColumns] = useState<Column[]>(initialData);
+  const { tasks, projects, updateTask } = useProjects();
+  const [columns, setColumns] = useState<Column[]>(initialColumns);
+  const [showCreateTask, setShowCreateTask] = useState(false);
 
-  const onDragEnd = (result: any) => {
+  // Organize tasks into columns
+  useEffect(() => {
+    const tasksByStatus = tasks.reduce((acc, task) => {
+      const status = task.status;
+      if (!acc[status]) acc[status] = [];
+      acc[status].push(task);
+      return acc;
+    }, {} as Record<string, Task[]>);
+
+    const updatedColumns = initialColumns.map(col => ({
+      ...col,
+      tasks: tasksByStatus[col.id] || []
+    }));
+
+    setColumns(updatedColumns);
+  }, [tasks]);
+
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -160,15 +101,22 @@ const KanbanBoard = () => {
 
     const sourceTask = sourceColumn.tasks[source.index];
 
-    // Remove task from source column
+    // Update task status in database if moving between columns
+    if (source.droppableId !== destination.droppableId) {
+      const newStatus = destination.droppableId as Task['status'];
+      await updateTask(sourceTask.id, { status: newStatus });
+    }
+
+    // Optimistically update local state for smooth UX
     const newSourceTasks = Array.from(sourceColumn.tasks);
     newSourceTasks.splice(source.index, 1);
 
-    // Add task to destination column
     const newDestTasks = Array.from(destColumn.tasks);
-    newDestTasks.splice(destination.index, 0, sourceTask);
+    newDestTasks.splice(destination.index, 0, {
+      ...sourceTask,
+      status: destination.droppableId as Task['status']
+    });
 
-    // Update columns
     const newColumns = columns.map(col => {
       if (col.id === source.droppableId) {
         return { ...col, tasks: newSourceTasks };
@@ -186,7 +134,7 @@ const KanbanBoard = () => {
     <div className="h-full overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Kanban Board</h2>
-        <Button>
+        <Button onClick={() => setShowCreateTask(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Add Task
         </Button>
@@ -237,67 +185,45 @@ const KanbanBoard = () => {
                                       </Badge>
                                     </div>
 
-                                    {/* Description */}
-                                    {task.description && (
-                                      <p className="text-xs text-muted-foreground line-clamp-2">
-                                        {task.description}
-                                      </p>
-                                    )}
+                                     {/* Description */}
+                                     {task.description && (
+                                       <p className="text-xs text-muted-foreground line-clamp-2">
+                                         {task.description}
+                                       </p>
+                                     )}
 
-                                    {/* Tags */}
-                                    {task.tags && task.tags.length > 0 && (
-                                      <div className="flex flex-wrap gap-1">
-                                        {task.tags.map((tag, idx) => (
-                                          <Badge key={idx} variant="outline" className="text-xs">
-                                            {tag}
-                                          </Badge>
-                                        ))}
-                                      </div>
-                                    )}
+                                     {/* Due Date */}
+                                     {task.due_date && (
+                                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                         <Calendar className="h-3 w-3" />
+                                         {new Date(task.due_date).toLocaleDateString()}
+                                       </div>
+                                     )}
 
-                                    {/* Due Date */}
-                                    {task.dueDate && (
-                                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                        <Calendar className="h-3 w-3" />
-                                        {new Date(task.dueDate).toLocaleDateString()}
-                                      </div>
-                                    )}
+                                     {/* Time Tracking */}
+                                     {(task.estimated_hours || task.actual_hours) && (
+                                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                         <Clock className="h-3 w-3" />
+                                         {task.actual_hours || 0}h / {task.estimated_hours || 0}h
+                                       </div>
+                                     )}
 
-                                    {/* Time Tracking */}
-                                    {(task.estimatedHours || task.actualHours) && (
-                                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                        <Clock className="h-3 w-3" />
-                                        {task.actualHours ? `${task.actualHours}h` : '0h'} / {task.estimatedHours}h
-                                      </div>
-                                    )}
+                                     {/* Footer */}
+                                     <div className="flex items-center justify-between pt-2">
+                                       {/* Assignee */}
+                                       {task.assignee_id && (
+                                         <Avatar className="h-6 w-6">
+                                           <AvatarFallback className="text-xs">
+                                             A
+                                           </AvatarFallback>
+                                         </Avatar>
+                                       )}
 
-                                    {/* Footer */}
-                                    <div className="flex items-center justify-between pt-2">
-                                      {/* Assignee */}
-                                      {task.assignee && (
-                                        <Avatar className="h-6 w-6">
-                                          <AvatarFallback className="text-xs">
-                                            {getInitials(task.assignee)}
-                                          </AvatarFallback>
-                                        </Avatar>
-                                      )}
-
-                                      {/* Metadata */}
-                                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                        {task.comments !== undefined && task.comments > 0 && (
-                                          <div className="flex items-center gap-1">
-                                            <MessageSquare className="h-3 w-3" />
-                                            {task.comments}
-                                          </div>
-                                        )}
-                                        {task.attachments !== undefined && task.attachments > 0 && (
-                                          <div className="flex items-center gap-1">
-                                            <Paperclip className="h-3 w-3" />
-                                            {task.attachments}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
+                                       {/* Created date */}
+                                       <div className="text-xs text-muted-foreground">
+                                         {new Date(task.created_at).toLocaleDateString()}
+                                       </div>
+                                     </div>
                                   </div>
                                 </CardContent>
                               </Card>
@@ -311,7 +237,7 @@ const KanbanBoard = () => {
                       <Button 
                         variant="outline" 
                         className="w-full border-dashed"
-                        onClick={() => console.log(`Add task to ${column.title}`)}
+                        onClick={() => setShowCreateTask(true)}
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Add Task
@@ -324,6 +250,21 @@ const KanbanBoard = () => {
           ))}
         </div>
       </DragDropContext>
+
+      {/* Create Task Dialog */}
+      <Dialog open={showCreateTask} onOpenChange={setShowCreateTask}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create New Task</DialogTitle>
+          </DialogHeader>
+          <CreateTaskForm 
+            projectId=""
+            onSuccess={() => setShowCreateTask(false)}
+            onCancel={() => setShowCreateTask(false)}
+            availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

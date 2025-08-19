@@ -28,6 +28,7 @@ import GanttChart from '@/components/project/GanttChart';
 import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
 import NotificationCenter from '@/components/project/NotificationCenter';
 import TeamManagement from '@/components/project/TeamManagement';
+import { useProjectAnalytics } from '@/hooks/useProjectAnalytics';
 
 // Mock data for demonstration
 const mockProjects = [
@@ -149,6 +150,7 @@ const getTaskStatusColor = (status: string) => {
 };
 
 const ProjectManagement = () => {
+  const { analytics } = useProjectAnalytics();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [showCreateProject, setShowCreateProject] = useState(false);
@@ -571,7 +573,19 @@ const ProjectManagement = () => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <AnalyticsDashboard data={analyticsData} />
+            {analytics ? (
+              <AnalyticsDashboard data={analytics} />
+            ) : (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <p className="text-muted-foreground">
+                      No analytics data available. Create some projects and tasks to see analytics.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="team">
