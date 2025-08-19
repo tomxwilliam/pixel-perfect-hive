@@ -31,8 +31,7 @@ export const useProjects = () => {
       // Filter based on user role
       if (profile?.role !== 'admin') {
         projectsQuery = projectsQuery
-          .eq('customer_id', user.id)
-          .eq('approval_status', 'approved'); // Only show approved projects to customers
+          .eq('customer_id', user.id); // Show all projects for customers, including pending ones
       }
 
       const { data: projectsData, error: projectsError } = await projectsQuery
