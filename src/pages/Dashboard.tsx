@@ -152,9 +152,11 @@ const Dashboard = () => {
                 <Link key={index} to={action.href}>
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardContent className={`${isMobile ? 'p-4' : 'p-6'} relative`}>
-                      <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
-                        Coming Soon
-                      </Badge>
+                      {action.title === 'AI Assistant' && (
+                        <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
+                          Coming Soon
+                        </Badge>
+                      )}
                       <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${action.color} text-white mb-3`}>
                         <action.icon className="h-5 w-5" />
                       </div>

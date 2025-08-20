@@ -58,46 +58,46 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-11 gap-1'}>
+          <MobileTabsList className={isMobile ? 'w-full' : 'grid w-full grid-cols-11 gap-1'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Overview
+              <span className="text-xs sm:text-sm">Overview</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="crm" className="flex items-center gap-2">
               <Target className="h-4 w-4" />
-              CRM
+              <span className="text-xs sm:text-sm">CRM</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="customers" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Customers
+              <span className="text-xs sm:text-sm">Customers</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="projects" className="flex items-center gap-2">
               <FolderOpen className="h-4 w-4" />
-              Projects
+              <span className="text-xs sm:text-sm">Projects</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="tickets" className="flex items-center gap-2">
               <Ticket className="h-4 w-4" />
-              Support
+              <span className="text-xs sm:text-sm">Support</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
-              Invoices
+              <span className="text-xs sm:text-sm">Invoices</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Quotes
+              <span className="text-xs sm:text-sm">Quotes</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Calendar
+              <span className="text-xs sm:text-sm">Calendar</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="social" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Social
+              <span className="text-xs sm:text-sm">Social</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
-              Domains
+              <span className="text-xs sm:text-sm">Domains</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
               <Server className="h-4 w-4" />

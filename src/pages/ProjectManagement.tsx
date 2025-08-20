@@ -319,34 +319,34 @@ const ProjectManagement = () => {
 
         {/* Main Content Tabs */}
         <MobileTabs defaultValue="overview" className="w-full">
-          <MobileTabsList className="grid w-full grid-cols-4 md:grid-cols-7">
+          <MobileTabsList className="w-full">
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
+              <span className="text-xs sm:text-sm">Overview</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="kanban" className="flex items-center gap-2">
               <KanbanSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">Kanban</span>
+              <span className="text-xs sm:text-sm">Kanban</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="gantt" className="flex items-center gap-2">
               <List className="h-4 w-4" />
-              <span className="hidden sm:inline">Gantt</span>
+              <span className="text-xs sm:text-sm">Gantt</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span className="hidden sm:inline">Calendar</span>
+              <span className="text-xs sm:text-sm">Calendar</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="analytics" className="flex items-center gap-2 hidden md:flex">
+            <MobileTabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Analytics
+              <span className="text-xs sm:text-sm hidden sm:inline">Analytics</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="team" className="flex items-center gap-2 hidden md:flex">
+            <MobileTabsTrigger value="team" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Team
+              <span className="text-xs sm:text-sm hidden sm:inline">Team</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="notifications" className="flex items-center gap-2 hidden md:flex">
+            <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              Alerts
+              <span className="text-xs sm:text-sm hidden sm:inline">Alerts</span>
             </MobileTabsTrigger>
           </MobileTabsList>
 

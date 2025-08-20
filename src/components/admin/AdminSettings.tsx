@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
 import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AdminManagement from './settings/AdminManagement';
@@ -28,43 +28,43 @@ const AdminSettings = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="admins" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-8">
-          <TabsTrigger value="admins" className="flex items-center gap-2">
+      <MobileTabs defaultValue="admins" className="space-y-6">
+        <MobileTabsList className="w-full">
+          <MobileTabsTrigger value="admins" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Admins
-          </TabsTrigger>
-          <TabsTrigger value="invoices" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Admins</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            Invoices
-          </TabsTrigger>
-          <TabsTrigger value="quotes" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Invoices</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            Quotes
-          </TabsTrigger>
-          <TabsTrigger value="pricing" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Quotes</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="pricing" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
-            Pricing
-          </TabsTrigger>
-          <TabsTrigger value="domains" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Pricing</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="domains" className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
-            Domains
-          </TabsTrigger>
-          <TabsTrigger value="integrations" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Domains</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="integrations" className="flex items-center gap-2">
             <Link2 className="h-4 w-4" />
-            Integrations
-          </TabsTrigger>
-          <TabsTrigger value="ai" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">Integrations</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="ai" className="flex items-center gap-2">
             <Bot className="h-4 w-4" />
-            AI Agent
-          </TabsTrigger>
-          <TabsTrigger value="communications" className="flex items-center gap-2">
+            <span className="text-xs sm:text-sm">AI Agent</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="communications" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            Communications
-          </TabsTrigger>
-        </TabsList>
+            <span className="text-xs sm:text-sm">Comms</span>
+          </MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="admins" className="space-y-6">
+        <MobileTabsContent value="admins" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -76,17 +76,17 @@ const AdminSettings = () => {
               <AdminManagement isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="invoices" className="space-y-6">
+        <MobileTabsContent value="invoices" className="space-y-6">
           <InvoiceTemplateSettings />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="quotes" className="space-y-6">
+        <MobileTabsContent value="quotes" className="space-y-6">
           <QuoteTemplateSettings />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="pricing" className="space-y-6">
+        <MobileTabsContent value="pricing" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -98,9 +98,9 @@ const AdminSettings = () => {
               <ServicePricingDefaults isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="domains" className="space-y-6">
+        <MobileTabsContent value="domains" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -112,9 +112,9 @@ const AdminSettings = () => {
               <DomainHostingSettings isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="integrations" className="space-y-6">
+        <MobileTabsContent value="integrations" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -126,9 +126,9 @@ const AdminSettings = () => {
               <APIIntegrations isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="ai" className="space-y-6">
+        <MobileTabsContent value="ai" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -140,9 +140,9 @@ const AdminSettings = () => {
               <AIAgentSettings isSuperAdmin={isSuperAdmin} />
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="communications" className="space-y-6">
+        <MobileTabsContent value="communications" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -154,8 +154,8 @@ const AdminSettings = () => {
               <AdminCommunications />
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
     </div>
   );
 };
