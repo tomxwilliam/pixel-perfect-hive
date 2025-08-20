@@ -338,15 +338,15 @@ const ProjectManagement = () => {
             </MobileTabsTrigger>
             <MobileTabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline">Analytics</span>
+              <span className="text-xs sm:text-sm">Analytics</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="team" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline">Team</span>
+              <span className="text-xs sm:text-sm">Team</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline">Alerts</span>
+              <span className="text-xs sm:text-sm">Alerts</span>
             </MobileTabsTrigger>
           </MobileTabsList>
 
