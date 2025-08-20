@@ -17,6 +17,7 @@ import { AppDevelopmentForm } from '@/components/project-forms/AppDevelopmentFor
 import { GameDevelopmentForm } from '@/components/project-forms/GameDevelopmentForm';
 import { FileUpload, FileList } from '@/components/ui/file-upload';
 import { UploadedFile } from '@/hooks/useFileUpload';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProjectFormData {
   title: string;
@@ -59,6 +60,7 @@ const NewProject = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -229,67 +231,71 @@ const NewProject = () => {
       <Navigation />
       
       <div className="pt-20 pb-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
+        <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 ${isMobile ? 'px-3' : ''}`}>
+          <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center'} mb-6 md:mb-8`}>
             <Button 
               variant="ghost" 
               onClick={() => navigate('/dashboard')}
-              className="mr-4"
+              className={`${isMobile ? 'self-start w-fit' : 'mr-4'} min-h-[44px]`}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Start New Project</h1>
-              <p className="text-muted-foreground">Step {currentStep} of 4: {getStepTitle()}</p>
+            <div className={isMobile ? 'text-center' : ''}>
+              <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>Start New Project</h1>
+              <p className="text-muted-foreground">
+                Step {currentStep} of 4: {getStepTitle()}
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className={`grid grid-cols-1 ${isMobile ? 'gap-6' : 'lg:grid-cols-4 gap-8'}`}>
             {/* Progress Steps */}
-            <div className="lg:col-span-1">
+            <div className={`${isMobile ? 'order-2' : 'lg:col-span-1'}`}>
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Progress</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-3">
-                    <Badge variant={currentStep >= 1 ? "default" : "secondary"}>1</Badge>
-                    <span className={currentStep >= 1 ? "font-medium" : "text-muted-foreground"}>
-                      Basic Info
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Badge variant={currentStep >= 2 ? "default" : "secondary"}>2</Badge>
-                    <span className={currentStep >= 2 ? "font-medium" : "text-muted-foreground"}>
-                      Project Details
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Badge variant={currentStep >= 3 ? "default" : "secondary"}>3</Badge>
-                    <span className={currentStep >= 3 ? "font-medium" : "text-muted-foreground"}>
-                      Additional Files
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Badge variant={currentStep >= 4 ? "default" : "secondary"}>4</Badge>
-                    <span className={currentStep >= 4 ? "font-medium" : "text-muted-foreground"}>
-                      Review & Submit
-                    </span>
+                <CardContent className={`space-y-4 ${isMobile ? 'pb-4' : ''}`}>
+                  <div className={`${isMobile ? 'grid grid-cols-4 gap-2' : 'space-y-4'}`}>
+                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
+                      <Badge variant={currentStep >= 1 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>1</Badge>
+                      <span className={`${currentStep >= 1 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
+                        Basic Info
+                      </span>
+                    </div>
+                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
+                      <Badge variant={currentStep >= 2 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>2</Badge>
+                      <span className={`${currentStep >= 2 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
+                        Project Details
+                      </span>
+                    </div>
+                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
+                      <Badge variant={currentStep >= 3 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>3</Badge>
+                      <span className={`${currentStep >= 3 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
+                        Additional Files
+                      </span>
+                    </div>
+                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
+                      <Badge variant={currentStep >= 4 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>4</Badge>
+                      <span className={`${currentStep >= 4 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
+                        Review & Submit
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Main Form */}
-            <div className="lg:col-span-3">
+            <div className={`${isMobile ? 'order-1' : 'lg:col-span-3'}`}>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>{getStepTitle()}</CardTitle>
-                    <CardDescription>{getStepDescription()}</CardDescription>
+                  <CardHeader className={isMobile ? 'pb-4' : ''}>
+                    <CardTitle className={isMobile ? 'text-lg' : ''}>{getStepTitle()}</CardTitle>
+                    <CardDescription className={isMobile ? 'text-sm' : ''}>{getStepDescription()}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className={`space-y-6 ${isMobile ? 'px-4 pb-4' : ''}`}>
                     {/* Step 1: Basic Information */}
                     {currentStep === 1 && (
                       <>
