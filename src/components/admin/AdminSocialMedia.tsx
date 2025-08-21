@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from "@/components/ui/mobile-tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   BarChart3, 
   Calendar, 
@@ -33,6 +34,7 @@ export function AdminSocialMedia() {
   const [syncing, setSyncing] = useState(false);
   const [tweeting, setTweeting] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleSyncProfile = async () => {
     try {
@@ -78,83 +80,83 @@ export function AdminSocialMedia() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className={`flex ${isMobile ? 'flex-col space-y-4' : 'items-center justify-between'}`}>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Social Media Manager</h1>
+          <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold tracking-tight`}>Social Media Manager</h1>
           <p className="text-muted-foreground">
             Manage and schedule posts across Twitter and LinkedIn
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className={`flex ${isMobile ? 'flex-wrap' : ''} items-center gap-2`}>
           <Badge variant="outline" className="gap-1">
             <Twitter className="h-3 w-3" />
-            Connected
+            <span className={isMobile ? 'text-xs' : ''}>Connected</span>
           </Badge>
           <Badge variant="outline" className="gap-1">
             <Linkedin className="h-3 w-3" />
-            Connected
+            <span className={isMobile ? 'text-xs' : ''}>Connected</span>
           </Badge>
-          <Button variant="outline" size="sm" onClick={handleSyncProfile} disabled={syncing}>
-            <RefreshCw className="h-3 w-3 mr-1" /> {syncing ? 'Syncing...' : 'Sync Twitter'}
+          <Button variant="outline" size={isMobile ? "sm" : "sm"} onClick={handleSyncProfile} disabled={syncing}>
+            <RefreshCw className="h-3 w-3 mr-1" /> {syncing ? 'Syncing...' : isMobile ? 'Sync' : 'Sync Twitter'}
           </Button>
-          <Button size="sm" onClick={handleSendTestTweet} disabled={tweeting}>
-            <Send className="h-3 w-3 mr-1" /> {tweeting ? 'Posting...' : 'Send Test Tweet'}
+          <Button size={isMobile ? "sm" : "sm"} onClick={handleSendTestTweet} disabled={tweeting}>
+            <Send className="h-3 w-3 mr-1" /> {tweeting ? 'Posting...' : isMobile ? 'Test Tweet' : 'Send Test Tweet'}
           </Button>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="dashboard" className="gap-2">
+      <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <MobileTabsList className={isMobile ? 'w-full' : 'grid w-full grid-cols-6'}>
+          <MobileTabsTrigger value="dashboard" className="gap-2">
             <BarChart3 className="h-4 w-4" />
-            Dashboard
-          </TabsTrigger>
-          <TabsTrigger value="composer" className="gap-2">
+            <span className="text-xs sm:text-sm">Dashboard</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="composer" className="gap-2">
             <Edit3 className="h-4 w-4" />
-            Composer
-          </TabsTrigger>
-          <TabsTrigger value="calendar" className="gap-2">
+            <span className="text-xs sm:text-sm">Composer</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="calendar" className="gap-2">
             <Calendar className="h-4 w-4" />
-            Calendar
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="gap-2">
+            <span className="text-xs sm:text-sm">Calendar</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="analytics" className="gap-2">
             <TrendingUp className="h-4 w-4" />
-            Analytics
-          </TabsTrigger>
-          <TabsTrigger value="accounts" className="gap-2">
+            <span className="text-xs sm:text-sm">Analytics</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="accounts" className="gap-2">
             <Users className="h-4 w-4" />
-            Accounts
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="gap-2">
+            <span className="text-xs sm:text-sm">Accounts</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="settings" className="gap-2">
             <Settings className="h-4 w-4" />
-            Settings
-          </TabsTrigger>
-        </TabsList>
+            <span className="text-xs sm:text-sm">Settings</span>
+          </MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="dashboard" className="space-y-6">
+        <MobileTabsContent value="dashboard" className="space-y-6">
           <SocialMediaDashboard />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="composer" className="space-y-6">
+        <MobileTabsContent value="composer" className="space-y-6">
           <SocialMediaComposer />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="calendar" className="space-y-6">
+        <MobileTabsContent value="calendar" className="space-y-6">
           <SocialMediaCalendar />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <MobileTabsContent value="analytics" className="space-y-6">
           <SocialMediaAnalytics />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="accounts" className="space-y-6">
+        <MobileTabsContent value="accounts" className="space-y-6">
           <SocialAccountManager />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
+        <MobileTabsContent value="settings" className="space-y-6">
           <SocialMediaSettings />
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
     </div>
   );
 }

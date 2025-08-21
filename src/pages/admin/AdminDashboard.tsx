@@ -58,7 +58,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <MobileTabsList className={isMobile ? 'w-full' : 'grid w-full grid-cols-11 gap-1'}>
+          <MobileTabsList className={isMobile ? 'w-full' : 'grid w-full grid-cols-13 gap-1'}>
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Overview</span>
@@ -101,8 +101,20 @@ const AdminDashboard = () => {
             </MobileTabsTrigger>
             <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
               <Server className="h-4 w-4" />
-              Hosting
+              <span className="text-xs sm:text-sm">Hosting</span>
             </MobileTabsTrigger>
+            {user?.email?.endsWith('@404codelab.com') && (
+              <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
+                <Calculator className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Accounting</span>
+              </MobileTabsTrigger>
+            )}
+            {user?.email?.endsWith('@404codelab.com') && (
+              <MobileTabsTrigger value="settings" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Settings</span>
+              </MobileTabsTrigger>
+            )}
           </MobileTabsList>
 
           <MobileTabsContent value="overview">

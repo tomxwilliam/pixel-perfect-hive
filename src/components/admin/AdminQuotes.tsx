@@ -24,6 +24,7 @@ import { CreateQuoteDialog } from "./forms/CreateQuoteDialog";
 import { QuoteManagementModal } from "./modals/QuoteManagementModal";
 import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
 import { Search, Filter, DollarSign, FileText, Clock, Trash2 } from "lucide-react";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Quote {
   id: string;
@@ -66,6 +67,7 @@ export function AdminQuotes() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [quoteToDelete, setQuoteToDelete] = useState<QuoteWithCustomer | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchQuotes();
@@ -181,7 +183,7 @@ export function AdminQuotes() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'}`}>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Quote Value</CardTitle>
@@ -214,7 +216,7 @@ export function AdminQuotes() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'}`}>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -227,7 +229,7 @@ export function AdminQuotes() {
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-gray-400" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className={isMobile ? "w-full" : "w-[180px]"}>
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -261,6 +263,69 @@ export function AdminQuotes() {
               )}
             </div>
           </CardContent>
+        ) : isMobile ? (
+          <div className="space-y-4">
+            {filteredQuotes.map((quote) => (
+              <div key={quote.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-medium mb-1">#{quote.quote_number}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {quote.customer?.first_name} {quote.customer?.last_name}
+                    </p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge className={getStatusColor(quote.status)}>
+                        {quote.status}
+                      </Badge>
+                      <div className="flex items-center space-x-1">
+                        <DollarSign className="h-3 w-3" />
+                        <span className="text-sm font-medium">
+                          £{quote.amount.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>Project: {quote.project?.title || "No Project"}</span>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3" />
+                        <span>
+                          Valid: {quote.valid_until 
+                            ? new Date(quote.valid_until).toLocaleDateString()
+                            : "No expiry"
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <span className="text-xs text-muted-foreground">
+                    Created: {new Date(quote.created_at).toLocaleDateString()}
+                  </span>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        setSelectedQuote(quote);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      View
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDeleteQuote(quote)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <Table>
             <TableHeader>

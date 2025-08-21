@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, MessageSquare, User, Clock, Search, Edit, Trash2 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateTicketDialog } from './forms/CreateTicketDialog';
 import { TicketDetailsModal } from './modals/TicketDetailsModal';
@@ -36,6 +37,7 @@ export const AdminTickets = () => {
   const [ticketToEdit, setTicketToEdit] = useState<TicketWithDetails | null>(null);
   const [ticketToDelete, setTicketToDelete] = useState<TicketWithDetails | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const fetchTickets = async () => {
     try {
@@ -199,99 +201,90 @@ export const AdminTickets = () => {
         <CardDescription>
           Manage customer support requests and issues
         </CardDescription>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search tickets..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="urgent">Urgent</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className={`${isMobile ? 'flex flex-col space-y-3' : 'flex items-center justify-between'}`}>
+          <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'items-center space-x-2'}`}>
+            <div className="flex items-center space-x-2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search tickets..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={isMobile ? "w-full" : "max-w-sm"}
+              />
+            </div>
+            <div className={`flex ${isMobile ? 'space-y-2 flex-col' : 'space-x-2'}`}>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className={isMobile ? "w-full" : "w-[140px]"}>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                <SelectTrigger className={isMobile ? "w-full" : "w-[140px]"}>
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Priority</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <CreateTicketDialog onTicketCreated={handleTicketCreated} />
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Ticket</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Project</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        {isMobile ? (
+          <div className="space-y-4">
             {filteredTickets.map((ticket) => (
-              <TableRow key={ticket.id}>
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{ticket.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {ticket.description.slice(0, 50)}...
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <div>
-                      <div className="font-medium">
-                        {ticket.customer 
-                          ? `${ticket.customer.first_name || ''} ${ticket.customer.last_name || ''}`.trim() || 'Unknown'
-                          : 'Unknown Customer'
-                        }
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {ticket.customer?.email || 'No email'}
+              <div key={ticket.id} className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-medium mb-1">{ticket.title}</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                      {ticket.description}
+                    </p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant={getPriorityColor(ticket.priority)}>
+                        {ticket.priority}
+                      </Badge>
+                      <div className="flex items-center space-x-1">
+                        <User className="h-3 w-3" />
+                        <span className="text-xs text-muted-foreground">
+                          {ticket.customer 
+                            ? `${ticket.customer.first_name || ''} ${ticket.customer.last_name || ''}`.trim() || 'Unknown'
+                            : 'Unknown Customer'
+                          }
+                        </span>
                       </div>
                     </div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>Project: {ticket.project?.title || 'General Support'}</span>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3" />
+                        <span>{new Date(ticket.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  {ticket.project?.title || 'General Support'}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getPriorityColor(ticket.priority)}>
-                    {ticket.priority}
-                  </Badge>
-                </TableCell>
-                <TableCell>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2 border-t">
                   <Select 
                     value={ticket.status} 
                     onValueChange={(value) => updateTicketStatus(ticket.id, value)}
                   >
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-[140px]">
                       <SelectValue>
-                        <Badge className={getStatusColor(ticket.status)}>
+                        <Badge variant={getStatusColor(ticket.status)}>
                           {ticket.status.replace('_', ' ')}
                         </Badge>
                       </SelectValue>
@@ -303,17 +296,8 @@ export const AdminTickets = () => {
                       <SelectItem value="closed">Closed</SelectItem>
                     </SelectContent>
                   </Select>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3" />
-                    <span className="text-sm">
-                      {new Date(ticket.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-1">
+                  
+                  <div className="flex space-x-2">
                     <Button variant="ghost" size="sm" onClick={() => { setSelectedTicket(ticket); setIsModalOpen(true); }}>
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -324,11 +308,104 @@ export const AdminTickets = () => {
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
-                </TableCell>
-              </TableRow>
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Ticket</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Project</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredTickets.map((ticket) => (
+                <TableRow key={ticket.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{ticket.title}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {ticket.description.slice(0, 50)}...
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <div>
+                        <div className="font-medium">
+                          {ticket.customer 
+                            ? `${ticket.customer.first_name || ''} ${ticket.customer.last_name || ''}`.trim() || 'Unknown'
+                            : 'Unknown Customer'
+                          }
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {ticket.customer?.email || 'No email'}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {ticket.project?.title || 'General Support'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={getPriorityColor(ticket.priority)}>
+                      {ticket.priority}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Select 
+                      value={ticket.status} 
+                      onValueChange={(value) => updateTicketStatus(ticket.id, value)}
+                    >
+                      <SelectTrigger className="w-[120px]">
+                        <SelectValue>
+                          <Badge variant={getStatusColor(ticket.status)}>
+                            {ticket.status.replace('_', ' ')}
+                          </Badge>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="open">Open</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="resolved">Resolved</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="h-3 w-3" />
+                      <span className="text-sm">
+                        {new Date(ticket.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-1">
+                      <Button variant="ghost" size="sm" onClick={() => { setSelectedTicket(ticket); setIsModalOpen(true); }}>
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleEditTicket(ticket)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleDeleteTicket(ticket)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
       
       {selectedTicket && (

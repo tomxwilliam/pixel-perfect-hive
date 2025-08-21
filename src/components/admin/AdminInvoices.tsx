@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { Eye, Download, Send, DollarSign, Calendar, Search, Plus, Pencil, Trash } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateInvoiceDialog } from './forms/CreateInvoiceDialog';
 import { InvoiceManagementModal } from './modals/InvoiceManagementModal';
@@ -34,6 +35,7 @@ export const AdminInvoices = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<InvoiceWithCustomer | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   const fetchInvoices = async () => {
     try {
@@ -124,7 +126,7 @@ export const AdminInvoices = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-3'}`}>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -170,16 +172,18 @@ export const AdminInvoices = () => {
             </div>
             <CreateInvoiceDialog onInvoiceCreated={fetchInvoices} />
           </div>
-          <div className="flex items-center space-x-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search invoices..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
+          <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'items-center space-x-2'}`}>
+            <div className="flex items-center space-x-2">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search invoices..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={isMobile ? "w-full" : "max-w-sm"}
+              />
+            </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className={isMobile ? "w-full" : "w-[140px]"}>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -193,78 +197,130 @@ export const AdminInvoices = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice #</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Project</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          {isMobile ? (
+            <div className="space-y-4">
               {filteredInvoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell className="font-medium">
-                    {invoice.invoice_number}
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">
+                <div key={invoice.id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h4 className="font-medium mb-1">#{invoice.invoice_number}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">
                         {invoice.customer?.first_name} {invoice.customer?.last_name}
+                      </p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge className={getStatusColor(invoice.status)}>
+                          {invoice.status}
+                        </Badge>
+                        <div className="flex items-center space-x-1">
+                          <DollarSign className="h-3 w-3" />
+                          <span className="text-sm font-medium">
+                            £{Number(invoice.amount).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {invoice.customer?.company_name || 'Individual'}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span>Project: {invoice.project?.title || 'General Services'}</span>
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>
+                            Due: {invoice.due_date 
+                              ? new Date(invoice.due_date).toLocaleDateString()
+                              : 'No due date'
+                            }
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {invoice.project?.title || 'General Services'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <DollarSign className="h-3 w-3" />
-                      <span className="font-medium">
-                        {Number(invoice.amount).toLocaleString()}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(invoice.status)}>
-                      {invoice.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="h-3 w-3" />
-                      <span className="text-sm">
-                        {invoice.due_date 
-                          ? new Date(invoice.due_date).toLocaleDateString()
-                          : 'No due date'
-                        }
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-1">
-                      <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }} aria-label="View invoice">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingInvoice(invoice); setIsEditOpen(true); }} aria-label="Edit invoice">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeleteTarget(invoice); setIsDeleteOpen(true); }} aria-label="Delete invoice">
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                  </div>
+                  
+                  <div className="flex items-center justify-end pt-2 border-t space-x-2">
+                    <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => { setEditingInvoice(invoice); setIsEditOpen(true); }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => { setDeleteTarget(invoice); setIsDeleteOpen(true); }}>
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               ))}
-            </TableBody>
-        </Table>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Invoice #</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Due Date</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredInvoices.map((invoice) => (
+                  <TableRow key={invoice.id}>
+                    <TableCell className="font-medium">
+                      {invoice.invoice_number}
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">
+                          {invoice.customer?.first_name} {invoice.customer?.last_name}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {invoice.customer?.company_name || 'Individual'}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {invoice.project?.title || 'General Services'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <DollarSign className="h-3 w-3" />
+                        <span className="font-medium">
+                          £{Number(invoice.amount).toLocaleString()}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(invoice.status)}>
+                        {invoice.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-3 w-3" />
+                        <span className="text-sm">
+                          {invoice.due_date 
+                            ? new Date(invoice.due_date).toLocaleDateString()
+                            : 'No due date'
+                          }
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => { setEditingInvoice(invoice); setIsEditOpen(true); }}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => { setDeleteTarget(invoice); setIsDeleteOpen(true); }}>
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
