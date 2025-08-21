@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from "@/components/ui/mobile-tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -189,15 +189,27 @@ export default function CustomerDomainsHosting() {
         <h1 className="text-2xl font-bold">Domains & Hosting</h1>
       </div>
 
-      <Tabs defaultValue="search" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="search">Search Domains</TabsTrigger>
-          <TabsTrigger value="domains">My Domains ({domains?.length || 0})</TabsTrigger>
-          <TabsTrigger value="hosting">My Hosting ({hostingSubscriptions?.length || 0})</TabsTrigger>
-          <TabsTrigger value="packages">Hosting Plans</TabsTrigger>
-        </TabsList>
+      <MobileTabs defaultValue="search" className="space-y-6">
+        <MobileTabsList className="w-full">
+          <MobileTabsTrigger value="search" className="flex items-center gap-2">
+            <Search className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">Search</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="domains" className="flex items-center gap-2">
+            <Globe className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">Domains ({domains?.length || 0})</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
+            <Server className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">Hosting ({hostingSubscriptions?.length || 0})</span>
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="packages" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            <span className="text-xs sm:text-sm">Plans</span>
+          </MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="search" className="space-y-6">
+        <MobileTabsContent value="search" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Domain Search</CardTitle>
@@ -234,9 +246,9 @@ export default function CustomerDomainsHosting() {
                 </div>}
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="domains" className="space-y-4">
+        <MobileTabsContent value="domains" className="space-y-4">
           {domains?.length === 0 ? <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Globe className="h-12 w-12 text-muted-foreground mb-4" />
@@ -278,9 +290,9 @@ export default function CustomerDomainsHosting() {
                   </div>
                 </CardContent>
               </Card>)}
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="hosting" className="space-y-4">
+        <MobileTabsContent value="hosting" className="space-y-4">
           {hostingSubscriptions?.length === 0 ? <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Server className="h-12 w-12 text-muted-foreground mb-4" />
@@ -328,9 +340,9 @@ export default function CustomerDomainsHosting() {
                   </div>
                 </CardContent>
               </Card>)}
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="packages" className="space-y-6">
+        <MobileTabsContent value="packages" className="space-y-6">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-2">Web Hosting Packages (Annual Billing)</h2>
             <p className="text-muted-foreground">
@@ -490,8 +502,8 @@ export default function CustomerDomainsHosting() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
       
       <DomainDetailsModal 
         domain={selectedDomain}
