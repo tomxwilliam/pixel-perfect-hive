@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { DomainDetailsModal } from "./DomainDetailsModal";
 import { HostingDetailsModal } from "./HostingDetailsModal";
+// Mobile-friendly domains and hosting management
 export default function CustomerDomainsHosting() {
   const {
     user
