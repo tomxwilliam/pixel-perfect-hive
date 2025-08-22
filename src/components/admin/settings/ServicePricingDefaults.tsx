@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
@@ -36,6 +36,7 @@ const ServicePricingDefaults: React.FC<ServicePricingDefaultsProps> = ({ isSuper
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServicePricing | null>(null);
   const [loading, setLoading] = useState(false);
+  const isMobile = useIsMobile();
   const [formData, setFormData] = useState({
     service_name: '',
     service_type: 'web_development' as ServicePricing['service_type'],
