@@ -331,7 +331,7 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
+        <div className="overflow-x-auto overflow-y-auto max-h-[400px] md:max-h-[600px]">
           {/* Timeline Header */}
           <div className="flex sticky top-0 bg-background z-10 border-b">
             <div className="w-64 p-3 font-medium border-r bg-muted">

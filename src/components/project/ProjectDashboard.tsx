@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -236,15 +236,15 @@ const ProjectDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="kanban">Kanban</TabsTrigger>
-          <TabsTrigger value="calendar">Calendar</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
+      <MobileTabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+        <MobileTabsList className="grid w-full grid-cols-4">
+          <MobileTabsTrigger value="overview">Overview</MobileTabsTrigger>
+          <MobileTabsTrigger value="kanban">Kanban</MobileTabsTrigger>
+          <MobileTabsTrigger value="calendar">Calendar</MobileTabsTrigger>
+          <MobileTabsTrigger value="reports">Reports</MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <MobileTabsContent value="overview" className="space-y-6">
           {/* Projects Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {projects.map((project) => (
@@ -339,13 +339,13 @@ const ProjectDashboard = () => {
               </CardContent>
             </Card>
           )}
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="kanban">
+        <MobileTabsContent value="kanban">
           <KanbanBoard />
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="calendar">
+        <MobileTabsContent value="calendar">
           <Card>
             <CardContent className="p-12 text-center">
               <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -356,9 +356,9 @@ const ProjectDashboard = () => {
               <Button>Open Calendar View</Button>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="reports">
+        <MobileTabsContent value="reports">
           <Card>
             <CardContent className="p-12 text-center">
               <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -369,8 +369,8 @@ const ProjectDashboard = () => {
               <Button>View Reports</Button>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
     </div>
   );
 };

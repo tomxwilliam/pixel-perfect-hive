@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
 import { 
   BarChart, 
   Bar, 
@@ -164,15 +164,15 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
       </div>
 
       {/* Charts and Detailed Analytics */}
-      <Tabs defaultValue="trends" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="trends">Trends</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="workload">Workload</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
+      <MobileTabs defaultValue="trends" className="w-full">
+        <MobileTabsList className="grid w-full grid-cols-4">
+          <MobileTabsTrigger value="trends">Trends</MobileTabsTrigger>
+          <MobileTabsTrigger value="performance">Performance</MobileTabsTrigger>
+          <MobileTabsTrigger value="workload">Workload</MobileTabsTrigger>
+          <MobileTabsTrigger value="reports">Reports</MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="trends" className="space-y-6">
+        <MobileTabsContent value="trends" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -224,9 +224,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="performance" className="space-y-6">
+        <MobileTabsContent value="performance" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -274,9 +274,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="workload" className="space-y-6">
+        <MobileTabsContent value="workload" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
@@ -362,9 +362,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="reports" className="space-y-6">
+        <MobileTabsContent value="reports" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -417,8 +417,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ data }) => {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
     </div>
   );
 };

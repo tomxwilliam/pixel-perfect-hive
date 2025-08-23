@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
@@ -338,14 +338,14 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
           </div>
 
           {/* Team Members List */}
-          <Tabs defaultValue="list">
-            <TabsList className="mb-4">
-              <TabsTrigger value="list">List View</TabsTrigger>
-              <TabsTrigger value="grid">Grid View</TabsTrigger>
-              <TabsTrigger value="performance">Performance</TabsTrigger>
-            </TabsList>
+          <MobileTabs defaultValue="list">
+            <MobileTabsList className="mb-4">
+              <MobileTabsTrigger value="list">List View</MobileTabsTrigger>
+              <MobileTabsTrigger value="grid">Grid View</MobileTabsTrigger>
+              <MobileTabsTrigger value="performance">Performance</MobileTabsTrigger>
+            </MobileTabsList>
 
-            <TabsContent value="list">
+            <MobileTabsContent value="list">
               <div className="space-y-4">
                 {loading ? (
                   <div className="text-center py-8 text-muted-foreground">
@@ -404,9 +404,9 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
                   ))
                 )}
               </div>
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="grid">
+            <MobileTabsContent value="grid">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredMembers.map((member) => (
                   <Card key={member.id}>
@@ -450,16 +450,16 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
                   </Card>
                 ))}
               </div>
-            </TabsContent>
+            </MobileTabsContent>
 
-            <TabsContent value="performance">
+            <MobileTabsContent value="performance">
               <div className="space-y-4">
                 <div className="text-center py-8 text-muted-foreground">
                   Performance analytics coming soon...
                 </div>
               </div>
-            </TabsContent>
-          </Tabs>
+            </MobileTabsContent>
+          </MobileTabs>
         </CardContent>
       </Card>
     </div>

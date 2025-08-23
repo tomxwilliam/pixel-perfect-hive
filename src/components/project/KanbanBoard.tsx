@@ -164,9 +164,9 @@ const KanbanBoard = () => {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-6 overflow-x-auto pb-6 h-full">
+        <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 h-full">
           {columns.map((column) => (
-            <div key={column.id} className="flex-shrink-0 w-80">
+            <div key={column.id} className="flex-shrink-0 w-72 md:w-80">
               <Card className="h-full">
                 <CardHeader className={`pb-3 ${column.color} rounded-t-lg`}>
                   <CardTitle className="flex items-center justify-between">
@@ -195,9 +195,9 @@ const KanbanBoard = () => {
                                 snapshot.isDragging ? 'rotate-2 shadow-lg' : ''
                               }`}
                             >
-                              <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                                <CardContent className="p-4">
-                                  <div className="space-y-3">
+                              <Card className="cursor-pointer hover:shadow-md transition-shadow touch-manipulation">
+                                <CardContent className="p-3 md:p-4">
+                                  <div className="space-y-2 md:space-y-3">
                                     {/* Header */}
                                     <div className="flex items-start justify-between">
                                       <h4 className="font-medium text-sm leading-5 line-clamp-2">
