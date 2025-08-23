@@ -215,23 +215,23 @@ export const AdminCommunications = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="emails" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="emails" className="flex items-center gap-2">
+      <MobileTabs defaultValue="emails" className="space-y-6">
+        <MobileTabsList className="grid w-full grid-cols-3">
+          <MobileTabsTrigger value="emails" className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
             Email Logs ({emailLogs.length})
-          </TabsTrigger>
-          <TabsTrigger value="ai-chats" className="flex items-center gap-2">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="ai-chats" className="flex items-center gap-2">
             <Bot className="h-4 w-4" />
             AI Conversations ({aiConversations.length})
-          </TabsTrigger>
-          <TabsTrigger value="social" className="flex items-center gap-2">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="social" className="flex items-center gap-2">
             <Send className="h-4 w-4" />
             Social Posts ({socialPosts.length})
-          </TabsTrigger>
-        </TabsList>
+          </MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="emails" className="space-y-4">
+        <MobileTabsContent value="emails" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Email Communications</h3>
             <Select value={emailFilter} onValueChange={(value: any) => setEmailFilter(value)}>
@@ -294,9 +294,9 @@ export const AdminCommunications = () => {
               </Card>
             )}
           </div>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="ai-chats" className="space-y-4">
+        <MobileTabsContent value="ai-chats" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">AI Conversations</h3>
             <Badge variant="outline">{aiConversations.length} total conversations</Badge>
@@ -359,9 +359,9 @@ export const AdminCommunications = () => {
               </Card>
             )}
           </div>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="social" className="space-y-4">
+        <MobileTabsContent value="social" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">Social Media Posts</h3>
             <Badge variant="outline">{socialPosts.length} total posts</Badge>
@@ -428,8 +428,8 @@ export const AdminCommunications = () => {
               </Card>
             )}
           </div>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
     </div>
   );
 };

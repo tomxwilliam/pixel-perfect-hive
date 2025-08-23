@@ -298,35 +298,35 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
       </Card>
 
       {/* Main Configuration Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className={`${isMobile ? 'grid grid-cols-2 h-auto' : 'grid grid-cols-6'} w-full`}>
-          <TabsTrigger value="overview" className="flex items-center gap-1 text-xs">
+      <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <MobileTabsList className={`${isMobile ? 'grid grid-cols-2 h-auto' : 'grid grid-cols-6'} w-full`}>
+          <MobileTabsTrigger value="overview" className="flex items-center gap-1 text-xs">
             <Target className="h-3 w-3" />
             {!isMobile && 'Overview'}
-          </TabsTrigger>
-          <TabsTrigger value="intake" className="flex items-center gap-1 text-xs">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="intake" className="flex items-center gap-1 text-xs">
             <Users className="h-3 w-3" />
             {!isMobile && 'Client Intake'}
-          </TabsTrigger>
-          <TabsTrigger value="workflows" className="flex items-center gap-1 text-xs">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="workflows" className="flex items-center gap-1 text-xs">
             <Workflow className="h-3 w-3" />
             {!isMobile && 'AI Workflows'}
-          </TabsTrigger>
-          <TabsTrigger value="calendar" className="flex items-center gap-1 text-xs">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="calendar" className="flex items-center gap-1 text-xs">
             <Calendar className="h-3 w-3" />
             {!isMobile && 'Calendar'}
-          </TabsTrigger>
-          <TabsTrigger value="social" className="flex items-center gap-1 text-xs">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="social" className="flex items-center gap-1 text-xs">
             <Share2 className="h-3 w-3" />
             {!isMobile && 'Social'}
-          </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-1 text-xs">
+          </MobileTabsTrigger>
+          <MobileTabsTrigger value="system" className="flex items-center gap-1 text-xs">
             <Save className="h-3 w-3" />
             {!isMobile && 'System'}
-          </TabsTrigger>
-        </TabsList>
+          </MobileTabsTrigger>
+        </MobileTabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <MobileTabsContent value="overview" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Agent Configuration</CardTitle>
@@ -420,9 +420,9 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="intake" className="space-y-6">
+        <MobileTabsContent value="intake" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -485,9 +485,9 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="workflows" className="space-y-6">
+        <MobileTabsContent value="workflows" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -555,9 +555,9 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="calendar" className="space-y-6">
+        <MobileTabsContent value="calendar" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -617,9 +617,9 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="social" className="space-y-6">
+        <MobileTabsContent value="social" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -686,9 +686,9 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </MobileTabsContent>
 
-        <TabsContent value="system" className="space-y-6">
+        <MobileTabsContent value="system" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -752,8 +752,8 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </MobileTabsContent>
+      </MobileTabs>
 
       {/* Status Summary */}
       <Card>
