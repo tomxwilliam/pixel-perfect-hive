@@ -255,61 +255,77 @@ const ProjectManagement = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                  <KanbanSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          <Card className="animate-fade-in">
+            <CardContent className="p-4 lg:p-6">
+              <div className="flex items-center gap-3 lg:gap-4">
+                <div className="p-2 lg:p-3 bg-blue-100 dark:bg-blue-900 rounded-lg shrink-0">
+                  <KanbanSquare className="h-5 w-5 lg:h-6 lg:w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Active Projects</p>
-                  <p className="text-2xl font-bold">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs lg:text-sm text-muted-foreground mb-1">Active Projects</p>
+                  <p className="text-xl lg:text-2xl font-bold">
                     {projects.filter(p => p.status === 'in_progress').length}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {projects.filter(p => p.status === 'in_progress').length > 0 ? '1 on track, 0 overdue' : 'No active projects'}
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                  <List className="h-5 w-5 text-green-600 dark:text-green-400" />
+          <Card className="animate-fade-in [animation-delay:0.1s]">
+            <CardContent className="p-4 lg:p-6">
+              <div className="flex items-center gap-3 lg:gap-4">
+                <div className="p-2 lg:p-3 bg-green-100 dark:bg-green-900 rounded-lg shrink-0">
+                  <List className="h-5 w-5 lg:h-6 lg:w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Tasks</p>
-                  <p className="text-2xl font-bold">{tasks.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
-                  <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Due This Week</p>
-                  <p className="text-2xl font-bold">{upcomingDeadlines.length}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs lg:text-sm text-muted-foreground mb-1">Task Completion</p>
+                  <p className="text-xl lg:text-2xl font-bold">
+                    {tasks.length > 0 ? Math.round((tasks.filter(t => t.status === 'completed').length / tasks.length) * 100) : 0}%
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {tasks.filter(t => t.status === 'completed').length} of {tasks.length} completed
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+          <Card className="animate-fade-in [animation-delay:0.2s]">
+            <CardContent className="p-4 lg:p-6">
+              <div className="flex items-center gap-3 lg:gap-4">
+                <div className="p-2 lg:p-3 bg-orange-100 dark:bg-orange-900 rounded-lg shrink-0">
+                  <Clock className="h-5 w-5 lg:h-6 lg:w-6 text-orange-600 dark:text-orange-400" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Avg Progress</p>
-                  <p className="text-2xl font-bold">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs lg:text-sm text-muted-foreground mb-1">Total Hours</p>
+                  <p className="text-xl lg:text-2xl font-bold">
+                    {projects.reduce((total, project) => total + (project.total_hours_logged || 0), 0)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {projects.reduce((total, project) => total + (project.total_hours_logged || 0), 0) > 0 ? 'Billable hours logged' : 'No hours logged'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="animate-fade-in [animation-delay:0.3s]">
+            <CardContent className="p-4 lg:p-6">
+              <div className="flex items-center gap-3 lg:gap-4">
+                <div className="p-2 lg:p-3 bg-purple-100 dark:bg-purple-900 rounded-lg shrink-0">
+                  <TrendingUp className="h-5 w-5 lg:h-6 lg:w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs lg:text-sm text-muted-foreground mb-1">Budget Utilization</p>
+                  <p className="text-xl lg:text-2xl font-bold">
                     {projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + (p.completion_percentage || 0), 0) / projects.length) : 0}%
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    £{1000 - (projects.reduce((total, project) => total + (project.total_hours_logged || 0), 0) * 50)} remaining
                   </p>
                 </div>
               </div>
