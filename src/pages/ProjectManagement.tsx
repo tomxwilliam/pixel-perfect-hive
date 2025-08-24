@@ -239,8 +239,15 @@ const ProjectManagement = () => {
                 </DialogHeader>
                 <CreateTaskForm 
                   availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
-                  onSuccess={() => setShowCreateTask(false)}
-                  onCancel={() => setShowCreateTask(false)}
+                  projectId={selectedProject}
+                  onSuccess={() => {
+                    setShowCreateTask(false);
+                    setSelectedProject(null);
+                  }}
+                  onCancel={() => {
+                    setShowCreateTask(false);
+                    setSelectedProject(null);
+                  }}
                 />
               </DialogContent>
             </Dialog>
@@ -876,11 +883,25 @@ const ProjectManagement = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 pt-4">
-                  <Button className="flex-1">
+                  <Button 
+                    className="flex-1"
+                    onClick={() => {
+                      setShowCreateTask(true);
+                      setSelectedProject(selectedProjectDetails.id);
+                    }}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Task
                   </Button>
-                  <Button variant="outline" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => {
+                      setShowCreateProject(true);
+                      // Note: You may want to implement edit mode for the CreateProjectForm
+                      console.log('Edit project:', selectedProjectDetails);
+                    }}
+                  >
                     Edit Project
                   </Button>
                   <Button variant="outline" className="flex-1" onClick={() => setShowProjectDetails(false)}>
