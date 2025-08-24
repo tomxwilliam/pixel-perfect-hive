@@ -169,6 +169,8 @@ const ProjectManagement = () => {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPriority, setFilterPriority] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedProjectDetails, setSelectedProjectDetails] = useState<any>(null);
+  const [showProjectDetails, setShowProjectDetails] = useState(false);
 
   
   const filteredProjects = projects.filter(project => {
@@ -538,7 +540,15 @@ const ProjectManagement = () => {
                        <Badge variant="outline" className="capitalize">
                          {project.status.replace('_', ' ')}
                        </Badge>
-                       <Button variant="outline" size="sm" className="min-h-[36px]">
+                       <Button 
+                         variant="outline" 
+                         size="sm" 
+                         className="min-h-[36px]"
+                         onClick={() => {
+                           setSelectedProjectDetails(project);
+                           setShowProjectDetails(true);
+                         }}
+                       >
                          View Details
                        </Button>
                      </div>
@@ -734,6 +744,153 @@ const ProjectManagement = () => {
             </div>
           </MobileTabsContent>
         </MobileTabs>
+
+        {/* Project Details Modal */}
+        <Dialog open={showProjectDetails} onOpenChange={setShowProjectDetails}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-3">
+                {selectedProjectDetails?.title}
+                <Badge variant={getPriorityColor(selectedProjectDetails?.priority)}>
+                  {selectedProjectDetails?.priority}
+                </Badge>
+              </DialogTitle>
+            </DialogHeader>
+            
+            {selectedProjectDetails && (
+              <div className="space-y-6">
+                {/* Project Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold">{selectedProjectDetails.completion_percentage || 0}%</p>
+                        <p className="text-sm text-muted-foreground">Progress</p>
+                        <Progress value={selectedProjectDetails.completion_percentage || 0} className="mt-2" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold">
+                          {tasks.filter(t => t.project_id === selectedProjectDetails.id && t.status === 'completed').length}
+                          /
+                          {tasks.filter(t => t.project_id === selectedProjectDetails.id).length}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Tasks Completed</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold">
+                          {selectedProjectDetails.total_hours_logged || 0}h
+                        </p>
+                        <p className="text-sm text-muted-foreground">Hours Logged</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Project Description */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Description</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      {selectedProjectDetails.description || 'No description available.'}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Project Tasks */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Project Tasks</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {tasks
+                        .filter(task => task.project_id === selectedProjectDetails.id)
+                        .map((task) => (
+                          <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex-1">
+                              <h4 className="font-medium">{task.title}</h4>
+                              {task.description && (
+                                <p className="text-sm text-muted-foreground">{task.description}</p>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className={getTaskStatusColor(task.status)}>
+                                {task.status?.replace('_', ' ') || 'Unknown'}
+                              </Badge>
+                              {task.due_date && (
+                                <span className="text-sm text-muted-foreground">
+                                  Due: {new Date(task.due_date).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      }
+                      {tasks.filter(task => task.project_id === selectedProjectDetails.id).length === 0 && (
+                        <p className="text-center text-muted-foreground py-8">No tasks found for this project.</p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Project Timeline */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Timeline</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium">Start Date</p>
+                        <p className="text-muted-foreground">
+                          {selectedProjectDetails.start_date 
+                            ? new Date(selectedProjectDetails.start_date).toLocaleDateString()
+                            : 'Not set'
+                          }
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Estimated Completion</p>
+                        <p className="text-muted-foreground">
+                          {selectedProjectDetails.estimated_completion_date 
+                            ? new Date(selectedProjectDetails.estimated_completion_date).toLocaleDateString()
+                            : 'Not set'
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                  <Button className="flex-1">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Task
+                  </Button>
+                  <Button variant="outline" className="flex-1">
+                    Edit Project
+                  </Button>
+                  <Button variant="outline" className="flex-1" onClick={() => setShowProjectDetails(false)}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </main>
 
       <Footer />
