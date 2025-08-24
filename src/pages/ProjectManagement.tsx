@@ -166,12 +166,20 @@ const ProjectManagement = () => {
   const [showCreateProject, setShowCreateProject] = useState(false);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterPriority, setFilterPriority] = useState<string>('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   
-  const filteredProjects = projects.filter(project =>
-    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesStatus = filterStatus === 'all' || project.status === filterStatus;
+    const matchesPriority = filterPriority === 'all' || project.priority === filterPriority;
+    
+    return matchesSearch && matchesStatus && matchesPriority;
+  });
 
   const upcomingDeadlines = tasks
     .filter(task => task.due_date && new Date(task.due_date) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000))
@@ -301,71 +309,191 @@ const ProjectManagement = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search projects..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 min-h-[44px]"
+              />
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="min-h-[44px] justify-center sm:justify-start"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filter
+              {(filterStatus !== 'all' || filterPriority !== 'all') && (
+                <span className="ml-2 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-full">
+                  {[filterStatus !== 'all' ? 1 : 0, filterPriority !== 'all' ? 1 : 0].reduce((a, b) => a + b, 0)}
+                </span>
+              )}
+            </Button>
           </div>
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
+          
+          {/* Filter Controls */}
+          {showFilters && (
+            <Card className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Status</label>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="w-full p-2 border rounded-md bg-background min-h-[44px]"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="planning">Planning</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="on_hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Priority</label>
+                  <select
+                    value={filterPriority}
+                    onChange={(e) => setFilterPriority(e.target.value)}
+                    className="w-full p-2 border rounded-md bg-background min-h-[44px]"
+                  >
+                    <option value="all">All Priority</option>
+                    <option value="highest">Highest</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="lowest">Lowest</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setFilterStatus('all');
+                      setFilterPriority('all');
+                    }}
+                    className="w-full min-h-[44px]"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    onClick={() => setShowFilters(false)}
+                    className="w-full min-h-[44px]"
+                  >
+                    Apply Filters
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
 
         {/* Main Content Tabs */}
         <MobileTabs defaultValue="overview" className="w-full">
-          <MobileTabsList className="w-full">
-            <MobileTabsTrigger value="overview" className="flex items-center gap-2">
+          <MobileTabsList className="w-full overflow-x-auto">
+            <MobileTabsTrigger value="overview" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <BarChart3 className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Overview</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Overview</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="kanban" className="flex items-center gap-2">
+            <MobileTabsTrigger value="kanban" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <KanbanSquare className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Kanban</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Kanban</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="gantt" className="flex items-center gap-2">
+            <MobileTabsTrigger value="gantt" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <List className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Gantt</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Gantt</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
+            <MobileTabsTrigger value="calendar" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <Calendar className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Calendar</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Calendar</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="analytics" className="flex items-center gap-2">
+            <MobileTabsTrigger value="analytics" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <BarChart3 className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Analytics</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Analytics</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="team" className="flex items-center gap-2">
+            <MobileTabsTrigger value="team" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <Users className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Team</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Team</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
+            <MobileTabsTrigger value="notifications" className="flex items-center gap-1 sm:gap-2 min-w-fit">
               <AlertCircle className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Alerts</span>
+              <span className="text-xs sm:text-sm whitespace-nowrap">Alerts</span>
             </MobileTabsTrigger>
           </MobileTabsList>
 
           <MobileTabsContent value="overview" className="space-y-6">
+            {/* Results Summary */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredProjects.length} of {projects.length} projects
+              </p>
+              {filteredProjects.length !== projects.length && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setFilterStatus('all');
+                    setFilterPriority('all');
+                  }}
+                >
+                  Clear all filters
+                </Button>
+              )}
+            </div>
+            
             {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-              {filteredProjects.map((project) => (
-                <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-lg mb-1">{project.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {project.description}
-                        </p>
+              {filteredProjects.length === 0 ? (
+                <div className="col-span-full">
+                  <Card>
+                    <CardContent className="p-12 text-center">
+                      <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No projects found</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Try adjusting your search terms or filters
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setSearchTerm('');
+                          setFilterStatus('all');
+                          setFilterPriority('all');
+                        }}
+                      >
+                        Clear filters
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                filteredProjects.map((project) => (
+                  <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-base sm:text-lg mb-1">{project.title}</CardTitle>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {project.description}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <div className={`w-3 h-3 rounded-full ${getStatusColor(project.status)}`} />
+                          <Badge variant={getPriorityColor(project.priority)} className="text-xs">
+                            {project.priority}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className={`w-3 h-3 rounded-full ${getStatusColor(project.status)} ml-2 mt-1`} />
-                    </div>
-                  </CardHeader>
+                    </CardHeader>
                   <CardContent className="space-y-4">
                      {/* Progress */}
                      <div className="space-y-2">
@@ -405,18 +533,19 @@ const ProjectManagement = () => {
                        </div>
                      </div>
 
-                    {/* Priority Badge */}
-                    <div className="flex justify-between items-center">
-                      <Badge variant={getPriorityColor(project.priority)}>
-                        {project.priority}
-                      </Badge>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                     {/* Action Button */}
+                     <div className="flex justify-between items-center">
+                       <Badge variant="outline" className="capitalize">
+                         {project.status.replace('_', ' ')}
+                       </Badge>
+                       <Button variant="outline" size="sm" className="min-h-[36px]">
+                         View Details
+                       </Button>
+                     </div>
+                   </CardContent>
+                 </Card>
+               ))
+              )}
             </div>
 
             {/* Recent Tasks and Upcoming Deadlines */}
