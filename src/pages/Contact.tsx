@@ -160,6 +160,9 @@ const Contact = () => {
                         <SelectItem value="web-development">
                           🌐 Web Development
                         </SelectItem>
+                        <SelectItem value="ai-integration">
+                          🤖 AI Integration
+                        </SelectItem>
                         <SelectItem value="consulting">
                           💡 Technical Consulting
                         </SelectItem>
