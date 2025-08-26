@@ -33,24 +33,12 @@ export default function CookiePolicy() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-foreground">Types of Cookies We Use</h2>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Necessary Cookies</h3>
-                    <p className="text-muted-foreground">Required for site functionality (e.g., login sessions)</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Analytics Cookies</h3>
-                    <p className="text-muted-foreground">Help us understand site performance and improve services</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Preference Cookies</h3>
-                    <p className="text-muted-foreground">Remember your settings (e.g., language, preferences)</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Third-Party Cookies</h3>
-                    <p className="text-muted-foreground">Used by services like Google Analytics</p>
-                  </div>
-                </div>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li><strong>Necessary Cookies</strong> – required for site functionality (e.g., login sessions).</li>
+                  <li><strong>Analytics Cookies</strong> – help us understand site performance and improve services.</li>
+                  <li><strong>Preference Cookies</strong> – remember your settings (e.g., language, preferences).</li>
+                  <li><strong>Third-Party Cookies</strong> – used by services like Google Analytics.</li>
+                </ul>
               </section>
 
               <section className="mb-8">

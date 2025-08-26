@@ -46,9 +46,7 @@ export default function PrivacyPolicy() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-foreground">Sharing Your Information</h2>
-                <p className="text-muted-foreground mb-4">
-                  We do not sell your data. We may share limited data with:
-                </p>
+                <p className="text-muted-foreground mb-4">We do not sell your data. We may share limited data with:</p>
                 <ul className="space-y-2 text-muted-foreground">
                   <li>Payment processors</li>
                   <li>Service providers (for hosting, analytics, or support)</li>
@@ -80,7 +78,7 @@ export default function PrivacyPolicy() {
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4 text-foreground">Contact Us</h2>
                 <p className="text-muted-foreground">
-                  For questions about this Privacy Policy, contact us at: <a href="mailto:hello@404codelab.com" className="text-primary hover:text-primary/80">hello@404codelab.com</a>
+                  For questions about this Privacy Policy, contact us at <a href="mailto:hello@404codelab.com" className="text-primary hover:text-primary/80">hello@404codelab.com</a>
                 </p>
               </section>
             </div>

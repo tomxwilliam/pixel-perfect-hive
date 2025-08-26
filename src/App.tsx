@@ -27,6 +27,10 @@ import AppsLanding from "./pages/landing/AppsLanding";
 import WebLanding from "./pages/landing/WebLanding";
 import AILanding from "./pages/landing/AILanding";
 import ProjectManagement from "./pages/ProjectManagement";
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import TermsOfService from "./pages/legal/TermsOfService";
+import RefundsPolicy from "./pages/legal/RefundsPolicy";
+import CookiePolicy from "./pages/legal/CookiePolicy";
 
 
 const queryClient = new QueryClient();
@@ -88,6 +92,10 @@ const App = () => (
               <Route path="/l/apps" element={<AppsLanding />} />
               <Route path="/l/web" element={<WebLanding />} />
               <Route path="/l/ai-integration" element={<AILanding />} />
+              <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+              <Route path="/legal/terms" element={<TermsOfService />} />
+              <Route path="/legal/refunds" element={<RefundsPolicy />} />
+              <Route path="/legal/cookies" element={<CookiePolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
 

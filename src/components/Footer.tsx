@@ -103,13 +103,32 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} 404 Code Lab. All rights reserved.
-          </p>
-          <div className="flex items-center space-x-2 text-muted-foreground text-sm mt-4 md:mt-0">
-            <Coffee className="h-4 w-4" />
-            <span>404, Not Here! 💻</span>
+        <div className="border-t border-border mt-8 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <p className="text-muted-foreground text-sm">
+              © {new Date().getFullYear()} 404 Code Lab. All rights reserved.
+            </p>
+            
+            {/* Legal Links */}
+            <div className="flex flex-wrap gap-4 text-sm">
+              <Link to="/legal/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/legal/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                Terms of Service
+              </Link>
+              <Link to="/legal/refunds" className="text-muted-foreground hover:text-primary transition-colors">
+                Refunds Policy
+              </Link>
+              <Link to="/legal/cookies" className="text-muted-foreground hover:text-primary transition-colors">
+                Cookie Policy
+              </Link>
+            </div>
+            
+            <div className="flex items-center space-x-2 text-muted-foreground text-sm">
+              <Coffee className="h-4 w-4" />
+              <span>404, Not Here! 💻</span>
+            </div>
           </div>
         </div>
       </div>
