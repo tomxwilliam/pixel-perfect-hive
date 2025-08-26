@@ -77,7 +77,7 @@ export default function AIIntegration() {
                 {
                   title: "E‑commerce personalisation",
                   text: "Boost AOV with intelligent recommendations and semantic search.",
-                  image: "/lovable-uploads/1e963e0b-cd28-4c9f-a4ee-0efb51b7c7fa.png",
+                  image: "/lovable-uploads/4823f2ae-5275-4f6c-8ea9-0d29e5f8e011.png",
                   alt: "AI powered recommendations UI mockup"
                 },
                 {
