@@ -89,7 +89,7 @@ export default function AIIntegration() {
                 {
                   title: "Operational workflows",
                   text: "Connect CRMs, helpdesks, and data stores to trigger smart automations.",
-                  image: "/lovable-uploads/5deb9273-b749-4781-803a-ac052ba93374.png",
+                  image: "/lovable-uploads/11dd4a5f-f848-489c-876d-1b24c2201d72.png",
                   alt: "Automation flow diagram"
                 },
               ].map((u) => (
