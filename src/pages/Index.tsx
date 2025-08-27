@@ -11,7 +11,12 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
-        <div className="absolute inset-0 bg-background/20"></div>
+        <div className="absolute inset-0 bg-background/20" style={{
+          backgroundImage: 'url(/lovable-uploads/0649ad28-de44-42bb-b776-70c0a8fca446.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}></div>
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-3 py-2 text-xs sm:px-4 sm:text-sm inline-flex items-center justify-center">
             🚀 404 Code Lab
