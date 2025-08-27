@@ -25,21 +25,23 @@ const Index = () => {
             Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
           </p>
 
-          {/* Featured Game */}
-          <Card className="mb-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 max-w-md mx-auto">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-4">
-                <span className="text-2xl mr-2">🐝</span>
-                <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: BeeVerse</h3>
-              </div>
-              <p className="mb-4 text-foreground">The ultimate idle bee empire game.</p>
-              <p className="text-sm text-muted-foreground mb-4">Download now on iPhone.</p>
-              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                <Download className="mr-2 h-4 w-4" />
-                App Store
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Featured Game - Only show from 2026 onwards */}
+          {new Date().getFullYear() >= 2026 && (
+            <Card className="mb-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 max-w-md mx-auto">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <span className="text-2xl mr-2">🐝</span>
+                  <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: BeeVerse</h3>
+                </div>
+                <p className="mb-4 text-foreground">The ultimate idle bee empire game.</p>
+                <p className="text-sm text-muted-foreground mb-4">Download now on iPhone.</p>
+                <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                  <Download className="mr-2 h-4 w-4" />
+                  App Store
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="flex items-center justify-center text-muted-foreground animate-bounce">
             <span className="mr-2">Explore Our Work</span>
