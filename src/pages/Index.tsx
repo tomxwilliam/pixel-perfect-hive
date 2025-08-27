@@ -11,7 +11,15 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
-        <div className="absolute inset-0 bg-background/20" style={{
+        {/* Light mode background */}
+        <div className="absolute inset-0 bg-background/20 dark:hidden" style={{
+          backgroundImage: 'url(/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}></div>
+        {/* Dark mode background */}
+        <div className="absolute inset-0 bg-background/20 hidden dark:block" style={{
           backgroundImage: 'url(/lovable-uploads/0649ad28-de44-42bb-b776-70c0a8fca446.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
