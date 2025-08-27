@@ -241,7 +241,7 @@ const Contact = () => {
                     Need instant support? Message us on WhatsApp for quick responses! 💬
                   </p>
                   <Button 
-                    onClick={() => window.open('https://wa.me/447123456789?text=Hi%20404CodeLabs!%20I%27m%20interested%20in%20your%20services.', '_blank')}
+                    onClick={() => window.open('https://wa.me/447496295759?text=Hi%20404CodeLabs!%20I%27m%20interested%20in%20your%20services.', '_blank')}
                     className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
                     size="lg"
                   >
