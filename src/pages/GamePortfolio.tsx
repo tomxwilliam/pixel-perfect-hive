@@ -72,11 +72,12 @@ const GamePortfolio = () => {
                 </div>
                 
                 <div className="relative">
-                  <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8 text-center">
-                    <div className="text-6xl mb-4">🏭</div>
-                    <p className="text-muted-foreground">
-                      Game screenshots and preview coming soon!
-                    </p>
+                  <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-4 overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/621f61df-74f7-45ba-b1d7-4c1b7251d429.png"
+                      alt="BeeVerse game screenshot showing a lush meadow environment with bees, flowers, and game UI"
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
                   </div>
                 </div>
               </div>
