@@ -58,7 +58,7 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <MobileTabsList className={isMobile ? 'w-full' : 'grid w-full grid-cols-13 gap-1'}>
+          <MobileTabsList className="w-full">
             <MobileTabsTrigger value="overview" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Overview</span>
