@@ -83,7 +83,7 @@ export default function AIIntegration() {
                 {
                   title: "SaaS support automation",
                   text: "Deflect tickets with an in-app assistant trained on your docs and data.",
-                  image: "/lovable-uploads/92993cef-c133-4703-92a8-85cd3a923387.png",
+                  image: "/lovable-uploads/593bb6c4-a62b-47c4-9a2f-9223d539bff7.png",
                   alt: "AI chatbot embedded in SaaS app"
                 },
                 {
