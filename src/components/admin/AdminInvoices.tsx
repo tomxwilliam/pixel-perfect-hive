@@ -58,16 +58,24 @@ export const AdminInvoices = () => {
     }
   };
 
-  const handleDeleteConfirm = async () => {
+const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
       const { error } = await supabase.from('invoices').delete().eq('id', deleteTarget.id);
-      if (error) throw error;
-      toast.success('Invoice deleted');
+      if (error) {
+        console.error('Delete error details:', error);
+        if (error.code === '23503') {
+          toast.error('Cannot delete invoice: It is referenced by hosting subscriptions. Please remove those references first.');
+        } else {
+          toast.error(`Failed to delete invoice: ${error.message}`);
+        }
+        return;
+      }
+      toast.success('Invoice deleted successfully');
       await fetchInvoices();
     } catch (error) {
       console.error('Error deleting invoice:', error);
-      toast.error('Failed to delete invoice');
+      toast.error('Failed to delete invoice: Unexpected error occurred');
     } finally {
       setIsDeleteOpen(false);
       setDeleteTarget(null);

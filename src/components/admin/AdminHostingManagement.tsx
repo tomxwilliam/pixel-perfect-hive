@@ -12,6 +12,7 @@ import { Server, Play, Pause, Trash2, Eye, AlertTriangle, Settings, ExternalLink
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import HostingPackageManagement from "./HostingPackageManagement";
 
 const AdminHostingManagement = () => {
   const { toast } = useToast();
@@ -307,6 +308,7 @@ const AdminHostingManagement = () => {
       <Tabs defaultValue="subscriptions" className="space-y-4">
         <TabsList>
           <TabsTrigger value="subscriptions">All Subscriptions</TabsTrigger>
+          <TabsTrigger value="packages">Hosting Packages</TabsTrigger>
           <TabsTrigger value="requests">Provisioning Requests</TabsTrigger>
         </TabsList>
 
@@ -518,6 +520,10 @@ const AdminHostingManagement = () => {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="packages" className="space-y-4">
+          <HostingPackageManagement />
         </TabsContent>
 
         <TabsContent value="requests" className="space-y-4">
