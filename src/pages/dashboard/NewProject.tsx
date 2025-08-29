@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { WebDevelopmentForm } from '@/components/project-forms/WebDevelopmentForm';
 import { AppDevelopmentForm } from '@/components/project-forms/AppDevelopmentForm';
 import { GameDevelopmentForm } from '@/components/project-forms/GameDevelopmentForm';
+import { AIIntegrationForm } from '@/components/project-forms/AIIntegrationForm';
 import { FileUpload, FileList } from '@/components/ui/file-upload';
 import { UploadedFile } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -43,6 +44,14 @@ interface ProjectFormData {
   gameplayDescription?: string;
   gameFeatures?: string[];
   gameAssets?: string[];
+  // AI Integration fields
+  aiProjectType?: string;
+  aiDescription?: string;
+  aiFeatures?: string[];
+  aiIntegrationTypes?: string[];
+  expectedUsers?: string;
+  aiComplexity?: string;
+  aiTimeline?: string;
 }
 
 const NewProject = () => {
@@ -93,6 +102,16 @@ const NewProject = () => {
           gameplayDescription: formData.gameplayDescription,
           gameFeatures: formData.gameFeatures || [],
           gameAssets: formData.gameAssets || []
+        }),
+        // AI Integration requirements
+        ...(formData.project_type === 'ai' && {
+          aiProjectType: formData.aiProjectType,
+          aiDescription: formData.aiDescription,
+          aiFeatures: formData.aiFeatures || [],
+          aiIntegrationTypes: formData.aiIntegrationTypes || [],
+          expectedUsers: formData.expectedUsers,
+          aiComplexity: formData.aiComplexity,
+          aiTimeline: formData.aiTimeline
         })
       };
 
@@ -151,6 +170,8 @@ const NewProject = () => {
         return `App Development Project: ${formData.appCategory || 'Mobile Application'} - ${formData.appFunctionality || 'Custom functionality as specified'}`;
       case 'game':
         return `Game Development Project: ${formData.gameGenre || 'Game'} - ${formData.gameplayDescription || 'Custom gameplay as specified'}`;
+      case 'ai':
+        return `AI Integration Project: ${formData.aiProjectType || 'AI Solution'} - ${formData.aiDescription || 'Custom AI integration as specified'}`;
       default:
         return 'Custom project with detailed requirements';
     }
@@ -190,7 +211,8 @@ const NewProject = () => {
   const canProceedToStep3 = canProceedToStep2 && (
     (formData.project_type === 'web' && formData.websiteType) ||
     (formData.project_type === 'app' && formData.appPlatforms && formData.appPlatforms.length > 0) ||
-    (formData.project_type === 'game' && formData.gameGenre)
+    (formData.project_type === 'game' && formData.gameGenre) ||
+    (formData.project_type === 'ai' && formData.aiProjectType)
   );
 
   const renderProjectTypeForm = () => {
@@ -201,6 +223,8 @@ const NewProject = () => {
         return <AppDevelopmentForm formData={formData} updateFormData={updateFormData} />;
       case 'game':
         return <GameDevelopmentForm formData={formData} updateFormData={updateFormData} />;
+      case 'ai':
+        return <AIIntegrationForm formData={formData} updateFormData={updateFormData} />;
       default:
         return null;
     }
@@ -320,10 +344,11 @@ const NewProject = () => {
                             <SelectTrigger>
                               <SelectValue placeholder="Select project type" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-popover border border-border z-50">
                               <SelectItem value="web">💻 Web Development</SelectItem>
                               <SelectItem value="app">📱 App Development</SelectItem>
                               <SelectItem value="game">🎮 Game Development</SelectItem>
+                              <SelectItem value="ai">🤖 AI Integration</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
