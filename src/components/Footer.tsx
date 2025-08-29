@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
-import { FaTiktok, FaDiscord, FaXTwitter } from "react-icons/fa6";
+import { FaTiktok, FaDiscord, FaXTwitter, FaBehance } from "react-icons/fa6";
 import { useTheme } from "@/hooks/useTheme";
 
 export const Footer = () => {
@@ -32,20 +32,23 @@ export const Footer = () => {
               Bold ideas, pixel-perfect reality.
             </p>
             <div className="flex space-x-4">
-              <a href="https://github.com/thomas-jackk" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://github.com/tomxwilliam" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Github className="h-5 w-5" />
               </a>
-              <a href="https://linkedin.com/in/thomas-jackk" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://linkedin.com/company/404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="https://x.com/thomas_jackk" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="http://x.com/404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <FaXTwitter className="h-5 w-5" />
               </a>
-              <a href="https://tiktok.com/@thomas_jackk" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://www.tiktok.com/@404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <FaTiktok className="h-5 w-5" />
               </a>
-              <a href="https://discord.gg/your-server" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="https://discord.gg/KBq4nVVHug" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <FaDiscord className="h-5 w-5" />
+              </a>
+              <a href="https://www.behance.net/404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+                <FaBehance className="h-5 w-5" />
               </a>
             </div>
           </div>
