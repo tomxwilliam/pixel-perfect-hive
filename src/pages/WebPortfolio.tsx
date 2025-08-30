@@ -148,9 +148,7 @@ const WebPortfolio = () => {
           {/* Charity Section */}
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-8 mb-12 text-center">
             <h3 className="text-2xl font-bold mb-4 text-primary">Supporting Non-Profits & Charities</h3>
-            <p className="text-lg text-muted-foreground mb-4">
-              Are you a registered charity or non-profit organization? We believe in giving back to the community.
-            </p>
+            <p className="text-lg text-muted-foreground mb-4">Are you a registered charity or non-profit organisation? We believe in giving back to the community.</p>
             <p className="text-muted-foreground mb-6">
               Contact us and we'll create a simple, professional website for your charity to help you get started with your online presence - at no cost.
             </p>
