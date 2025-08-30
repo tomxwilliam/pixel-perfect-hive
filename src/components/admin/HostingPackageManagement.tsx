@@ -13,6 +13,7 @@ const HostingPackageManagement = () => {
   const queryClient = useQueryClient();
   const [packageToDelete, setPackageToDelete] = useState<any>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [forceDelete, setForceDelete] = useState(false);
 
   // Fetch hosting packages with usage count
   const { data: packages, isLoading } = useQuery({
@@ -92,17 +93,16 @@ const HostingPackageManagement = () => {
     if (!packageToDelete) return;
 
     try {
-      // First try to archive (safe approach)
       await deletePackage.mutateAsync({ 
         packageId: packageToDelete.id, 
-        forceDelete: false 
+        forceDelete: forceDelete 
       });
     } catch (error) {
-      // Handle any errors
       console.error('Package management error:', error);
     } finally {
       setIsDeleteOpen(false);
       setPackageToDelete(null);
+      setForceDelete(false);
     }
   };
 
@@ -128,7 +128,7 @@ const HostingPackageManagement = () => {
         <CardHeader>
           <CardTitle>Hosting Package Management</CardTitle>
           <CardDescription>
-            Manage hosting packages and their availability. Packages with active subscriptions will be archived instead of deleted.
+            Manage hosting packages and their availability. You can archive packages to hide them from new orders or completely delete them.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -176,33 +176,32 @@ const HostingPackageManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      {pkg.usage_count > 0 ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setPackageToDelete(pkg);
-                            setIsDeleteOpen(true);
-                          }}
-                          disabled={deletePackage.isPending}
-                        >
-                          <Archive className="h-4 w-4 mr-1" />
-                          Archive
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => {
-                            setPackageToDelete(pkg);
-                            setIsDeleteOpen(true);
-                          }}
-                          disabled={deletePackage.isPending}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
-                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setPackageToDelete(pkg);
+                          setForceDelete(false);
+                          setIsDeleteOpen(true);
+                        }}
+                        disabled={deletePackage.isPending}
+                      >
+                        <Archive className="h-4 w-4 mr-1" />
+                        Archive
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setPackageToDelete(pkg);
+                          setForceDelete(true);
+                          setIsDeleteOpen(true);
+                        }}
+                        disabled={deletePackage.isPending}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -216,12 +215,14 @@ const HostingPackageManagement = () => {
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteConfirm}
-        title={packageToDelete?.usage_count > 0 ? "Archive hosting package?" : "Delete hosting package?"}
+        title={forceDelete ? "Delete hosting package?" : "Archive hosting package?"}
         description={
-          packageToDelete?.usage_count > 0 
-            ? `This package has ${packageToDelete.usage_count} active subscription(s). It will be archived (hidden from new orders) but existing customers can continue using it.`
-            : "This will permanently delete the hosting package. This action cannot be undone."
+          forceDelete
+            ? `This will permanently delete the hosting package${packageToDelete?.usage_count > 0 ? ` and remove it from ${packageToDelete.usage_count} active subscription(s)` : ''}. This action cannot be undone.`
+            : `This package will be archived (hidden from new orders)${packageToDelete?.usage_count > 0 ? ` but existing ${packageToDelete.usage_count} customer(s) can continue using it` : ''}.`
         }
+        confirmText={forceDelete ? "Delete" : "Archive"}
+        warningText={forceDelete && packageToDelete?.usage_count > 0 ? "Warning: This will affect active customers!" : undefined}
       />
     </div>
   );
