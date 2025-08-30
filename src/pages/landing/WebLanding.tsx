@@ -17,7 +17,7 @@ export default function WebLanding() {
       ]}
       
       features={[
-        "Lightning-fast performance optimization",
+        "Lightning-fast performance optimisation",
         "Mobile-first responsive design",
         "Advanced SEO & analytics integration",
         "Secure authentication systems",
@@ -32,7 +32,7 @@ export default function WebLanding() {
         "Reach customers on any device",
         "Rank higher in search results",
         "Protect user data & build trust",
-        "Connect with your favorite tools",
+        "Connect with your favourite tools",
         "Update content without coding",
         "Increase sales & revenue",
         "Make data-driven decisions"
@@ -68,7 +68,7 @@ export default function WebLanding() {
         {
           name: "Sarah Chen",
           company: "TechFlow Solutions",
-          content: "404 Code Lab delivered a stunning website that increased our leads by 300%. The attention to detail and performance optimization is incredible.",
+          content: "404 Code Lab delivered a stunning website that increased our leads by 300%. The attention to detail and performance optimisation is incredible.",
           rating: 5
         },
         {
@@ -93,10 +93,10 @@ export default function WebLanding() {
           description: "Perfect for showcasing your business and capturing leads",
           features: [
             "Custom responsive design",
-            "SEO optimization",
+            "SEO optimisation",
             "Contact forms",
             "Google Analytics",
-            "Mobile optimization",
+            "Mobile optimisation",
             "2 weeks delivery"
           ]
         },
@@ -110,7 +110,7 @@ export default function WebLanding() {
             "Content Management System",
             "Blog functionality",
             "Advanced SEO",
-            "Performance optimization",
+            "Performance optimisation",
             "3 weeks delivery"
           ],
           popular: true
@@ -134,7 +134,7 @@ export default function WebLanding() {
       process={[
         {
           title: "Discovery",
-          description: "We analyze your needs, goals, and target audience to create the perfect strategy.",
+          description: "We analyse your needs, goals, and target audience to create the perfect strategy.",
           icon: <Search className="h-8 w-8 text-primary" />
         },
         {
@@ -149,7 +149,7 @@ export default function WebLanding() {
         },
         {
           title: "Launch",
-          description: "Thorough testing, optimization, and deployment to ensure everything works perfectly.",
+          description: "Thorough testing, optimisation, and deployment to ensure everything works perfectly.",
           icon: <Zap className="h-8 w-8 text-primary" />
         }
       ]}
@@ -179,7 +179,7 @@ export default function WebLanding() {
       
       seo={{
         title: "Professional Web Development Services | 404 Code Lab",
-        description: "Custom websites and web applications that drive results. Fast, secure, SEO-optimized development with modern technologies. Get a quote today!",
+        description: "Custom websites and web applications that drive results. Fast, secure, SEO-optimised development with modern technologies. Get a quote today!",
       }}
     />
   );

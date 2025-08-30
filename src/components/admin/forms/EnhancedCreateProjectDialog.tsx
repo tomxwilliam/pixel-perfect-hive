@@ -145,7 +145,7 @@ export const EnhancedCreateProjectDialog = ({ onProjectCreated }: EnhancedCreate
         'Multiplayer Support',
         'Leaderboards',
         'In-Game Purchases',
-        'Character Customization',
+        'Character Customisation',
         'Level Editor',
         'Social Features',
         'Analytics/Telemetry',

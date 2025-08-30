@@ -18,7 +18,7 @@ export default function AILanding() {
       
       features={[
         "Intelligent chatbots & virtual assistants",
-        "Process automation & workflow optimization",
+        "Process automation & workflow optimisation",
         "Predictive analytics & data insights",
         "Personalized recommendation engines",
         "Natural language processing",
@@ -126,7 +126,7 @@ export default function AILanding() {
             "Computer vision systems",
             "Advanced analytics",
             "Staff training included",
-            "Ongoing optimization"
+            "Ongoing optimisation"
           ]
         }
       ]}
@@ -139,7 +139,7 @@ export default function AILanding() {
         },
         {
           title: "Data Preparation",
-          description: "Clean, organize, and prepare your data for optimal AI model performance.",
+          description: "Clean, organise, and prepare your data for optimal AI model performance.",
           icon: <BarChart className="h-8 w-8 text-primary" />
         },
         {
@@ -149,7 +149,7 @@ export default function AILanding() {
         },
         {
           title: "Integration",
-          description: "Seamlessly integrate AI into your existing systems with monitoring and optimization.",
+          description: "Seamlessly integrate AI into your existing systems with monitoring and optimisation.",
           icon: <Settings className="h-8 w-8 text-primary" />
         }
       ]}
@@ -165,7 +165,7 @@ export default function AILanding() {
         },
         {
           question: "Do you provide training for our team?",
-          answer: "Yes! We include comprehensive training for your team on how to use, maintain, and optimize the AI systems we build. We also provide ongoing support and updates."
+          answer: "Yes! We include comprehensive training for your team on how to use, maintain, and optimise the AI systems we build. We also provide ongoing support and updates."
         },
         {
           question: "What kind of ROI can we expect from AI?",

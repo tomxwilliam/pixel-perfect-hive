@@ -6,7 +6,7 @@ export default function GamesLanding() {
     <EnhancedLandingTemplate
       title="Mobile Game Development"
       subtitle="Create Games That Players Can't Put Down"
-      intro="From addictive puzzle games to immersive adventures, we craft mobile games that captivate players and generate serious revenue. Beautiful art, engaging gameplay, and smart monetization strategies."
+      intro="From addictive puzzle games to immersive adventures, we craft mobile games that captivate players and generate serious revenue. Beautiful art, engaging gameplay, and smart monetisation strategies."
       icon={<Gamepad2 className="h-4 w-4" />}
       
       heroStats={[
@@ -19,7 +19,7 @@ export default function GamesLanding() {
       features={[
         "Addictive game mechanics & loops",
         "Stunning 2D/3D art & animations",
-        "Balanced monetization strategies",
+        "Balanced monetisation strategies",
         "Social features & leaderboards",
         "Live events & content updates",
         "Advanced analytics & A/B testing",
@@ -33,7 +33,7 @@ export default function GamesLanding() {
         "Generate revenue from day one",
         "Build active gaming communities",
         "Keep players coming back",
-        "Optimize for maximum retention",
+        "Optimise for maximum retention",
         "Reach iOS and Android users",
         "Rank higher in app stores"
       ]}
@@ -68,7 +68,7 @@ export default function GamesLanding() {
         {
           name: "Tommy Lee",
           company: "Indie Game Studio",
-          content: "Our puzzle game hit #1 in the App Store! The team's expertise in game mechanics and monetization was game-changing.",
+          content: "Our puzzle game hit #1 in the App Store! The team's expertise in game mechanics and monetisation was game-changing.",
           rating: 5
         },
         {
@@ -94,7 +94,7 @@ export default function GamesLanding() {
           features: [
             "Puzzle, idle, or arcade gameplay",
             "Professional 2D art & animations",
-            "Basic monetization (ads + IAP)",
+            "Basic monetisation (ads + IAP)",
             "Social features & leaderboards",
             "iOS & Android deployment",
             "12 weeks delivery"
@@ -148,8 +148,8 @@ export default function GamesLanding() {
           icon: <Code className="h-8 w-8 text-primary" />
         },
         {
-          title: "Launch & Optimize",
-          description: "App Store optimization, soft launch testing, and ongoing content updates.",
+          title: "Launch & Optimise",
+          description: "App Store optimisation, soft launch testing, and ongoing content updates.",
           icon: <Play className="h-8 w-8 text-primary" />
         }
       ]}
@@ -164,12 +164,12 @@ export default function GamesLanding() {
           answer: "Development time depends on game complexity. Casual games take 12-16 weeks, premium games take 16-24 weeks, and AAA mobile games can take 6+ months."
         },
         {
-          question: "Do you help with game monetization?",
-          answer: "Absolutely! We implement proven monetization strategies including in-app purchases, rewarded ads, battle passes, and subscription models. We optimize for both user experience and revenue."
+          question: "Do you help with game monetisation?",
+          answer: "Absolutely! We implement proven monetisation strategies including in-app purchases, rewarded ads, battle passes, and subscription models. We optimise for both user experience and revenue."
         },
         {
           question: "Will you handle App Store submission and marketing?",
-          answer: "Yes! We manage the complete App Store and Google Play submission process, create marketing assets, and provide guidance on user acquisition and ASO (App Store Optimization)."
+          answer: "Yes! We manage the complete App Store and Google Play submission process, create marketing assets, and provide guidance on user acquisition and ASO (App Store Optimisation)."
         }
       ]}
       

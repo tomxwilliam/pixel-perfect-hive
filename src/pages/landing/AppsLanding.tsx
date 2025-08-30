@@ -149,7 +149,7 @@ export default function AppsLanding() {
         },
         {
           title: "Launch",
-          description: "App Store optimization, submission, and ongoing support for success.",
+          description: "App Store optimisation, submission, and ongoing support for success.",
           icon: <Store className="h-8 w-8 text-primary" />
         }
       ]}
@@ -165,11 +165,11 @@ export default function AppsLanding() {
         },
         {
           question: "Do you build for both iOS and Android?",
-          answer: "Yes! We specialize in cross-platform development using React Native, which allows us to build for both platforms efficiently while maintaining native performance."
+          answer: "Yes! We specialise in cross-platform development using React Native, which allows us to build for both platforms efficiently while maintaining native performance."
         },
         {
           question: "Will you help with App Store submission?",
-          answer: "Absolutely! We handle the entire App Store and Google Play submission process, including optimization, screenshots, descriptions, and compliance with store guidelines."
+          answer: "Absolutely! We handle the entire App Store and Google Play submission process, including optimisation, screenshots, descriptions, and compliance with store guidelines."
         }
       ]}
       
@@ -179,7 +179,7 @@ export default function AppsLanding() {
       
       seo={{
         title: "Professional Mobile App Development | iOS & Android | 404 Code Lab",
-        description: "Custom mobile app development for iOS and Android. React Native, native development, UI/UX design, and App Store optimization. Get your quote today!",
+        description: "Custom mobile app development for iOS and Android. React Native, native development, UI/UX design, and App Store optimisation. Get your quote today!",
       }}
     />
   );

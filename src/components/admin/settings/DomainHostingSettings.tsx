@@ -448,7 +448,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                   <div className="flex flex-wrap gap-2 justify-center">
                     <Badge variant="secondary">✅ Responsive Design</Badge>
                     <Badge variant="secondary">✅ Dark Mode Support</Badge>
-                    <Badge variant="secondary">✅ Brand Customizable</Badge>
+                    <Badge variant="secondary">✅ Brand Customisable</Badge>
                     <Badge variant="secondary">✅ Dynamic Content</Badge>
                   </div>
                 </CardContent>

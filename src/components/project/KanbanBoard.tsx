@@ -62,7 +62,7 @@ const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [showCreateTask, setShowCreateTask] = useState(false);
 
-  // Organize tasks into columns based on status
+  // Organise tasks into columns based on status
   useEffect(() => {
     const tasksByStatus = tasks.reduce((acc, task) => {
       let columnId = task.status;

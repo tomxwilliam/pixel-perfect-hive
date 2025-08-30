@@ -79,7 +79,7 @@ const About = () => {
                 <h3 className="text-xl font-bold mb-4 text-accent">⚡ Performance First</h3>
                 <p className="text-muted-foreground">
                   Speed and smoothness aren't afterthoughts — they're core features. 
-                  We optimize for performance from day one, ensuring every experience feels instant.
+                  We optimise for performance from day one, ensuring every experience feels instant.
                 </p>
               </CardContent>
             </Card>

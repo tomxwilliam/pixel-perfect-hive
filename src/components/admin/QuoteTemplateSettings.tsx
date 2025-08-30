@@ -222,7 +222,7 @@ export const QuoteTemplateSettings = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Quote Template Settings</h2>
-          <p className="text-muted-foreground">Customize your quote template and branding</p>
+          <p className="text-muted-foreground">Customise your quote template and branding</p>
         </div>
         <div className="flex gap-2">
           <Button onClick={() => setShowPreview(true)} variant="outline">

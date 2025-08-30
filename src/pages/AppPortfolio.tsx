@@ -49,7 +49,7 @@ const AppPortfolio = () => {
                   </div>
                   <h3 className="font-bold mb-2 text-primary">Native Performance</h3>
                   <p className="text-sm text-muted-foreground">
-                    Optimized for iOS and Android with smooth 60fps animations
+                    Optimised for iOS and Android with smooth 60fps animations
                   </p>
                 </div>
                 
@@ -69,7 +69,7 @@ const AppPortfolio = () => {
                   </div>
                   <h3 className="font-bold mb-2 text-primary">Analytics Ready</h3>
                   <p className="text-sm text-muted-foreground">
-                    Built-in analytics and user behavior tracking
+                    Built-in analytics and user behaviour tracking
                   </p>
                 </div>
               </div>
@@ -83,7 +83,7 @@ const AppPortfolio = () => {
                 <div className="text-4xl mb-4">📊</div>
                 <h3 className="text-xl font-bold mb-4 text-primary">Productivity Tools</h3>
                 <p className="text-muted-foreground mb-4">
-                  Task managers, time trackers, and workflow optimization apps that actually get used.
+                  Task managers, time trackers, and workflow optimisation apps that actually get used.
                 </p>
                 <Badge className="bg-primary/20 text-primary border-primary/30">
                   Business Apps
@@ -264,8 +264,8 @@ const AppPortfolio = () => {
                                 <TrendingUp className="h-4 w-4 text-accent" />
                               </div>
                               <div>
-                                <h3 className="font-bold text-accent mb-2">4. Launch & Optimization</h3>
-                                <p className="text-sm">App Store submission, launch strategy, analytics setup, and ongoing optimization based on user feedback and performance data.</p>
+                                <h3 className="font-bold text-accent mb-2">4. Launch & Optimisation</h3>
+                                <p className="text-sm">App Store submission, launch strategy, analytics setup, and ongoing optimisation based on user feedback and performance data.</p>
                               </div>
                             </div>
                           </div>

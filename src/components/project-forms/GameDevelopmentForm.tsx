@@ -40,10 +40,10 @@ export const GameDevelopmentForm: React.FC<GameDevelopmentFormProps> = ({ formDa
     { id: 'in-game-store', label: 'In-game Purchases/Store' },
     { id: 'leaderboards', label: 'Leaderboards' },
     { id: 'social-features', label: 'Social Features (Friends, Sharing)' },
-    { id: 'ad-monetization', label: 'Ad Monetization' },
+    { id: 'ad-monetization', label: 'Ad Monetisation' },
     { id: 'achievement-system', label: 'Achievement System' },
     { id: 'cloud-saves', label: 'Cloud Save System' },
-    { id: 'customization', label: 'Character/Item Customization' },
+    { id: 'customization', label: 'Character/Item Customisation' },
     { id: 'tournament-mode', label: 'Tournament/Competition Mode' },
     { id: 'daily-challenges', label: 'Daily Challenges/Quests' }
   ];

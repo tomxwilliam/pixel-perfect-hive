@@ -43,7 +43,7 @@ const WebPortfolio = () => {
                 <h3 className="text-xl font-bold mb-4 text-primary">Performance First</h3>
                 <p className="text-muted-foreground">
                   Every site we build loads in under 3 seconds. No bloated frameworks, 
-                  just clean, optimized code that users and search engines love.
+                  just clean, optimised code that users and search engines love.
                 </p>
               </CardContent>
             </Card>
@@ -198,7 +198,7 @@ const WebPortfolio = () => {
                       </div>
                       <div className="flex items-center text-muted-foreground">
                         <Smartphone className="h-5 w-5 text-primary mr-3" />
-                        <span>Mobile-optimized for on-the-go bookings</span>
+                        <span>Mobile-optimised for on-the-go bookings</span>
                       </div>
                     </div>
                     
@@ -724,11 +724,11 @@ const WebPortfolio = () => {
                           <div className="flex-1">
                             <h3 className="text-xl font-bold text-accent mb-2">4. Launch Phase</h3>
                             <p className="text-muted-foreground mb-3">
-                              Deploying your project to production with thorough testing and optimization.
+                              Deploying your project to production with thorough testing and optimisation.
                             </p>
                             <div className="text-sm text-muted-foreground space-y-1">
                               <div>• Production deployment and configuration</div>
-                              <div>• Performance optimization and monitoring</div>
+                              <div>• Performance optimisation and monitoring</div>
                               <div>• SEO setup and analytics integration</div>
                               <div>• Timeline: 1 week</div>
                             </div>
@@ -747,7 +747,7 @@ const WebPortfolio = () => {
                             </p>
                             <div className="text-sm text-muted-foreground space-y-1">
                               <div>• Regular updates and security patches</div>
-                              <div>• Performance monitoring and optimization</div>
+                              <div>• Performance monitoring and optimisation</div>
                               <div>• Feature enhancements and bug fixes</div>
                               <div>• Timeline: Ongoing as needed</div>
                             </div>

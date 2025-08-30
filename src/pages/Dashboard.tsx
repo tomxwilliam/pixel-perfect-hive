@@ -103,7 +103,7 @@ const Dashboard = () => {
       
       <div className="pt-20 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Welcome Header - Mobile Optimized */}
+          {/* Welcome Header - Mobile Optimised */}
           <div className={`${isMobile ? 'flex flex-col space-y-4' : 'flex items-center justify-between'} mb-8`}>
             <div className={`flex ${isMobile ? 'flex-col items-center text-center space-y-3' : 'items-center space-x-4'}`}>
               <Avatar className={`${isMobile ? 'h-20 w-20' : 'h-16 w-16'}`}>
@@ -169,7 +169,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Main Content Tabs - Mobile Optimized */}
+          {/* Main Content Tabs - Mobile Optimised */}
           <MobileTabs defaultValue="overview" className="space-y-6">
             <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-7'}>
               <MobileTabsTrigger value="overview" className="flex items-center gap-2">

@@ -150,7 +150,7 @@ const NewTicket = () => {
                     required
                   />
                   <p className="text-sm text-muted-foreground">
-                    Include steps to reproduce the issue, error messages, and expected behavior
+                    Include steps to reproduce the issue, error messages, and expected behaviour
                   </p>
                 </div>
 
