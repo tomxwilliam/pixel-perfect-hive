@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ProjectSlideshow } from "@/components/portfolio/ProjectSlideshow";
 const WebPortfolio = () => {
   const navigate = useNavigate();
   return <div className="min-h-screen bg-background text-foreground">
@@ -167,462 +168,193 @@ const WebPortfolio = () => {
 
           <div className="space-y-12">
             {/* SparkleClean */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Globe className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">SparkleClean</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      A modern cleaning service website featuring an elegant gallery showcase, streamlined contact forms, and service booking system designed to convert visitors into customers.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Palette className="h-5 w-5 text-primary mr-3" />
-                        <span>Modern gallery with before/after photos</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-accent mr-3" />
-                        <span>Streamlined contact and booking forms</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Smartphone className="h-5 w-5 text-primary mr-3" />
-                        <span>Mobile-optimised for on-the-go bookings</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/sparkleclean/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/de1286a6-6683-4438-a78c-c5995a51478e.png" alt="SparkleClean Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="SparkleClean"
+              description="A modern cleaning service website featuring an elegant gallery showcase, streamlined contact forms, and service booking system designed to convert visitors into customers."
+              features={[
+                { icon: <Globe className="h-6 w-6 text-primary" />, text: "" },
+                { icon: <Palette className="h-5 w-5 text-primary mr-3" />, text: "Modern gallery with before/after photos" },
+                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Streamlined contact and booking forms" },
+                { icon: <Smartphone className="h-5 w-5 text-primary mr-3" />, text: "Mobile-optimised for on-the-go bookings" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/de1286a6-6683-4438-a78c-c5995a51478e.png", 
+                  alt: "SparkleClean Website Preview",
+                  caption: "Homepage showcasing cleaning services and gallery"
+                }
+              ]}
+              liveUrl="https://404codelab.com/sparkleclean/index.html"
+              gradient="primary"
+            />
 
             {/* FixRight Plumbing */}
-            <Card className="bg-gradient-to-r from-accent/10 to-primary/10 border-accent/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mr-4">
-                        <Zap className="h-6 w-6 text-accent" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-accent mb-2">FixRight Plumbing</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Emergency plumbing service website with 24/7 booking system, boiler service scheduling, and instant quote calculator to help customers get immediate assistance.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Rocket className="h-5 w-5 text-accent mr-3" />
-                        <span>24/7 emergency booking system</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Code className="h-5 w-5 text-accent/70 mr-3" />
-                        <span>Instant quote calculator</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <HeadphonesIcon className="h-5 w-5 text-accent mr-3" />
-                        <span>Live chat support integration</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/fixright-plumbing/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/08b142ce-467d-4503-aa9d-28d4085bbf3b.png" alt="FixRight Plumbing Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="FixRight Plumbing"
+              description="Emergency plumbing service website with 24/7 booking system, boiler service scheduling, and instant quote calculator to help customers get immediate assistance."
+              features={[
+                { icon: <Zap className="h-6 w-6 text-accent" />, text: "" },
+                { icon: <Rocket className="h-5 w-5 text-accent mr-3" />, text: "24/7 emergency booking system" },
+                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Instant quote calculator" },
+                { icon: <HeadphonesIcon className="h-5 w-5 text-accent mr-3" />, text: "Live chat support integration" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/08b142ce-467d-4503-aa9d-28d4085bbf3b.png", 
+                  alt: "FixRight Plumbing Website Preview",
+                  caption: "Emergency plumbing services with instant booking"
+                }
+              ]}
+              liveUrl="https://404codelab.com/fixright-plumbing/index.html"
+              gradient="accent"
+            />
 
             {/* Shear Perfection */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mr-4">
-                        <Palette className="h-6 w-6 text-accent" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-accent mb-2">Shear Perfection</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Hair & beauty salon website featuring online booking system, treatment galleries, and stylist profiles to showcase expertise and build client confidence.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-accent mr-3" />
-                        <span>Online appointment booking</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-accent/70 mr-3" />
-                        <span>Treatment gallery showcase</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <TrendingUp className="h-5 w-5 text-accent mr-3" />
-                        <span>Stylist profiles and reviews</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/shear-perfection/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/9bf1d85f-9e5f-4fb0-9ce8-f74db644a586.png" alt="Shear Perfection Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Shear Perfection"
+              description="Hair & beauty salon website featuring online booking system, treatment galleries, and stylist profiles to showcase expertise and build client confidence."
+              features={[
+                { icon: <Palette className="h-6 w-6 text-accent" />, text: "" },
+                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Online appointment booking" },
+                { icon: <Eye className="h-5 w-5 text-accent/70 mr-3" />, text: "Treatment gallery showcase" },
+                { icon: <TrendingUp className="h-5 w-5 text-accent mr-3" />, text: "Stylist profiles and reviews" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/9bf1d85f-9e5f-4fb0-9ce8-f74db644a586.png", 
+                  alt: "Shear Perfection Website Preview",
+                  caption: "Hair & beauty salon with online booking"
+                }
+              ]}
+              liveUrl="https://404codelab.com/shear-perfection/index.html"
+              gradient="primary"
+            />
 
             {/* Padrino's Pizza */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Globe className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">Padrino's Pizza</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Takeaway pizza restaurant website with interactive menu builder, food gallery, and seamless online ordering system to boost delivery sales.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Code className="h-5 w-5 text-primary mr-3" />
-                        <span>Interactive menu and pizza builder</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-accent mr-3" />
-                        <span>Appetizing food gallery</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Rocket className="h-5 w-5 text-primary mr-3" />
-                        <span>One-click ordering system</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/padrinos-pizza/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/c4140cc5-49a7-448f-a499-fa51ef6ff6c9.png" alt="Padrino's Pizza Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Padrino's Pizza"
+              description="Takeaway pizza restaurant website with interactive menu builder, food gallery, and seamless online ordering system to boost delivery sales."
+              features={[
+                { icon: <Globe className="h-6 w-6 text-primary" />, text: "" },
+                { icon: <Code className="h-5 w-5 text-primary mr-3" />, text: "Interactive menu and pizza builder" },
+                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Appetizing food gallery" },
+                { icon: <Rocket className="h-5 w-5 text-primary mr-3" />, text: "One-click ordering system" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/c4140cc5-49a7-448f-a499-fa51ef6ff6c9.png", 
+                  alt: "Padrino's Pizza Website Preview",
+                  caption: "Pizza restaurant with interactive menu builder"
+                }
+              ]}
+              liveUrl="https://404codelab.com/padrinos-pizza/index.html"
+              gradient="primary"
+            />
 
             {/* Sweet Crumbs */}
-            <Card className="bg-gradient-to-r from-accent/10 to-primary/10 border-accent/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mr-4">
-                        <Palette className="h-6 w-6 text-accent" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-accent mb-2">Sweet Crumbs</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Custom cake shop website featuring flavor browsing, cake galleries, and personalized order forms to help customers create their dream celebrations.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-accent mr-3" />
-                        <span>Interactive flavor and design galleries</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Code className="h-5 w-5 text-accent/70 mr-3" />
-                        <span>Custom order form builder</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-accent mr-3" />
-                        <span>Event consultation booking</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/sweet-crumbs/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/1e963e0b-cd28-4c9f-a4ee-0efb51b7c7fa.png" alt="Sweet Crumbs Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Sweet Crumbs"
+              description="Custom cake shop website featuring flavor browsing, cake galleries, and personalized order forms to help customers create their dream celebrations."
+              features={[
+                { icon: <Palette className="h-6 w-6 text-accent" />, text: "" },
+                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Interactive flavor and design galleries" },
+                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Custom order form builder" },
+                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Event consultation booking" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/1e963e0b-cd28-4c9f-a4ee-0efb51b7c7fa.png", 
+                  alt: "Sweet Crumbs Website Preview",
+                  caption: "Custom cake shop with interactive galleries"
+                }
+              ]}
+              liveUrl="https://404codelab.com/sweet-crumbs/index.html"
+              gradient="accent"
+            />
 
             {/* Happy Paws */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-accent/20 rounded-lg flex items-center justify-center mr-4">
-                        <Users className="h-6 w-6 text-accent" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-accent mb-2">Happy Paws</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Dog grooming & daycare website with service galleries, staff profiles, and online booking to help pet owners find trusted care for their furry friends.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-accent mr-3" />
-                        <span>Before/after grooming galleries</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-accent/70 mr-3" />
-                        <span>Staff profiles and credentials</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Rocket className="h-5 w-5 text-accent mr-3" />
-                        <span>Online booking and scheduling</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/happy-paws/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-accent to-primary hover:from-accent/90 hover:to-primary/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/5deb9273-b749-4781-803a-ac052ba93374.png" alt="Happy Paws Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Happy Paws"
+              description="Dog grooming & daycare website with service galleries, staff profiles, and online booking to help pet owners find trusted care for their furry friends."
+              features={[
+                { icon: <Users className="h-6 w-6 text-accent" />, text: "" },
+                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Before/after grooming galleries" },
+                { icon: <Users className="h-5 w-5 text-accent/70 mr-3" />, text: "Staff profiles and credentials" },
+                { icon: <Rocket className="h-5 w-5 text-accent mr-3" />, text: "Online booking and scheduling" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/5deb9273-b749-4781-803a-ac052ba93374.png", 
+                  alt: "Happy Paws Website Preview",
+                  caption: "Dog grooming & daycare with online booking"
+                }
+              ]}
+              liveUrl="https://404codelab.com/happy-paws/index.html"
+              gradient="primary"
+            />
 
             {/* Crafted Joinery */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Code className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">Crafted Joinery</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Bespoke joinery portfolio website showcasing handcrafted furniture, project galleries, and consultation booking to attract high-value custom work clients.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-primary mr-3" />
-                        <span>High-quality project photo galleries</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Palette className="h-5 w-5 text-accent mr-3" />
-                        <span>Material and finish showcases</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-primary mr-3" />
-                        <span>Consultation booking system</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/crafted-joinery/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/ae042420-8758-4f7f-89c6-368216ad3dd5.png" alt="Crafted Joinery Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Crafted Joinery"
+              description="Bespoke joinery portfolio website showcasing handcrafted furniture, project galleries, and consultation booking to attract high-value custom work clients."
+              features={[
+                { icon: <Code className="h-6 w-6 text-primary" />, text: "" },
+                { icon: <Eye className="h-5 w-5 text-primary mr-3" />, text: "High-quality project photo galleries" },
+                { icon: <Palette className="h-5 w-5 text-accent mr-3" />, text: "Material and finish showcases" },
+                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Consultation booking system" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/ae042420-8758-4f7f-89c6-368216ad3dd5.png", 
+                  alt: "Crafted Joinery Website Preview",
+                  caption: "Bespoke joinery portfolio with consultation booking"
+                }
+              ]}
+              liveUrl="https://404codelab.com/crafted-joinery/index.html"
+              gradient="primary"
+            />
 
             {/* IronHouse Gym */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Zap className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">IronHouse Gym</h3>
-                        
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Bold gym website featuring class timetables, trainer profiles, and membership sign-up to motivate visitors and convert them into dedicated members.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <TrendingUp className="h-5 w-5 text-primary mr-3" />
-                        <span>Interactive class timetables</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-primary mr-3" />
-                        <span>Trainer profiles and specialties</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Rocket className="h-5 w-5 text-primary mr-3" />
-                        <span>Online membership sign-up</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/ironhouse-gym/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/47f9ad80-e301-4e42-aab1-48bedbe2da16.png" alt="IronHouse Gym Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="IronHouse Gym"
+              description="Bold gym website featuring class timetables, trainer profiles, and membership sign-up to motivate visitors and convert them into dedicated members."
+              features={[
+                { icon: <Zap className="h-6 w-6 text-primary" />, text: "" },
+                { icon: <TrendingUp className="h-5 w-5 text-primary mr-3" />, text: "Interactive class timetables" },
+                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Trainer profiles and specialties" },
+                { icon: <Rocket className="h-5 w-5 text-primary mr-3" />, text: "Online membership sign-up" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/47f9ad80-e301-4e42-aab1-48bedbe2da16.png", 
+                  alt: "IronHouse Gym Website Preview",
+                  caption: "Bold gym website with class timetables and membership"
+                }
+              ]}
+              liveUrl="https://404codelab.com/ironhouse-gym/index.html"
+              gradient="primary"
+            />
 
             {/* Inkspire */}
-            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
-              <CardContent className="p-8 lg:p-12">
-                <div className="grid lg:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mr-4">
-                        <Palette className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-bold text-primary mb-2">Inkspire</h3>
-                      </div>
-                    </div>
-                    
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      Professional tattoo parlor website featuring artist portfolios, design galleries, and consultation booking to help clients find the perfect artist for their vision.
-                    </p>
-                    
-                    <div className="space-y-4 mb-8">
-                      <div className="flex items-center text-muted-foreground">
-                        <Users className="h-5 w-5 text-primary mr-3" />
-                        <span>Detailed artist bios and portfolios</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Eye className="h-5 w-5 text-accent mr-3" />
-                        <span>High-res tattoo gallery showcase</span>
-                      </div>
-                      <div className="flex items-center text-muted-foreground">
-                        <Code className="h-5 w-5 text-primary mr-3" />
-                        <span>Design consultation booking</span>
-                      </div>
-                    </div>
-                    
-                    <a href="https://404codelab.com/inkspire/index.html" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({
-                    variant: "default"
-                  }), "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90")}>
-                      <Globe className="mr-2 h-5 w-5" />
-                      View Project
-                    </a>
-                  </div>
-                  
-                  <div className="relative">
-                    <div className="bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl p-8">
-                      <img src="/lovable-uploads/0f5fc07e-8b2a-49a3-b4d4-1e7a3adb62b1.png" alt="Inkspire Website Preview" className="w-full h-64 object-cover rounded-lg" />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProjectSlideshow
+              title="Inkspire"
+              description="Professional tattoo parlor website featuring artist portfolios, design galleries, and consultation booking to help clients find the perfect artist for their vision."
+              features={[
+                { icon: <Palette className="h-6 w-6 text-primary" />, text: "" },
+                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Detailed artist bios and portfolios" },
+                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "High-res tattoo gallery showcase" },
+                { icon: <Code className="h-5 w-5 text-primary mr-3" />, text: "Design consultation booking" }
+              ]}
+              images={[
+                { 
+                  src: "/lovable-uploads/0f5fc07e-8b2a-49a3-b4d4-1e7a3adb62b1.png", 
+                  alt: "Inkspire Website Preview",
+                  caption: "Professional tattoo parlor with artist portfolios"
+                }
+              ]}
+              liveUrl="https://404codelab.com/inkspire/index.html"
+              gradient="primary"
+            />
 
           </div>
 
