@@ -79,16 +79,6 @@ export const ProjectSlideshow = ({
                 </div>
               ))}
             </div>
-            
-            <a 
-              href={liveUrl} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className={cn(buttonVariants({ variant: "default" }), styles.button)}
-            >
-              <Globe className="mr-2 h-5 w-5" />
-              View Project
-            </a>
           </div>
           
           <div className="relative">
