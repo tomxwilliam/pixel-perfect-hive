@@ -65,28 +65,105 @@ export const ProjectSlideshow = ({
           {/* Image Slideshow */}
           <div className="relative">
             <div className={cn("bg-gradient-to-br rounded-2xl p-8", `from-${gradient}/20 to-${gradient === "primary" ? "accent" : "primary"}/20`)}>
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {images.map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="relative group">
-                        <img 
-                          src={image.src} 
-                          alt={image.alt} 
-                          className="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105" 
-                        />
-                        {image.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3 rounded-b-lg">
-                            <p className="text-sm">{image.caption}</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="cursor-pointer relative">
+                    <Carousel className="w-full">
+                      <CarouselContent>
+                        {images.map((image, index) => (
+                          <CarouselItem key={index}>
+                            <div className="relative group">
+                              <img 
+                                src={image.src} 
+                                alt={image.alt} 
+                                className="w-full h-64 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105" 
+                              />
+                              {/* View Website Overlay */}
+                              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                                <div className="bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full flex items-center space-x-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                  <Globe className="h-5 w-5 text-primary" />
+                                  <span className="text-primary font-semibold">View Website</span>
+                                </div>
+                              </div>
+                              {image.caption && (
+                                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3 rounded-b-lg">
+                                  <p className="text-sm">{image.caption}</p>
+                                </div>
+                              )}
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-0 shadow-lg z-10" />
+                      <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-0 shadow-lg z-10" />
+                    </Carousel>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-6xl w-full h-[90vh] p-0">
+                  <div className="relative h-full bg-black rounded-lg overflow-hidden">
+                    {/* Full-screen Image Slideshow */}
+                    <div className="relative h-full">
+                      <img 
+                        src={images[modalSlide]?.src} 
+                        alt={images[modalSlide]?.alt} 
+                        className="w-full h-full object-contain" 
+                      />
+                      
+                      {/* Navigation Arrows */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white border-0"
+                        onClick={() => setModalSlide(modalSlide > 0 ? modalSlide - 1 : images.length - 1)}
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white border-0"
+                        onClick={() => setModalSlide(modalSlide < images.length - 1 ? modalSlide + 1 : 0)}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                      
+                      {/* Image Info Overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <h4 className="text-white text-xl font-semibold mb-2">{title}</h4>
+                            {images[modalSlide]?.caption && (
+                              <p className="text-white/80 text-sm">{images[modalSlide].caption}</p>
+                            )}
                           </div>
-                        )}
+                          <div className="text-white/60 text-sm">
+                            {modalSlide + 1} / {images.length}
+                          </div>
+                        </div>
                       </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-0 shadow-lg" />
-                <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border-0 shadow-lg" />
-              </Carousel>
+                      
+                      {/* Thumbnail Navigation */}
+                      <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
+                        <div className="flex space-x-2">
+                          {images.map((_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setModalSlide(index)}
+                              className={cn(
+                                "w-3 h-3 rounded-full transition-all duration-200",
+                                index === modalSlide 
+                                  ? "bg-white" 
+                                  : "bg-white/40 hover:bg-white/60"
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
               
               {/* Slide indicators */}
               <div className="flex justify-center mt-4 space-x-2">
@@ -124,82 +201,6 @@ export const ProjectSlideshow = ({
                 <span className="ml-2">{feature.text}</span>
               </div>
             ))}
-          </div>
-          
-          {/* View Website Button */}
-          <div className="flex justify-center">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className={cn(styles.button, "animate-fade-in")}>
-                  <Globe className="mr-2 h-5 w-5" />
-                  View Website
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-6xl w-full h-[90vh] p-0">
-                <div className="relative h-full bg-black rounded-lg overflow-hidden">
-                  {/* Full-screen Image Slideshow */}
-                  <div className="relative h-full">
-                    <img 
-                      src={images[modalSlide]?.src} 
-                      alt={images[modalSlide]?.alt} 
-                      className="w-full h-full object-contain" 
-                    />
-                    
-                    {/* Navigation Arrows */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white border-0"
-                      onClick={() => setModalSlide(modalSlide > 0 ? modalSlide - 1 : images.length - 1)}
-                    >
-                      <ChevronLeft className="h-6 w-6" />
-                    </Button>
-                    
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white border-0"
-                      onClick={() => setModalSlide(modalSlide < images.length - 1 ? modalSlide + 1 : 0)}
-                    >
-                      <ChevronRight className="h-6 w-6" />
-                    </Button>
-                    
-                    {/* Image Info Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <h4 className="text-white text-xl font-semibold mb-2">{title}</h4>
-                          {images[modalSlide]?.caption && (
-                            <p className="text-white/80 text-sm">{images[modalSlide].caption}</p>
-                          )}
-                        </div>
-                        <div className="text-white/60 text-sm">
-                          {modalSlide + 1} / {images.length}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Thumbnail Navigation */}
-                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-                      <div className="flex space-x-2">
-                        {images.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setModalSlide(index)}
-                            className={cn(
-                              "w-3 h-3 rounded-full transition-all duration-200",
-                              index === modalSlide 
-                                ? "bg-white" 
-                                : "bg-white/40 hover:bg-white/60"
-                            )}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </CardContent>
