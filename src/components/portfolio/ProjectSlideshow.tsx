@@ -54,33 +54,13 @@ export const ProjectSlideshow = ({
   return (
     <Card className={styles.card}>
       <CardContent className="p-8 lg:p-12">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          <div>
-            <div className="flex items-center mb-6">
-              <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center mr-4", styles.icon)}>
-                {features[0]?.icon}
-              </div>
-              <div>
-                <h3 className={cn("text-2xl font-bold mb-2", gradient === "primary" ? "text-primary" : "text-accent")}>
-                  {title}
-                </h3>
-              </div>
-            </div>
-            
-            <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-              {description}
-            </p>
-            
-            <div className="space-y-4 mb-8">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-center text-muted-foreground">
-                  {feature.icon}
-                  <span>{feature.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="space-y-8">
+          {/* Title */}
+          <h3 className={cn("text-3xl font-bold text-center", gradient === "primary" ? "text-primary" : "text-accent")}>
+            {title}
+          </h3>
           
+          {/* Image Slideshow */}
           <div className="relative">
             <div className={cn("bg-gradient-to-br rounded-2xl p-8", `from-${gradient}/20 to-${gradient === "primary" ? "accent" : "primary"}/20`)}>
               <Carousel className="w-full">
@@ -127,6 +107,21 @@ export const ProjectSlideshow = ({
                 {currentSlide + 1} / {images.length}
               </div>
             </div>
+          </div>
+          
+          {/* Description */}
+          <p className="text-lg text-muted-foreground text-center leading-relaxed max-w-3xl mx-auto">
+            {description}
+          </p>
+          
+          {/* Features */}
+          <div className="space-y-4">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-center justify-center text-muted-foreground">
+                {feature.icon}
+                <span className="ml-2">{feature.text}</span>
+              </div>
+            ))}
           </div>
         </div>
       </CardContent>
