@@ -195,7 +195,7 @@ export const ProjectSlideshow = ({
           
           {/* Features */}
           <div className="space-y-4">
-            {features.map((feature, index) => (
+            {features.slice(1).map((feature, index) => (
               <div key={index} className="flex items-center justify-center text-muted-foreground">
                 {feature.icon}
                 <span className="ml-2">{feature.text}</span>
