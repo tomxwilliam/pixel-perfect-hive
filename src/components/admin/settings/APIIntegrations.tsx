@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -26,7 +27,9 @@ import {
   CheckSquare,
   FileText,
   Database,
-  Zap
+  Zap,
+  AlertTriangle,
+  TestTube
 } from 'lucide-react';
 
 interface APIIntegration {
@@ -43,17 +46,100 @@ interface APIIntegration {
   updated_at: string;
 }
 
+interface OAuthConnection {
+  id: string;
+  user_id: string;
+  provider: string;
+  access_token: string;
+  refresh_token?: string;
+  expires_at: string;
+  scope?: string;
+  account_id?: string;
+  meta?: any;
+  created_at: string;
+  updated_at: string;
+}
+
 interface APIIntegrationsProps {
   isSuperAdmin: boolean;
 }
 
 const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const [integrations, setIntegrations] = useState<APIIntegration[]>([]);
+  const [oauthConnections, setOAuthConnections] = useState<OAuthConnection[]>([]);
   const [loading, setLoading] = useState(false);
+  const [missingCredentials, setMissingCredentials] = useState<string[]>([]);
+  const [testingGoogle, setTestingGoogle] = useState(false);
 
   useEffect(() => {
     fetchIntegrations();
+    fetchOAuthConnections();
+    checkCredentials();
   }, []);
+
+  // Check URL params for OAuth callback results
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const connected = urlParams.get('connected');
+    const error = urlParams.get('error');
+    
+    if (connected === 'google') {
+      toast({
+        title: "Google Calendar Connected",
+        description: "Successfully connected to Google Calendar. You can now create events.",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+      fetchOAuthConnections(); // Refresh connection status
+    } else if (error) {
+      const errorMessages: { [key: string]: string } = {
+        oauth_denied: 'OAuth authorization was denied',
+        invalid_callback: 'Invalid OAuth callback parameters',
+        invalid_state: 'Invalid OAuth state parameter',
+        config_missing: 'Google OAuth configuration is incomplete',
+        token_exchange_failed: 'Failed to exchange authorization code for tokens',
+        no_access_token: 'No access token received from Google',
+        database_error: 'Failed to save OAuth connection',
+        callback_error: 'An error occurred during OAuth callback',
+      };
+      
+      toast({
+        title: "Connection Failed",
+        description: errorMessages[error] || 'An unknown error occurred',
+        variant: "destructive",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+    }
+  }, []);
+
+  const checkCredentials = () => {
+    const missing = [];
+    
+    // Check Google OAuth credentials
+    const hasGoogleClientId = typeof window !== 'undefined';
+    const hasGoogleClientSecret = typeof window !== 'undefined';
+    
+    if (!hasGoogleClientId || !hasGoogleClientSecret) {
+      missing.push('google_calendar');
+    }
+    
+    setMissingCredentials(missing);
+  };
+
+  const fetchOAuthConnections = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('oauth_connections')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOAuthConnections(data as OAuthConnection[] || []);
+    } catch (error) {
+      console.error('Error fetching OAuth connections:', error);
+    }
+  };
 
   const fetchIntegrations = async () => {
     try {
@@ -230,6 +316,77 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     return descriptions[type] || `${type} integration for enhanced workflow automation.`;
   };
 
+  const handleGoogleConnect = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('oauth-google-start');
+      
+      if (error) throw error;
+      
+      if (data.authUrl) {
+        // Redirect to Google OAuth
+        window.location.href = data.authUrl;
+      } else {
+        throw new Error('No auth URL received');
+      }
+    } catch (error) {
+      console.error('Google OAuth start error:', error);
+      toast({
+        title: "Connection Failed",
+        description: `Failed to start Google OAuth: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleGoogleDisconnect = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('oauth-google-disconnect');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Disconnected",
+        description: "Google Calendar has been disconnected successfully.",
+      });
+      
+      fetchOAuthConnections();
+    } catch (error) {
+      console.error('Google disconnect error:', error);
+      toast({
+        title: "Disconnect Failed",
+        description: `Failed to disconnect Google Calendar: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleGoogleTest = async () => {
+    setTestingGoogle(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('google-test-create-event');
+      
+      if (error) throw error;
+      
+      if (data.success && data.event) {
+        toast({
+          title: "Test Successful!",
+          description: `Created test event: "${data.event.summary}". Check your Google Calendar.`,
+        });
+      } else {
+        throw new Error(data.error || 'Test failed');
+      }
+    } catch (error) {
+      console.error('Google test error:', error);
+      toast({
+        title: "Test Failed",
+        description: `Failed to create test event: ${error.message}`,
+        variant: "destructive",
+      });
+    } finally {
+      setTestingGoogle(false);
+    }
+  };
+
   const handleConnect = async (integration: APIIntegration) => {
     if (!isSuperAdmin) {
       toast({
@@ -237,6 +394,11 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         description: "Only super admin can configure API integrations",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (integration.integration_type === 'google_calendar') {
+      await handleGoogleConnect();
       return;
     }
 
@@ -394,6 +556,11 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       return;
     }
 
+    if (integration.integration_type === 'google_calendar') {
+      await handleGoogleDisconnect();
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase
@@ -473,6 +640,37 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   };
 
   const getConnectionStatus = (integration: APIIntegration) => {
+    // For Google Calendar, check OAuth connections
+    if (integration.integration_type === 'google_calendar') {
+      const googleConnection = oauthConnections.find(conn => conn.provider === 'google');
+      
+      if (!googleConnection) {
+        return {
+          icon: <XCircle className="h-4 w-4" />,
+          text: 'Disconnected',
+          variant: 'destructive' as const
+        };
+      }
+      
+      const expiresAt = new Date(googleConnection.expires_at);
+      const now = new Date();
+      
+      if (expiresAt < now) {
+        return {
+          icon: <Clock className="h-4 w-4" />,
+          text: 'Token Expired',
+          variant: 'secondary' as const
+        };
+      }
+      
+      return {
+        icon: <CheckCircle className="h-4 w-4" />,
+        text: 'Connected',
+        variant: 'default' as const,
+        account: googleConnection.meta?.email
+      };
+    }
+    
     if (!integration.is_connected) {
       return {
         icon: <XCircle className="h-4 w-4" />,
@@ -513,6 +711,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       <div className="grid gap-6">
         {integrations.map((integration) => {
           const status = getConnectionStatus(integration);
+          const hasCredentialWarning = missingCredentials.includes(integration.integration_type);
           
           return (
             <Card key={integration.id}>
@@ -525,6 +724,11 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                       <p className="text-sm text-muted-foreground font-normal">
                         {getIntegrationDescription(integration.integration_type)}
                       </p>
+                      {status.account && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Connected as: {status.account}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <Badge variant={status.variant} className="flex items-center gap-1">
@@ -534,6 +738,15 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                {hasCredentialWarning && (
+                  <Alert className="mb-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      Google OAuth credentials are missing. Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to enable this integration.
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     {integration.last_sync_at && (
@@ -549,7 +762,20 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    {integration.is_connected && (
+                    {/* Google Calendar specific test button */}
+                    {integration.integration_type === 'google_calendar' && status.text === 'Connected' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGoogleTest}
+                        disabled={testingGoogle || !isSuperAdmin}
+                      >
+                        <TestTube className="h-4 w-4 mr-2" />
+                        {testingGoogle ? 'Testing...' : 'Test Create Event'}
+                      </Button>
+                    )}
+                    
+                    {status.text === 'Connected' && integration.integration_type !== 'google_calendar' && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -582,7 +808,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                       </Button>
                     )}
                     
-                    {integration.is_connected ? (
+                    {status.text === 'Connected' ? (
                       <Button
                         variant="destructive"
                         size="sm"
@@ -594,7 +820,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                     ) : (
                       <Button
                         onClick={() => handleConnect(integration)}
-                        disabled={loading || !isSuperAdmin}
+                        disabled={loading || !isSuperAdmin || hasCredentialWarning}
                         size="sm"
                       >
                         <Link2 className="h-4 w-4 mr-2" />
@@ -629,7 +855,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
             <div className="space-y-2">
               <h4 className="font-medium">Google Calendar</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Project milestone events</li>
+                <li>• Create calendar events automatically</li>
+                <li>• Project milestone tracking</li>
                 <li>• Deadline reminders</li>
                 <li>• Client meeting scheduling</li>
               </ul>

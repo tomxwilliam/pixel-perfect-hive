@@ -1134,6 +1134,48 @@ export type Database = {
         }
         Relationships: []
       }
+      oauth_connections: {
+        Row: {
+          access_token: string
+          account_id: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          meta: Json | null
+          provider: string
+          refresh_token: string | null
+          scope: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          account_id?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          meta?: Json | null
+          provider: string
+          refresh_token?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          account_id?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          meta?: Json | null
+          provider?: string
+          refresh_token?: string | null
+          scope?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pipeline_stages: {
         Row: {
           color: string | null
