@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import HostingPackageManagement from "./HostingPackageManagement";
+import { ConfirmDeleteDialog } from "@/components/ui/confirm-delete-dialog";
 
 const AdminHostingManagement = () => {
   const { toast } = useToast();
@@ -20,6 +21,8 @@ const AdminHostingManagement = () => {
   const [selectedSubscription, setSelectedSubscription] = useState<any>(null);
   const [notes, setNotes] = useState("");
   const [hostingIntegration, setHostingIntegration] = useState<any>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [subscriptionToDelete, setSubscriptionToDelete] = useState<any>(null);
 
   // Fetch hosting integration status with error handling
   useEffect(() => {
@@ -136,6 +139,34 @@ const AdminHostingManagement = () => {
       toast({
         title: "Notes Updated",
         description: "Subscription notes have been updated successfully.",
+      });
+    }
+  });
+
+  // Delete hosting subscription
+  const deleteHostingSubscription = useMutation({
+    mutationFn: async (subscriptionId: string) => {
+      const { error } = await supabase
+        .from('hosting_subscriptions')
+        .delete()
+        .eq('id', subscriptionId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-hosting-subscriptions'] });
+      toast({
+        title: "Subscription Deleted",
+        description: "Hosting subscription has been permanently deleted.",
+      });
+      setDeleteDialogOpen(false);
+      setSubscriptionToDelete(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Delete Failed",
+        description: error.message,
+        variant: "destructive",
       });
     }
   });
@@ -512,6 +543,17 @@ const AdminHostingManagement = () => {
                               </div>
                             </DialogContent>
                           </Dialog>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSubscriptionToDelete(subscription);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -592,6 +634,16 @@ const AdminHostingManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ConfirmDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => deleteHostingSubscription.mutate(subscriptionToDelete?.id)}
+        loading={deleteHostingSubscription.isPending}
+        title="Delete Hosting Subscription"
+        description={`Are you sure you want to permanently delete the hosting subscription for ${subscriptionToDelete?.profiles?.first_name} ${subscriptionToDelete?.profiles?.last_name}? This action cannot be undone.`}
+        warningText="This will permanently remove the hosting subscription from your database. The actual hosting account may still exist with your provider."
+      />
     </div>
   );
 };
