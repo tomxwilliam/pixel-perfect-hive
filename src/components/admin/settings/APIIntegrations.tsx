@@ -644,7 +644,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     if (integration.integration_type === 'google_calendar') {
       const googleConnection = oauthConnections.find(conn => conn.provider === 'google');
       
-      if (!googleConnection) {
+      if (!googleConnection || !googleConnection.access_token) {
         return {
           icon: <XCircle className="h-4 w-4" />,
           text: 'Disconnected',
@@ -655,7 +655,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       const expiresAt = new Date(googleConnection.expires_at);
       const now = new Date();
       
-      if (expiresAt < now) {
+      if (expiresAt <= now) {
         return {
           icon: <Clock className="h-4 w-4" />,
           text: 'Token Expired',
@@ -663,11 +663,20 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         };
       }
       
+      // Only show as connected if we have valid tokens and account info
+      if (googleConnection.meta?.email && googleConnection.access_token) {
+        return {
+          icon: <CheckCircle className="h-4 w-4" />,
+          text: 'Connected',
+          variant: 'default' as const,
+          account: googleConnection.meta.email
+        };
+      }
+      
       return {
-        icon: <CheckCircle className="h-4 w-4" />,
-        text: 'Connected',
-        variant: 'default' as const,
-        account: googleConnection.meta?.email
+        icon: <XCircle className="h-4 w-4" />,
+        text: 'Disconnected',
+        variant: 'destructive' as const
       };
     }
     
