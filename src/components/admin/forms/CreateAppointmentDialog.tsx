@@ -106,22 +106,41 @@ export const CreateAppointmentDialog = ({ onAppointmentCreated }: CreateAppointm
       const scheduledDateTime = new Date(values.scheduled_at);
       scheduledDateTime.setHours(hours, minutes, 0, 0);
 
+      const appointmentData = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone || null,
+        customer_id: values.customer_id || null,
+        scheduled_at: scheduledDateTime.toISOString(),
+        duration_minutes: values.duration_minutes,
+        notes: values.notes || null,
+        meeting_link: values.meeting_link || null,
+      };
+
+      // Insert appointment into database
       const { error } = await supabase
         .from('call_bookings')
-        .insert({
-          name: values.name,
-          email: values.email,
-          phone: values.phone || null,
-          customer_id: values.customer_id || null,
-          scheduled_at: scheduledDateTime.toISOString(),
-          duration_minutes: values.duration_minutes,
-          notes: values.notes || null,
-          meeting_link: values.meeting_link || null,
-        });
+        .insert(appointmentData);
 
       if (error) throw error;
 
-      toast.success('Appointment created successfully');
+      // Create Google Calendar event
+      try {
+        const { error: calendarError } = await supabase.functions.invoke('google-create-appointment-event', {
+          body: { appointment: appointmentData }
+        });
+        
+        if (calendarError) {
+          console.warn('Failed to sync to Google Calendar:', calendarError);
+          toast.success('Appointment created successfully (Calendar sync failed)');
+        } else {
+          toast.success('Appointment created and synced to Google Calendar');
+        }
+      } catch (calendarError) {
+        console.warn('Calendar sync error:', calendarError);
+        toast.success('Appointment created successfully (Calendar sync failed)');
+      }
+
       setOpen(false);
       form.reset();
       setSelectedTime('09:00');
