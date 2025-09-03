@@ -817,8 +817,16 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                       </Button>
                     )}
                     
-                    {/* Google Calendar: Only show Connect button when disconnected */}
-                    {integration.integration_type === 'google_calendar' && status.text !== 'Connected' && (
+                    {status.text === 'Connected' ? (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDisconnect(integration)}
+                        disabled={loading || !isSuperAdmin}
+                      >
+                        Disconnect
+                      </Button>
+                    ) : (
                       <Button
                         onClick={() => handleConnect(integration)}
                         disabled={loading || !isSuperAdmin || hasCredentialWarning}
@@ -827,31 +835,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                         <Link2 className="h-4 w-4 mr-2" />
                         Connect
                       </Button>
-                    )}
-                    
-                    {/* Other integrations: Show Connect/Disconnect buttons */}
-                    {integration.integration_type !== 'google_calendar' && (
-                      <>
-                        {status.text === 'Connected' ? (
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDisconnect(integration)}
-                            disabled={loading || !isSuperAdmin}
-                          >
-                            Disconnect
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => handleConnect(integration)}
-                            disabled={loading || !isSuperAdmin || hasCredentialWarning}
-                            size="sm"
-                          >
-                            <Link2 className="h-4 w-4 mr-2" />
-                            Connect
-                          </Button>
-                        )}
-                      </>
                     )}
                   </div>
                 </div>
