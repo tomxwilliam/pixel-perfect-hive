@@ -207,10 +207,41 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
       return;
     }
 
-    toast({
-      title: "Vertex AI Connection",
-      description: "Google Vertex AI OAuth flow would be initiated here",
-    });
+    setLoading(true);
+    try {
+      // Test Vertex AI connection
+      const { data, error } = await supabase.functions.invoke('test-vertex-ai');
+      
+      if (error) throw error;
+
+      if (data.success) {
+        // Update AI settings with connection status
+        await handleUpdateSettings({
+          vertex_config: {
+            connected: true,
+            projectId: data.projectId,
+            connectedAt: new Date().toISOString()
+          }
+        });
+        
+        setIsConnected(true);
+        toast({
+          title: "Success!",
+          description: `Vertex AI connected successfully to project: ${data.projectId}`,
+        });
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Vertex AI connection error:', error);
+      toast({
+        title: "Connection Failed",
+        description: error.message || "Failed to connect to Vertex AI. Please check your configuration.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isSuperAdmin) {

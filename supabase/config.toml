@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.google-create-appointment-event]
 verify_jwt = true
+
+[functions.test-vertex-ai]
+verify_jwt = true
