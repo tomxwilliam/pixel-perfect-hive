@@ -289,10 +289,15 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
             <div>
               <p className="text-sm text-muted-foreground">
                 {isConnected 
-                  ? 'AI automation system is connected and ready for comprehensive automation.'
-                  : 'Connect Google Vertex AI to enable advanced automation features.'
+                  ? '404 Code Lab Portal AI is connected and ready for autonomous operations: support, sales, billing, projects, and customer communications.'
+                  : 'Connect Google Vertex AI to enable the comprehensive Portal AI operations system.'
                 }
               </p>
+              {isConnected && (
+                <div className="mt-2 text-xs text-muted-foreground">
+                  <strong>Active Capabilities:</strong> Ticket management, quote generation, project tracking, customer triage, audit logging, UK/GDPR compliance
+                </div>
+              )}
             </div>
             <div className="flex gap-2">
               <Button 
@@ -383,8 +388,8 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
                     <div className="flex items-center gap-3">
                       <Users className="h-8 w-8 text-blue-500" />
                       <div>
-                        <h5 className="font-medium">Client Intake</h5>
-                        <p className="text-sm text-muted-foreground">Auto-triage & communication</p>
+                        <h5 className="font-medium">Support Operations</h5>
+                        <p className="text-sm text-muted-foreground">Ticket creation, triage & resolution</p>
                       </div>
                     </div>
                     <Switch 
@@ -404,10 +409,10 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
 
                   <Card className="p-4">
                     <div className="flex items-center gap-3">
-                      <Workflow className="h-8 w-8 text-green-500" />
+                      <DollarSign className="h-8 w-8 text-green-500" />
                       <div>
-                        <h5 className="font-medium">AI Workflows</h5>
-                        <p className="text-sm text-muted-foreground">Task automation & priority</p>
+                        <h5 className="font-medium">Sales & Billing</h5>
+                        <p className="text-sm text-muted-foreground">Quotes, invoices & payment links</p>
                       </div>
                     </div>
                     <Switch 
@@ -427,10 +432,10 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
 
                   <Card className="p-4">
                     <div className="flex items-center gap-3">
-                      <Share2 className="h-8 w-8 text-purple-500" />
+                      <Workflow className="h-8 w-8 text-purple-500" />
                       <div>
-                        <h5 className="font-medium">Social Media</h5>
-                        <p className="text-sm text-muted-foreground">Auto-posting & scheduling</p>
+                        <h5 className="font-medium">Project Management</h5>
+                        <p className="text-sm text-muted-foreground">Project creation & task tracking</p>
                       </div>
                     </div>
                     <Switch 
@@ -447,6 +452,27 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
                       className="mt-2"
                     />
                   </Card>
+                </div>
+
+                <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                  <h6 className="font-medium mb-2 flex items-center gap-2">
+                    <Brain className="h-4 w-4" />
+                    Active Automations Summary
+                  </h6>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <div className="font-medium">Operations Active:</div>
+                      <div className="text-muted-foreground">
+                        {Object.values(aiSettings?.scope_config || {}).filter(Boolean).length} / {Object.keys(aiSettings?.scope_config || {}).length}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="font-medium">System Status:</div>
+                      <div className={aiSettings?.is_enabled ? "text-green-600" : "text-amber-600"}>
+                        {aiSettings?.is_enabled ? "Fully Active" : "Standby Mode"}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
