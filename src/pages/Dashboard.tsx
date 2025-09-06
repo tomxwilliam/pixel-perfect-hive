@@ -18,6 +18,7 @@ import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import CustomerDomainsHosting from '@/components/customer/CustomerDomainsHosting';
 import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
+import { CustomerAppointments } from '@/components/customer/CustomerAppointments';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   User, 
@@ -183,7 +184,7 @@ const Dashboard = () => {
 
           {/* Main Content Tabs - Mobile Optimised */}
           <MobileTabs defaultValue="overview" className="space-y-6">
-            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-7'}>
+            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
               <MobileTabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart className="h-4 w-4" />
                 Overview
@@ -207,6 +208,10 @@ const Dashboard = () => {
               <MobileTabsTrigger value="domains" className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
                 Domains & Hosting
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="appointments" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Appointments
               </MobileTabsTrigger>
               <MobileTabsTrigger value="notifications" className="flex items-center gap-2">
                 <Bell className="h-4 w-4" />
@@ -240,6 +245,10 @@ const Dashboard = () => {
 
           <MobileTabsContent value="domains">
             <CustomerDomainsHosting />
+          </MobileTabsContent>
+
+          <MobileTabsContent value="appointments">
+            <CustomerAppointments />
           </MobileTabsContent>
 
             <MobileTabsContent value="notifications">
