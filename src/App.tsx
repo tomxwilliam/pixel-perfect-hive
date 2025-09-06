@@ -20,6 +20,7 @@ import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
 import AIChat from "./pages/dashboard/AIChat";
+import Portal from "./pages/dashboard/Portal";
 import NotFound from "./pages/NotFound";
 import AIIntegration from "./pages/services/AIIntegration";
 import GamesLanding from "./pages/landing/GamesLanding";
@@ -79,6 +80,11 @@ const App = () => (
               <Route path="/dashboard/chat" element={
                 <ProtectedRoute>
                   <AIChat />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/portal" element={
+                <ProtectedRoute>
+                  <Portal />
                 </ProtectedRoute>
               } />
               <Route path="/projects" element={
