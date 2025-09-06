@@ -1,36 +1,49 @@
 import React, { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ArrowLeft, Send, Bot, User, Sparkles } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { ArrowLeft, Send, Bot, User, Sparkles, Loader2, Brain, AlertTriangle, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
   content: string;
   isUser: boolean;
   timestamp: Date;
+  tools?: any[];
+}
+
+interface AIResponse {
+  response: string;
+  tool_results?: any[];
+  next_action?: string;
+  escalation_needed?: boolean;
 }
 
 const AIChat = () => {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: `Hello ${profile?.first_name || 'there'}! I'm your AI assistant from 404 Code Labs. I can help you with project questions, technical guidance, and general support. How can I assist you today?`,
+      content: `Hello ${profile?.first_name || 'there'}! I'm the 404 Code Lab Portal AI, your autonomous operations brain. I can help with support tickets, sales quotes, project management, billing, and comprehensive customer assistance. How can I help you today?`,
       isUser: false,
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || !user) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -40,20 +53,70 @@ const AIChat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentQuery = inputMessage;
     setInputMessage('');
-    setIsTyping(true);
+    setIsLoading(true);
 
-    // Simulate AI response (in real implementation, this would call your AI service)
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      const { data, error } = await supabase.functions.invoke('portal-ai', {
+        body: {
+          query: currentQuery,
+          context: 'general',
+          user_role: profile?.role || 'customer',
+          user_id: user.id,
+          ticket_id: null,
+          contact_id: user.id
+        }
+      });
+
+      if (error) throw error;
+      
+      const aiResponse: AIResponse = data;
+      const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "Thanks for your message! Our AI features are currently being integrated. For immediate assistance, please create a support ticket or book a consultation call. I'll be fully operational soon with advanced project guidance and technical support capabilities.",
+        content: aiResponse.response,
+        isUser: false,
+        timestamp: new Date(),
+        tools: aiResponse.tool_results
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+      
+      // Show escalation notice
+      if (aiResponse.escalation_needed) {
+        toast({
+          title: "Human Support Required",
+          description: "I'm escalating this to our human team for immediate assistance.",
+          variant: "destructive"
+        });
+      }
+      
+      // Show tool results
+      if (aiResponse.tool_results?.length) {
+        toast({
+          title: "Action Completed",
+          description: `I've processed your request using ${aiResponse.tool_results.length} system operation(s).`,
+        });
+      }
+      
+    } catch (error) {
+      console.error('Portal AI error:', error);
+      toast({
+        title: "AI Assistant Error",
+        description: "I apologize for the error. Let me escalate this to our human team.",
+        variant: "destructive"
+      });
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 2).toString(),
+        content: "I encountered an error and have escalated this to our human support team. They will be with you shortly.",
         isUser: false,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiResponse]);
-      setIsTyping(false);
-    }, 2000);
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -65,9 +128,11 @@ const AIChat = () => {
 
   const quickActions = [
     "Help me plan a mobile app project",
-    "What's the typical timeline for a web app?",
-    "I need technical architecture advice",
-    "Show me your portfolio examples"
+    "Create a support ticket for my website issue", 
+    "I need a quote for an e-commerce website",
+    "Show me my project progress",
+    "Help with billing and invoices",
+    "I need technical architecture advice"
   ];
 
   return (
@@ -86,10 +151,20 @@ const AIChat = () => {
               Back to Dashboard
             </Button>
             <div className="flex items-center">
-              <Sparkles className="h-8 w-8 mr-3 text-primary" />
+              <Brain className="h-8 w-8 mr-3 text-primary" />
               <div>
-                <h1 className="text-3xl font-bold">AI Assistant</h1>
-                <p className="text-muted-foreground">Get instant help with your projects</p>
+                <h1 className="text-3xl font-bold">Portal AI Assistant</h1>
+                <div className="flex items-center gap-2">
+                  <p className="text-muted-foreground">404 Code Lab Operations Brain</p>
+                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    UK Compliant
+                  </Badge>
+                  <Badge variant="outline" className="text-xs flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    GMT
+                  </Badge>
+                </div>
               </div>
             </div>
           </div>
@@ -98,10 +173,10 @@ const AIChat = () => {
             <CardHeader className="flex-shrink-0">
               <CardTitle className="flex items-center">
                 <Bot className="h-5 w-5 mr-2" />
-                Chat with AI Assistant
+                404 Code Lab Portal AI
               </CardTitle>
               <CardDescription>
-                Ask questions about projects, get technical guidance, or general support
+                Your autonomous operations assistant for support, sales, projects, and comprehensive customer service
               </CardDescription>
             </CardHeader>
             
@@ -117,7 +192,7 @@ const AIChat = () => {
                       <div className="flex items-start space-x-2 max-w-[80%]">
                         {!message.isUser && (
                           <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                            <Bot className="h-4 w-4 text-primary-foreground" />
+                            <Brain className="h-4 w-4 text-primary-foreground" />
                           </div>
                         )}
                         <div
@@ -128,6 +203,21 @@ const AIChat = () => {
                           }`}
                         >
                           <p className="text-sm">{message.content}</p>
+                          {message.tools && message.tools.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                              <Separator className="my-2" />
+                              <div className="text-xs opacity-75">System Operations:</div>
+                              {message.tools.map((tool: any, toolIndex: number) => (
+                                <Badge key={toolIndex} variant="secondary" className="text-xs mr-1">
+                                  {tool.success ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertTriangle className="h-3 w-3 mr-1" />}
+                                  {tool.data?.ticket_id ? `Ticket #${tool.data.ticket_number}` : 
+                                   tool.data?.quote_id ? `Quote Created` :
+                                   tool.data?.project_id ? `Project Created` : 
+                                   'Operation Complete'}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
                           <p className="text-xs opacity-70 mt-1">
                             {message.timestamp.toLocaleTimeString()}
                           </p>
@@ -141,17 +231,16 @@ const AIChat = () => {
                     </div>
                   ))}
                   
-                  {isTyping && (
+                  {isLoading && (
                     <div className="flex justify-start">
                       <div className="flex items-start space-x-2">
                         <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                          <Bot className="h-4 w-4 text-primary-foreground" />
+                          <Brain className="h-4 w-4 text-primary-foreground" />
                         </div>
                         <div className="bg-muted rounded-lg px-4 py-2">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          <div className="flex items-center space-x-2">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-sm">Processing your request...</span>
                           </div>
                         </div>
                       </div>
@@ -162,16 +251,17 @@ const AIChat = () => {
 
               {/* Quick Actions */}
               <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-2">Quick questions:</p>
-                <div className="flex flex-wrap gap-2">
+                <p className="text-sm text-muted-foreground mb-2">Try asking:</p>
+                <div className="grid grid-cols-2 gap-2">
                   {quickActions.map((action, index) => (
                     <Button
                       key={index}
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => setInputMessage(action)}
-                      className="text-xs"
+                      className="text-xs text-left justify-start hover:bg-primary/10 h-auto p-2"
                     >
+                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0" />
                       {action}
                     </Button>
                   ))}
@@ -179,16 +269,31 @@ const AIChat = () => {
               </div>
 
               {/* Input Area */}
-              <div className="flex space-x-2">
-                <Input
-                  placeholder="Type your message..."
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Ask me anything about 404 Code Lab services..."
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  disabled={isTyping}
+                  onKeyDown={handleKeyPress}
+                  disabled={isLoading}
+                  className="resize-none h-20 text-sm"
                 />
-                <Button onClick={sendMessage} disabled={isTyping || !inputMessage.trim()}>
-                  <Send className="h-4 w-4" />
+                <Button 
+                  onClick={sendMessage} 
+                  disabled={isLoading || !inputMessage.trim()}
+                  className="w-full"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Message
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

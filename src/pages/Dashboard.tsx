@@ -73,16 +73,9 @@ const Dashboard = () => {
     },
     {
       title: 'AI Assistant',
-      description: 'Chat with our AI helper',
-      icon: MessageCircle,
-      href: '/dashboard/chat',
-      color: 'bg-orange-500'
-    },
-    {
-      title: 'Portal AI',
       description: '404 Code Lab Operations Brain',
       icon: MessageCircle,
-      href: '/dashboard/portal',
+      href: '/dashboard/chat',
       color: 'bg-gradient-to-r from-purple-500 to-pink-500'
     }
   ];
@@ -155,17 +148,12 @@ const Dashboard = () => {
           {/* Quick Actions - Mobile Grid */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4'}`}>
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'}`}>
               {quickActions.map((action, index) => (
                 <Link key={index} to={action.href}>
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                     <CardContent className={`${isMobile ? 'p-4' : 'p-6'} relative`}>
                       {action.title === 'AI Assistant' && (
-                        <Badge variant="secondary" className="absolute top-2 right-2 text-xs">
-                          Coming Soon
-                        </Badge>
-                      )}
-                      {action.title === 'Portal AI' && (
                         <Badge variant="default" className="absolute top-2 right-2 text-xs bg-gradient-to-r from-purple-500 to-pink-500">
                           Live
                         </Badge>
