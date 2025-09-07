@@ -48,11 +48,39 @@ serve(async (req) => {
     // Get Google Cloud service account for Vertex AI
     const serviceAccountJson = Deno.env.get('GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON');
     if (!serviceAccountJson) {
-      throw new Error('Google Cloud service account not configured');
+      console.error('Google Cloud service account not configured');
+      return new Response(JSON.stringify({ 
+        response: "I'm currently being set up. Please try again in a few moments, or I can escalate this to our human team.",
+        escalation_needed: false
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const serviceAccount = JSON.parse(serviceAccountJson);
-    const accessToken = await getGoogleCloudAccessToken(serviceAccount);
+    let serviceAccount;
+    try {
+      serviceAccount = JSON.parse(serviceAccountJson);
+    } catch (parseError) {
+      console.error('Failed to parse service account JSON:', parseError);
+      return new Response(JSON.stringify({ 
+        response: "I'm experiencing a configuration issue. Let me escalate this to our human team.",
+        escalation_needed: true
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    let accessToken;
+    try {
+      accessToken = await getGoogleCloudAccessToken(serviceAccount);
+    } catch (tokenError) {
+      console.error('Failed to get Google Cloud access token:', tokenError);
+      return new Response(JSON.stringify({ 
+        response: "I'm having trouble connecting to my AI service. Let me escalate this to our human team for immediate assistance.",
+        escalation_needed: true
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     // Process query with tool functions
     let toolResults = [];
@@ -68,39 +96,47 @@ serve(async (req) => {
     }
 
     // Call Vertex AI with enhanced context
-    const response = await fetch(
-      `https://us-central1-aiplatform.googleapis.com/v1/projects/${serviceAccount.project_id}/locations/us-central1/publishers/google/models/gemini-1.5-pro:generateContent`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            role: 'user',
-            parts: [{
-              text: `${SYSTEM_PROMPT}\n\nUser Role: ${user_role}\nContext: ${context}\n\nUser Query: ${enhancedQuery}`
-            }]
-          }],
-          generationConfig: {
-            temperature: 0.3, // Lower for more consistent responses
-            topK: 40,
-            topP: 0.8,
-            maxOutputTokens: 2048,
-          }
-        })
+    let aiResponse = "Hello! I'm the 404 Code Lab Portal AI assistant. I can help with support tickets, quotes, projects, and general inquiries. How can I assist you today?";
+    
+    try {
+      const response = await fetch(
+        `https://us-central1-aiplatform.googleapis.com/v1/projects/${serviceAccount.project_id}/locations/us-central1/publishers/google/models/gemini-1.5-pro:generateContent`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              role: 'user',
+              parts: [{
+                text: `${SYSTEM_PROMPT}\n\nUser Role: ${user_role}\nContext: ${context}\n\nUser Query: ${enhancedQuery}`
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.3,
+              topK: 40,
+              topP: 0.8,
+              maxOutputTokens: 2048,
+            }
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('Vertex AI API error:', error);
+        throw new Error(`Vertex AI API error: ${response.status}`);
       }
-    );
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error('Vertex AI API error:', error);
-      throw new Error(`Vertex AI API error: ${response.status}`);
+      const data = await response.json();
+      aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || aiResponse;
+    } catch (aiError) {
+      console.error('AI service error:', aiError);
+      // Use fallback response, don't fail the entire request
+      aiResponse = `I understand you're asking: "${query}". I'm currently experiencing some technical difficulties with my AI processing, but I can still help you with basic operations. Would you like me to escalate this to our human support team?`;
     }
-
-    const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated';
 
     // Log interaction for audit trail
     await auditLog(supabase, user_id, 'ai_interaction', 'ai_conversation', null, {
