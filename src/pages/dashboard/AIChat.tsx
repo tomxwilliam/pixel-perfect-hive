@@ -85,9 +85,9 @@ const AIChat = () => {
       // Show escalation notice
       if (aiResponse.escalation_needed) {
         toast({
-          title: "Human Support Required",
-          description: "I'm escalating this to our human team for immediate assistance.",
-          variant: "destructive"
+          title: "Escalation Notice",
+          description: "Your request has been noted for human team review.",
+          variant: "default"
         });
       }
       
@@ -169,21 +169,21 @@ const AIChat = () => {
             </div>
           </div>
 
-          <Card className="h-[600px] flex flex-col">
-            <CardHeader className="flex-shrink-0">
-              <CardTitle className="flex items-center">
-                <Bot className="h-5 w-5 mr-2" />
+          <Card className="h-[700px] flex flex-col border-0 shadow-lg">
+            <CardHeader className="flex-shrink-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-t-lg">
+              <CardTitle className="flex items-center text-lg">
+                <Bot className="h-6 w-6 mr-2 text-primary" />
                 404 Code Lab Portal AI
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm">
                 Your autonomous operations assistant for support, sales, projects, and comprehensive customer service
               </CardDescription>
             </CardHeader>
             
             <CardContent className="flex-1 flex flex-col">
               {/* Messages Area */}
-              <ScrollArea className="flex-1 mb-4">
-                <div className="space-y-4 pr-4">
+              <ScrollArea className="flex-1 mb-6">
+                <div className="space-y-4 pr-4 py-4">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -196,10 +196,10 @@ const AIChat = () => {
                           </div>
                         )}
                         <div
-                          className={`rounded-lg px-4 py-2 ${
+                          className={`rounded-xl px-4 py-3 shadow-sm ${
                             message.isUser
                               ? 'bg-primary text-primary-foreground'
-                              : 'bg-muted'
+                              : 'bg-card border'
                           }`}
                         >
                           <p className="text-sm">{message.content}</p>
@@ -250,51 +250,62 @@ const AIChat = () => {
               </ScrollArea>
 
               {/* Quick Actions */}
-              <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-2">Try asking:</p>
-                <div className="grid grid-cols-2 gap-2">
+              <div className="mb-4 p-4 bg-muted/30 rounded-lg">
+                <p className="text-sm font-medium text-foreground mb-3">Try asking:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {quickActions.map((action, index) => (
                     <Button
                       key={index}
                       variant="ghost"
                       size="sm"
                       onClick={() => setInputMessage(action)}
-                      className="text-xs text-left justify-start hover:bg-primary/10 h-auto p-2"
+                      className="text-xs text-left justify-start hover:bg-primary/10 h-auto p-3 border border-border/50 hover:border-primary/20 transition-colors"
                     >
-                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0" />
-                      {action}
+                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0 text-primary" />
+                      <span className="text-left">{action}</span>
                     </Button>
                   ))}
                 </div>
               </div>
 
               {/* Input Area */}
-              <div className="space-y-2">
+              <div className="space-y-3 border-t pt-4">
                 <Textarea
                   placeholder="Ask me anything about 404 Code Lab services..."
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyDown={handleKeyPress}
                   disabled={isLoading}
-                  className="resize-none h-20 text-sm"
+                  className="resize-none h-24 text-sm border-border/50 focus:border-primary transition-colors"
                 />
-                <Button 
-                  onClick={sendMessage} 
-                  disabled={isLoading || !inputMessage.trim()}
-                  className="w-full"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Message
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={sendMessage} 
+                    disabled={isLoading || !inputMessage.trim()}
+                    className="flex-1"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Send Message
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setInputMessage('')}
+                    disabled={isLoading || !inputMessage.trim()}
+                    size="icon"
+                  >
+                    <span className="sr-only">Clear</span>
+                    ×
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
