@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,6 +41,17 @@ const AIChat = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || !user) return;
@@ -56,6 +67,7 @@ const AIChat = () => {
     const currentQuery = inputMessage;
     setInputMessage('');
     setIsLoading(true);
+    setIsTyping(true);
 
     try {
       const { data, error } = await supabase.functions.invoke('portal-ai', {
@@ -116,6 +128,7 @@ const AIChat = () => {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
@@ -169,120 +182,146 @@ const AIChat = () => {
             </div>
           </div>
 
-          <Card className="h-[700px] flex flex-col border-0 shadow-lg">
-            <CardHeader className="flex-shrink-0 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-t-lg">
+          <Card className="h-[700px] flex flex-col border-0 shadow-2xl backdrop-blur-sm bg-gradient-to-br from-background to-muted/20">
+            <CardHeader className="flex-shrink-0 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 rounded-t-lg border-b border-border/30">
               <CardTitle className="flex items-center text-lg">
-                <Bot className="h-6 w-6 mr-2 text-primary" />
+                <div className="ai-avatar w-7 h-7 rounded-full flex items-center justify-center mr-3 pulse-glow">
+                  <Bot className="h-4 w-4 text-primary-foreground" />
+                </div>
                 404 Code Lab Portal AI
+                <div className="ml-auto flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-xs text-muted-foreground">Online</span>
+                </div>
               </CardTitle>
-              <CardDescription className="text-sm">
+              <CardDescription className="text-sm text-muted-foreground/80">
                 Your autonomous operations assistant for support, sales, projects, and comprehensive customer service
               </CardDescription>
             </CardHeader>
             
             <CardContent className="flex-1 flex flex-col">
               {/* Messages Area */}
-              <ScrollArea className="flex-1 mb-6">
-                <div className="space-y-4 pr-4 py-4">
-                  {messages.map((message) => (
+              <ScrollArea ref={scrollAreaRef} className="flex-1 mb-6 px-2">
+                <div className="space-y-6 py-4">
+                  {messages.map((message, index) => (
                     <div
                       key={message.id}
-                      className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                      className={`message-appear flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className="flex items-start space-x-2 max-w-[80%]">
+                      <div className="flex items-start space-x-3 max-w-[85%]">
                         {!message.isUser && (
-                          <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                            <Brain className="h-4 w-4 text-primary-foreground" />
+                          <div className="ai-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                            <Brain className="h-5 w-5 text-primary-foreground" />
                           </div>
                         )}
                         <div
-                          className={`rounded-xl px-4 py-3 shadow-sm ${
+                          className={`message-bubble rounded-2xl px-5 py-4 ${
                             message.isUser
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-card border'
+                              ? 'user-message'
+                              : 'ai-message'
                           }`}
                         >
-                          <p className="text-sm">{message.content}</p>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                           {message.tools && message.tools.length > 0 && (
-                            <div className="mt-2 space-y-1">
-                              <Separator className="my-2" />
-                              <div className="text-xs opacity-75">System Operations:</div>
-                              {message.tools.map((tool: any, toolIndex: number) => (
-                                <Badge key={toolIndex} variant="secondary" className="text-xs mr-1">
-                                  {tool.success ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertTriangle className="h-3 w-3 mr-1" />}
-                                  {tool.data?.ticket_id ? `Ticket #${tool.data.ticket_number}` : 
-                                   tool.data?.quote_id ? `Quote Created` :
-                                   tool.data?.project_id ? `Project Created` : 
-                                   'Operation Complete'}
-                                </Badge>
-                              ))}
+                            <div className="mt-3 space-y-2">
+                              <Separator className="opacity-30" />
+                              <div className="text-xs font-medium opacity-75 flex items-center gap-1">
+                                <Sparkles className="h-3 w-3" />
+                                System Operations:
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {message.tools.map((tool: any, toolIndex: number) => (
+                                  <Badge key={toolIndex} variant="secondary" className="text-xs px-2 py-1 rounded-full">
+                                    {tool.success ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertTriangle className="h-3 w-3 mr-1" />}
+                                    {tool.data?.ticket_id ? `Ticket #${tool.data.ticket_number}` : 
+                                     tool.data?.quote_id ? `Quote Created` :
+                                     tool.data?.project_id ? `Project Created` : 
+                                     'Operation Complete'}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
                           )}
-                          <p className="text-xs opacity-70 mt-1">
-                            {message.timestamp.toLocaleTimeString()}
+                          <p className="text-xs opacity-60 mt-2 font-medium">
+                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
                         {message.isUser && (
-                          <div className="flex-shrink-0 w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                            <User className="h-4 w-4" />
+                          <div className="user-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                            <User className="h-5 w-5 text-secondary-foreground" />
                           </div>
                         )}
                       </div>
                     </div>
                   ))}
                   
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="flex items-start space-x-2">
-                        <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                          <Brain className="h-4 w-4 text-primary-foreground" />
+                  {(isLoading || isTyping) && (
+                    <div className="message-appear flex justify-start">
+                      <div className="flex items-start space-x-3">
+                        <div className="ai-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
+                          <Brain className="h-5 w-5 text-primary-foreground animate-pulse" />
                         </div>
-                        <div className="bg-muted rounded-lg px-4 py-2">
+                        <div className="ai-message message-bubble rounded-2xl px-5 py-4">
                           <div className="flex items-center space-x-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
                             <span className="text-sm">Processing your request...</span>
+                          </div>
+                          <div className="flex space-x-1 mt-2">
+                            <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
               {/* Quick Actions */}
-              <div className="mb-4 p-4 bg-muted/30 rounded-lg">
-                <p className="text-sm font-medium text-foreground mb-3">Try asking:</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="mb-6 p-5 bg-gradient-to-r from-muted/20 to-muted/10 rounded-xl border border-border/30 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <p className="text-sm font-semibold text-foreground">Quick Actions</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {quickActions.map((action, index) => (
                     <Button
                       key={index}
                       variant="ghost"
                       size="sm"
                       onClick={() => setInputMessage(action)}
-                      className="text-xs text-left justify-start hover:bg-primary/10 h-auto p-3 border border-border/50 hover:border-primary/20 transition-colors"
+                      className="quick-action text-xs text-left justify-start h-auto p-4 rounded-xl bg-background/50"
                     >
-                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0 text-primary" />
-                      <span className="text-left">{action}</span>
+                      <ArrowRight className="h-4 w-4 mr-3 flex-shrink-0 text-primary" />
+                      <span className="text-left font-medium">{action}</span>
                     </Button>
                   ))}
                 </div>
               </div>
 
               {/* Input Area */}
-              <div className="space-y-3 border-t pt-4">
-                <Textarea
-                  placeholder="Ask me anything about 404 Code Lab services..."
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  disabled={isLoading}
-                  className="resize-none h-24 text-sm border-border/50 focus:border-primary transition-colors"
-                />
-                <div className="flex gap-2">
+              <div className="space-y-4 border-t border-border/30 pt-5">
+                <div className="relative">
+                  <Textarea
+                    placeholder="Ask me anything about 404 Code Lab services..."
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    disabled={isLoading}
+                    className="chat-input resize-none h-20 text-sm rounded-xl pr-12 bg-background/80"
+                  />
+                  <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+                    {inputMessage.length}/500
+                  </div>
+                </div>
+                <div className="flex gap-3">
                   <Button 
                     onClick={sendMessage} 
                     disabled={isLoading || !inputMessage.trim()}
-                    className="flex-1"
+                    className="flex-1 h-11 rounded-xl bg-gradient-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/25 transition-all duration-200"
                   >
                     {isLoading ? (
                       <>
@@ -300,10 +339,9 @@ const AIChat = () => {
                     variant="outline"
                     onClick={() => setInputMessage('')}
                     disabled={isLoading || !inputMessage.trim()}
-                    size="icon"
+                    className="h-11 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all duration-200"
                   >
-                    <span className="sr-only">Clear</span>
-                    ×
+                    Clear
                   </Button>
                 </div>
               </div>

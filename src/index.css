@@ -91,8 +91,83 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* AI Chat specific colors */
+    --ai-message-bg: 217.2 32.6% 17.5%;
+    --user-message-bg: 262.1 83.3% 57.8%;
+    --message-shadow: 0 4px 12px -4px hsl(var(--primary) / 0.15);
+    --ai-glow: 262.1 83.3% 57.8% / 0.2;
+    --chat-gradient: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--secondary) / 0.05) 100%);
   }
 }
+
+@layer components {
+  /* AI Chat Animations */
+  .message-appear {
+    animation: messageSlideIn 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  
+  .message-bubble {
+    @apply backdrop-blur-sm transition-all duration-200 hover:shadow-lg;
+    box-shadow: var(--message-shadow);
+  }
+  
+  .ai-message {
+    @apply bg-gradient-to-br from-card to-muted/30 border border-border/50;
+    backdrop-filter: blur(8px);
+  }
+  
+  .user-message {
+    @apply bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg;
+  }
+  
+  .quick-action {
+    @apply transform transition-all duration-200 hover:scale-[1.02] hover:shadow-md;
+    @apply border border-border/30 hover:border-primary/30 hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5;
+  }
+  
+  .chat-input {
+    @apply transition-all duration-200 focus:shadow-lg focus:shadow-primary/10;
+    @apply border-border/50 focus:border-primary/50 backdrop-blur-sm;
+  }
+  
+  .ai-avatar {
+    @apply bg-gradient-to-br from-primary to-accent shadow-lg;
+    box-shadow: 0 0 20px hsl(var(--ai-glow));
+  }
+  
+  .user-avatar {
+    @apply bg-gradient-to-br from-secondary to-muted-foreground;
+  }
+}
+
+@layer utilities {
+  /* Animation keyframes */
+  @keyframes messageSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+    }
+  }
+  
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
 
 @layer base {
   * {
