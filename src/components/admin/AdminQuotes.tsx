@@ -83,7 +83,8 @@ export function AdminQuotes() {
           customer:profiles(id, first_name, last_name, email, company_name),
           project:projects(id, title)
         `)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100); // Limit for better performance
 
       if (error) {
         console.error("Supabase error:", error);
@@ -95,7 +96,6 @@ export function AdminQuotes() {
         throw error;
       }
 
-      console.log("Fetched quotes data:", data);
       setQuotes((data as QuoteWithCustomer[]) || []);
     } catch (error) {
       console.error("Error fetching quotes:", error);

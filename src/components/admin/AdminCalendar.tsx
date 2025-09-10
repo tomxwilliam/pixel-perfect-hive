@@ -101,7 +101,8 @@ export const AdminCalendar = () => {
       const { data, error } = await supabase
         .from('call_bookings')
         .select('*')
-        .order('scheduled_at', { ascending: true });
+        .order('scheduled_at', { ascending: true })
+        .limit(50); // Limit for better performance
 
       if (error) throw error;
       setBookings(data || []);
@@ -122,7 +123,8 @@ export const AdminCalendar = () => {
       const { data, error } = await supabase
         .from('blocked_dates')
         .select('*')
-        .order('date', { ascending: true });
+        .order('date', { ascending: true })
+        .limit(30); // Limit for better performance
 
       if (error) throw error;
       setBlockedDates(data || []);

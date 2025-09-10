@@ -43,10 +43,11 @@ export const AdminInvoices = () => {
         .from('invoices')
         .select(`
           *,
-          customer:profiles(*),
+          customer:profiles(id, first_name, last_name, email, company_name),
           project:projects(title)
         `)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(100); // Limit for better performance
 
       if (data) {
         setInvoices(data as InvoiceWithCustomer[]);
@@ -54,7 +55,7 @@ export const AdminInvoices = () => {
     } catch (error) {
       console.error('Error fetching invoices:', error);
     } finally {
-    setLoading(false);
+      setLoading(false);
     }
   };
 
