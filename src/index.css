@@ -168,6 +168,7 @@ All colors MUST be HSL.
   .pulse-glow {
     animation: pulseGlow 2s ease-in-out infinite;
   }
+}
 
 @layer base {
   * {
