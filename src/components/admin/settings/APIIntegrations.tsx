@@ -72,9 +72,21 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const [testingGoogle, setTestingGoogle] = useState(false);
 
   useEffect(() => {
-    fetchIntegrations();
-    fetchOAuthConnections();
-    checkCredentials();
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        // Load all data in parallel for faster loading
+        await Promise.all([
+          fetchIntegrations(),
+          fetchOAuthConnections(),
+          checkCredentials()
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
   }, []);
 
   // Check URL params for OAuth callback results
@@ -113,7 +125,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     }
   }, []);
 
-  const checkCredentials = () => {
+  const checkCredentials = async () => {
     const missing = [];
     
     // Check Google OAuth credentials
@@ -146,69 +158,10 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       const { data, error } = await supabase
         .from('api_integrations')
         .select('*')
-        .order('integration_type', { ascending: true });
+        .order('integration_name', { ascending: true });
 
       if (error) throw error;
-      
-      // Define all available integrations
-      const allIntegrations = [
-        { type: 'xero', name: 'Xero Accounting' },
-        { type: 'google_calendar', name: 'Google Calendar' },
-        { type: 'linkedin', name: 'LinkedIn' },
-        { type: 'twitter', name: 'Twitter' },
-        { type: 'stripe', name: 'Stripe Payments' },
-        { type: 'paypal', name: 'PayPal' },
-        { type: 'slack', name: 'Slack' },
-        { type: 'discord', name: 'Discord' },
-        { type: 'microsoft_teams', name: 'Microsoft Teams' },
-        { type: 'openai', name: 'OpenAI API' },
-        { type: 'sendgrid', name: 'SendGrid Email' },
-        { type: 'twilio', name: 'Twilio SMS' },
-        { type: 'mailchimp', name: 'Mailchimp' },
-        { type: 'hubspot', name: 'HubSpot CRM' },
-        { type: 'salesforce', name: 'Salesforce' },
-        { type: 'zoom', name: 'Zoom' },
-        { type: 'github', name: 'GitHub' },
-        { type: 'gitlab', name: 'GitLab' },
-        { type: 'jira', name: 'Jira' },
-        { type: 'trello', name: 'Trello' },
-        { type: 'notion', name: 'Notion' },
-        { type: 'airtable', name: 'Airtable' },
-        { type: 'zapier', name: 'Zapier' },
-        { type: 'unlimited_web_hosting', name: 'Unlimited Web Hosting UK' },
-        { type: 'openprovider', name: 'OpenProvider Domains' },
-        { type: 'whm_cpanel', name: 'WHM/cPanel' }
-      ];
-      
-      // Get existing integration types
-      const existingTypes = data?.map(i => i.integration_type) || [];
-      const missingIntegrations = allIntegrations.filter(integration => 
-        !existingTypes.includes(integration.type)
-      );
-      
-      // Insert missing integrations one by one to handle constraint issues
-      for (const integration of missingIntegrations) {
-        try {
-          await supabase
-            .from('api_integrations')
-            .insert({
-              integration_name: integration.name,
-              integration_type: integration.type,
-              is_connected: false
-            });
-        } catch (insertError) {
-          console.log(`Integration ${integration.type} may already exist or is not supported:`, insertError);
-        }
-      }
-      
-      // Refetch all integrations
-      const { data: finalData, error: finalError } = await supabase
-        .from('api_integrations')
-        .select('*')
-        .order('integration_name', { ascending: true });
-        
-      if (finalError) throw finalError;
-      setIntegrations(finalData as APIIntegration[] || []);
+      setIntegrations(data as APIIntegration[] || []);
       
     } catch (error) {
       console.error('Error fetching integrations:', error);
@@ -708,33 +661,40 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
   return (
     <div className="space-y-6">
-      <div className="text-muted-foreground">
-        <p>Connect external services to automate workflows and sync data across platforms.</p>
-        {!isSuperAdmin && (
-          <p className="mt-2 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
-            <strong>Note:</strong> Only the super admin can configure API integrations.
-          </p>
-        )}
-      </div>
+      {loading && integrations.length === 0 ? (
+        <div className="flex items-center justify-center py-8">
+          <RefreshCw className="h-6 w-6 animate-spin mr-2" />
+          <span>Loading integrations...</span>
+        </div>
+      ) : (
+        <>
+          <div className="text-muted-foreground">
+            <p>Connect external services to automate workflows and sync data across platforms.</p>
+            {!isSuperAdmin && (
+              <p className="mt-2 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
+                <strong>Note:</strong> Only the super admin can configure API integrations.
+              </p>
+            )}
+          </div>
 
-      <div className="grid gap-6">
-        {integrations.map((integration) => {
-          const status = getConnectionStatus(integration);
-          const hasCredentialWarning = missingCredentials.includes(integration.integration_type);
-          
-          return (
-            <Card key={integration.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {getIntegrationIcon(integration.integration_type)}
-                    <div>
-                      <h3 className="text-lg font-semibold">{integration.integration_name}</h3>
-                      <p className="text-sm text-muted-foreground font-normal">
-                        {getIntegrationDescription(integration.integration_type)}
-                      </p>
-                      {status.account && (
-                        <p className="text-xs text-muted-foreground mt-1">
+          <div className="grid gap-6">
+            {integrations.map((integration) => {
+              const status = getConnectionStatus(integration);
+              const hasCredentialWarning = missingCredentials.includes(integration.integration_type);
+              
+              return (
+                <Card key={integration.id}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {getIntegrationIcon(integration.integration_type)}
+                        <div>
+                          <h3 className="text-lg font-semibold">{integration.integration_name}</h3>
+                          <p className="text-sm text-muted-foreground font-normal">
+                            {getIntegrationDescription(integration.integration_type)}
+                          </p>
+                          {status.account && (
+                            <p className="text-xs text-muted-foreground mt-1">
                           Connected as: {status.account}
                         </p>
                       )}
@@ -905,6 +865,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
           </div>
         </CardContent>
       </Card>
+        </>
+      )}
     </div>
   );
 };
