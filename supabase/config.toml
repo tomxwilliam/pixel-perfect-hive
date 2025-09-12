@@ -23,3 +23,21 @@ verify_jwt = true
 
 [functions.portal-ai]
 verify_jwt = true
+
+[functions.linkedin-oauth-start]
+verify_jwt = false
+
+[functions.linkedin-oauth-callback]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = true
+
+[functions.analytics-advanced]
+verify_jwt = true
+
+[functions.realtime-collaboration]
+verify_jwt = false
+
+[functions.social-media-integration]
+verify_jwt = true
