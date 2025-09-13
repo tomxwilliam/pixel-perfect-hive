@@ -1176,6 +1176,42 @@ export type Database = {
         }
         Relationships: []
       }
+      org_billing_settings: {
+        Row: {
+          account_name: string
+          account_number: string
+          created_at: string | null
+          iban: string | null
+          id: string
+          notes_bacs: string | null
+          org_id: string
+          sort_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          created_at?: string | null
+          iban?: string | null
+          id?: string
+          notes_bacs?: string | null
+          org_id?: string
+          sort_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          created_at?: string | null
+          iban?: string | null
+          id?: string
+          notes_bacs?: string | null
+          org_id?: string
+          sort_code?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       pipeline_stages: {
         Row: {
           color: string | null

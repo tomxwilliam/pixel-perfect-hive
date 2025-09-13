@@ -8,7 +8,7 @@ import ServicePricingDefaults from './settings/ServicePricingDefaults';
 import APIIntegrations from './settings/APIIntegrations';
 import AIAgentSettings from './settings/AIAgentSettings';
 import DomainHostingSettings from './settings/DomainHostingSettings';
-import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
+import { InvoiceSettings } from './settings/InvoiceSettings';
 import { AdminCommunications } from './AdminCommunications';
 import { QuoteTemplateSettings } from './QuoteTemplateSettings';
 
@@ -36,7 +36,7 @@ const AdminSettings = () => {
           </MobileTabsTrigger>
           <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            <span className="text-xs sm:text-sm">Invoices</span>
+            <span className="text-xs sm:text-sm">Invoice Settings</span>
           </MobileTabsTrigger>
           <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
@@ -79,7 +79,7 @@ const AdminSettings = () => {
         </MobileTabsContent>
 
         <MobileTabsContent value="invoices" className="space-y-6">
-          <InvoiceTemplateSettings />
+          <InvoiceSettings isSuperAdmin={isSuperAdmin} />
         </MobileTabsContent>
 
         <MobileTabsContent value="quotes" className="space-y-6">

@@ -2,34 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   Link2, 
-  Calendar, 
-  DollarSign, 
-  Linkedin, 
-  Twitter, 
   RefreshCw, 
   Settings,
   CheckCircle,
   XCircle,
-  Clock,
   Server,
-  MessageSquare,
-  Mail,
-  Users,
-  Video,
-  Code,
-  Ticket,
-  CheckSquare,
-  FileText,
-  Database,
-  Zap,
-  AlertTriangle,
-  TestTube
+  AlertTriangle
 } from 'lucide-react';
 
 interface APIIntegration {
@@ -46,118 +29,24 @@ interface APIIntegration {
   updated_at: string;
 }
 
-interface OAuthConnection {
-  id: string;
-  user_id: string;
-  provider: string;
-  access_token: string;
-  refresh_token?: string;
-  expires_at: string;
-  scope?: string;
-  account_id?: string;
-  meta?: any;
-  created_at: string;
-  updated_at: string;
-}
-
 interface APIIntegrationsProps {
   isSuperAdmin: boolean;
 }
 
 const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const [integrations, setIntegrations] = useState<APIIntegration[]>([]);
-  const [oauthConnections, setOAuthConnections] = useState<OAuthConnection[]>([]);
   const [loading, setLoading] = useState(false);
-  const [missingCredentials, setMissingCredentials] = useState<string[]>([]);
-  const [testingGoogle, setTestingGoogle] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        // Load all data in parallel for faster loading
-        await Promise.all([
-          fetchIntegrations(),
-          fetchOAuthConnections(),
-          checkCredentials()
-        ]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadData();
+    fetchIntegrations();
   }, []);
-
-  // Check URL params for OAuth callback results
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const connected = urlParams.get('connected');
-    const error = urlParams.get('error');
-    
-    if (connected === 'google') {
-      toast({
-        title: "Google Calendar Connected",
-        description: "Successfully connected to Google Calendar. You can now create events.",
-      });
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-      fetchOAuthConnections(); // Refresh connection status
-    } else if (error) {
-      const errorMessages: { [key: string]: string } = {
-        oauth_denied: 'OAuth authorization was denied',
-        invalid_callback: 'Invalid OAuth callback parameters',
-        invalid_state: 'Invalid OAuth state parameter',
-        config_missing: 'Google OAuth configuration is incomplete',
-        token_exchange_failed: 'Failed to exchange authorization code for tokens',
-        no_access_token: 'No access token received from Google',
-        database_error: 'Failed to save OAuth connection',
-        callback_error: 'An error occurred during OAuth callback',
-      };
-      
-      toast({
-        title: "Connection Failed",
-        description: errorMessages[error] || 'An unknown error occurred',
-        variant: "destructive",
-      });
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
-    }
-  }, []);
-
-  const checkCredentials = async () => {
-    const missing = [];
-    
-    // Check Google OAuth credentials
-    const hasGoogleClientId = typeof window !== 'undefined';
-    const hasGoogleClientSecret = typeof window !== 'undefined';
-    
-    if (!hasGoogleClientId || !hasGoogleClientSecret) {
-      missing.push('google_calendar');
-    }
-    
-    setMissingCredentials(missing);
-  };
-
-  const fetchOAuthConnections = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('oauth_connections')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setOAuthConnections(data as OAuthConnection[] || []);
-    } catch (error) {
-      console.error('Error fetching OAuth connections:', error);
-    }
-  };
 
   const fetchIntegrations = async () => {
     try {
       const { data, error } = await supabase
         .from('api_integrations')
         .select('*')
+        .in('integration_type', ['unlimited_web_hosting', 'openprovider', 'whm_cpanel', 'google_ai'])
         .order('integration_name', { ascending: true });
 
       if (error) throw error;
@@ -175,169 +64,32 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
   const getIntegrationName = (type: string): string => {
     const names: Record<string, string> = {
-      xero: 'Xero Accounting',
-      google_calendar: 'Google Calendar',
-      linkedin: 'LinkedIn',
-      twitter: 'Twitter',
-      stripe: 'Stripe Payments',
-      paypal: 'PayPal',
-      slack: 'Slack',
-      discord: 'Discord',
-      microsoft_teams: 'Microsoft Teams',
-      openai: 'OpenAI API',
-      sendgrid: 'SendGrid Email',
-      twilio: 'Twilio SMS',
-      mailchimp: 'Mailchimp',
-      hubspot: 'HubSpot CRM',
-      salesforce: 'Salesforce',
-      zoom: 'Zoom',
-      github: 'GitHub',
-      gitlab: 'GitLab',
-      jira: 'Jira',
-      trello: 'Trello',
-      notion: 'Notion',
-      airtable: 'Airtable',
-      zapier: 'Zapier',
       unlimited_web_hosting: 'Unlimited Web Hosting UK',
       openprovider: 'OpenProvider Domains',
-      whm_cpanel: 'WHM/cPanel'
+      whm_cpanel: 'WHM/cPanel',
+      google_ai: 'Google AI Agent'
     };
     return names[type] || type;
   };
 
   const getIntegrationIcon = (type: string) => {
     const icons: Record<string, React.ReactNode> = {
-      xero: <DollarSign className="h-5 w-5" />,
-      google_calendar: <Calendar className="h-5 w-5" />,
-      linkedin: <Linkedin className="h-5 w-5" />,
-      twitter: <Twitter className="h-5 w-5" />,
       unlimited_web_hosting: <Server className="h-5 w-5" />,
       openprovider: <Server className="h-5 w-5" />,
       whm_cpanel: <Server className="h-5 w-5" />,
-      stripe: <DollarSign className="h-5 w-5" />,
-      paypal: <DollarSign className="h-5 w-5" />,
-      slack: <MessageSquare className="h-5 w-5" />,
-      discord: <MessageSquare className="h-5 w-5" />,
-      microsoft_teams: <MessageSquare className="h-5 w-5" />,
-      openai: <Settings className="h-5 w-5" />,
-      sendgrid: <Mail className="h-5 w-5" />,
-      twilio: <MessageSquare className="h-5 w-5" />,
-      mailchimp: <Mail className="h-5 w-5" />,
-      hubspot: <Users className="h-5 w-5" />,
-      salesforce: <Users className="h-5 w-5" />,
-      zoom: <Video className="h-5 w-5" />,
-      github: <Code className="h-5 w-5" />,
-      gitlab: <Code className="h-5 w-5" />,
-      jira: <Ticket className="h-5 w-5" />,
-      trello: <CheckSquare className="h-5 w-5" />,
-      notion: <FileText className="h-5 w-5" />,
-      airtable: <Database className="h-5 w-5" />,
-      zapier: <Zap className="h-5 w-5" />
+      google_ai: <Settings className="h-5 w-5" />
     };
     return icons[type] || <Link2 className="h-5 w-5" />;
   };
 
   const getIntegrationDescription = (type: string): string => {
     const descriptions: Record<string, string> = {
-      xero: 'Automatically sync invoices, quotes, and billing data with Xero accounting software.',
-      google_calendar: 'Create calendar events automatically when projects start or deadlines are set.',
-      linkedin: 'Post project updates and company announcements directly to your LinkedIn profile.',
-      twitter: 'Share completed projects, announcements, and engage with your audience on Twitter.',
       unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
       openprovider: 'Register and manage domains through OpenProvider API for automated domain registration and DNS management.',
       whm_cpanel: 'Manage cPanel hosting accounts through WHM (Web Host Manager) reseller interface for complete hosting automation.',
-      stripe: 'Process payments securely with Stripe payment gateway integration.',
-      paypal: 'Accept PayPal payments for invoices and project milestones.',
-      slack: 'Send project updates and notifications to your Slack workspace.',
-      discord: 'Connect your Discord server for team collaboration and notifications.',
-      microsoft_teams: 'Integrate with Microsoft Teams for seamless communication.',
-      openai: 'Leverage OpenAI API for AI-powered features and automation.',
-      sendgrid: 'Send transactional emails and notifications via SendGrid.',
-      twilio: 'Send SMS notifications and alerts to customers via Twilio.',
-      mailchimp: 'Manage email marketing campaigns and customer communications.',
-      hubspot: 'Sync customer data and manage relationships with HubSpot CRM.',
-      salesforce: 'Integrate with Salesforce for comprehensive customer management.',
-      zoom: 'Schedule and manage video meetings for client consultations.',
-      github: 'Connect GitHub repositories for project development tracking.',
-      gitlab: 'Integrate GitLab for version control and project management.',
-      jira: 'Track project issues and tasks with Jira integration.',
-      trello: 'Manage project boards and tasks with Trello integration.',
-      notion: 'Sync project documentation and notes with Notion.',
-      airtable: 'Manage project data and workflows with Airtable integration.',
-      zapier: 'Connect hundreds of apps and automate workflows with Zapier.'
+      google_ai: 'Leverage Google AI (Gemini) for intelligent customer support, content generation, and automated assistance.'
     };
     return descriptions[type] || `${type} integration for enhanced workflow automation.`;
-  };
-
-  const handleGoogleConnect = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('oauth-google-start');
-      
-      if (error) throw error;
-      
-      if (data.authUrl) {
-        // Redirect to Google OAuth
-        window.location.href = data.authUrl;
-      } else {
-        throw new Error('No auth URL received');
-      }
-    } catch (error) {
-      console.error('Google OAuth start error:', error);
-      toast({
-        title: "Connection Failed",
-        description: `Failed to start Google OAuth: ${error.message}`,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleGoogleDisconnect = async () => {
-    try {
-      const { error } = await supabase.functions.invoke('oauth-google-disconnect');
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Disconnected",
-        description: "Google Calendar has been disconnected successfully.",
-      });
-      
-      fetchOAuthConnections();
-    } catch (error) {
-      console.error('Google disconnect error:', error);
-      toast({
-        title: "Disconnect Failed",
-        description: `Failed to disconnect Google Calendar: ${error.message}`,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleGoogleTest = async () => {
-    setTestingGoogle(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('google-test-create-event');
-      
-      if (error) throw error;
-      
-      if (data.success && data.event) {
-        toast({
-          title: "Test Successful!",
-          description: `Created test event: "${data.event.summary}". Check your Google Calendar.`,
-        });
-      } else {
-        throw new Error(data.error || 'Test failed');
-      }
-    } catch (error) {
-      console.error('Google test error:', error);
-      toast({
-        title: "Test Failed",
-        description: `Failed to create test event: ${error.message}`,
-        variant: "destructive",
-      });
-    } finally {
-      setTestingGoogle(false);
-    }
   };
 
   const handleConnect = async (integration: APIIntegration) => {
@@ -347,11 +99,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         description: "Only super admin can configure API integrations",
         variant: "destructive",
       });
-      return;
-    }
-
-    if (integration.integration_type === 'google_calendar') {
-      await handleGoogleConnect();
       return;
     }
 
@@ -441,50 +188,33 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
           fetchIntegrations();
         }
-      } else if (integration.integration_type === 'twitter') {
-        // For Twitter, test the connection using stored credentials
-        try {
-          const { data, error } = await supabase.functions.invoke('twitter-integration/connect');
-          
+      } else if (integration.integration_type === 'google_ai') {
+        // For Google AI, just mark as connected if user confirms
+        const confirmed = confirm('This will enable Google AI integration using your configured credentials. Continue?');
+        if (confirmed) {
+          const { error } = await supabase
+            .from('api_integrations')
+            .update({
+              is_connected: true,
+              last_sync_at: new Date().toISOString()
+            })
+            .eq('id', integration.id);
+
           if (error) throw error;
-          
-          if (data.success) {
-            const { error: updateError } = await supabase
-              .from('api_integrations')
-              .update({
-                is_connected: true,
-                last_sync_at: new Date().toISOString()
-              })
-              .eq('id', integration.id);
 
-            if (updateError) throw updateError;
-
-            toast({
-              title: "Connected",
-              description: "Twitter integration connected successfully",
-            });
-
-            fetchIntegrations();
-          } else {
-            throw new Error(data.error || 'Failed to connect to Twitter');
-          }
-        } catch (error) {
-          console.error('Twitter connection error:', error);
           toast({
-            title: "Connection Failed",
-            description: `Failed to connect Twitter: ${error.message}`,
-            variant: "destructive",
+            title: "Connected",
+            description: "Google AI integration connected successfully",
           });
+
+          fetchIntegrations();
         }
       } else {
-        // For other integrations, show OAuth placeholder
+        // For other integrations, show placeholder
         toast({
-          title: "OAuth Flow",
-          description: `Initiating ${integration.integration_name} OAuth flow...`,
+          title: "Integration",
+          description: `${integration.integration_name} integration settings...`,
         });
-        
-        // TODO: Implement actual OAuth flows for each service
-        // This would redirect to the service's OAuth page
       }
       
     } catch (error) {
@@ -503,14 +233,9 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     if (!isSuperAdmin) {
       toast({
         title: "Access Denied",
-        description: "Only super admin can configure API integrations",
+        description: "Only super admin can modify integrations",
         variant: "destructive",
       });
-      return;
-    }
-
-    if (integration.integration_type === 'google_calendar') {
-      await handleGoogleDisconnect();
       return;
     }
 
@@ -521,9 +246,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
         .update({
           is_connected: false,
           access_token: null,
-          refresh_token: null,
-          token_expires_at: null,
-          config_data: {},
+          config_data: null,
           last_sync_at: null
         })
         .eq('id', integration.id);
@@ -531,8 +254,8 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: `${integration.integration_name} disconnected successfully`,
+        title: "Disconnected",
+        description: `${integration.integration_name} has been disconnected`,
       });
 
       fetchIntegrations();
@@ -548,324 +271,144 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     }
   };
 
-  const handleSync = async (integration: APIIntegration) => {
-    if (!integration.is_connected) {
-      toast({
-        title: "Not Connected",
-        description: `${integration.integration_name} is not connected`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // TODO: Implement actual sync logic for each integration
-      // This would call the appropriate edge function
-      
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate sync
-      
-      const { error } = await supabase
-        .from('api_integrations')
-        .update({
-          last_sync_at: new Date().toISOString()
-        })
-        .eq('id', integration.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: `${integration.integration_name} synced successfully`,
-      });
-
-      fetchIntegrations();
-    } catch (error) {
-      console.error('Error syncing integration:', error);
-      toast({
-        title: "Error",
-        description: "Failed to sync integration",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getConnectionStatus = (integration: APIIntegration) => {
-    // For Google Calendar, check OAuth connections
-    if (integration.integration_type === 'google_calendar') {
-      const googleConnection = oauthConnections.find(conn => conn.provider === 'google');
-      
-      if (!googleConnection || !googleConnection.access_token) {
-        return {
-          icon: <XCircle className="h-4 w-4" />,
-          text: 'Disconnected',
-          variant: 'destructive' as const
-        };
-      }
-      
-      const expiresAt = new Date(googleConnection.expires_at);
-      const now = new Date();
-      
-      if (expiresAt <= now) {
-        return {
-          icon: <Clock className="h-4 w-4" />,
-          text: 'Token Expired',
-          variant: 'secondary' as const
-        };
-      }
-      
-      // Only show as connected if we have valid tokens and account info
-      if (googleConnection.meta?.email && googleConnection.access_token) {
-        return {
-          icon: <CheckCircle className="h-4 w-4" />,
-          text: 'Connected',
-          variant: 'default' as const,
-          account: googleConnection.meta.email
-        };
-      }
-      
-      return {
-        icon: <XCircle className="h-4 w-4" />,
-        text: 'Disconnected',
-        variant: 'destructive' as const
-      };
-    }
-    
-    if (!integration.is_connected) {
-      return {
-        icon: <XCircle className="h-4 w-4" />,
-        text: 'Disconnected',
-        variant: 'destructive' as const
-      };
-    }
-
-    const expiresAt = integration.token_expires_at ? new Date(integration.token_expires_at) : null;
-    const now = new Date();
-    
-    if (expiresAt && expiresAt < now) {
-      return {
-        icon: <Clock className="h-4 w-4" />,
-        text: 'Token Expired',
-        variant: 'secondary' as const
-      };
-    }
-
-    return {
-      icon: <CheckCircle className="h-4 w-4" />,
-      text: 'Connected',
-      variant: 'default' as const
-    };
-  };
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="h-32 bg-muted rounded-lg"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {loading && integrations.length === 0 ? (
-        <div className="flex items-center justify-center py-8">
-          <RefreshCw className="h-6 w-6 animate-spin mr-2" />
-          <span>Loading integrations...</span>
-        </div>
-      ) : (
-        <>
-          <div className="text-muted-foreground">
-            <p>Connect external services to automate workflows and sync data across platforms.</p>
-            {!isSuperAdmin && (
-              <p className="mt-2 text-sm bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
-                <strong>Note:</strong> Only the super admin can configure API integrations.
-              </p>
-            )}
-          </div>
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Only essential integrations are available: Web Hosting, Domain Management, and AI Assistant.
+        </AlertDescription>
+      </Alert>
 
-          <div className="grid gap-6">
-            {integrations.map((integration) => {
-              const status = getConnectionStatus(integration);
-              const hasCredentialWarning = missingCredentials.includes(integration.integration_type);
-              
-              return (
-                <Card key={integration.id}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {getIntegrationIcon(integration.integration_type)}
-                        <div>
-                          <h3 className="text-lg font-semibold">{integration.integration_name}</h3>
-                          <p className="text-sm text-muted-foreground font-normal">
-                            {getIntegrationDescription(integration.integration_type)}
-                          </p>
-                          {status.account && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                          Connected as: {status.account}
-                        </p>
-                      )}
-                    </div>
+      <div className="grid gap-6">
+        {integrations.map((integration) => (
+          <Card key={integration.id}>
+            <CardHeader>
+              <CardTitle className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  {getIntegrationIcon(integration.integration_type)}
+                  <div>
+                    <h3 className="text-lg font-semibold">
+                      {getIntegrationName(integration.integration_type)}
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-normal">
+                      {getIntegrationDescription(integration.integration_type)}
+                    </p>
                   </div>
-                  <Badge variant={status.variant} className="flex items-center gap-1">
-                    {status.icon}
-                    {status.text}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {hasCredentialWarning && (
-                  <Alert className="mb-4">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      Google OAuth credentials are missing. Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to enable this integration.
-                    </AlertDescription>
-                  </Alert>
-                )}
+                </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    {integration.last_sync_at && (
-                      <p className="text-sm text-muted-foreground">
-                        Last synced: {new Date(integration.last_sync_at).toLocaleString()}
-                      </p>
+                <div className="flex items-center gap-2">
+                  <Badge variant={integration.is_connected ? "default" : "secondary"}>
+                    {integration.is_connected ? (
+                      <>
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Connected
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="h-3 w-3 mr-1" />
+                        Disconnected
+                      </>
                     )}
-                    {integration.token_expires_at && integration.is_connected && (
-                      <p className="text-sm text-muted-foreground">
-                        Token expires: {new Date(integration.token_expires_at).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    {/* Google Calendar specific test button */}
-                    {integration.integration_type === 'google_calendar' && status.text === 'Connected' && (
+                  </Badge>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                  {integration.last_sync_at ? (
+                    <span>Last synced: {new Date(integration.last_sync_at).toLocaleString()}</span>
+                  ) : (
+                    <span>Never synced</span>
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap gap-2">
+                  {integration.is_connected ? (
+                    <div className="flex gap-2">
                       <Button
                         variant="outline"
-                        size="sm"
-                        onClick={handleGoogleTest}
-                        disabled={testingGoogle || !isSuperAdmin}
-                      >
-                        <TestTube className="h-4 w-4 mr-2" />
-                        {testingGoogle ? 'Testing...' : 'Test Create Event'}
-                      </Button>
-                    )}
-                    
-                    {status.text === 'Connected' && integration.integration_type !== 'google_calendar' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleSync(integration)}
-                        disabled={loading}
-                      >
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Sync Now
-                      </Button>
-                    )}
-                    
-                    {/* Quick access to management */}
-                    {integration.integration_type === 'unlimited_web_hosting' && integration.is_connected && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open('/admin?section=hosting', '_blank')}
-                      >
-                        Manage Hosting
-                      </Button>
-                    )}
-                    
-                    {integration.integration_type === 'openprovider' && integration.is_connected && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open('/admin?section=domains', '_blank')}
-                      >
-                        Manage Domains
-                      </Button>
-                    )}
-                    
-                    {status.text === 'Connected' ? (
-                      <Button
-                        variant="destructive"
                         size="sm"
                         onClick={() => handleDisconnect(integration)}
-                        disabled={loading || !isSuperAdmin}
+                        disabled={loading}
                       >
                         Disconnect
                       </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleConnect(integration)}
-                        disabled={loading || !isSuperAdmin || hasCredentialWarning}
-                        size="sm"
-                      >
-                        <Link2 className="h-4 w-4 mr-2" />
-                        Connect
-                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleConnect(integration)}
+                      disabled={loading || !isSuperAdmin}
+                    >
+                      {loading ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                          Connecting...
+                        </>
+                      ) : (
+                        'Connect'
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Show configuration details if connected */}
+              {integration.is_connected && integration.config_data && (
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-sm font-medium mb-2">Configuration:</p>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {integration.integration_type === 'whm_cpanel' && (
+                      <>
+                        <div>Server: {integration.config_data.whm_url}</div>
+                        <div>Username: {integration.config_data.whm_username}</div>
+                        <div>Auto-provision: {integration.config_data.auto_provision ? 'Enabled' : 'Disabled'}</div>
+                      </>
+                    )}
+                    {integration.integration_type === 'openprovider' && (
+                      <div>API URL: {integration.config_data.api_url}</div>
+                    )}
+                    {integration.integration_type === 'unlimited_web_hosting' && (
+                      <div>API URL: {integration.config_data.api_url}</div>
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+              )}
+
+              {!isSuperAdmin && (
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <p className="text-xs text-muted-foreground">
+                    Only super administrators can modify API integrations.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Integration Features
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <h4 className="font-medium">Xero Accounting</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Auto-sync invoices and quotes</li>
-                <li>• Real-time billing data</li>
-                <li>• Payment status updates</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">Google Calendar</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Create calendar events automatically</li>
-                <li>• Project milestone tracking</li>
-                <li>• Deadline reminders</li>
-                <li>• Client meeting scheduling</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">LinkedIn</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Project showcase posts</li>
-                <li>• Company announcements</li>
-                <li>• Professional networking</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">Twitter</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Quick project updates</li>
-                <li>• Scheduled content</li>
-                <li>• Community engagement</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">Unlimited Web Hosting UK</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Automatic cPanel provisioning</li>
-                <li>• Hosting account management</li>
-                <li>• Real-time status monitoring</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">OpenProvider Domains</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Automated domain registration</li>
-                <li>• DNS management and control</li>
-                <li>• Domain renewals and transfers</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-        </>
+      {integrations.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          <Link2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p>No integrations configured yet</p>
+          <p className="text-sm">Contact system administrator to set up integrations</p>
+        </div>
       )}
     </div>
   );

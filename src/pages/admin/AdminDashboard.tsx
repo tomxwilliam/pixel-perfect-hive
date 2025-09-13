@@ -15,7 +15,7 @@ import { AdminQuotes } from '@/components/admin/AdminQuotes';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
-import { AdminSocialMedia } from '@/components/admin/AdminSocialMedia';
+// Social media removed
 import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
 import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
@@ -91,10 +91,7 @@ const AdminDashboard = () => {
               <Calendar className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Calendar</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="social" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Social</span>
-            </MobileTabsTrigger>
+            {/* Social media tab removed */}
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Domains</span>
@@ -181,11 +178,7 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
 
-          <MobileTabsContent value="social">
-            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-              <AdminSocialMedia />
-            </React.Suspense>
-          </MobileTabsContent>
+          {/* Social media content removed */}
 
           <MobileTabsContent value="domains">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>

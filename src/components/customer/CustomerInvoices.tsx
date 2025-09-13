@@ -11,6 +11,7 @@ import { Tables } from '@/integrations/supabase/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { generateInvoicePDF, generateSimpleInvoicePDF } from '@/utils/pdfGenerator';
 import { InvoiceDetailsModal } from './InvoiceDetailsModal';
+import { InvoicePaymentModal } from './InvoicePaymentModal';
 
 type Invoice = Tables<'invoices'>;
 
@@ -22,6 +23,7 @@ export const CustomerInvoices = () => {
   const [processingPayment, setProcessingPayment] = useState<string | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const fetchInvoices = async () => {
@@ -312,10 +314,11 @@ export const CustomerInvoices = () => {
                           size="sm" 
                           variant={invoice.due_date && new Date(invoice.due_date) < new Date() ? "destructive" : "outline"} 
                           className={isMobile ? "text-xs px-2 h-7" : ""}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePayInvoice(invoice.id);
-                          }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedInvoice(invoice);
+                          setPaymentModalOpen(true);
+                        }}
                           disabled={processingPayment === invoice.id}
                         >
                           <CreditCard className="h-4 w-4 mr-1" />
@@ -365,6 +368,12 @@ export const CustomerInvoices = () => {
         open={modalOpen}
         onOpenChange={setModalOpen}
         onInvoiceUpdated={fetchInvoices}
+      />
+      
+      <InvoicePaymentModal 
+        invoice={selectedInvoice}
+        open={paymentModalOpen}
+        onOpenChange={setPaymentModalOpen}
       />
     </Card>
   );
