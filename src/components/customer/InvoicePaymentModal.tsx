@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Copy, CreditCard, MessageSquare, Banknote } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Copy, CreditCard, Building2, Phone, Ticket } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
 
 type Invoice = Tables<'invoices'>;
 
-interface OrgBillingSettings {
+interface BillingSettings {
+  id: string;
   account_name: string;
   sort_code: string;
   account_number: string;
-  iban: string | null;
-  notes_bacs: string | null;
+  iban: string;
+  notes_bacs: string;
 }
 
 interface InvoicePaymentModalProps {
@@ -30,28 +30,32 @@ interface InvoicePaymentModalProps {
 export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
   invoice,
   open,
-  onOpenChange
+  onOpenChange,
 }) => {
-  const [billingSettings, setBillingSettings] = useState<OrgBillingSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const [billingSettings, setBillingSettings] = useState<BillingSettings | null>(null);
+  const [loading, setLoading] = useState(false);
   const [creatingTicket, setCreatingTicket] = useState(false);
-  const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (open) {
+    if (open && invoice) {
       fetchBillingSettings();
     }
-  }, [open]);
+  }, [open, invoice]);
 
   const fetchBillingSettings = async () => {
+    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('org_billing_settings')
-        .select('account_name, sort_code, account_number, iban, notes_bacs')
-        .limit(1)
-        .maybeSingle();
+        .select('*')
+        .single();
 
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+
       setBillingSettings(data);
     } catch (error) {
       console.error('Error fetching billing settings:', error);
@@ -82,19 +86,19 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
   };
 
   const createSupportTicket = async (reason: string) => {
-    if (!invoice) return;
+    if (!user || !invoice) return;
 
     setCreatingTicket(true);
     try {
       const { data, error } = await supabase
         .from('tickets')
         .insert({
-          customer_id: invoice.customer_id,
-          title: `Payment Assistance - Invoice #${invoice.invoice_number}`,
-          description: `Customer requesting ${reason} for invoice #${invoice.invoice_number} (Amount: £${Number(invoice.amount).toLocaleString()})`,
+          customer_id: user.id,
+          title: `Payment assistance for Invoice #${invoice.invoice_number}`,
+          description: `Customer requesting ${reason} for invoice #${invoice.invoice_number} (Amount: £${invoice.amount})`,
           priority: 'medium',
-          category_id: null,
-          source: 'web'
+          source: 'web',
+          tags: ['payment', 'invoice', reason.includes('payment link') ? 'payment_link' : 'support']
         })
         .select()
         .single();
@@ -103,15 +107,15 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
 
       toast({
         title: "Support Ticket Created",
-        description: `Ticket #${data.ticket_number} has been created. We'll get back to you shortly.`,
+        description: `Ticket #${data.ticket_number} has been created. Our team will contact you shortly.`,
       });
 
       onOpenChange(false);
     } catch (error) {
       console.error('Error creating support ticket:', error);
       toast({
-        title: "Ticket Creation Failed",
-        description: "Failed to create support ticket. Please try again.",
+        title: "Failed to Create Ticket",
+        description: "Please try again or contact support directly",
         variant: "destructive",
       });
     } finally {
@@ -121,187 +125,172 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
 
   if (!invoice) return null;
 
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP'
+    }).format(amount);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className={`${isMobile ? 'w-[95vw]' : 'max-w-2xl'}`}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
             Pay Invoice #{invoice.invoice_number}
           </DialogTitle>
-        </DialogHeader>
-
-        <div className="mb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-2xl font-bold">£{Number(invoice.amount).toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">
-                Due: {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'Not specified'}
-              </p>
-            </div>
-            <Badge variant={invoice.status === 'pending' && invoice.due_date && new Date(invoice.due_date) < new Date() ? 'destructive' : 'secondary'}>
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-semibold">{formatAmount(Number(invoice.amount))}</span>
+            <Badge variant={invoice.due_date && new Date(invoice.due_date) < new Date() && invoice.status === 'pending' ? 'destructive' : 'secondary'}>
               {invoice.status.toUpperCase()}
             </Badge>
           </div>
-        </div>
+        </DialogHeader>
 
-        <Tabs defaultValue="bacs" className="w-full">
+        <Tabs defaultValue="bank" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="bacs" className="flex items-center gap-2">
-              <Banknote className="h-4 w-4" />
-              Bank Transfer (BACS)
-            </TabsTrigger>
-            <TabsTrigger value="card" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Card / Apple Pay / Google Pay
-            </TabsTrigger>
+            <TabsTrigger value="bank">Bank Transfer (BACS)</TabsTrigger>
+            <TabsTrigger value="card">Card / Digital Payments</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="bacs" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Bank Transfer Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {loading ? (
-                  <div className="animate-pulse space-y-3">
-                    <div className="h-4 bg-muted rounded w-1/2"></div>
-                    <div className="h-4 bg-muted rounded w-1/3"></div>
-                    <div className="h-4 bg-muted rounded w-2/3"></div>
-                  </div>
-                ) : billingSettings ? (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Account Name</Label>
-                        <div className="flex items-center gap-2">
-                          <Input value={billingSettings.account_name} readOnly />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyToClipboard(billingSettings.account_name, 'Account name')}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Sort Code</Label>
-                        <div className="flex items-center gap-2">
-                          <Input value={billingSettings.sort_code} readOnly />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyToClipboard(billingSettings.sort_code, 'Sort code')}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Account Number</Label>
-                        <div className="flex items-center gap-2">
-                          <Input value={billingSettings.account_number} readOnly />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyToClipboard(billingSettings.account_number, 'Account number')}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {billingSettings.iban && (
-                        <div className="space-y-2">
-                          <Label>IBAN</Label>
-                          <div className="flex items-center gap-2">
-                            <Input value={billingSettings.iban} readOnly />
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => copyToClipboard(billingSettings.iban!, 'IBAN')}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Payment Reference</Label>
+          <TabsContent value="bank" className="space-y-4">
+            {loading ? (
+              <div className="animate-pulse space-y-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-10 bg-muted rounded"></div>
+                ))}
+              </div>
+            ) : billingSettings ? (
+              <div className="space-y-4">
+                <div className="border rounded-lg p-4">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Bank Transfer Details
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Account Name:</span>
                       <div className="flex items-center gap-2">
-                        <Input value={invoice.invoice_number} readOnly className="font-mono" />
+                        <span className="font-medium">{billingSettings.account_name}</span>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(invoice.invoice_number, 'Invoice reference')}
+                          onClick={() => copyToClipboard(billingSettings.account_name, 'Account name')}
                         >
-                          <Copy className="h-4 w-4" />
+                          <Copy className="h-3 w-3" />
                         </Button>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        Please use this as your payment reference
-                      </p>
                     </div>
-
-                    {billingSettings.notes_bacs && (
-                      <div className="p-4 bg-muted rounded-lg">
-                        <p className="text-sm">{billingSettings.notes_bacs}</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Sort Code:</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-medium">{billingSettings.sort_code}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(billingSettings.sort_code, 'Sort code')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Account Number:</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-medium">{billingSettings.account_number}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(billingSettings.account_number, 'Account number')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {billingSettings.iban && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">IBAN:</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-medium">{billingSettings.iban}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => copyToClipboard(billingSettings.iban, 'IBAN')}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
                     )}
-                  </>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>Bank transfer details are not available at the moment.</p>
-                    <p>Please contact support for assistance.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="card" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Card Payment</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center py-8 space-y-4">
-                  <div className="flex justify-center">
-                    <CreditCard className="h-16 w-16 text-muted-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-lg font-medium">Prefer to pay by card, Apple Pay or Google Pay?</p>
-                    <p className="text-sm text-muted-foreground">
-                      We'll send you a secure payment link via email
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Button
-                      onClick={() => createSupportTicket('a secure payment link')}
-                      disabled={creatingTicket}
-                      className="w-full"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      {creatingTicket ? 'Creating Request...' : 'Contact Support for Payment Link'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => createSupportTicket('general payment assistance')}
-                      disabled={creatingTicket}
-                      className="w-full"
-                    >
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Open Support Ticket
-                    </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                  <h5 className="font-medium mb-2">Payment Reference (Important!)</h5>
+                  <div className="flex items-center justify-between bg-background border rounded p-3">
+                    <span className="font-mono font-bold text-lg">{invoice.invoice_number}</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(invoice.invoice_number, 'Invoice reference')}
+                    >
+                      <Copy className="h-4 w-4 mr-1" />
+                      Copy
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Please use this exact reference when making your payment
+                  </p>
+                </div>
+
+                {billingSettings.notes_bacs && (
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <p className="text-sm">{billingSettings.notes_bacs}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Bank transfer details are not available. Please contact support.</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="card" className="space-y-4">
+            <div className="text-center py-8 space-y-4">
+              <CreditCard className="h-12 w-12 mx-auto text-muted-foreground" />
+              <div>
+                <h4 className="font-semibold mb-2">Prefer to pay by card, Apple Pay or Google Pay?</h4>
+                <p className="text-muted-foreground mb-6">
+                  We can provide you with a secure payment link for card and digital wallet payments.
+                </p>
+              </div>
+              
+              <div className={`flex ${isMobile ? 'flex-col gap-3' : 'gap-4 justify-center'}`}>
+                <Button
+                  onClick={() => createSupportTicket('payment link request')}
+                  disabled={creatingTicket}
+                  className="flex items-center gap-2"
+                >
+                  <Phone className="h-4 w-4" />
+                  {creatingTicket ? 'Creating...' : 'Contact Support for Payment Link'}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => createSupportTicket('general payment support')}
+                  disabled={creatingTicket}
+                  className="flex items-center gap-2"
+                >
+                  <Ticket className="h-4 w-4" />
+                  Open Support Ticket
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </DialogContent>

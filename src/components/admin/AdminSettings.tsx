@@ -8,9 +8,10 @@ import ServicePricingDefaults from './settings/ServicePricingDefaults';
 import APIIntegrations from './settings/APIIntegrations';
 import AIAgentSettings from './settings/AIAgentSettings';
 import DomainHostingSettings from './settings/DomainHostingSettings';
-import { InvoiceSettings } from './settings/InvoiceSettings';
+import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
 import { AdminCommunications } from './AdminCommunications';
 import { QuoteTemplateSettings } from './QuoteTemplateSettings';
+import { InvoiceSettings } from './settings/InvoiceSettings';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -80,6 +81,7 @@ const AdminSettings = () => {
 
         <MobileTabsContent value="invoices" className="space-y-6">
           <InvoiceSettings isSuperAdmin={isSuperAdmin} />
+          <InvoiceTemplateSettings />
         </MobileTabsContent>
 
         <MobileTabsContent value="quotes" className="space-y-6">

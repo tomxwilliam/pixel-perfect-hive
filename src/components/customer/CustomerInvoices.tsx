@@ -370,6 +370,12 @@ export const CustomerInvoices = () => {
         onInvoiceUpdated={fetchInvoices}
       />
       
+      <InvoicePaymentModal
+        invoice={selectedInvoice}
+        open={paymentModalOpen}
+        onOpenChange={setPaymentModalOpen}
+      />
+      
       <InvoicePaymentModal 
         invoice={selectedInvoice}
         open={paymentModalOpen}
