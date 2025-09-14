@@ -217,6 +217,19 @@ const AdminHostingManagement = () => {
               <Badge variant={hostingIntegration?.is_connected ? "default" : "destructive"}>
                 {hostingIntegration?.is_connected ? "Connected" : "Not Connected"}
               </Badge>
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => {
+                  toast({
+                    title: "API Configuration",
+                    description: "Opening API integration settings...",
+                  });
+                }}
+              >
+                <Key className="h-4 w-4 mr-1" />
+                Add API
+              </Button>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm">
