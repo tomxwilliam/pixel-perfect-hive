@@ -8,7 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Server, Play, Pause, Trash2, Eye, AlertTriangle, Settings, ExternalLink } from "lucide-react";
+import { 
+  Server, Play, Pause, Trash2, Eye, AlertTriangle, Settings, ExternalLink,
+  Globe, Database, Mail, Shield, FileText, HardDrive, Users, Lock,
+  Activity, BarChart3, Terminal, Folder, Download, Upload, Key,
+  Wifi, MonitorSpeaker, Cpu, MemoryStick, Network, Clock
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -337,11 +342,511 @@ const AdminHostingManagement = () => {
       </Card>
 
       <Tabs defaultValue="subscriptions" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="subscriptions">All Subscriptions</TabsTrigger>
-          <TabsTrigger value="packages">Hosting Packages</TabsTrigger>
-          <TabsTrigger value="requests">Provisioning Requests</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
+          <TabsTrigger value="cpanel">cPanel Dashboard</TabsTrigger>
+          <TabsTrigger value="whm">WHM Control</TabsTrigger>
+          <TabsTrigger value="packages">Packages</TabsTrigger>
+          <TabsTrigger value="requests">Requests</TabsTrigger>
+          <TabsTrigger value="monitoring">Monitoring</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="cpanel" className="space-y-4">
+          <div className="grid gap-6">
+            {/* cPanel Header */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Terminal className="h-5 w-5" />
+                  cPanel Control Interface
+                </CardTitle>
+                <CardDescription>
+                  Full hosting control panel functionality for customer accounts
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* cPanel Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              
+              {/* Files Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Folder className="h-4 w-4 text-blue-500" />
+                    File Manager
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Manage files and directories</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">Web Root</Badge>
+                    <Badge variant="outline" className="text-xs">FTP</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Email Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-green-500" />
+                    Email Accounts
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Manage email addresses</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">IMAP</Badge>
+                    <Badge variant="outline" className="text-xs">POP3</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Database Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Database className="h-4 w-4 text-purple-500" />
+                    MySQL Databases
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Database management</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">phpMyAdmin</Badge>
+                    <Badge variant="outline" className="text-xs">Remote</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Domain Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-orange-500" />
+                    Domains
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Domain management</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">Subdomains</Badge>
+                    <Badge variant="outline" className="text-xs">Redirects</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Security Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-red-500" />
+                    Security
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">SSL & protection</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">SSL/TLS</Badge>
+                    <Badge variant="outline" className="text-xs">IP Blocker</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Software Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Download className="h-4 w-4 text-indigo-500" />
+                    Software
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">App installer</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">WordPress</Badge>
+                    <Badge variant="outline" className="text-xs">Softaculous</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Backup Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <HardDrive className="h-4 w-4 text-cyan-500" />
+                    Backup
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Backup & restore</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">Full</Badge>
+                    <Badge variant="outline" className="text-xs">Partial</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Metrics Section */}
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 text-teal-500" />
+                    Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Usage statistics</p>
+                  <div className="mt-2 flex gap-1">
+                    <Badge variant="outline" className="text-xs">Bandwidth</Badge>
+                    <Badge variant="outline" className="text-xs">Storage</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <Button variant="outline" className="h-20 flex flex-col gap-2">
+                    <Mail className="h-5 w-5" />
+                    <span className="text-xs">Create Email</span>
+                  </Button>
+                  <Button variant="outline" className="h-20 flex flex-col gap-2">
+                    <Database className="h-5 w-5" />
+                    <span className="text-xs">New Database</span>
+                  </Button>
+                  <Button variant="outline" className="h-20 flex flex-col gap-2">
+                    <Globe className="h-5 w-5" />
+                    <span className="text-xs">Add Subdomain</span>
+                  </Button>
+                  <Button variant="outline" className="h-20 flex flex-col gap-2">
+                    <Key className="h-5 w-5" />
+                    <span className="text-xs">Install SSL</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="whm" className="space-y-4">
+          <div className="grid gap-6">
+            {/* WHM Header */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Server className="h-5 w-5" />
+                  WHM (Web Host Manager) Control
+                </CardTitle>
+                <CardDescription>
+                  Server administration and reseller management interface
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Server Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Cpu className="h-8 w-8 text-blue-500" />
+                    <div>
+                      <p className="text-sm font-medium">CPU Usage</p>
+                      <p className="text-2xl font-bold">23%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <MemoryStick className="h-8 w-8 text-green-500" />
+                    <div>
+                      <p className="text-sm font-medium">Memory</p>
+                      <p className="text-2xl font-bold">67%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <HardDrive className="h-8 w-8 text-purple-500" />
+                    <div>
+                      <p className="text-sm font-medium">Disk Usage</p>
+                      <p className="text-2xl font-bold">45%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <Network className="h-8 w-8 text-orange-500" />
+                    <div>
+                      <p className="text-sm font-medium">Network</p>
+                      <p className="text-2xl font-bold text-green-600">Online</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* WHM Functions Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    Account Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Create, modify, and manage accounts</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs">Active: 127</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-green-500" />
+                    DNS Management
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">DNS zone management</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs">Zones: 89</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-red-500" />
+                    Security Center
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Security settings and monitoring</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs text-green-600">Secure</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-purple-500" />
+                    Email Routing
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Mail server configuration</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs text-green-600">Running</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-orange-500" />
+                    Package Manager
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">Hosting packages and features</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs">Packages: 5</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-cyan-500" />
+                    Server Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs text-muted-foreground">System health monitoring</p>
+                  <div className="mt-2">
+                    <Badge variant="outline" className="text-xs text-green-600">Healthy</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Server Services Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Server Services</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">Apache</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">MySQL</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">Exim</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">cPanel</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">Dovecot</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">Pure-FTPd</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">SSH</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                  <div className="flex items-center justify-between p-3 border rounded">
+                    <span className="text-sm">DNS</span>
+                    <Badge variant="outline" className="text-green-600">Running</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="monitoring" className="space-y-4">
+          <div className="grid gap-6">
+            {/* Monitoring Header */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MonitorSpeaker className="h-5 w-5" />
+                  Server Monitoring & Analytics
+                </CardTitle>
+                <CardDescription>
+                  Real-time server performance and resource monitoring
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Resource Usage Charts */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">CPU Usage (24h)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 bg-muted rounded flex items-center justify-center">
+                    <p className="text-muted-foreground">CPU Usage Chart</p>
+                  </div>
+                  <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-bold text-blue-600">23%</p>
+                      <p className="text-xs text-muted-foreground">Current</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">18%</p>
+                      <p className="text-xs text-muted-foreground">Average</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-red-600">87%</p>
+                      <p className="text-xs text-muted-foreground">Peak</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Memory Usage (24h)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 bg-muted rounded flex items-center justify-center">
+                    <p className="text-muted-foreground">Memory Usage Chart</p>
+                  </div>
+                  <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-bold text-blue-600">67%</p>
+                      <p className="text-xs text-muted-foreground">Current</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">62%</p>
+                      <p className="text-xs text-muted-foreground">Average</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-red-600">94%</p>
+                      <p className="text-xs text-muted-foreground">Peak</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-3 border rounded">
+                    <Clock className="h-4 w-4 text-green-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Account created: user@example.com</p>
+                      <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 border rounded">
+                    <Clock className="h-4 w-4 text-blue-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">SSL certificate installed for domain.com</p>
+                      <p className="text-xs text-muted-foreground">15 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 border rounded">
+                    <Clock className="h-4 w-4 text-orange-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Backup completed for 12 accounts</p>
+                      <p className="text-xs text-muted-foreground">1 hour ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 border rounded">
+                    <Clock className="h-4 w-4 text-purple-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Database created: shop_db</p>
+                      <p className="text-xs text-muted-foreground">2 hours ago</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
         <TabsContent value="subscriptions" className="space-y-4">
           <Card>
