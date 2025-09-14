@@ -12,7 +12,12 @@ import {
   CheckCircle,
   XCircle,
   Server,
-  AlertTriangle
+  AlertTriangle,
+  Globe,
+  Bot,
+  Zap,
+  Power,
+  PowerOff
 } from 'lucide-react';
 
 interface APIIntegration {
@@ -72,14 +77,15 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     return names[type] || type;
   };
 
-  const getIntegrationIcon = (type: string) => {
+  const getIntegrationIcon = (type: string, isConnected: boolean) => {
+    const iconClass = `h-6 w-6 ${isConnected ? 'text-green-500' : 'text-muted-foreground'}`;
     const icons: Record<string, React.ReactNode> = {
-      unlimited_web_hosting: <Server className="h-5 w-5" />,
-      openprovider: <Server className="h-5 w-5" />,
-      whm_cpanel: <Server className="h-5 w-5" />,
-      google_ai: <Settings className="h-5 w-5" />
+      unlimited_web_hosting: <Server className={iconClass} />,
+      openprovider: <Globe className={iconClass} />,
+      whm_cpanel: <Server className={iconClass} />,
+      google_ai: <Bot className={iconClass} />
     };
-    return icons[type] || <Link2 className="h-5 w-5" />;
+    return icons[type] || <Link2 className={iconClass} />;
   };
 
   const getIntegrationDescription = (type: string): string => {
@@ -298,7 +304,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
             <CardHeader>
               <CardTitle className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  {getIntegrationIcon(integration.integration_type)}
+                  {getIntegrationIcon(integration.integration_type, integration.is_connected)}
                   <div>
                     <h3 className="text-lg font-semibold">
                       {getIntegrationName(integration.integration_type)}
@@ -310,19 +316,23 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Badge variant={integration.is_connected ? "default" : "secondary"}>
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
+                    integration.is_connected 
+                      ? 'bg-green-100 text-green-700 border border-green-200' 
+                      : 'bg-gray-100 text-gray-600 border border-gray-200'
+                  }`}>
                     {integration.is_connected ? (
                       <>
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Connected
+                        <Power className="h-3 w-3" />
+                        <span className="text-sm font-medium">Connected</span>
                       </>
                     ) : (
                       <>
-                        <XCircle className="h-3 w-3 mr-1" />
-                        Disconnected
+                        <PowerOff className="h-3 w-3" />
+                        <span className="text-sm font-medium">Disconnected</span>
                       </>
                     )}
-                  </Badge>
+                  </div>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -345,16 +355,28 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                         size="sm"
                         onClick={() => handleDisconnect(integration)}
                         disabled={loading}
+                        className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
                       >
+                        <PowerOff className="h-4 w-4 mr-2" />
                         Disconnect
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-green-200 text-green-600 cursor-default"
+                        disabled
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Active
                       </Button>
                     </div>
                   ) : (
                     <Button
-                      variant="default"
+                      variant={isSuperAdmin ? "default" : "secondary"}
                       size="sm"
                       onClick={() => handleConnect(integration)}
                       disabled={loading || !isSuperAdmin}
+                      className={isSuperAdmin ? "bg-green-600 hover:bg-green-700" : ""}
                     >
                       {loading ? (
                         <>
@@ -362,7 +384,10 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                           Connecting...
                         </>
                       ) : (
-                        'Connect'
+                        <>
+                          <Zap className="h-4 w-4 mr-2" />
+                          Connect
+                        </>
                       )}
                     </Button>
                   )}
