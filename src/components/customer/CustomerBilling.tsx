@@ -10,11 +10,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { InvoicePaymentModal } from "./InvoicePaymentModal";
 
 const CustomerBilling = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [processingPayment, setProcessingPayment] = useState<string | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
 
   // Fetch customer invoices
   const { data: invoices, isLoading: invoicesLoading, refetch: refetchInvoices } = useQuery({
@@ -46,34 +48,9 @@ const CustomerBilling = () => {
     }
   });
 
-  const handlePayInvoice = async (invoiceId: string) => {
-    if (!user) return;
-    
-    setProcessingPayment(invoiceId);
-    try {
-      const response = await supabase.functions.invoke('process-payment', {
-        body: { invoiceId }
-      });
-
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      // Redirect to Stripe checkout
-      if (response.data.checkoutUrl) {
-        window.open(response.data.checkoutUrl, '_blank');
-      }
-
-    } catch (error) {
-      console.error('Payment processing failed:', error);
-      toast({
-        title: "Payment Failed",
-        description: "Unable to process payment. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setProcessingPayment(null);
-    }
+  const handlePayInvoice = (invoice: any) => {
+    setSelectedInvoice(invoice);
+    setPaymentModalOpen(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -181,11 +158,10 @@ const CustomerBilling = () => {
                             {invoice.status === 'pending' && (
                               <Button
                                 size="sm"
-                                onClick={() => handlePayInvoice(invoice.id)}
-                                disabled={processingPayment === invoice.id}
+                                onClick={() => handlePayInvoice(invoice)}
                               >
                                 <CreditCard className="h-4 w-4 mr-1" />
-                                {processingPayment === invoice.id ? 'Processing...' : 'Pay Now'}
+                                Pay Now
                               </Button>
                             )}
                             <Button
@@ -317,6 +293,12 @@ const CustomerBilling = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      <InvoicePaymentModal
+        invoice={selectedInvoice}
+        open={paymentModalOpen}
+        onOpenChange={setPaymentModalOpen}
+      />
     </div>
   );
 };
