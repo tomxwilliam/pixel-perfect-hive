@@ -177,7 +177,9 @@ function shouldUseTool(query: string, context: string): boolean {
     'invoice', 'payment', 'bill',
     'project', 'task', 'deadline',
     'search', 'find', 'lookup',
-    'update', 'change', 'modify'
+    'update', 'change', 'modify',
+    'hosting', 'domain', 'cpanel', 'server',
+    'email', 'database', 'backup'
   ];
   
   return toolKeywords.some(keyword => 
@@ -205,6 +207,21 @@ async function executeTools(query: string, context: string, userId: string, cont
     // Project creation
     if (query.toLowerCase().includes('create project')) {
       return await createProject(supabase, contactId || userId, query);
+    }
+
+    // Hosting management
+    if (query.toLowerCase().includes('hosting') || query.toLowerCase().includes('domain') || query.toLowerCase().includes('cpanel') || query.toLowerCase().includes('server')) {
+      return await manageHosting(supabase, contactId || userId, query);
+    }
+
+    // Email management
+    if (query.toLowerCase().includes('email') && (query.toLowerCase().includes('create') || query.toLowerCase().includes('setup'))) {
+      return await manageEmailAccounts(supabase, contactId || userId, query);
+    }
+
+    // Database management
+    if (query.toLowerCase().includes('database') && (query.toLowerCase().includes('create') || query.toLowerCase().includes('backup'))) {
+      return await manageDatabases(supabase, contactId || userId, query);
     }
 
     return { success: false, error: 'No matching tool found' };
@@ -336,6 +353,141 @@ async function createProject(supabase: any, customerId: string, description: str
   }
 }
 
+async function manageHosting(supabase: any, customerId: string, query: string): Promise<ToolResult> {
+  try {
+    const lowercaseQuery = query.toLowerCase();
+    
+    if (lowercaseQuery.includes('create') || lowercaseQuery.includes('setup')) {
+      // Create hosting account
+      const hostingDetails = analyzeHostingRequirements(query);
+      
+      const { data, error } = await supabase
+        .from('hosting_accounts')
+        .insert({
+          customer_id: customerId,
+          domain: hostingDetails.domain,
+          package_name: hostingDetails.package,
+          status: 'pending_setup',
+          billing_cycle: hostingDetails.billingCycle,
+          auto_renewal: true
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return {
+        success: true,
+        data: {
+          hosting_id: data.id,
+          domain: data.domain,
+          package: data.package_name,
+          status: data.status,
+          message: 'Hosting account setup initiated. You will receive setup instructions shortly.'
+        }
+      };
+    }
+    
+    if (lowercaseQuery.includes('status') || lowercaseQuery.includes('check')) {
+      // Check hosting status
+      const { data, error } = await supabase
+        .from('hosting_accounts')
+        .select('*')
+        .eq('customer_id', customerId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return {
+        success: true,
+        data: {
+          accounts: data,
+          count: data.length,
+          message: `Found ${data.length} hosting account(s)`
+        }
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        message: 'I can help you with hosting account creation, status checks, domain management, and server monitoring. What would you like to do?'
+      }
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+async function manageEmailAccounts(supabase: any, customerId: string, query: string): Promise<ToolResult> {
+  try {
+    const emailDetails = analyzeEmailRequirements(query);
+    
+    // Log email request for manual setup
+    const { data, error } = await supabase
+      .from('tickets')
+      .insert({
+        customer_id: customerId,
+        title: 'Email Account Setup Request',
+        description: `Email setup request: ${emailDetails.email} for domain ${emailDetails.domain}`,
+        priority: 'medium',
+        status: 'open',
+        source: 'ai_portal',
+        category: 'email_setup'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: {
+        ticket_id: data.id,
+        email: emailDetails.email,
+        domain: emailDetails.domain,
+        message: 'Email account setup request created. Our team will configure your email account within 2 hours.'
+      }
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+async function manageDatabases(supabase: any, customerId: string, query: string): Promise<ToolResult> {
+  try {
+    const dbDetails = analyzeDatabaseRequirements(query);
+    
+    // Log database request for manual setup
+    const { data, error } = await supabase
+      .from('tickets')
+      .insert({
+        customer_id: customerId,
+        title: 'Database Management Request',
+        description: `Database request: ${dbDetails.type} - ${dbDetails.description}`,
+        priority: 'medium',
+        status: 'open',
+        source: 'ai_portal',
+        category: 'database'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: {
+        ticket_id: data.id,
+        database_type: dbDetails.type,
+        message: 'Database management request created. Our team will handle your database needs within 4 hours.'
+      }
+    };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
 // Helper functions
 function extractTicketTitle(description: string): string {
   const sentences = description.split(/[.!?]/);
@@ -402,6 +554,62 @@ function extractSearchTerm(query: string): string {
   }
   
   return query.replace(/[^\w\s]/gi, '');
+}
+
+function analyzeHostingRequirements(query: string): { domain: string, package: string, billingCycle: string } {
+  const lowercaseQuery = query.toLowerCase();
+  
+  // Extract domain if mentioned
+  const domainMatch = query.match(/([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/);
+  const domain = domainMatch ? domainMatch[1] : 'pending-domain.com';
+  
+  // Determine package based on requirements
+  let package = 'basic';
+  if (lowercaseQuery.includes('business') || lowercaseQuery.includes('premium')) {
+    package = 'business';
+  } else if (lowercaseQuery.includes('enterprise') || lowercaseQuery.includes('dedicated')) {
+    package = 'enterprise';
+  }
+  
+  // Determine billing cycle
+  let billingCycle = 'monthly';
+  if (lowercaseQuery.includes('yearly') || lowercaseQuery.includes('annual')) {
+    billingCycle = 'yearly';
+  }
+  
+  return { domain, package, billingCycle };
+}
+
+function analyzeEmailRequirements(query: string): { email: string, domain: string } {
+  const emailMatch = query.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  const domainMatch = query.match(/([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/);
+  
+  const email = emailMatch ? emailMatch[1] : 'info@domain.com';
+  const domain = domainMatch ? domainMatch[1] : 'domain.com';
+  
+  return { email, domain };
+}
+
+function analyzeDatabaseRequirements(query: string): { type: string, description: string } {
+  const lowercaseQuery = query.toLowerCase();
+  
+  let type = 'mysql'; // default
+  if (lowercaseQuery.includes('postgresql') || lowercaseQuery.includes('postgres')) {
+    type = 'postgresql';
+  } else if (lowercaseQuery.includes('mongodb') || lowercaseQuery.includes('mongo')) {
+    type = 'mongodb';
+  }
+  
+  let description = 'Database setup request';
+  if (lowercaseQuery.includes('backup')) {
+    description = 'Database backup request';
+  } else if (lowercaseQuery.includes('restore')) {
+    description = 'Database restore request';
+  } else if (lowercaseQuery.includes('migrate')) {
+    description = 'Database migration request';
+  }
+  
+  return { type, description };
 }
 
 function extractNextAction(response: string): string | null {
