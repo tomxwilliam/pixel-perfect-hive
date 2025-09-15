@@ -366,7 +366,7 @@ async function manageHosting(supabase: any, customerId: string, query: string): 
         .insert({
           customer_id: customerId,
           domain: hostingDetails.domain,
-          package_name: hostingDetails.package,
+          package_name: hostingDetails.packageType,
           status: 'pending_setup',
           billing_cycle: hostingDetails.billingCycle,
           auto_renewal: true
@@ -556,7 +556,7 @@ function extractSearchTerm(query: string): string {
   return query.replace(/[^\w\s]/gi, '');
 }
 
-function analyzeHostingRequirements(query: string): { domain: string, package: string, billingCycle: string } {
+function analyzeHostingRequirements(query: string): { domain: string, packageType: string, billingCycle: string } {
   const lowercaseQuery = query.toLowerCase();
   
   // Extract domain if mentioned
@@ -564,11 +564,11 @@ function analyzeHostingRequirements(query: string): { domain: string, package: s
   const domain = domainMatch ? domainMatch[1] : 'pending-domain.com';
   
   // Determine package based on requirements
-  let package = 'basic';
+  let packageType = 'basic';
   if (lowercaseQuery.includes('business') || lowercaseQuery.includes('premium')) {
-    package = 'business';
+    packageType = 'business';
   } else if (lowercaseQuery.includes('enterprise') || lowercaseQuery.includes('dedicated')) {
-    package = 'enterprise';
+    packageType = 'enterprise';
   }
   
   // Determine billing cycle
@@ -577,7 +577,7 @@ function analyzeHostingRequirements(query: string): { domain: string, package: s
     billingCycle = 'yearly';
   }
   
-  return { domain, package, billingCycle };
+  return { domain, packageType, billingCycle };
 }
 
 function analyzeEmailRequirements(query: string): { email: string, domain: string } {
