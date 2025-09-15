@@ -106,11 +106,7 @@ const About = () => {
                   <span className="text-3xl mr-3">🐝</span>
                   <h3 className="text-2xl font-bold text-accent">Currently Buzzing: BeeVerse</h3>
                 </div>
-                <p className="text-lg mb-6 max-w-2xl mx-auto text-foreground">
-                  Our flagship game Beevers showcases everything we stand for: addictive gameplay, 
-                  smart systems, and polish that keeps players coming back. It's not just a game — 
-                  it's a demonstration of our technical capabilities and design philosophy.
-                </p>
+                <p className="text-lg mb-6 max-w-2xl mx-auto text-foreground">Our flagship game BeeVerse showcases everything we stand for: addictive gameplay, smart systems, and polish that keeps players coming back. It's not just a game — it's a demonstration of our technical capabilities and design philosophy.</p>
                 <p className="text-accent font-medium">
                   The tech stack behind Beevers is rock solid — and reusable across industries.
                 </p>
