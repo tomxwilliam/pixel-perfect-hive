@@ -51,7 +51,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       const { data, error } = await supabase
         .from('api_integrations')
         .select('*')
-        .in('integration_type', ['unlimited_web_hosting', 'openprovider', 'whm_cpanel', 'google_ai'])
+        .in('integration_type', ['unlimited_web_hosting', 'enom', 'whm_cpanel', 'google_ai'])
         .order('integration_name', { ascending: true });
 
       if (error) throw error;
@@ -70,7 +70,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const getIntegrationName = (type: string): string => {
     const names: Record<string, string> = {
       unlimited_web_hosting: 'Unlimited Web Hosting UK',
-      openprovider: 'OpenProvider Domains',
+      enom: 'eNom Domain Reseller',
       whm_cpanel: 'WHM/cPanel',
       google_ai: 'Google AI Agent'
     };
@@ -81,7 +81,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
     const iconClass = `h-6 w-6 ${isConnected ? 'text-green-500' : 'text-muted-foreground'}`;
     const icons: Record<string, React.ReactNode> = {
       unlimited_web_hosting: <Server className={iconClass} />,
-      openprovider: <Globe className={iconClass} />,
+      enom: <Globe className={iconClass} />,
       whm_cpanel: <Server className={iconClass} />,
       google_ai: <Bot className={iconClass} />
     };
@@ -91,7 +91,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const getIntegrationDescription = (type: string): string => {
     const descriptions: Record<string, string> = {
       unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
-      openprovider: 'Register and manage domains through OpenProvider API for automated domain registration and DNS management.',
+      enom: 'Register and manage domains through eNom API for automated domain registration and DNS management.',
       whm_cpanel: 'Manage cPanel hosting accounts through WHM (Web Host Manager) reseller interface for complete hosting automation.',
       google_ai: 'Leverage Google AI (Gemini) for intelligent customer support, content generation, and automated assistance.'
     };
@@ -135,18 +135,21 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
           fetchIntegrations();
         }
-      } else if (integration.integration_type === 'openprovider') {
-        // For OpenProvider domains
-        const apiKey = prompt('Enter your OpenProvider API Key:');
-        const apiUrl = prompt('Enter your OpenProvider API URL:', 'https://api.openprovider.eu');
+      } else if (integration.integration_type === 'enom') {
+        // For eNom domains
+        const apiUser = prompt('Enter your eNom API User:');
+        const apiToken = prompt('Enter your eNom API Token:');
         
-        if (apiKey && apiUrl) {
+        if (apiUser && apiToken) {
           const { error } = await supabase
             .from('api_integrations')
             .update({
               is_connected: true,
-              access_token: apiKey,
-              config_data: { api_url: apiUrl },
+              access_token: apiToken,
+              config_data: { 
+                api_url: 'https://reseller.enom.com/interface.asp',
+                api_user: apiUser
+              },
               last_sync_at: new Date().toISOString()
             })
             .eq('id', integration.id);
@@ -155,7 +158,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
           toast({
             title: "Connected",
-            description: "OpenProvider domain integration connected successfully",
+            description: "eNom domain integration connected successfully",
           });
 
           fetchIntegrations();
@@ -406,8 +409,11 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                         <div>Auto-provision: {integration.config_data.auto_provision ? 'Enabled' : 'Disabled'}</div>
                       </>
                     )}
-                    {integration.integration_type === 'openprovider' && (
-                      <div>API URL: {integration.config_data.api_url}</div>
+                    {integration.integration_type === 'enom' && (
+                      <>
+                        <div>API URL: {integration.config_data.api_url}</div>
+                        <div>API User: {integration.config_data.api_user}</div>
+                      </>
                     )}
                     {integration.integration_type === 'unlimited_web_hosting' && (
                       <div>API URL: {integration.config_data.api_url}</div>

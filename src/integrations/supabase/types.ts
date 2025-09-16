@@ -392,12 +392,12 @@ export type Database = {
           customer_id: string
           dns_management: boolean | null
           domain_name: string
+          enom_domain_id: string | null
           expiry_date: string | null
           id: string
           invoice_id: string | null
           nameservers: string[] | null
           notes: string | null
-          openprovider_domain_id: string | null
           price: number
           registration_date: string | null
           status: Database["public"]["Enums"]["domain_status"]
@@ -410,12 +410,12 @@ export type Database = {
           customer_id: string
           dns_management?: boolean | null
           domain_name: string
+          enom_domain_id?: string | null
           expiry_date?: string | null
           id?: string
           invoice_id?: string | null
           nameservers?: string[] | null
           notes?: string | null
-          openprovider_domain_id?: string | null
           price: number
           registration_date?: string | null
           status?: Database["public"]["Enums"]["domain_status"]
@@ -428,12 +428,12 @@ export type Database = {
           customer_id?: string
           dns_management?: boolean | null
           domain_name?: string
+          enom_domain_id?: string | null
           expiry_date?: string | null
           id?: string
           invoice_id?: string | null
           nameservers?: string[] | null
           notes?: string | null
-          openprovider_domain_id?: string | null
           price?: number
           registration_date?: string | null
           status?: Database["public"]["Enums"]["domain_status"]

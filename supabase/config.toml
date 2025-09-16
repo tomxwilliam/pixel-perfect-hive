@@ -48,8 +48,6 @@ verify_jwt = true
 [functions.domain-register]
 verify_jwt = true
 
-[functions.openprovider_login]
-verify_jwt = true
 
 [functions.send-domain-hosting-email]
 verify_jwt = true

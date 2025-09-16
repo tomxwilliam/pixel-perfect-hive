@@ -47,71 +47,55 @@ const handler = async (req: Request): Promise<Response> => {
       '.net': 13.99
     };
 
-    const apiKey = Deno.env.get('OPENPROVIDER_API_KEY');
-    const apiSecret = Deno.env.get('OPENPROVIDER_API_SECRET');
+    const enomUser = Deno.env.get('ENOM_API_USER');
+    const enomToken = Deno.env.get('ENOM_API_TOKEN');
 
     let results: DomainResult[] = [];
 
-    if (apiKey && apiSecret) {
-      // Real OpenProvider API integration
+    if (enomUser && enomToken) {
+      // Real eNom API integration
       try {
-        console.log('Using OpenProvider API for domain search');
+        console.log('Using eNom API for domain search');
         
-        // OpenProvider authentication
-        const authResponse = await fetch('https://api.openprovider.eu/v1beta/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: apiKey,
-            password: apiSecret
-          })
-        });
+        // Check each domain with eNom API
+        for (const tld of tlds) {
+          const cleanTld = tld.replace('.', '');
+          const searchUrl = new URL('https://reseller.enom.com/interface.asp');
+          searchUrl.searchParams.set('command', 'Check');
+          searchUrl.searchParams.set('uid', enomUser);
+          searchUrl.searchParams.set('pw', enomToken);
+          searchUrl.searchParams.set('responsetype', 'JSON');
+          searchUrl.searchParams.set('domain', domain);
+          searchUrl.searchParams.set('tld', cleanTld);
 
-        if (!authResponse.ok) {
-          throw new Error('OpenProvider authentication failed');
+          const response = await fetch(searchUrl.toString());
+          
+          if (!response.ok) {
+            throw new Error(`eNom API request failed: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log('eNom API response:', data);
+          
+          // Parse eNom response
+          const isAvailable = data.RRPCode === '210' || data.DomainAvailable === '1';
+          
+          results.push({
+            domain: `${domain}.${cleanTld}`,
+            available: isAvailable,
+            price: domainPricing[tld] || 12.99,
+            tld: tld,
+            premium: data.IsPremium === '1' || false
+          });
         }
-
-        const authData = await authResponse.json();
-        const token = authData.data.token;
-
-        // Search domains
-        const searchResponse = await fetch('https://api.openprovider.eu/v1beta/domains/check', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            domains: tlds.map(tld => ({
-              name: domain,
-              extension: tld.replace('.', '')
-            }))
-          })
-        });
-
-        if (!searchResponse.ok) {
-          throw new Error('Domain search failed');
-        }
-
-        const searchData = await searchResponse.json();
-        
-        results = searchData.data.results.map((result: any) => ({
-          domain: `${result.domain.name}.${result.domain.extension}`,
-          available: result.status === 'free',
-          price: result.price?.product?.price || domainPricing[`.${result.domain.extension}`] || 12.99,
-          tld: `.${result.domain.extension}`,
-          premium: result.premium || false
-        }));
 
       } catch (error) {
-        console.error('OpenProvider API error:', error);
+        console.error('eNom API error:', error);
         // Fall back to mock data if API fails
         results = generateMockResults(domain, tlds, domainPricing);
       }
     } else {
-      console.log('OpenProvider credentials not configured, using mock data');
+      console.log('eNom credentials not configured, using mock data');
       // Mock data when credentials not provided
       results = generateMockResults(domain, tlds, domainPricing);
     }

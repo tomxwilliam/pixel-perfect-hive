@@ -178,7 +178,7 @@ export const DomainDetailsModal: React.FC<DomainDetailsModalProps> = ({
 
           {/* Additional Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {domain.openprovider_domain_id && (
+            {domain.enom_domain_id && (
               <Card>
                 <CardContent className="p-6">
                   <h3 className="font-semibold mb-3 flex items-center">
@@ -186,7 +186,7 @@ export const DomainDetailsModal: React.FC<DomainDetailsModalProps> = ({
                     Provider Information
                   </h3>
                   <div className="text-sm">
-                    <span className="font-medium">Provider ID:</span> {domain.openprovider_domain_id}
+                    <span className="font-medium">eNom Domain ID:</span> {domain.enom_domain_id}
                   </div>
                 </CardContent>
               </Card>
