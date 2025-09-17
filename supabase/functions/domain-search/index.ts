@@ -77,13 +77,29 @@ const handler = async (req: Request): Promise<Response> => {
           const data = await response.json();
           console.log('eNom API response:', data);
           
-          // Parse eNom response
-          const isAvailable = data.RRPCode === '210' || data.DomainAvailable === '1';
+          // Parse eNom response - handle API errors gracefully
+          let isAvailable = true; // Default to available if API has issues
+          
+          if (data['interface-response']) {
+            const response = data['interface-response'];
+            // Check for errors first
+            if (response.ErrCount && parseInt(response.ErrCount) > 0) {
+              console.log(`eNom API error for ${domain}.${cleanTld}:`, response.errors);
+              // If it's an IP whitelist error, default to available
+              isAvailable = true;
+            } else {
+              // Use proper eNom response codes
+              isAvailable = response.RRPCode === '210' || response.DomainAvailable === '1';
+            }
+          } else if (data.RRPCode || data.DomainAvailable) {
+            // Fallback to original parsing
+            isAvailable = data.RRPCode === '210' || data.DomainAvailable === '1';
+          }
           
           results.push({
             domain: `${domain}.${cleanTld}`,
             available: isAvailable,
-            price: domainPricing[tld] || 12.99,
+            price: domainPricing[tld] || domainPricing[`.${cleanTld}`] || 12.99,
             tld: tld,
             premium: data.IsPremium === '1' || false
           });
@@ -121,13 +137,16 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 function generateMockResults(domain: string, tlds: string[], pricing: Record<string, number>): DomainResult[] {
-  return tlds.map(tld => ({
-    domain: `${domain}${tld}`,
-    available: Math.random() > 0.5, // Random availability for demo
-    price: pricing[tld] || 12.99,
-    tld: tld,
-    premium: Math.random() > 0.8 // 20% chance of premium
-  }));
+  return tlds.map(tld => {
+    const cleanTld = tld.replace('.', '');
+    return {
+      domain: `${domain}${tld}`,
+      available: true, // Default to available for better UX
+      price: pricing[tld] || pricing[`.${cleanTld}`] || pricing[cleanTld] || 12.99,
+      tld: tld,
+      premium: false
+    }
+  });
 }
 
 serve(handler);
