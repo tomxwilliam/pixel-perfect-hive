@@ -19,6 +19,7 @@ import { AIIntegrationForm } from '@/components/project-forms/AIIntegrationForm'
 import { FileUpload, FileList } from '@/components/ui/file-upload';
 import { UploadedFile } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
+import DomainSearch from '@/components/customer/DomainSearch';
 
 interface ProjectFormData {
   title: string;
@@ -196,7 +197,7 @@ const NewProject = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -235,7 +236,8 @@ const NewProject = () => {
       case 1: return "Basic Information";
       case 2: return "Project Details";
       case 3: return "Additional Requirements";
-      case 4: return "Review & Submit";
+      case 4: return "Domain Registration";
+      case 5: return "Review & Submit";
       default: return "Project Setup";
     }
   };
@@ -245,7 +247,8 @@ const NewProject = () => {
       case 1: return "Tell us about your project basics";
       case 2: return "Provide specific details for your project type";
       case 3: return "Upload any additional files or requirements";
-      case 4: return "Review your project details before submission";
+      case 4: return "Search and register a domain for your project (optional)";
+      case 5: return "Review your project details before submission";
       default: return "";
     }
   };
@@ -268,7 +271,7 @@ const NewProject = () => {
             <div className={isMobile ? 'text-center' : ''}>
               <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>Start New Project</h1>
               <p className="text-muted-foreground">
-                Step {currentStep} of 4: {getStepTitle()}
+                Step {currentStep} of 5: {getStepTitle()}
               </p>
             </div>
           </div>
@@ -281,7 +284,7 @@ const NewProject = () => {
                   <CardTitle className="text-lg">Progress</CardTitle>
                 </CardHeader>
                 <CardContent className={`space-y-4 ${isMobile ? 'pb-4' : ''}`}>
-                  <div className={`${isMobile ? 'grid grid-cols-4 gap-2' : 'space-y-4'}`}>
+                  <div className={`${isMobile ? 'grid grid-cols-5 gap-2' : 'space-y-4'}`}>
                     <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
                       <Badge variant={currentStep >= 1 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>1</Badge>
                       <span className={`${currentStep >= 1 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
@@ -303,6 +306,12 @@ const NewProject = () => {
                     <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
                       <Badge variant={currentStep >= 4 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>4</Badge>
                       <span className={`${currentStep >= 4 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
+                        Domain
+                      </span>
+                    </div>
+                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
+                      <Badge variant={currentStep >= 5 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>5</Badge>
+                      <span className={`${currentStep >= 5 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
                         Review & Submit
                       </span>
                     </div>
@@ -418,8 +427,21 @@ const NewProject = () => {
                       </div>
                     )}
 
-                    {/* Step 4: Review & Submit */}
+                    {/* Step 4: Domain Registration */}
                     {currentStep === 4 && (
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-lg font-medium mb-4">Domain Registration (Optional)</h3>
+                          <p className="text-sm text-muted-foreground mb-6">
+                            Search and register a domain for your project. This is optional and can be done later.
+                          </p>
+                        </div>
+                        <DomainSearch />
+                      </div>
+                    )}
+
+                    {/* Step 5: Review & Submit */}
+                    {currentStep === 5 && (
                       <div className="space-y-6">
                         <div>
                           <h3 className="text-lg font-medium mb-4">Project Summary</h3>
@@ -474,7 +496,7 @@ const NewProject = () => {
                   </div>
 
                   <div>
-                    {currentStep < 4 ? (
+                    {currentStep < 5 ? (
                       <Button 
                         type="button" 
                         onClick={nextStep}
