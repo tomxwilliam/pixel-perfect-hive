@@ -123,6 +123,34 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
     }
   };
 
+  const handleStripePayment = async () => {
+    if (!invoice || !user) return;
+
+    setCreatingTicket(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('process-payment', {
+        body: { invoiceId: invoice.id }
+      });
+
+      if (error) throw error;
+
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to initialize payment. Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingTicket(false);
+    }
+  };
+
   if (!invoice) return null;
 
   const formatAmount = (amount: number) => {
@@ -264,31 +292,38 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
             <div className="text-center py-8 space-y-4">
               <CreditCard className="h-12 w-12 mx-auto text-muted-foreground" />
               <div>
-                <h4 className="font-semibold mb-2">Prefer to pay by card, Apple Pay or Google Pay?</h4>
+                <h4 className="font-semibold mb-2">Pay by Card, Apple Pay or Google Pay</h4>
                 <p className="text-muted-foreground mb-6">
-                  We can provide you with a secure payment link for card and digital wallet payments.
+                  Secure payment processing powered by Stripe. Your card details are never stored on our servers.
                 </p>
               </div>
               
-              <div className={`flex ${isMobile ? 'flex-col gap-3' : 'gap-4 justify-center'}`}>
+              <div className="space-y-4">
                 <Button
-                  onClick={() => createSupportTicket('payment link request')}
+                  onClick={handleStripePayment}
                   disabled={creatingTicket}
-                  className="flex items-center gap-2"
+                  size="lg"
+                  className="w-full flex items-center gap-2"
                 >
-                  <Phone className="h-4 w-4" />
-                  {creatingTicket ? 'Creating...' : 'Contact Support for Payment Link'}
+                  <CreditCard className="h-4 w-4" />
+                  {creatingTicket ? 'Processing...' : `Pay ${formatAmount(Number(invoice.amount))} with Card`}
                 </Button>
                 
-                <Button
-                  variant="outline"
-                  onClick={() => createSupportTicket('general payment support')}
-                  disabled={creatingTicket}
-                  className="flex items-center gap-2"
-                >
-                  <Ticket className="h-4 w-4" />
-                  Open Support Ticket
-                </Button>
+                <div className="text-xs text-muted-foreground">
+                  Powered by <span className="font-medium">Stripe</span> • Secure 256-bit SSL encryption
+                </div>
+                
+                <div className={`flex ${isMobile ? 'flex-col gap-3' : 'gap-4 justify-center'}`}>
+                  <Button
+                    variant="outline"
+                    onClick={() => createSupportTicket('payment assistance')}
+                    disabled={creatingTicket}
+                    className="flex items-center gap-2"
+                  >
+                    <Phone className="h-4 w-4" />
+                    Need Help?
+                  </Button>
+                </div>
               </div>
             </div>
           </TabsContent>
