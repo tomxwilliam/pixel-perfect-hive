@@ -17,10 +17,6 @@ import ProjectManagement from "./pages/ProjectManagement";
 import NotFound from "./pages/NotFound";
 import Support from "./pages/Support";
 
-// Portfolio pages
-import GamePortfolio from "./pages/GamePortfolio";
-import AppPortfolio from "./pages/AppPortfolio";  
-import WebPortfolio from "./pages/WebPortfolio";
 
 // Service pages
 import WebDevelopment from "./pages/services/WebDevelopment";
@@ -61,10 +57,6 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/support" element={<Support />} />
               
-              {/* Portfolio pages */}
-              <Route path="/portfolio/web" element={<WebPortfolio />} />
-              <Route path="/portfolio/apps" element={<AppPortfolio />} />
-              <Route path="/portfolio/games" element={<GamePortfolio />} />
               
               {/* Service pages */}
               <Route path="/services/web-development" element={<WebDevelopment />} />

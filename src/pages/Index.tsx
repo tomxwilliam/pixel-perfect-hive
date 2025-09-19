@@ -75,7 +75,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-primary">🎮 Games</h3>
                 <p className="text-muted-foreground mb-6">Addictive mobile games with smart systems and satisfying loops.</p>
-                <Link to="/portfolio/games">
+                <Link to="/services/game-development">
                   <Button variant="outline" className="border-primary/50 text-primary hover:bg-primary/20">
                     View Games
                     <ExternalLink className="ml-2 h-4 w-4" />
@@ -91,7 +91,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-accent">📱 Apps</h3>
                 <p className="text-muted-foreground mb-6">Custom mobile applications built from wireframe to App Store.</p>
-                <Link to="/portfolio/apps">
+                <Link to="/services/app-development">
                   <Button variant="outline" className="border-accent/50 text-accent hover:bg-accent/20">
                     View Apps
                     <ExternalLink className="ml-2 h-4 w-4" />
@@ -107,7 +107,7 @@ const Index = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-foreground">💻 Web Design</h3>
                 <p className="text-muted-foreground mb-6">Sleek websites with real-world power and pixel-perfect design.</p>
-                <Link to="/portfolio/web">
+                <Link to="/services/web-development">
                   <Button variant="outline" className="border-secondary/50 text-foreground hover:bg-secondary/10 hover:text-secondary">
                     View Websites
                     <ExternalLink className="ml-2 h-4 w-4" />

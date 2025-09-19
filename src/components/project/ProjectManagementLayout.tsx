@@ -174,13 +174,13 @@ const ProjectManagementFooter: React.FC<ProjectManagementFooterProps> = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground">Services</h3>
               <nav className="space-y-2">
-                <Link to="/portfolio/web" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/services/web-development" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Web Development
                 </Link>
-                <Link to="/portfolio/apps" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/services/app-development" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Mobile Apps
                 </Link>
-                <Link to="/portfolio/games" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/services/game-development" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Game Development
                 </Link>
                 <Link to="/services/ai-integration" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">

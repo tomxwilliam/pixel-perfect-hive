@@ -193,8 +193,6 @@ export default function GameDevelopment() {
         ]}
         
         ctaLabel="Start Your Game Project"
-        secondaryCtaLabel="View Game Portfolio"
-        secondaryCtaHref="/portfolio/games"
         
         seo={{
           title: seoData.title,

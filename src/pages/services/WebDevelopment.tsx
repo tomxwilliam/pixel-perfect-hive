@@ -193,8 +193,6 @@ export default function WebDevelopment() {
         ]}
         
         ctaLabel="Start Your Web Project"
-        secondaryCtaLabel="View Web Portfolio"
-        secondaryCtaHref="/portfolio/web"
         
         seo={{
           title: seoData.title,
