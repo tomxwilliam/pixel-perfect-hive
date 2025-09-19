@@ -193,6 +193,8 @@ export default function AppDevelopment() {
         ]}
         
         ctaLabel="Start Your App Project"
+        secondaryCtaLabel="View App Portfolio" 
+        secondaryCtaHref="/portfolio/apps"
         
         seo={{
           title: seoData.title,

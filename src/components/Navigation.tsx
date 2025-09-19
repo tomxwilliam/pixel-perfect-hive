@@ -39,6 +39,9 @@ const Navigation = () => {
 
   const servicesLinks = [
     { href: '/services/ai-integration', label: 'AI Integration', icon: Bot },
+    { href: '/portfolio/games', label: 'Games', icon: GamepadIcon },
+    { href: '/portfolio/apps', label: 'Mobile Apps', icon: Smartphone },
+    { href: '/portfolio/web', label: 'Web Dev', icon: Globe },
   ];
 
   return (

@@ -62,6 +62,21 @@ export const Footer = () => {
               </a>
               </li>
               <li>
+              <a href="/portfolio/web" className="text-muted-foreground hover:text-primary transition-colors">
+                Web Portfolio
+              </a>
+              </li>
+              <li>
+              <a href="/portfolio/games" className="text-muted-foreground hover:text-primary transition-colors">
+                Games
+              </a>
+              </li>
+              <li>
+              <a href="/portfolio/apps" className="text-muted-foreground hover:text-primary transition-colors">
+                Apps
+              </a>
+              </li>
+              <li>
               <a href="/services/ai-integration" className="text-muted-foreground hover:text-primary transition-colors">
                 AI Integration
               </a>

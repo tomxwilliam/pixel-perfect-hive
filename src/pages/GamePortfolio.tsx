@@ -1,0 +1,166 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
+import { StaticNavigation } from "@/components/StaticNavigation";
+import { Footer } from "@/components/Footer";
+import { Link } from "react-router-dom";
+import Seo from "@/components/Seo";
+const GamePortfolio = () => {
+  return <div className="min-h-screen bg-background text-foreground">
+      <Seo 
+        title="Game Portfolio | Mobile Games by 404 Code Lab"
+        description="Explore our collection of addictive mobile games including BeeVerse. Professional game development with Unity, engaging gameplay, and monetization strategies."
+        canonicalUrl="https://404codelab.com/portfolio/games"
+      />
+      <StaticNavigation />
+      
+      {/* Hero Section */}
+      <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">
+        <div className="max-w-4xl mx-auto text-center">
+          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2">
+            🎮 Game Development
+          </Badge>
+          
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+            Games Portfolio
+          </h1>
+          
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            This is where we shine. We build fun-first mobile games with smart systems, satisfying loops, and polish that sticks.
+          </p>
+        </div>
+      </section>
+
+      {/* Featured Game */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <Card className="bg-gradient-to-r from-accent/10 to-primary/10 border-accent/30 mb-12">
+            <CardContent className="p-8 lg:p-12">
+              <div className="grid lg:grid-cols-2 gap-8 items-center">
+                <div>
+                  <div className="flex items-center mb-6">
+                    <img src="/assets/beevers-icon.png" alt="Beevers Game Icon" className="w-16 h-16 mr-4 rounded-lg" />
+                    <div>
+                      <h2 className="text-3xl font-bold text-accent mb-2">BeeVerse</h2>
+                      <Badge className="text-accent border-accent/30 bg-accent/20">
+                        Featured Game
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <p className="text-xl mb-6 leading-relaxed text-foreground">
+                    The ultimate idle bee empire game where bees run the economy. 
+                    Build your hive, manage your workers, and watch your empire grow!
+                  </p>
+                  
+                  <div className="space-y-4 mb-8 text-muted-foreground">
+                    <div className="flex items-center">
+                      <Star className="h-5 w-5 text-accent mr-3" />
+                      <span>Strategic upgrades and prestige systems</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Zap className="h-5 w-5 text-primary mr-3" />
+                      <span>Smart buff mechanics and automation</span>
+                    </div>
+                    <div className="flex items-center">
+                      <TrendingUp className="h-5 w-5 text-accent mr-3" />
+                      <span>Currently in active development</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                      <Download className="mr-2 h-5 w-5" />
+                      Download on iOS
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-4 overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/621f61df-74f7-45ba-b1d7-4c1b7251d429.png"
+                      alt="BeeVerse game screenshot showing a lush meadow environment with bees, flowers, and game UI"
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Upcoming Games */}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 text-primary">🎲 More Games in Development</h2>
+            <p className="text-xl text-muted-foreground">
+              Our hive is buzzing with new projects. Stay tuned for exciting announcements!
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300">
+              <CardContent className="p-8 text-center">
+                <div className="text-4xl mb-4">🎯</div>
+                <h3 className="text-xl font-bold mb-4 text-primary">Strategy Game</h3>
+                <p className="text-muted-foreground mb-4">
+                  Deep strategic gameplay with resource management and tactical combat.
+                </p>
+                <Badge className="bg-primary/20 text-primary border-primary/30">
+                  In Concept
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card border-border hover:border-accent/50 transition-all duration-300">
+              <CardContent className="p-8 text-center">
+                <div className="text-4xl mb-4">🏃</div>
+                <h3 className="text-xl font-bold mb-4 text-accent">Idle Clicker</h3>
+                <p className="text-muted-foreground mb-4">
+                  Fast-paced action with unique mechanics and stunning visual effects.
+                </p>
+                <Badge className="bg-accent/20 text-accent border-accent/30">
+                  Early Development
+                </Badge>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300">
+              <CardContent className="p-8 text-center">
+                <div className="text-4xl mb-4">🧩</div>
+                <h3 className="text-xl font-bold mb-4 text-primary">Puzzle Adventure</h3>
+                <p className="text-muted-foreground mb-4">
+                  Mind-bending puzzles wrapped in an engaging narrative experience.
+                </p>
+                <Badge className="bg-primary/20 text-primary border-primary/30">
+                  Planning Phase
+                </Badge>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CTA Section */}
+          <div className="mt-16 text-center">
+            <Card className="bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-4 text-foreground">Have a Game Idea?</h3>
+                <p className="mb-6 max-w-2xl mx-auto text-muted-foreground">
+                  Whether you have a complete concept or just a spark of an idea, 
+                  we'd love to hear about it. Let's build the next addictive mobile game together!
+                </p>
+                <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                  <Link to="/contact">
+                    <Zap className="mr-2 h-5 w-5" />
+                    Discuss Your Game
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>;
+};
+export default GamePortfolio;
