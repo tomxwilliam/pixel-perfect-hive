@@ -12,7 +12,7 @@ interface CustomerStats {
 }
 
 export const useCustomerStats = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [stats, setStats] = useState<CustomerStats>({
     activeProjects: 0,
     openTickets: 0,
@@ -24,7 +24,7 @@ export const useCustomerStats = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = async () => {
-    if (!user) return;
+    if (!user || !profile) return;
 
     try {
       setLoading(true);
@@ -44,11 +44,18 @@ export const useCustomerStats = () => {
         .eq('customer_id', user.id)
         .in('status', ['open', 'in_progress']);
 
-      // Fetch invoice data
-      const { data: invoices } = await supabase
+      // Fetch invoice data - admin sees all, customers see their own
+      const isAdmin = profile.role === 'admin' || profile.email === 'admin@404codelab.com';
+      
+      const invoiceQuery = supabase
         .from('invoices')
-        .select('amount, status')
-        .eq('customer_id', user.id);
+        .select('amount, status');
+      
+      if (!isAdmin) {
+        invoiceQuery.eq('customer_id', user.id);
+      }
+      
+      const { data: invoices } = await invoiceQuery;
 
       const pendingInvoiceAmount = invoices
         ?.filter(inv => inv.status === 'pending')
@@ -104,7 +111,7 @@ export const useCustomerStats = () => {
     const invoicesChannel = supabase
       .channel('customer-invoices-changes')
       .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'invoices', filter: `customer_id=eq.${user?.id}` },
+        { event: '*', schema: 'public', table: 'invoices' },
         () => fetchStats()
       )
       .subscribe();
@@ -114,7 +121,7 @@ export const useCustomerStats = () => {
       supabase.removeChannel(ticketsChannel);
       supabase.removeChannel(invoicesChannel);
     };
-  }, [user?.id]);
+  }, [user?.id, profile?.role]);
 
   return { stats, loading, error, refetch: fetchStats };
 };
