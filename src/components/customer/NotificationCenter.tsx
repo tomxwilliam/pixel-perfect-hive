@@ -116,11 +116,11 @@ export const NotificationCenter = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'project': return 'bg-blue-100 text-blue-800';
-      case 'ticket': return 'bg-orange-100 text-orange-800';
-      case 'invoice': return 'bg-green-100 text-green-800';
-      case 'quote': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'project': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+      case 'ticket': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
+      case 'invoice': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+      case 'quote': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-300';
     }
   };
 
@@ -182,7 +182,7 @@ export const NotificationCenter = () => {
                 <div
                   key={notification.id}
                   className={`border rounded-lg p-4 transition-all hover:bg-muted/20 cursor-pointer ${
-                    !notification.read ? 'bg-blue-50 border-blue-200' : ''
+                    !notification.read ? 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800' : 'dark:bg-card'
                   }`}
                   onClick={() => {
                     setSelectedNotification(notification);
@@ -198,7 +198,7 @@ export const NotificationCenter = () => {
                           {notification.category}
                         </Badge>
                         {!notification.read && (
-                          <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                          <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
                         )}
                       </div>
                       
