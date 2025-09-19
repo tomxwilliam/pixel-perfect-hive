@@ -34,6 +34,8 @@ import AIChat from "./pages/dashboard/AIChat";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import { AdminAccounting } from "./components/admin/AdminAccounting";
+import AdminSettings from "./components/admin/AdminSettings";
 
 // Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -104,13 +106,23 @@ const App = () => (
               
               {/* Admin pages */}
               <Route path="/admin" element={
-                <ProtectedRoute requireAdmin={true}>
+                <ProtectedRoute requireCodeLabEmail={true}>
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/projects" element={
+              <Route path="/project-management" element={
                 <ProtectedRoute requireCodeLabEmail={true}>
                   <ProjectManagement />
+                </ProtectedRoute>
+              } />
+              <Route path="/accounting" element={
+                <ProtectedRoute requireCodeLabEmail={true}>
+                  <AdminAccounting />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedRoute requireCodeLabEmail={true}>
+                  <AdminSettings />
                 </ProtectedRoute>
               } />
               

@@ -43,8 +43,7 @@ export const StaticNavigation = () => {
     }
   };
 
-  const isAdmin = profile?.role === 'admin' || profile?.email === 'admin@404codelab.com';
-  const isCodeLabEmail = profile?.email?.includes('@404codelab.com');
+  const isCodeLabEmail = user?.email?.endsWith('@404codelab.com');
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -162,19 +161,21 @@ export const StaticNavigation = () => {
                   <DropdownMenuItem>
                     <a href="/dashboard" className="w-full">Dashboard</a>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <a href="/projects" className="w-full">Project Management</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <a href="/settings" className="w-full">Settings</a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <a href="/support" className="w-full">Support</a>
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <DropdownMenuItem>
-                      <a href="/admin" className="w-full">Admin Panel</a>
-                    </DropdownMenuItem>
+                  {isCodeLabEmail && (
+                    <>
+                      <DropdownMenuItem>
+                        <a href="/project-management" className="w-full">Project Management</a>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <a href="/admin" className="w-full">Admin Panel</a>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <a href="/accounting" className="w-full">Accounting</a>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <a href="/admin/settings" className="w-full">Settings</a>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
@@ -270,7 +271,7 @@ export const StaticNavigation = () => {
                     <div className="flex-1">
                       <div className="text-base font-medium text-foreground">{profile.first_name} {profile.last_name}</div>
                       <div className="text-sm text-muted-foreground">{profile.email}</div>
-                      <div className="mt-2 space-y-1">
+                       <div className="mt-2 space-y-1">
                         <a
                           href="/dashboard"
                           className="block text-muted-foreground hover:text-primary text-sm"
@@ -278,35 +279,37 @@ export const StaticNavigation = () => {
                         >
                           Dashboard
                         </a>
-                        <a
-                          href="/projects"
-                          className="block text-muted-foreground hover:text-primary text-sm"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Project Management
-                        </a>
-                        <a
-                          href="/settings"
-                          className="block text-muted-foreground hover:text-primary text-sm"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Settings
-                        </a>
-                        <a
-                          href="/support"
-                          className="block text-muted-foreground hover:text-primary text-sm"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          Support
-                        </a>
-                        {isAdmin && (
-                          <a
-                            href="/admin"
-                            className="block text-muted-foreground hover:text-primary text-sm"
-                            onClick={() => setIsOpen(false)}
-                          >
-                            Admin Panel
-                          </a>
+                        {isCodeLabEmail && (
+                          <>
+                            <a
+                              href="/project-management"
+                              className="block text-muted-foreground hover:text-primary text-sm"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              Project Management
+                            </a>
+                            <a
+                              href="/admin"
+                              className="block text-muted-foreground hover:text-primary text-sm"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              Admin Panel
+                            </a>
+                            <a
+                              href="/accounting"
+                              className="block text-muted-foreground hover:text-primary text-sm"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              Accounting
+                            </a>
+                            <a
+                              href="/admin/settings"
+                              className="block text-muted-foreground hover:text-primary text-sm"
+                              onClick={() => setIsOpen(false)}
+                            >
+                              Settings
+                            </a>
+                          </>
                         )}
                         <button
                           onClick={() => {
