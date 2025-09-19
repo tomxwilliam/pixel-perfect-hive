@@ -217,36 +217,6 @@ export type Database = {
         }
         Relationships: []
       }
-      app_store_links: {
-        Row: {
-          created_at: string
-          game_name: string
-          google_play_link: string | null
-          id: string
-          ios_link: string | null
-          is_active: boolean
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          game_name: string
-          google_play_link?: string | null
-          id?: string
-          ios_link?: string | null
-          is_active?: boolean
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          game_name?: string
-          google_play_link?: string | null
-          id?: string
-          ios_link?: string | null
-          is_active?: boolean
-          updated_at?: string
-        }
-        Relationships: []
-      }
       availability_settings: {
         Row: {
           created_at: string
@@ -1288,7 +1258,6 @@ export type Database = {
           notification_preferences: Json | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
-          stripe_customer_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1303,7 +1272,6 @@ export type Database = {
           notification_preferences?: Json | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
-          stripe_customer_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1318,7 +1286,6 @@ export type Database = {
           notification_preferences?: Json | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
-          stripe_customer_id?: string | null
           updated_at?: string
         }
         Relationships: []

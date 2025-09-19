@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsContent, MobileTabsList, MobileTabsTrigger } from '@/components/ui/mobile-tabs';
-import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText, MessageSquare, Smartphone } from 'lucide-react';
+import { Settings, Users, DollarSign, Link2, Bot, Globe, FileText, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import AdminManagement from './settings/AdminManagement';
 import ServicePricingDefaults from './settings/ServicePricingDefaults';
@@ -12,7 +12,6 @@ import { InvoiceTemplateSettings } from './InvoiceTemplateSettings';
 import { AdminCommunications } from './AdminCommunications';
 import { QuoteTemplateSettings } from './QuoteTemplateSettings';
 import { InvoiceSettings } from './settings/InvoiceSettings';
-import { AdminAppStoreLinks } from './AdminAppStoreLinks';
 
 const AdminSettings = () => {
   const { profile } = useAuth();
@@ -63,10 +62,6 @@ const AdminSettings = () => {
           <MobileTabsTrigger value="communications" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
             <span className="text-xs sm:text-sm">Comms</span>
-          </MobileTabsTrigger>
-          <MobileTabsTrigger value="appstore" className="flex items-center gap-2">
-            <Smartphone className="h-4 w-4" />
-            <span className="text-xs sm:text-sm">App Store</span>
           </MobileTabsTrigger>
         </MobileTabsList>
 
@@ -161,10 +156,6 @@ const AdminSettings = () => {
               <AdminCommunications />
             </CardContent>
           </Card>
-        </MobileTabsContent>
-
-        <MobileTabsContent value="appstore" className="space-y-6">
-          <AdminAppStoreLinks />
         </MobileTabsContent>
       </MobileTabs>
     </div>
