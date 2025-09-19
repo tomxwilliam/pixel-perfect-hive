@@ -6,6 +6,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { StaticNavigation } from '@/components/StaticNavigation';
+import { Footer } from '@/components/Footer';
 import { CalendarIcon, Download, FileText, DollarSign, Users, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -115,229 +117,235 @@ export const AdminAccounting = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Export for Details</div>
-            <p className="text-xs text-muted-foreground">
-              Full financial breakdown available in export
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Export for Details</div>
-            <p className="text-xs text-muted-foreground">
-              Customer analysis in export data
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Export for Details</div>
-            <p className="text-xs text-muted-foreground">
-              Unpaid invoices and quotes
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="min-h-screen bg-background">
+      <StaticNavigation />
+      <div className="container mx-auto p-6 pt-28">
+        <div className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">Export for Details</div>
+                <p className="text-xs text-muted-foreground">
+                  Full financial breakdown available in export
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">Export for Details</div>
+                <p className="text-xs text-muted-foreground">
+                  Customer analysis in export data
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">Export for Details</div>
+                <p className="text-xs text-muted-foreground">
+                  Unpaid invoices and quotes
+                </p>
+              </CardContent>
+            </Card>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Accounting Data Export</CardTitle>
-          <CardDescription>
-            Export comprehensive financial data for your accountant including invoices, quotes, projects, domains, hosting, and time tracking.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Quick Date Range Buttons */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Quick Date Ranges</label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { key: 'this-month', label: 'This Month' },
-                { key: 'last-month', label: 'Last Month' },
-                { key: 'this-year', label: 'This Year' },
-                { key: 'last-year', label: 'Last Year' },
-                { key: 'all-time', label: 'All Time' },
-              ].map((range) => (
-                <Button
-                  key={range.key}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleQuickDateRange(range.key)}
+          <Card>
+            <CardHeader>
+              <CardTitle>Accounting Data Export</CardTitle>
+              <CardDescription>
+                Export comprehensive financial data for your accountant including invoices, quotes, projects, domains, hosting, and time tracking.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Quick Date Range Buttons */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Quick Date Ranges</label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { key: 'this-month', label: 'This Month' },
+                    { key: 'last-month', label: 'Last Month' },
+                    { key: 'this-year', label: 'This Year' },
+                    { key: 'last-year', label: 'Last Year' },
+                    { key: 'all-time', label: 'All Time' },
+                  ].map((range) => (
+                    <Button
+                      key={range.key}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleQuickDateRange(range.key)}
+                    >
+                      {range.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Date Range */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Start Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !exportOptions.startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {exportOptions.startDate ? format(exportOptions.startDate, "PPP") : "Pick start date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={exportOptions.startDate}
+                        onSelect={(date) => setExportOptions(prev => ({ ...prev, startDate: date }))}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">End Date</label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !exportOptions.endDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {exportOptions.endDate ? format(exportOptions.endDate, "PPP") : "Pick end date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={exportOptions.endDate}
+                        onSelect={(date) => setExportOptions(prev => ({ ...prev, endDate: date }))}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              {/* Export Format */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Export Format</label>
+                <Select
+                  value={exportOptions.format}
+                  onValueChange={(value: 'csv' | 'excel') => 
+                    setExportOptions(prev => ({ ...prev, format: value }))
+                  }
                 >
-                  {range.label}
-                </Button>
-              ))}
-            </div>
-          </div>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="csv">CSV (Recommended for Accountants)</SelectItem>
+                    <SelectItem value="excel">Excel Compatible CSV</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Custom Date Range */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Start Date</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !exportOptions.startDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {exportOptions.startDate ? format(exportOptions.startDate, "PPP") : "Pick start date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={exportOptions.startDate}
-                    onSelect={(date) => setExportOptions(prev => ({ ...prev, startDate: date }))}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+              {/* Export Options */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium">Include in Export</label>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeCustomers}
+                      onChange={(e) => setExportOptions(prev => ({ 
+                        ...prev, 
+                        includeCustomers: e.target.checked 
+                      }))}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">Customer Information</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeProjects}
+                      onChange={(e) => setExportOptions(prev => ({ 
+                        ...prev, 
+                        includeProjects: e.target.checked 
+                      }))}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">Project Financial Data</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeTimeTracking}
+                      onChange={(e) => setExportOptions(prev => ({ 
+                        ...prev, 
+                        includeTimeTracking: e.target.checked 
+                      }))}
+                      className="rounded border-gray-300"
+                    />
+                    <span className="text-sm">Time Tracking & Billable Hours</span>
+                  </label>
+                </div>
+              </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">End Date</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !exportOptions.endDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {exportOptions.endDate ? format(exportOptions.endDate, "PPP") : "Pick end date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={exportOptions.endDate}
-                    onSelect={(date) => setExportOptions(prev => ({ ...prev, endDate: date }))}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
+              {/* Export Button */}
+              <Button 
+                onClick={handleExport} 
+                disabled={isExporting}
+                className="w-full"
+                size="lg"
+              >
+                {isExporting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating Export...
+                  </>
+                ) : (
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Export Accounting Data
+                  </>
+                )}
+              </Button>
 
-          {/* Export Format */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Export Format</label>
-            <Select
-              value={exportOptions.format}
-              onValueChange={(value: 'csv' | 'excel') => 
-                setExportOptions(prev => ({ ...prev, format: value }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="csv">CSV (Recommended for Accountants)</SelectItem>
-                <SelectItem value="excel">Excel Compatible CSV</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Export Options */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium">Include in Export</label>
-            <div className="space-y-2">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={exportOptions.includeCustomers}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    includeCustomers: e.target.checked 
-                  }))}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">Customer Information</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={exportOptions.includeProjects}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    includeProjects: e.target.checked 
-                  }))}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">Project Financial Data</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={exportOptions.includeTimeTracking}
-                  onChange={(e) => setExportOptions(prev => ({ 
-                    ...prev, 
-                    includeTimeTracking: e.target.checked 
-                  }))}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">Time Tracking & Billable Hours</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Export Button */}
-          <Button 
-            onClick={handleExport} 
-            disabled={isExporting}
-            className="w-full"
-            size="lg"
-          >
-            {isExporting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating Export...
-              </>
-            ) : (
-              <>
-                <Download className="mr-2 h-4 w-4" />
-                Export Accounting Data
-              </>
-            )}
-          </Button>
-
-          <div className="text-sm text-muted-foreground space-y-1">
-            <p><strong>Export includes:</strong></p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>All invoices with payment status and amounts</li>
-              <li>Quotes with conversion tracking</li>
-              <li>Project budgets and actual costs</li>
-              <li>Domain registration and renewal costs</li>
-              <li>Hosting subscription billing</li>
-              <li>Time logs with billable hour calculations</li>
-              <li>Customer details for cross-referencing</li>
-              <li>Outstanding receivables and recurring revenue</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p><strong>Export includes:</strong></p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>All invoices with payment status and amounts</li>
+                  <li>Quotes with conversion tracking</li>
+                  <li>Project budgets and actual costs</li>
+                  <li>Domain registration and renewal costs</li>
+                  <li>Hosting subscription billing</li>
+                  <li>Time logs with billable hour calculations</li>
+                  <li>Customer details for cross-referencing</li>
+                  <li>Outstanding receivables and recurring revenue</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      <Footer />
     </div>
   );
 };
