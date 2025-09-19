@@ -51,3 +51,12 @@ verify_jwt = true
 
 [functions.send-domain-hosting-email]
 verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.create-checkout-session]
+verify_jwt = true
+
+[functions.create-portal-session]
+verify_jwt = true
