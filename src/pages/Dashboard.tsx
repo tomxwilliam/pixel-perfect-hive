@@ -102,7 +102,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <StaticNavigation />
       
-      <div className="pt-20 pb-8">
+      <div className="pt-6 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Welcome Header - Mobile Optimised */}
           <div className={`${isMobile ? 'flex flex-col space-y-4' : 'flex items-center justify-between'} mb-8`}>

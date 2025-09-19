@@ -63,7 +63,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <StaticNavigation />
-      <div className="container mx-auto p-6 pt-28">
+      <div className="container mx-auto p-6 pt-6">
         <div className={`mb-8 ${isMobile ? 'text-center' : ''}`}>
           <h1 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-foreground`}>Admin Dashboard</h1>
           <p className="text-muted-foreground mt-2">Comprehensive business management and control center</p>
