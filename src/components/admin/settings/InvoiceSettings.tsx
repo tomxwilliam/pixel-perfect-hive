@@ -15,7 +15,7 @@ interface BillingSettings {
   sort_code: string;
   account_number: string;
   iban: string;
-  swift_code: string;
+  swift_code?: string; // Make optional for backward compatibility
   notes_bacs: string;
 }
 
@@ -46,8 +46,7 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
       }
 
       if (data) {
-        // Ensure swift_code exists for backward compatibility
-        setSettings({ ...data, swift_code: data.swift_code || '' });
+        setSettings(data);
       } else {
         // Create default settings if none exist
         const defaultSettings = {
@@ -123,8 +122,7 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
 
       if (error) throw error;
 
-      // Ensure swift_code exists for backward compatibility
-      setSettings({ ...data, swift_code: data.swift_code || '' });
+      setSettings(data);
       toast({
         title: "Settings Saved",
         description: "Bank details have been updated successfully",
@@ -275,7 +273,7 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
             <Label htmlFor="swift_code">SWIFT/BIC Code (Optional)</Label>
             <Input
               id="swift_code"
-              value={settings.swift_code}
+              value={settings.swift_code || ''}
               onChange={(e) => handleInputChange('swift_code', e.target.value)}
               placeholder="BKENGB2L"
               disabled={!isSuperAdmin}
