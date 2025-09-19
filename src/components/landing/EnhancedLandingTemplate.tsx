@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { Badge } from "@/components/ui/badge";
@@ -93,7 +93,7 @@ export default function EnhancedLandingTemplate({
   return (
     <div className="min-h-screen bg-background text-foreground">
       {seo && <Seo title={seo.title} description={seo.description} jsonLd={jsonLd} noIndex={seo.noIndex} />}
-      <Navigation />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <main className="relative">

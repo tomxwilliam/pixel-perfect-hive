@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ export default function AIIntegration() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Seo title={title} description={description} jsonLd={jsonLd} />
-      <Navigation />
+      <StaticNavigation />
       <main>
         {/* Hero Section */}
         <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">
