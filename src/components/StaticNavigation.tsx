@@ -95,19 +95,19 @@ export const StaticNavigation = () => {
                     onMouseLeave={handleServicesLeave}
                   >
                     <a
-                      href="/services/web-development"
+                      href="/portfolio/web"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       Web Development
                     </a>
                     <a
-                      href="/services/app-development"
+                      href="/portfolio/apps"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       App Development
                     </a>
                     <a
-                      href="/services/game-development"
+                      href="/portfolio/games"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       Game Development
@@ -222,21 +222,21 @@ export const StaticNavigation = () => {
               <div className="space-y-1">
                 <div className="text-muted-foreground px-3 py-2 text-base font-medium">Services</div>
                 <a
-                  href="/services/web-development"
+                  href="/portfolio/web"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Web Development
                 </a>
                 <a
-                  href="/services/app-development"
+                  href="/portfolio/apps"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   App Development
                 </a>
                 <a
-                  href="/services/game-development"
+                  href="/portfolio/games"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >

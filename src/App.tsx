@@ -24,9 +24,6 @@ import WebPortfolio from "./pages/WebPortfolio";
 
 // Service pages
 import AIIntegration from "./pages/services/AIIntegration";
-import WebDevelopment from "./pages/services/WebDevelopment";
-import AppDevelopment from "./pages/services/AppDevelopment";
-import GameDevelopment from "./pages/services/GameDevelopment";
 
 // Dashboard pages
 import NewProject from "./pages/dashboard/NewProject";
@@ -68,9 +65,6 @@ const App = () => (
               
               {/* Service pages */}
               <Route path="/services/ai-integration" element={<AIIntegration />} />
-              <Route path="/services/web-development" element={<WebDevelopment />} />
-              <Route path="/services/app-development" element={<AppDevelopment />} />
-              <Route path="/services/game-development" element={<GameDevelopment />} />
               
               {/* Authentication */}
               <Route path="/auth" element={<Auth />} />
