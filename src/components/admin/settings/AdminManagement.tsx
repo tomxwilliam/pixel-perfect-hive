@@ -171,12 +171,14 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
         setNewAdminEmail('');
       } else {
-        // User doesn't exist in profiles, provide helpful message
+        // User doesn't exist in profiles
+        // Provide clear instructions on what needs to happen
         toast({
           title: "User Not Found",
-          description: `No user found with email ${email}. The user must sign up and create an account first before being promoted to admin.`,
+          description: `No user found with email ${email}. To promote a user to admin, they must first create an account by signing up on the website.`,
           variant: "destructive",
         });
+        return;
       }
     } catch (error) {
       console.error('Error promoting user to admin:', error);
