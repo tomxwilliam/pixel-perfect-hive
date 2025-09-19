@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard";
 import ProjectManagement from "./pages/ProjectManagement";
 import NotFound from "./pages/NotFound";
 import Support from "./pages/Support";
+import UserSettings from "./pages/UserSettings";
 
 // Portfolio pages
 import GamePortfolio from "./pages/GamePortfolio";
@@ -57,6 +58,11 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <UserSettings />
+                </ProtectedRoute>
+              } />
               
               {/* Portfolio pages */}
               <Route path="/portfolio/web" element={<WebPortfolio />} />

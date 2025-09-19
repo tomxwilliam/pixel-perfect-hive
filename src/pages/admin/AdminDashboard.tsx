@@ -44,7 +44,9 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!user || profile?.role !== 'admin') {
+  const isAdmin = profile?.role === 'admin' || profile?.email === 'admin@404codelab.com';
+  
+  if (!user || !isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -166,6 +166,9 @@ export const StaticNavigation = () => {
                     <a href="/projects" className="w-full">Project Management</a>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
+                    <a href="/settings" className="w-full">Settings</a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
                     <a href="/support" className="w-full">Support</a>
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -281,6 +284,13 @@ export const StaticNavigation = () => {
                           onClick={() => setIsOpen(false)}
                         >
                           Project Management
+                        </a>
+                        <a
+                          href="/settings"
+                          className="block text-muted-foreground hover:text-primary text-sm"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Settings
                         </a>
                         <a
                           href="/support"
