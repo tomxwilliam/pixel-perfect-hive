@@ -20,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Seo from '@/components/Seo';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
 import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
@@ -196,7 +196,7 @@ const ProjectManagement = () => {
         description="Professional project management system with Kanban boards, Gantt charts, team collaboration, and comprehensive reporting for 404 Code Lab."
       />
       
-      <Navigation />
+      <StaticNavigation />
 
       {/* Main Content */}
       <main className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6 pt-20 md:pt-24">

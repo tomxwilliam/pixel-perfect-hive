@@ -4,7 +4,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
 import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator } from 'lucide-react';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
 import { AdminProjects } from '@/components/admin/AdminProjects';
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       <div className="container mx-auto p-6 pt-28">
         <div className={`mb-8 ${isMobile ? 'text-center' : ''}`}>
           <h1 className={`${isMobile ? 'text-3xl' : 'text-4xl'} font-bold text-foreground`}>Admin Dashboard</h1>

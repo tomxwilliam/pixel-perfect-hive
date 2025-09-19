@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -255,7 +255,7 @@ const NewProject = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       
       <div className="pt-20 pb-8">
         <div className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 ${isMobile ? 'px-3' : ''}`}>

@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { 
   Calendar as CalendarIcon, 
   Clock, 
@@ -271,7 +271,7 @@ const BookCall = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       
       <div className="pt-20 pb-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

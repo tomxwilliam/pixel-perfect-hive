@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { CustomerProjects } from '@/components/customer/CustomerProjects';
 import { CustomerTickets } from '@/components/customer/CustomerTickets';
@@ -100,7 +100,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       
       <div className="pt-20 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

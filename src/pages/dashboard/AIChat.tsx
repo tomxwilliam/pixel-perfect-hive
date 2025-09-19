@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -150,7 +150,7 @@ const AIChat = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       
       <div className="pt-20 pb-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
