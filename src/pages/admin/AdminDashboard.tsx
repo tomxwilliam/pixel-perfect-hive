@@ -36,7 +36,8 @@ const AdminDashboard = () => {
     }
   }, [searchParams]);
 
-  if (loading) {
+  // Show loading while auth is being determined
+  if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
@@ -44,16 +45,18 @@ const AdminDashboard = () => {
     );
   }
 
-  const isAdmin = profile?.role === 'admin' || profile?.email === 'admin@404codelab.com';
+  // Wait for profile to load before checking admin status
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  const isAdmin = profile.role === 'admin' || profile.email === 'admin@404codelab.com';
   
-  console.log('AdminDashboard check:', { 
-    user: !!user, 
-    profile: profile ? { role: profile.role, email: profile.email } : null,
-    isAdmin 
-  });
-  
-  if (!user || !isAdmin) {
-    console.log('AdminDashboard access denied:', { user: !!user, isAdmin });
+  if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 
