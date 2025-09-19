@@ -8,10 +8,10 @@ export const Footer = () => {
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
-  // Choose logo based on theme - using same logos as StaticNavigation
+  // Choose logo based on theme - using new uploaded logos
   const logoSrc = isDarkMode 
-    ? "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"  // Dark theme logo
-    : "/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png"; // Light theme logo
+    ? "/assets/logo-dark.png"  // Dark theme logo
+    : "/assets/logo-light.png"; // Light theme logo
 
   return (
     <footer className="bg-background border-t border-border py-12 px-4">

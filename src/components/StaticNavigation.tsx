@@ -17,8 +17,8 @@ export const StaticNavigation = () => {
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
   const logoSrc = isDarkMode
-    ? "/lovable-uploads/dd670ca4-826a-4160-ab5e-3087f16b0177.png"
-    : "/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png";
+    ? "/assets/logo-dark.png"
+    : "/assets/logo-light.png";
 
   const handleLogout = async () => {
     try {
