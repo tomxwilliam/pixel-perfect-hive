@@ -34,7 +34,7 @@ const GamePortfolio = () => {
               <div className="grid lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <div className="flex items-center mb-6">
-                    <span className="text-4xl mr-4">🐝</span>
+                    <img src="/assets/beevers-icon.png" alt="Beevers Game Icon" className="w-16 h-16 mr-4 rounded-lg" />
                     <div>
                       <h2 className="text-3xl font-bold text-accent mb-2">BeeVerse</h2>
                       <Badge className="text-accent border-accent/30 bg-accent/20">
