@@ -144,43 +144,45 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
       return;
     }
 
+    const email = newAdminEmail.trim().toLowerCase();
+
     setLoading(true);
     try {
-      // First check if user exists
+      // First check if user exists in profiles
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('email', newAdminEmail.trim())
+        .eq('email', email)
         .single();
 
-      if (profileError || !profile) {
+      if (profile && !profileError) {
+        // User exists in profiles, update their role directly
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ role: 'admin' })
+          .eq('id', profile.id);
+
+        if (updateError) throw updateError;
+
         toast({
-          title: "Error",
-          description: "User not found with this email address",
+          title: "Success",
+          description: `${email} has been promoted to admin`,
+        });
+
+        setNewAdminEmail('');
+      } else {
+        // User doesn't exist in profiles, provide helpful message
+        toast({
+          title: "User Not Found",
+          description: `No user found with email ${email}. The user must sign up and create an account first before being promoted to admin.`,
           variant: "destructive",
         });
-        return;
       }
-
-      // Update user role to admin
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ role: 'admin' })
-        .eq('id', profile.id);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: "Success",
-        description: `${newAdminEmail} has been promoted to admin`,
-      });
-
-      setNewAdminEmail('');
     } catch (error) {
       console.error('Error promoting user to admin:', error);
       toast({
         title: "Error",
-        description: "Failed to promote user to admin",
+        description: "Failed to promote user to admin. Please check the email address and try again.",
         variant: "destructive",
       });
     } finally {
