@@ -46,7 +46,8 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
       }
 
       if (data) {
-        setSettings(data);
+        // Ensure swift_code exists for backward compatibility
+        setSettings({ ...data, swift_code: data.swift_code || '' });
       } else {
         // Create default settings if none exist
         const defaultSettings = {
@@ -122,7 +123,8 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
 
       if (error) throw error;
 
-      setSettings(data);
+      // Ensure swift_code exists for backward compatibility
+      setSettings({ ...data, swift_code: data.swift_code || '' });
       toast({
         title: "Settings Saved",
         description: "Bank details have been updated successfully",

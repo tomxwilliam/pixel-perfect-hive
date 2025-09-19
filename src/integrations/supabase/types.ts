@@ -1216,6 +1216,7 @@ export type Database = {
           notes_bacs: string | null
           org_id: string
           sort_code: string
+          swift_code: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1227,6 +1228,7 @@ export type Database = {
           notes_bacs?: string | null
           org_id?: string
           sort_code: string
+          swift_code?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1238,6 +1240,7 @@ export type Database = {
           notes_bacs?: string | null
           org_id?: string
           sort_code?: string
+          swift_code?: string | null
           updated_at?: string | null
         }
         Relationships: []
