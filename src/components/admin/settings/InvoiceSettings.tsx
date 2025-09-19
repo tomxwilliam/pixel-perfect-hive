@@ -15,6 +15,7 @@ interface BillingSettings {
   sort_code: string;
   account_number: string;
   iban: string;
+  swift_code: string;
   notes_bacs: string;
 }
 
@@ -53,6 +54,7 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
           sort_code: '00-00-00',
           account_number: '12345678',
           iban: '',
+          swift_code: '',
           notes_bacs: 'Please use your invoice number as the payment reference when making your bank transfer. Payments are typically processed within 1-2 business days.'
         };
         setSettings(defaultSettings as BillingSettings);
@@ -268,6 +270,19 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="swift_code">SWIFT/BIC Code (Optional)</Label>
+            <Input
+              id="swift_code"
+              value={settings.swift_code}
+              onChange={(e) => handleInputChange('swift_code', e.target.value)}
+              placeholder="BKENGB2L"
+              disabled={!isSuperAdmin}
+              maxLength={11}
+            />
+            <p className="text-xs text-muted-foreground">8 or 11 characters</p>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="notes_bacs">Payment Instructions</Label>
             <Textarea
               id="notes_bacs"
@@ -342,7 +357,13 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
                 <div className="mt-4 p-3 bg-muted/50 rounded">
                   <p className="text-sm">{settings.notes_bacs}</p>
                 </div>
-              )}
+                )}
+                {settings.swift_code && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">SWIFT/BIC:</span>
+                    <span className="font-mono">{settings.swift_code}</span>
+                  </div>
+                )}
             </div>
           </CardContent>
         </Card>
