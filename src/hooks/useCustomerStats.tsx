@@ -50,7 +50,9 @@ export const useCustomerStats = () => {
         .select('amount, status')
         .eq('customer_id', user.id);
 
-      const pendingInvoices = invoices?.filter(inv => inv.status === 'pending').length || 0;
+      const pendingInvoiceAmount = invoices
+        ?.filter(inv => inv.status === 'pending')
+        .reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
       const totalSpent = invoices
         ?.filter(inv => inv.status === 'paid')
         .reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
@@ -66,7 +68,7 @@ export const useCustomerStats = () => {
       setStats({
         activeProjects: projectCount || 0,
         openTickets: ticketCount || 0,
-        pendingInvoices,
+        pendingInvoices: pendingInvoiceAmount,
         totalSpent,
         upcomingBookings: bookingCount || 0
       });
