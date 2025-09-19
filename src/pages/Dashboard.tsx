@@ -32,7 +32,7 @@ import {
   FileText,
   BarChart,
   Bell,
-  Globe
+  Server
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -194,7 +194,7 @@ const Dashboard = () => {
                 Quotes
               </MobileTabsTrigger>
               <MobileTabsTrigger value="domains" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
+                <Server className="h-4 w-4" />
                 Domains & Hosting
               </MobileTabsTrigger>
               <MobileTabsTrigger value="appointments" className="flex items-center gap-2">
