@@ -148,6 +148,9 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
+      // Check if it's a @404codelab.com email
+      const is404CodeLabEmail = email.endsWith('@404codelab.com');
+      
       // First check if user exists in profiles
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -168,17 +171,23 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
           title: "Success",
           description: `${email} has been promoted to admin`,
         });
-
+        
+        setNewAdminEmail('');
+      } else if (is404CodeLabEmail) {
+        // For @404codelab.com emails, they'll automatically be admin when they sign up
+        toast({
+          title: "Admin Role Configured",
+          description: `${email} will automatically have admin privileges when they sign up. All @404codelab.com emails are automatically assigned admin role.`,
+        });
+        
         setNewAdminEmail('');
       } else {
-        // User doesn't exist in profiles
-        // Provide clear instructions on what needs to happen
+        // User doesn't exist and it's not a @404codelab.com email
         toast({
           title: "User Not Found",
-          description: `No user found with email ${email}. To promote a user to admin, they must first create an account by signing up on the website.`,
+          description: `No user found with email ${email}. The user must sign up and create an account first before being promoted to admin.`,
           variant: "destructive",
         });
-        return;
       }
     } catch (error) {
       console.error('Error promoting user to admin:', error);
