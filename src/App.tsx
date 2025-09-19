@@ -7,26 +7,37 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+// Pages
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import GamePortfolio from "./pages/GamePortfolio";
-import AppPortfolio from "./pages/AppPortfolio";
-import WebPortfolio from "./pages/WebPortfolio";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import ProjectManagement from "./pages/ProjectManagement";
+import NotFound from "./pages/NotFound";
+import Support from "./pages/Support";
+
+// Portfolio pages
+import GamePortfolio from "./pages/GamePortfolio";
+import AppPortfolio from "./pages/AppPortfolio";  
+import WebPortfolio from "./pages/WebPortfolio";
+
+// Service pages
+import WebDevelopment from "./pages/services/WebDevelopment";
+import AppDevelopment from "./pages/services/AppDevelopment";
+import GameDevelopment from "./pages/services/GameDevelopment";
+import AIIntegration from "./pages/services/AIIntegration";
+
+// Dashboard pages
 import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
 import AIChat from "./pages/dashboard/AIChat";
-import NotFound from "./pages/NotFound";
-import AIIntegration from "./pages/services/AIIntegration";
-import GamesLanding from "./pages/landing/GamesLanding";
-import AppsLanding from "./pages/landing/AppsLanding";
-import WebLanding from "./pages/landing/WebLanding";
-import AILanding from "./pages/landing/AILanding";
-import ProjectManagement from "./pages/ProjectManagement";
+
+// Admin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
+// Legal pages
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsOfService from "./pages/legal/TermsOfService";
 import RefundsPolicy from "./pages/legal/RefundsPolicy";
@@ -44,21 +55,30 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+              {/* Main pages */}
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/portfolio/games" element={<GamePortfolio />} />
-              <Route path="/portfolio/apps" element={<AppPortfolio />} />
+              <Route path="/support" element={<Support />} />
+              
+              {/* Portfolio pages */}
               <Route path="/portfolio/web" element={<WebPortfolio />} />
+              <Route path="/portfolio/apps" element={<AppPortfolio />} />
+              <Route path="/portfolio/games" element={<GamePortfolio />} />
+              
+              {/* Service pages */}
+              <Route path="/services/web-development" element={<WebDevelopment />} />
+              <Route path="/services/app-development" element={<AppDevelopment />} />
+              <Route path="/services/game-development" element={<GameDevelopment />} />
+              <Route path="/services/ai-integration" element={<AIIntegration />} />
+              
+              {/* Authentication */}
               <Route path="/auth" element={<Auth />} />
+              
+              {/* Dashboard pages */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin" element={
-                <ProtectedRoute requireAdmin={true}>
-                  <AdminDashboard />
                 </ProtectedRoute>
               } />
               <Route path="/dashboard/projects/new" element={
@@ -81,21 +101,27 @@ const App = () => (
                   <AIChat />
                 </ProtectedRoute>
               } />
+              
+              {/* Admin pages */}
+              <Route path="/admin" element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="/projects" element={
                 <ProtectedRoute requireCodeLabEmail={true}>
                   <ProjectManagement />
                 </ProtectedRoute>
               } />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="/services/ai-integration" element={<AIIntegration />} />
-              <Route path="/l/games" element={<GamesLanding />} />
-              <Route path="/l/apps" element={<AppsLanding />} />
-              <Route path="/l/web" element={<WebLanding />} />
-              <Route path="/l/ai-integration" element={<AILanding />} />
+              
+              {/* Legal pages */}
               <Route path="/legal/privacy" element={<PrivacyPolicy />} />
               <Route path="/legal/terms" element={<TermsOfService />} />
               <Route path="/legal/refunds" element={<RefundsPolicy />} />
               <Route path="/legal/cookies" element={<CookiePolicy />} />
+              
+              {/* 404 page */}
+              <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
 
