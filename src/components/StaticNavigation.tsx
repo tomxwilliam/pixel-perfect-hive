@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +10,7 @@ import { useTheme } from "@/hooks/useTheme";
 export const StaticNavigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user, profile, signOut } = useAuth();
   const { theme } = useTheme();
 
@@ -19,6 +20,19 @@ export const StaticNavigation = () => {
   const logoSrc = isDarkMode
     ? "/assets/logo-dark.png"
     : "/assets/logo-light.png";
+
+  const handleServicesEnter = () => {
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    setServicesOpen(true);
+  };
+
+  const handleServicesLeave = () => {
+    servicesTimeoutRef.current = setTimeout(() => {
+      setServicesOpen(false);
+    }, 150); // Small delay to allow mouse movement
+  };
 
   const handleLogout = async () => {
     try {
@@ -66,8 +80,8 @@ export const StaticNavigation = () => {
               {/* Services Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
+                onMouseEnter={handleServicesEnter}
+                onMouseLeave={handleServicesLeave}
               >
                 <button className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center">
                   Services
@@ -75,7 +89,11 @@ export const StaticNavigation = () => {
                 </button>
                 
                 {servicesOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-popover border border-border rounded-md shadow-lg z-50">
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-48 bg-popover border border-border rounded-md shadow-lg z-50"
+                    onMouseEnter={handleServicesEnter}
+                    onMouseLeave={handleServicesLeave}
+                  >
                     <a
                       href="/services/web-development"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
