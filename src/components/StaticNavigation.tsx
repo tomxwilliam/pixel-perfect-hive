@@ -42,7 +42,7 @@ export const StaticNavigation = () => {
               <img
                 src={logoSrc}
                 alt="404 Code Lab"
-                className="h-12 w-auto"
+                className="h-16 w-auto"
               />
             </a>
           </div>
