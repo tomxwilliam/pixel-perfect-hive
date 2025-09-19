@@ -4,13 +4,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Smartphone, Zap, Code, TrendingUp, Star, Shield, CheckCircle, Users, Clock, Lightbulb } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const AppPortfolio = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Seo 
+        title="App Portfolio | Mobile App Development by 404 Code Lab"
+        description="Discover our professional mobile app development portfolio. iOS and Android apps with React Native, native development, and custom solutions."
+        canonicalUrl="https://404codelab.com/portfolio/apps"
+      />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-accent/10 to-primary/10">

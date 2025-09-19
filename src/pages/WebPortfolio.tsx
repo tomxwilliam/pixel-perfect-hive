@@ -3,16 +3,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palette, Rocket, HeadphonesIcon } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
-import { useNavigate } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProjectSlideshow } from "@/components/portfolio/ProjectSlideshow";
+import Seo from "@/components/Seo";
 const WebPortfolio = () => {
-  const navigate = useNavigate();
   return <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Seo 
+        title="Web Portfolio | Professional Website Development by 404 Code Lab"
+        description="Explore our web development portfolio. Custom websites, e-commerce platforms, and web applications built with React, Next.js, and modern technologies."
+        canonicalUrl="https://404codelab.com/portfolio/web"
+      />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">
@@ -368,9 +372,11 @@ const WebPortfolio = () => {
                   Let's create something equally impressive for your business.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button onClick={() => navigate('/contact')} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                    <Zap className="mr-2 h-5 w-5" />
-                    Contact Us
+                  <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                    <a href="/contact">
+                      <Zap className="mr-2 h-5 w-5" />
+                      Contact Us
+                    </a>
                   </Button>
                   
                   <Dialog>
@@ -504,9 +510,11 @@ const WebPortfolio = () => {
                         </div>
 
                         <div className="text-center pt-4">
-                          <Button onClick={() => navigate('/contact')} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                            Start Your Project
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                          <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                            <a href="/contact">
+                              Start Your Project
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </a>
                           </Button>
                         </div>
                       </div>

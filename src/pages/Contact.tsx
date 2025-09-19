@@ -6,10 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, MapPin, Send, Zap, Phone, Loader2 } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import Seo from "@/components/Seo";
 const Contact = () => {
   const {
     toast
@@ -82,7 +83,12 @@ const Contact = () => {
     });
   };
   return <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Seo 
+        title="Contact 404 Code Lab | Get Your Project Quote Today"
+        description="Get in touch with 404 Code Lab for web development, mobile apps, games, and AI integration. Free project consultation and competitive quotes."
+        canonicalUrl="https://404codelab.com/contact"
+      />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">

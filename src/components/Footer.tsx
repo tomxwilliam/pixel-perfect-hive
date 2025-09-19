@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter, FaBehance } from "react-icons/fa6";
 import { useTheme } from "@/hooks/useTheme";
@@ -58,39 +57,39 @@ export const Footer = () => {
             <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  About Us
-                </Link>
+              <a href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                About Us
+              </a>
               </li>
               <li>
-                <Link to="/portfolio/web" className="text-muted-foreground hover:text-primary transition-colors">
-                  Web Portfolio
-                </Link>
+              <a href="/portfolio/web" className="text-muted-foreground hover:text-primary transition-colors">
+                Web Portfolio
+              </a>
               </li>
               <li>
-                <Link to="/portfolio/games" className="text-muted-foreground hover:text-primary transition-colors">
-                  Games
-                </Link>
+              <a href="/portfolio/games" className="text-muted-foreground hover:text-primary transition-colors">
+                Games
+              </a>
               </li>
               <li>
-                <Link to="/portfolio/apps" className="text-muted-foreground hover:text-primary transition-colors">
-                  Apps
-                </Link>
+              <a href="/portfolio/apps" className="text-muted-foreground hover:text-primary transition-colors">
+                Apps
+              </a>
               </li>
               <li>
-                <Link to="/services/ai-integration" className="text-muted-foreground hover:text-primary transition-colors">
-                  AI Integration
-                </Link>
+              <a href="/services/ai-integration" className="text-muted-foreground hover:text-primary transition-colors">
+                AI Integration
+              </a>
               </li>
               <li>
-                <Link to="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
-                  Customer Portal
-                </Link>
+              <a href="/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
+                Customer Portal
+              </a>
               </li>
               <li>
-                <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  Contact
-                </Link>
+              <a href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                Contact
+              </a>
               </li>
             </ul>
           </div>
@@ -114,18 +113,18 @@ export const Footer = () => {
             
             {/* Legal Links */}
             <div className="flex flex-wrap gap-4 text-sm">
-              <Link to="/legal/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="/legal/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy Policy
-              </Link>
-              <Link to="/legal/terms" className="text-muted-foreground hover:text-primary transition-colors">
+              </a>
+              <a href="/legal/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
-              </Link>
-              <Link to="/legal/refunds" className="text-muted-foreground hover:text-primary transition-colors">
+              </a>
+              <a href="/legal/refunds" className="text-muted-foreground hover:text-primary transition-colors">
                 Refunds Policy
-              </Link>
-              <Link to="/legal/cookies" className="text-muted-foreground hover:text-primary transition-colors">
+              </a>
+              <a href="/legal/cookies" className="text-muted-foreground hover:text-primary transition-colors">
                 Cookie Policy
-              </Link>
+              </a>
             </div>
             
             <div className="flex items-center space-x-2 text-muted-foreground text-sm">

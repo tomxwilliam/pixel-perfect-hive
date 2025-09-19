@@ -1,11 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Code, Zap, Users, Target } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
+import Seo from "@/components/Seo";
 const About = () => {
+  const seoData = {
+    title: "About 404 Code Lab | Scottish Indie Development Studio",
+    description: "Meet the team behind 404 Code Lab. Scottish indie development studio creating innovative games, apps, and websites with cutting-edge technology.",
+    canonicalUrl: "https://404codelab.com/about"
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "404 Code Lab",
+      "description": seoData.description,
+      "foundingLocation": "Scotland",
+      "url": "https://404codelab.com"
+    }
+  };
+
   return <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Seo {...seoData} jsonLd={jsonLd} />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">

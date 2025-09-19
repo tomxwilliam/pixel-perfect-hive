@@ -1,4 +1,4 @@
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 
@@ -10,7 +10,7 @@ export default function TermsOfService() {
         description="Read the terms and conditions governing your use of 404 Code Lab's hosting and digital services."
       />
       <div className="min-h-screen bg-background">
-        <Navigation />
+        <StaticNavigation />
         
         <main className="pt-24 pb-16 px-4">
           <div className="max-w-4xl mx-auto">

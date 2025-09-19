@@ -2,12 +2,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import Seo from "@/components/Seo";
 const GamePortfolio = () => {
   return <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Seo 
+        title="Game Portfolio | Mobile Games by 404 Code Lab"
+        description="Explore our collection of addictive mobile games including BeeVerse. Professional game development with Unity, engaging gameplay, and monetization strategies."
+        canonicalUrl="https://404codelab.com/portfolio/games"
+      />
+      <StaticNavigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/10">
