@@ -23,9 +23,6 @@ import AppPortfolio from "./pages/AppPortfolio";
 import WebPortfolio from "./pages/WebPortfolio";
 
 // Service pages
-import WebDevelopment from "./pages/services/WebDevelopment";
-import AppDevelopment from "./pages/services/AppDevelopment";
-import GameDevelopment from "./pages/services/GameDevelopment";
 import AIIntegration from "./pages/services/AIIntegration";
 
 // Dashboard pages
@@ -67,9 +64,6 @@ const App = () => (
               <Route path="/portfolio/games" element={<GamePortfolio />} />
               
               {/* Service pages */}
-              <Route path="/services/web-development" element={<WebDevelopment />} />
-              <Route path="/services/app-development" element={<AppDevelopment />} />
-              <Route path="/services/game-development" element={<GameDevelopment />} />
               <Route path="/services/ai-integration" element={<AIIntegration />} />
               
               {/* Authentication */}
