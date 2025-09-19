@@ -31,6 +31,7 @@ interface AdminManagementProps {
 
 const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
   const [adminRequests, setAdminRequests] = useState<AdminRequest[]>([]);
+  const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const isMobile = useIsMobile();
@@ -38,8 +39,38 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
   useEffect(() => {
     if (isSuperAdmin) {
       fetchAdminRequests();
+      fetchAdminUsers();
     }
   }, [isSuperAdmin]);
+
+  const fetchAdminUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email, first_name, last_name, created_at')
+        .eq('role', 'admin')
+        .order('email');
+
+      if (error) {
+        console.error('Error fetching admin users:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch admin users",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAdminUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching admin users:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch admin users",
+        variant: "destructive",
+      });
+    }
+  };
 
   const fetchAdminRequests = async () => {
     try {
@@ -201,6 +232,54 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
     }
   };
 
+  const handleRemoveAdmin = async (userId: string, userEmail: string) => {
+    if (!isSuperAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "Only super admin can remove admin privileges",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Prevent removing tom@404codelab.com
+    if (userEmail === 'tom@404codelab.com') {
+      toast({
+        title: "Cannot Remove Super Admin",
+        description: "The super admin account cannot be removed",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: 'customer' })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Admin privileges removed from ${userEmail}`,
+      });
+
+      // Refresh the admin users list
+      fetchAdminUsers();
+    } catch (error) {
+      console.error('Error removing admin privileges:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove admin privileges",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!isSuperAdmin) {
     return (
       <div className="text-center py-8">
@@ -251,6 +330,71 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
               </Button>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Current Admin Users */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5" />
+            Current Admin Users
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {adminUsers.length === 0 ? (
+            <div className="text-center py-8">
+              <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No admin users found</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {adminUsers.map((admin) => (
+                <div key={admin.id} className={`p-4 border rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
+                  <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
+                    <div className={`flex items-center gap-3 ${isMobile ? 'mb-2' : ''}`}>
+                      <Shield className="h-5 w-5 text-primary" />
+                      <div>
+                        <h4 className="font-medium">
+                          {admin.first_name && admin.last_name 
+                            ? `${admin.first_name} ${admin.last_name}`
+                            : admin.email
+                          }
+                        </h4>
+                        <p className="text-sm text-muted-foreground">{admin.email}</p>
+                      </div>
+                    </div>
+                    <div className={`flex items-center gap-2 ${isMobile ? 'flex-col w-full' : ''}`}>
+                      <Badge variant="default" className="flex items-center gap-1">
+                        <Shield className="h-3 w-3" />
+                        Admin
+                      </Badge>
+                      {admin.email !== 'tom@404codelab.com' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleRemoveAdmin(admin.id, admin.email)}
+                          disabled={loading}
+                          className={isMobile ? 'w-full' : ''}
+                        >
+                          <UserX className="h-4 w-4 mr-2" />
+                          Remove Admin
+                        </Button>
+                      )}
+                      {admin.email === 'tom@404codelab.com' && (
+                        <Badge variant="outline" className="text-xs">
+                          Super Admin
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Admin since: {new Date(admin.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
