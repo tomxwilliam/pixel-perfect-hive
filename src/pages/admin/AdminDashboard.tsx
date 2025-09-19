@@ -46,7 +46,14 @@ const AdminDashboard = () => {
 
   const isAdmin = profile?.role === 'admin' || profile?.email === 'admin@404codelab.com';
   
+  console.log('AdminDashboard check:', { 
+    user: !!user, 
+    profile: profile ? { role: profile.role, email: profile.email } : null,
+    isAdmin 
+  });
+  
   if (!user || !isAdmin) {
+    console.log('AdminDashboard access denied:', { user: !!user, isAdmin });
     return <Navigate to="/dashboard" replace />;
   }
 

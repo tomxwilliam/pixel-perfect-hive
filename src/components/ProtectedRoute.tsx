@@ -32,8 +32,17 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (requireAdmin && profile && profile.role !== 'admin' && profile.email !== 'admin@404codelab.com') {
-    return <Navigate to="/dashboard" replace />;
+  if (requireAdmin && profile) {
+    console.log('Admin check:', { 
+      role: profile.role, 
+      email: profile.email,
+      isAdmin: profile.role === 'admin' || profile.email === 'admin@404codelab.com'
+    });
+    
+    if (profile.role !== 'admin' && profile.email !== 'admin@404codelab.com') {
+      console.log('Access denied - redirecting to dashboard');
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   if (requireCodeLabEmail && user && !user.email?.endsWith('@404codelab.com')) {
