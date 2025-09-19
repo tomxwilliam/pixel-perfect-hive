@@ -1,12 +1,49 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
+import { Download, ExternalLink, Star, Zap, TrendingUp, Smartphone, Apple } from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
+import { supabase } from "@/integrations/supabase/client";
+interface AppStoreLink {
+  id: string;
+  game_name: string;
+  ios_link: string;
+  google_play_link: string;
+  is_active: boolean;
+}
+
 const GamePortfolio = () => {
+  const [appStoreLinks, setAppStoreLinks] = useState<AppStoreLink[]>([]);
+
+  useEffect(() => {
+    fetchAppStoreLinks();
+  }, []);
+
+  const fetchAppStoreLinks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("app_store_links")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setAppStoreLinks(data || []);
+    } catch (error) {
+      console.error("Error fetching app store links:", error);
+    }
+  };
+
+  // Find BeeVerse links
+  const beeVerseLinks = appStoreLinks.find(link => 
+    link.game_name.toLowerCase().includes('beeverse') || 
+    link.game_name.toLowerCase().includes('bee verse')
+  );
+
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
         title="Game Portfolio | Mobile Games by 404 Code Lab"
@@ -70,10 +107,36 @@ const GamePortfolio = () => {
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                      <Download className="mr-2 h-5 w-5" />
-                      Download on iOS
-                    </Button>
+                    {beeVerseLinks?.ios_link && (
+                      <Button 
+                        asChild 
+                        className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                      >
+                        <a href={beeVerseLinks.ios_link} target="_blank" rel="noopener noreferrer">
+                          <Apple className="mr-2 h-5 w-5" />
+                          Download on iOS
+                        </a>
+                      </Button>
+                    )}
+                    
+                    {beeVerseLinks?.google_play_link && (
+                      <Button 
+                        asChild 
+                        variant="outline" 
+                        className="border-primary/30 hover:bg-primary/10"
+                      >
+                        <a href={beeVerseLinks.google_play_link} target="_blank" rel="noopener noreferrer">
+                          <Smartphone className="mr-2 h-5 w-5" />
+                          Get it on Google Play
+                        </a>
+                      </Button>
+                    )}
+                    
+                    {!beeVerseLinks?.ios_link && !beeVerseLinks?.google_play_link && (
+                      <div className="text-muted-foreground">
+                        Download links coming soon!
+                      </div>
+                    )}
                   </div>
                 </div>
                 
