@@ -350,9 +350,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/47f9ad80-e301-4e42-aab1-48bedbe2da16.png", 
-                  alt: "IronHouse Gym Website Preview",
-                  caption: "Bold gym website with class timetables and membership"
+                  src: "/lovable-uploads/ih1.png", 
+                  alt: "IronHouse Gym Homepage",
+                  caption: "Homepage featuring strength revolution messaging"
+                },
+                { 
+                  src: "/lovable-uploads/ih2.png", 
+                  alt: "IronHouse Gym About Page",
+                  caption: "About page showcasing gym values and community"
+                },
+                { 
+                  src: "/lovable-uploads/ih3.png", 
+                  alt: "IronHouse Gym Timetable",
+                  caption: "Interactive class timetable and booking system"
+                },
+                { 
+                  src: "/lovable-uploads/ih4.png", 
+                  alt: "IronHouse Gym Trainers",
+                  caption: "Trainer profiles and specialties showcase"
+                },
+                { 
+                  src: "/lovable-uploads/ih5.png", 
+                  alt: "IronHouse Gym Contact",
+                  caption: "Contact page with membership options"
                 }
               ]}
               liveUrl="https://404codelab.com/ironhouse-gym/index.html"
