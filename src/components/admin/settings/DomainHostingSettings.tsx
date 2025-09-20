@@ -22,6 +22,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
   const [newTldPrice, setNewTldPrice] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
+  const [isSyncing, setIsSyncing] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -33,6 +34,20 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         .from('domain_hosting_settings')
         .select('*')
         .single();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Fetch domain pricing from domain_prices table
+  const { data: domainPricing, isLoading: isPricingLoading } = useQuery({
+    queryKey: ['domain-prices'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('domain_prices')
+        .select('*')
+        .order('tld');
       
       if (error) throw error;
       return data;
@@ -76,22 +91,76 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
   const handleAddTldPricing = async () => {
     if (!newTld || !newTldPrice) return;
     
-    const currentPricing = (settings?.domain_pricing as Record<string, number>) || {};
-    const updatedPricing = {
-      ...currentPricing,
-      [newTld]: parseFloat(newTldPrice)
-    };
+    const { error } = await supabase
+      .from('domain_prices')
+      .insert({
+        tld: newTld.startsWith('.') ? newTld : `.${newTld}`,
+        retail_gbp: parseFloat(newTldPrice),
+        retail_usd: parseFloat(newTldPrice) / 0.79, // Convert GBP to USD using approx rate
+        id_protect_gbp: 7.99,
+        source: 'manual',
+        is_override: true
+      });
     
-    updateSettingsMutation.mutate({ domain_pricing: updatedPricing });
-    setNewTld("");
-    setNewTldPrice("");
+    if (error) {
+      toast({
+        title: "Error adding TLD",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['domain-prices'] });
+      setNewTld("");
+      setNewTldPrice("");
+      toast({
+        title: "TLD added",
+        description: "Domain pricing has been added successfully"
+      });
+    }
   };
 
   const handleRemoveTldPricing = async (tld: string) => {
-    const currentPricing = (settings?.domain_pricing as Record<string, number>) || {};
-    const { [tld]: removed, ...updatedPricing } = currentPricing;
+    const { error } = await supabase
+      .from('domain_prices')
+      .delete()
+      .eq('tld', tld);
     
-    updateSettingsMutation.mutate({ domain_pricing: updatedPricing });
+    if (error) {
+      toast({
+        title: "Error removing TLD",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['domain-prices'] });
+      toast({
+        title: "TLD removed",
+        description: "Domain pricing has been removed successfully"
+      });
+    }
+  };
+
+  const handleSyncFromEnom = async () => {
+    setIsSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('sync-enom-prices');
+      
+      if (error) throw error;
+      
+      queryClient.invalidateQueries({ queryKey: ['domain-prices'] });
+      toast({
+        title: "Sync completed",
+        description: `Updated ${data.updated_count} domain prices from Enom`
+      });
+    } catch (error: any) {
+      toast({
+        title: "Sync failed",
+        description: error.message || "Failed to sync pricing from Enom",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleEmailTemplateUpdate = async (templateKey: string, field: string, value: string) => {
@@ -178,7 +247,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     { value: 'support-ticket-closed', label: 'Support Ticket Closed' }
   ];
 
-  if (isLoading) {
+  if (isLoading || isPricingLoading) {
     return <div>Loading settings...</div>;
   }
 
@@ -300,6 +369,17 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                 </Button>
               </div>
 
+              {/* Sync from Enom Button */}
+              <div className="flex gap-2 mb-4">
+                <Button 
+                  onClick={handleSyncFromEnom}
+                  disabled={isSyncing}
+                  variant="outline"
+                >
+                  {isSyncing ? "Syncing..." : "Sync from Enom"}
+                </Button>
+              </div>
+
               {/* Domain Pricing Table */}
               <div className="border rounded-lg overflow-hidden">
                 <div className="bg-muted/50 border-b">
@@ -313,63 +393,74 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                   </div>
                 </div>
                 <div className="divide-y">
-                  {Object.entries((settings?.domain_pricing as Record<string, number>) || {}).map(([tld, price]) => (
-                    <div key={tld} className="grid grid-cols-6 gap-4 p-4 items-center">
-                      {/* TLD */}
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="font-mono">
-                          .{tld}
-                        </Badge>
-                      </div>
-                      
-                      {/* Register Price */}
-                      <div className="text-center">
-                        <span className="font-medium text-green-600">£{price as number}</span>
-                        <p className="text-xs text-muted-foreground">registration</p>
-                      </div>
-                      
-                      {/* Renew Price */}
-                      <div className="text-center">
-                        <span className="font-medium text-blue-600">£{(price as number * 1.1).toFixed(2)}</span>
-                        <p className="text-xs text-muted-foreground">renewal</p>
-                      </div>
-                      
-                      {/* Transfer Price */}
-                      <div className="text-center">
-                        <span className="font-medium text-purple-600">£{(price as number * 0.9).toFixed(2)}</span>
-                        <p className="text-xs text-muted-foreground">transfer</p>
-                      </div>
-                      
-                      {/* Status */}
-                      <div className="text-center">
-                        <Badge variant="secondary" className="text-xs">
-                          Manual
-                        </Badge>
-                        <p className="text-xs text-muted-foreground">
-                          Updated: Today
-                        </p>
-                      </div>
-                      
-                      {/* Actions */}
-                      <div className="text-center">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleRemoveTldPricing(tld)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Empty state */}
-                  {Object.keys((settings?.domain_pricing as Record<string, number>) || {}).length === 0 && (
+                  {isPricingLoading ? (
                     <div className="p-8 text-center text-muted-foreground">
-                      <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p>No domain pricing configured</p>
-                      <p className="text-sm">Add TLDs above or sync from Enom</p>
+                      Loading pricing data...
                     </div>
+                  ) : (
+                    <>
+                      {domainPricing?.map((pricing) => (
+                        <div key={pricing.id} className="grid grid-cols-6 gap-4 p-4 items-center">
+                          {/* TLD */}
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-mono">
+                              {pricing.tld}
+                            </Badge>
+                          </div>
+                          
+                          {/* Register Price */}
+                          <div className="text-center">
+                            <span className="font-medium text-green-600">£{pricing.retail_gbp}</span>
+                            <p className="text-xs text-muted-foreground">registration</p>
+                          </div>
+                          
+                          {/* Renew Price */}
+                          <div className="text-center">
+                            <span className="font-medium text-blue-600">£{pricing.retail_gbp}</span>
+                            <p className="text-xs text-muted-foreground">renewal</p>
+                          </div>
+                          
+                          {/* Transfer Price */}
+                          <div className="text-center">
+                            <span className="font-medium text-purple-600">£{pricing.retail_gbp}</span>
+                            <p className="text-xs text-muted-foreground">transfer</p>
+                          </div>
+                          
+                          {/* Status */}
+                          <div className="text-center">
+                            <Badge variant={pricing.source === 'enom' ? 'default' : 'secondary'} className="text-xs">
+                              {pricing.source === 'enom' ? 'Enom Sync' : 'Manual'}
+                            </Badge>
+                            <p className="text-xs text-muted-foreground">
+                              {pricing.last_synced_at ? 
+                                new Date(pricing.last_synced_at).toLocaleDateString() : 
+                                new Date(pricing.updated_at).toLocaleDateString()
+                              }
+                            </p>
+                          </div>
+                          
+                          {/* Actions */}
+                          <div className="text-center">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleRemoveTldPricing(pricing.tld)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Empty state */}
+                      {(!domainPricing || domainPricing.length === 0) && (
+                        <div className="p-8 text-center text-muted-foreground">
+                          <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <p>No domain pricing configured</p>
+                          <p className="text-sm">Add TLDs above or sync from Enom</p>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
