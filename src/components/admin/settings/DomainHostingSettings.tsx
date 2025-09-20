@@ -300,22 +300,78 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                 </Button>
               </div>
 
-              <div className="space-y-2">
-                {Object.entries((settings?.domain_pricing as Record<string, number>) || {}).map(([tld, price]) => (
-                  <div key={tld} className="flex items-center justify-between p-2 border rounded">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline">.{tld}</Badge>
-                      <span className="font-medium">£{price as number}</span>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveTldPricing(tld)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+              {/* Domain Pricing Table */}
+              <div className="border rounded-lg overflow-hidden">
+                <div className="bg-muted/50 border-b">
+                  <div className="grid grid-cols-6 gap-4 p-4 font-medium text-sm">
+                    <div>TLD</div>
+                    <div className="text-center">Register Price</div>
+                    <div className="text-center">Renew Price</div>
+                    <div className="text-center">Transfer Price</div>
+                    <div className="text-center">Status</div>
+                    <div className="text-center">Actions</div>
                   </div>
-                ))}
+                </div>
+                <div className="divide-y">
+                  {Object.entries((settings?.domain_pricing as Record<string, number>) || {}).map(([tld, price]) => (
+                    <div key={tld} className="grid grid-cols-6 gap-4 p-4 items-center">
+                      {/* TLD */}
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="font-mono">
+                          .{tld}
+                        </Badge>
+                      </div>
+                      
+                      {/* Register Price */}
+                      <div className="text-center">
+                        <span className="font-medium text-green-600">£{price as number}</span>
+                        <p className="text-xs text-muted-foreground">registration</p>
+                      </div>
+                      
+                      {/* Renew Price */}
+                      <div className="text-center">
+                        <span className="font-medium text-blue-600">£{(price as number * 1.1).toFixed(2)}</span>
+                        <p className="text-xs text-muted-foreground">renewal</p>
+                      </div>
+                      
+                      {/* Transfer Price */}
+                      <div className="text-center">
+                        <span className="font-medium text-purple-600">£{(price as number * 0.9).toFixed(2)}</span>
+                        <p className="text-xs text-muted-foreground">transfer</p>
+                      </div>
+                      
+                      {/* Status */}
+                      <div className="text-center">
+                        <Badge variant="secondary" className="text-xs">
+                          Manual
+                        </Badge>
+                        <p className="text-xs text-muted-foreground">
+                          Updated: Today
+                        </p>
+                      </div>
+                      
+                      {/* Actions */}
+                      <div className="text-center">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleRemoveTldPricing(tld)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Empty state */}
+                  {Object.keys((settings?.domain_pricing as Record<string, number>) || {}).length === 0 && (
+                    <div className="p-8 text-center text-muted-foreground">
+                      <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p>No domain pricing configured</p>
+                      <p className="text-sm">Add TLDs above or sync from Enom</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
