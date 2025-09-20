@@ -442,6 +442,120 @@ export type Database = {
         }
         Relationships: []
       }
+      domain_orders: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string
+          customer_id: string
+          domain_name: string
+          domain_price_gbp: number
+          enom_domain_id: string | null
+          enom_order_id: string | null
+          expires_at: string | null
+          id: string
+          id_protect: boolean | null
+          id_protect_price_gbp: number | null
+          nameservers: string[] | null
+          provisioned_at: string | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tld: string
+          total_price_gbp: number
+          updated_at: string
+          years: number
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string
+          customer_id: string
+          domain_name: string
+          domain_price_gbp: number
+          enom_domain_id?: string | null
+          enom_order_id?: string | null
+          expires_at?: string | null
+          id?: string
+          id_protect?: boolean | null
+          id_protect_price_gbp?: number | null
+          nameservers?: string[] | null
+          provisioned_at?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tld: string
+          total_price_gbp: number
+          updated_at?: string
+          years?: number
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string
+          customer_id?: string
+          domain_name?: string
+          domain_price_gbp?: number
+          enom_domain_id?: string | null
+          enom_order_id?: string | null
+          expires_at?: string | null
+          id?: string
+          id_protect?: boolean | null
+          id_protect_price_gbp?: number | null
+          nameservers?: string[] | null
+          provisioned_at?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tld?: string
+          total_price_gbp?: number
+          updated_at?: string
+          years?: number
+        }
+        Relationships: []
+      }
+      domain_prices: {
+        Row: {
+          created_at: string
+          id: string
+          id_protect_gbp: number
+          id_protect_usd: number | null
+          is_override: boolean | null
+          last_synced_at: string | null
+          margin_percent: number | null
+          retail_gbp: number
+          retail_usd: number
+          source: string | null
+          tld: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          id_protect_gbp: number
+          id_protect_usd?: number | null
+          is_override?: boolean | null
+          last_synced_at?: string | null
+          margin_percent?: number | null
+          retail_gbp: number
+          retail_usd: number
+          source?: string | null
+          tld: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          id_protect_gbp?: number
+          id_protect_usd?: number | null
+          is_override?: boolean | null
+          last_synced_at?: string | null
+          margin_percent?: number | null
+          retail_gbp?: number
+          retail_usd?: number
+          source?: string | null
+          tld?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       domain_registrations: {
         Row: {
           created_at: string | null
@@ -628,35 +742,77 @@ export type Database = {
         Row: {
           body_html: string
           body_text: string | null
+          category: string | null
           created_at: string | null
           id: string
           is_active: boolean | null
+          is_system: boolean | null
           name: string
           subject: string
           template_type: string
           updated_at: string | null
+          variables: Json | null
         }
         Insert: {
           body_html: string
           body_text?: string | null
+          category?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          is_system?: boolean | null
           name: string
           subject: string
           template_type: string
           updated_at?: string | null
+          variables?: Json | null
         }
         Update: {
           body_html?: string
           body_text?: string | null
+          category?: string | null
           created_at?: string | null
           id?: string
           is_active?: boolean | null
+          is_system?: boolean | null
           name?: string
           subject?: string
           template_type?: string
           updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
+      }
+      exchange_rates: {
+        Row: {
+          cached_at: string
+          created_at: string
+          expires_at: string
+          from_currency: string
+          id: string
+          rate: number
+          source: string | null
+          to_currency: string
+        }
+        Insert: {
+          cached_at?: string
+          created_at?: string
+          expires_at: string
+          from_currency: string
+          id?: string
+          rate: number
+          source?: string | null
+          to_currency: string
+        }
+        Update: {
+          cached_at?: string
+          created_at?: string
+          expires_at?: string
+          from_currency?: string
+          id?: string
+          rate?: number
+          source?: string | null
+          to_currency?: string
         }
         Relationships: []
       }
@@ -801,6 +957,77 @@ export type Database = {
           },
           {
             foreignKeyName: "hosting_accounts_package_fk"
+            columns: ["hosting_package_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hosting_orders: {
+        Row: {
+          billing_cycle: string | null
+          cpanel_password: string | null
+          cpanel_username: string | null
+          created_at: string
+          customer_id: string
+          domain_name: string | null
+          expires_at: string | null
+          hosting_package_id: string
+          hosting_price_gbp: number
+          id: string
+          provisioned_at: string | null
+          server_ip: string | null
+          status: string | null
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
+          suspended_at: string | null
+          updated_at: string
+          whm_account_id: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string
+          customer_id: string
+          domain_name?: string | null
+          expires_at?: string | null
+          hosting_package_id: string
+          hosting_price_gbp: number
+          id?: string
+          provisioned_at?: string | null
+          server_ip?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          suspended_at?: string | null
+          updated_at?: string
+          whm_account_id?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string
+          customer_id?: string
+          domain_name?: string | null
+          expires_at?: string | null
+          hosting_package_id?: string
+          hosting_price_gbp?: number
+          id?: string
+          provisioned_at?: string | null
+          server_ip?: string | null
+          status?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          suspended_at?: string | null
+          updated_at?: string
+          whm_account_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_orders_hosting_package_id_fkey"
             columns: ["hosting_package_id"]
             isOneToOne: false
             referencedRelation: "hosting_packages"

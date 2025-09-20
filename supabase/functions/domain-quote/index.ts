@@ -20,6 +20,7 @@ interface DomainQuoteResponse {
   idProtectPrice: number;
   totalGBP: number;
   currency: string;
+  updatedAt?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -37,29 +38,40 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Getting quote for: ${domain} (${years} years, ID Protect: ${id_protect})`);
 
-    // Get currency conversion rates
-    const { data: rateData } = await supabase
-      .from('currency_rates')
-      .select('rate, margin')
-      .eq('from_currency', 'USD')
-      .eq('to_currency', 'GBP')
+    // Get domain pricing from new pricing table
+    const tld = '.' + domain.split('.').slice(1).join('.');
+    
+    let { data: priceData } = await supabase
+      .from('domain_prices')
+      .select('*')
+      .eq('tld', tld)
       .single();
 
-    const usdToGbpRate = rateData?.rate || 0.79;
-    const margin = rateData?.margin || 0.05;
+    // If no specific pricing found, try to refresh from sync if stale
+    if (!priceData || new Date(priceData.last_synced_at) < new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+      console.log(`Pricing for ${tld} is stale or missing, attempting refresh...`);
+      
+      try {
+        await supabase.functions.invoke('sync-enom-prices');
+        
+        // Try to get updated pricing
+        const { data: refreshedPrice } = await supabase
+          .from('domain_prices')
+          .select('*')
+          .eq('tld', tld)
+          .single();
+          
+        if (refreshedPrice) {
+          priceData = refreshedPrice;
+        }
+      } catch (error) {
+        console.error('Failed to refresh pricing:', error);
+      }
+    }
 
-    // Get domain pricing from settings
-    const { data: settings } = await supabase
-      .from('domain_hosting_settings')
-      .select('domain_pricing')
-      .single();
-
-    const domainPricing = settings?.domain_pricing || {
-      '.com': 12.99,
-      '.co.uk': 9.99,
-      '.org': 14.99,
-      '.net': 13.99
-    };
+    // Fallback to default pricing if still no data
+    const basePriceGBP = priceData?.retail_gbp || 12.99;
+    const idProtectPriceGBP = priceData?.id_protect_gbp || 7.99;
 
     const enomUser = Deno.env.get('ENOM_API_USER');
     const enomToken = Deno.env.get('ENOM_API_TOKEN');
@@ -102,28 +114,20 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    // Calculate pricing
-    const tld = '.' + domain.split('.').slice(1).join('.');
-    const basePriceGBP = domainPricing[tld] || domainPricing['.com'] || 12.99;
-    
-    // Domain price for multiple years
+    // Calculate pricing using new pricing data
     const totalDomainPrice = basePriceGBP * years;
-    
-    // ID Protection price (typically $9.95/year in USD, convert to GBP)
-    const idProtectPriceUSD = 9.95;
-    const idProtectPriceGBP = id_protect ? (idProtectPriceUSD * usdToGbpRate * (1 + margin) * years) : 0;
-    
-    // Total price
-    const totalGBP = totalDomainPrice + idProtectPriceGBP;
+    const totalIdProtectPrice = id_protect ? (idProtectPriceGBP * years) : 0;
+    const totalGBP = totalDomainPrice + totalIdProtectPrice;
 
     const result: DomainQuoteResponse = {
       available: isAvailable,
       domain,
       years,
       domainPrice: totalDomainPrice,
-      idProtectPrice: idProtectPriceGBP,
+      idProtectPrice: totalIdProtectPrice,
       totalGBP: Math.round(totalGBP * 100) / 100, // Round to 2 decimal places
-      currency: 'GBP'
+      currency: 'GBP',
+      updatedAt: priceData?.last_synced_at || new Date().toISOString()
     };
 
     return new Response(JSON.stringify(result), {
