@@ -267,9 +267,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/1e963e0b-cd28-4c9f-a4ee-0efb51b7c7fa.png", 
-                  alt: "Sweet Crumbs Website Preview",
-                  caption: "Custom cake shop with interactive galleries"
+                  src: "/lovable-uploads/sc1.png", 
+                  alt: "Sweet Crumbs Homepage",
+                  caption: "Homepage featuring premium chocolate cake with hero section"
+                },
+                { 
+                  src: "/lovable-uploads/sc2.png", 
+                  alt: "Sweet Crumbs About Page",
+                  caption: "About page showcasing team and baking expertise"
+                },
+                { 
+                  src: "/lovable-uploads/sc3.png", 
+                  alt: "Sweet Crumbs Flavours",
+                  caption: "Interactive flavour selection and pricing page"
+                },
+                { 
+                  src: "/lovable-uploads/sc4.png", 
+                  alt: "Sweet Crumbs Gallery",
+                  caption: "Gallery showcasing custom cake portfolio"
+                },
+                { 
+                  src: "/lovable-uploads/sc5.png", 
+                  alt: "Sweet Crumbs Contact",
+                  caption: "Contact page with cake order enquiry form"
                 }
               ]}
               liveUrl="https://404codelab.com/sweet-crumbs/index.html"
