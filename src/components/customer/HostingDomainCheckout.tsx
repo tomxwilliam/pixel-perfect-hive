@@ -27,13 +27,16 @@ interface HostingPackage {
   monthly_price: number;
   disk_space_gb: number;
   email_accounts: number;
-  features: {
-    websites?: string | number;
-    ssl?: boolean;
-    backups?: string;
-    [key: string]: any;
-  };
+  features: any; // Keep as any since it's Json from Supabase
 }
+
+// Helper function to safely access features
+const getFeature = (features: any, key: string): any => {
+  if (typeof features === 'object' && features !== null) {
+    return features[key];
+  }
+  return undefined;
+};
 
 export default function HostingDomainCheckout() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -256,14 +259,14 @@ export default function HostingDomainCheckout() {
                 </div>
 
                 <div className="space-y-2 text-sm">
-                  {(pkg.features as any)?.websites && (
-                    <div>Websites: {(pkg.features as any).websites}</div>
+                  {getFeature(pkg.features, 'websites') && (
+                    <div>Websites: {getFeature(pkg.features, 'websites')}</div>
                   )}
                   <div>{pkg.disk_space_gb}GB Storage</div>
                   <div>Unlimited Bandwidth</div>
                   <div>{pkg.email_accounts} Email Account{pkg.email_accounts > 1 ? 's' : ''}</div>
-                  {(pkg.features as any)?.ssl && <div>Free SSL Certificate</div>}
-                  {(pkg.features as any)?.backups && <div>{(pkg.features as any).backups} Backups</div>}
+                  {getFeature(pkg.features, 'ssl') && <div>Free SSL Certificate</div>}
+                  {getFeature(pkg.features, 'backups') && <div>{getFeature(pkg.features, 'backups')} Backups</div>}
                 </div>
               </div>
             ))}
