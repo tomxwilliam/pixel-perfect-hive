@@ -24,7 +24,15 @@ interface HostingPackage {
   package_name: string;
   stripe_price_id: string;
   annual_price: number;
-  features: any;
+  monthly_price: number;
+  disk_space_gb: number;
+  email_accounts: number;
+  features: {
+    websites?: string | number;
+    ssl?: boolean;
+    backups?: string;
+    [key: string]: any;
+  };
 }
 
 export default function HostingDomainCheckout() {
@@ -49,7 +57,7 @@ export default function HostingDomainCheckout() {
         .order('monthly_price', { ascending: true });
       
       if (error) throw error;
-      return data;
+      return data as HostingPackage[];
     }
   });
 
@@ -248,14 +256,14 @@ export default function HostingDomainCheckout() {
                 </div>
 
                 <div className="space-y-2 text-sm">
-                  {pkg.features?.websites && (
-                    <div>Websites: {pkg.features.websites}</div>
+                  {(pkg.features as any)?.websites && (
+                    <div>Websites: {(pkg.features as any).websites}</div>
                   )}
                   <div>{pkg.disk_space_gb}GB Storage</div>
                   <div>Unlimited Bandwidth</div>
                   <div>{pkg.email_accounts} Email Account{pkg.email_accounts > 1 ? 's' : ''}</div>
-                  {pkg.features?.ssl && <div>Free SSL Certificate</div>}
-                  {pkg.features?.backups && <div>{pkg.features.backups} Backups</div>}
+                  {(pkg.features as any)?.ssl && <div>Free SSL Certificate</div>}
+                  {(pkg.features as any)?.backups && <div>{(pkg.features as any).backups} Backups</div>}
                 </div>
               </div>
             ))}

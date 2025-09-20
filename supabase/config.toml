@@ -60,3 +60,9 @@ verify_jwt = true
 
 [functions.create-portal-session]
 verify_jwt = true
+
+[functions.domain-quote]
+verify_jwt = true
+
+[functions.combined-checkout]
+verify_jwt = true
