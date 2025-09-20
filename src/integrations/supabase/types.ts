@@ -376,6 +376,33 @@ export type Database = {
           },
         ]
       }
+      currency_rates: {
+        Row: {
+          from_currency: string
+          id: string
+          margin: number | null
+          rate: number
+          to_currency: string
+          updated_at: string | null
+        }
+        Insert: {
+          from_currency: string
+          id?: string
+          margin?: number | null
+          rate: number
+          to_currency: string
+          updated_at?: string | null
+        }
+        Update: {
+          from_currency?: string
+          id?: string
+          margin?: number | null
+          rate?: number
+          to_currency?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       domain_hosting_settings: {
         Row: {
           api_settings: Json | null
@@ -414,6 +441,75 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      domain_registrations: {
+        Row: {
+          created_at: string | null
+          currency: string
+          customer_id: string
+          domain_name: string
+          enom_order_id: string | null
+          expiry_date: string | null
+          id: string
+          id_protect: boolean | null
+          nameservers: string[] | null
+          order_id: string | null
+          price: number
+          registration_date: string | null
+          status: string
+          tld: string
+          years: number
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string
+          customer_id: string
+          domain_name: string
+          enom_order_id?: string | null
+          expiry_date?: string | null
+          id?: string
+          id_protect?: boolean | null
+          nameservers?: string[] | null
+          order_id?: string | null
+          price: number
+          registration_date?: string | null
+          status?: string
+          tld: string
+          years?: number
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string
+          customer_id?: string
+          domain_name?: string
+          enom_order_id?: string | null
+          expiry_date?: string | null
+          id?: string
+          id_protect?: boolean | null
+          nameservers?: string[] | null
+          order_id?: string | null
+          price?: number
+          registration_date?: string | null
+          status?: string
+          tld?: string
+          years?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "domain_registrations_customer_fk"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "domain_registrations_order_fk"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       domains: {
         Row: {
@@ -642,6 +738,76 @@ export type Database = {
         }
         Relationships: []
       }
+      hosting_accounts: {
+        Row: {
+          cpanel_password: string | null
+          cpanel_username: string | null
+          created_at: string | null
+          customer_id: string
+          domain_name: string
+          expires_at: string | null
+          hosting_package_id: string
+          id: string
+          order_id: string | null
+          server_ip: string | null
+          status: string
+          suspended_at: string | null
+          whm_account_id: string | null
+        }
+        Insert: {
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string | null
+          customer_id: string
+          domain_name: string
+          expires_at?: string | null
+          hosting_package_id: string
+          id?: string
+          order_id?: string | null
+          server_ip?: string | null
+          status?: string
+          suspended_at?: string | null
+          whm_account_id?: string | null
+        }
+        Update: {
+          cpanel_password?: string | null
+          cpanel_username?: string | null
+          created_at?: string | null
+          customer_id?: string
+          domain_name?: string
+          expires_at?: string | null
+          hosting_package_id?: string
+          id?: string
+          order_id?: string | null
+          server_ip?: string | null
+          status?: string
+          suspended_at?: string | null
+          whm_account_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosting_accounts_customer_fk"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosting_accounts_order_fk"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosting_accounts_package_fk"
+            columns: ["hosting_package_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hosting_packages: {
         Row: {
           annual_price: number | null
@@ -658,8 +824,10 @@ export type Database = {
           package_name: string
           package_type: Database["public"]["Enums"]["hosting_package_type"]
           setup_fee: number | null
+          stripe_price_id: string | null
           subdomains: number | null
           updated_at: string
+          whm_package_name: string | null
         }
         Insert: {
           annual_price?: number | null
@@ -676,8 +844,10 @@ export type Database = {
           package_name: string
           package_type: Database["public"]["Enums"]["hosting_package_type"]
           setup_fee?: number | null
+          stripe_price_id?: string | null
           subdomains?: number | null
           updated_at?: string
+          whm_package_name?: string | null
         }
         Update: {
           annual_price?: number | null
@@ -694,8 +864,10 @@ export type Database = {
           package_name?: string
           package_type?: Database["public"]["Enums"]["hosting_package_type"]
           setup_fee?: number | null
+          stripe_price_id?: string | null
           subdomains?: number | null
           updated_at?: string
+          whm_package_name?: string | null
         }
         Relationships: []
       }
@@ -1205,6 +1377,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      orders: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          currency: string
+          customer_id: string
+          id: string
+          items: Json
+          metadata: Json | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string
+          customer_id: string
+          id?: string
+          items?: Json
+          metadata?: Json | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string
+          customer_id?: string
+          id?: string
+          items?: Json
+          metadata?: Json | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_fk"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       org_billing_settings: {
         Row: {
