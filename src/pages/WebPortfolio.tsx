@@ -224,9 +224,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/08b142ce-467d-4503-aa9d-28d4085bbf3b.png", 
-                  alt: "FixRight Plumbing Website Preview",
-                  caption: "Emergency plumbing services with instant booking"
+                  src: "/lovable-uploads/fr1.png", 
+                  alt: "FixRight Plumbing Homepage",
+                  caption: "Homepage showcasing professional plumbing & heating services"
+                },
+                { 
+                  src: "/lovable-uploads/fr2.png", 
+                  alt: "FixRight Plumbing About Page",
+                  caption: "About page highlighting 15+ years of experience and qualifications"
+                },
+                { 
+                  src: "/lovable-uploads/fr3.png", 
+                  alt: "FixRight Plumbing Services",
+                  caption: "Comprehensive services page with emergency callout options"
+                },
+                { 
+                  src: "/lovable-uploads/fr4.png", 
+                  alt: "FixRight Plumbing Projects",
+                  caption: "Recent projects gallery with customer testimonials"
+                },
+                { 
+                  src: "/lovable-uploads/fr5.png", 
+                  alt: "FixRight Plumbing Contact",
+                  caption: "Contact page with emergency callout and quote request forms"
                 }
               ]}
               liveUrl="https://404codelab.com/fixright-plumbing/index.html"
