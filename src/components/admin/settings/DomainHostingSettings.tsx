@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Server, Settings, Save, Plus, Trash2, Mail, Send, Eye } from "lucide-react";
+import { Globe, Server, Settings, Save, Plus, Trash2, Mail, Send, Eye, Edit, RotateCcw } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
 interface DomainHostingSettingsProps {
   isSuperAdmin: boolean;
@@ -23,15 +25,19 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [isSyncing, setIsSyncing] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<any>(null);
+  const [editSubject, setEditSubject] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch current settings
-  const { data: settings, isLoading } = useQuery({
-    queryKey: ['domain-hosting-settings'],
+  // Fetch domain settings
+  const { data: domainSettings, isLoading: isSettingsLoading } = useQuery({
+    queryKey: ['domain-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('domain_hosting_settings')
+        .from('domain_settings')
         .select('*')
         .single();
       
@@ -54,18 +60,32 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     }
   });
 
-  // Update settings mutation
+  // Fetch email templates
+  const { data: emailTemplates, isLoading: isTemplatesLoading } = useQuery({
+    queryKey: ['email-templates'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('email_templates')
+        .select('*')
+        .order('category, name');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Update domain settings mutation
   const updateSettingsMutation = useMutation({
     mutationFn: async (updates: any) => {
       const { error } = await supabase
-        .from('domain_hosting_settings')
+        .from('domain_settings')
         .update(updates)
-        .eq('id', settings?.id);
+        .eq('id', domainSettings?.id);
       
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['domain-hosting-settings'] });
+      queryClient.invalidateQueries({ queryKey: ['domain-settings'] });
       toast({
         title: "Settings updated",
         description: "Domain & hosting settings have been saved successfully"
@@ -80,12 +100,65 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     }
   });
 
+  // Update email template mutation
+  const updateTemplateMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string, updates: any }) => {
+      const { error } = await supabase
+        .from('email_templates')
+        .update(updates)
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['email-templates'] });
+      toast({
+        title: "Template updated",
+        description: "Email template has been saved successfully"
+      });
+      setIsEditDialogOpen(false);
+      setEditingTemplate(null);
+    },
+    onError: (error) => {
+      toast({
+        title: "Update failed",
+        description: "Unable to update template. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Send test email mutation
+  const sendTestEmailMutation = useMutation({
+    mutationFn: async ({ templateId, email }: { templateId: string, email: string }) => {
+      const { data, error } = await supabase.functions.invoke('send-test-email', {
+        body: { templateId, email }
+      });
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Test email sent",
+        description: "Test email has been sent successfully"
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to send test email",
+        description: error.message || "Unable to send test email. Please try again.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleToggleUpdate = async (field: string, value: boolean) => {
     updateSettingsMutation.mutate({ [field]: value });
   };
 
   const handleNameserverUpdate = async (nameservers: string[]) => {
-    updateSettingsMutation.mutate({ default_nameservers: nameservers });
+    updateSettingsMutation.mutate({ nameservers });
   };
 
   const handleAddTldPricing = async () => {
@@ -163,179 +236,146 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     }
   };
 
-  const handleEmailTemplateUpdate = async (templateKey: string, field: string, value: string) => {
-    const currentTemplates = (settings?.email_templates as Record<string, any>) || {};
-    const updatedTemplates = {
-      ...currentTemplates,
-      [templateKey]: {
-        ...(currentTemplates[templateKey] || {}),
-        [field]: value
-      }
-    };
-    
-    updateSettingsMutation.mutate({ email_templates: updatedTemplates });
+  const handleEditTemplate = (template: any) => {
+    setEditingTemplate(template);
+    setEditSubject(template.subject);
+    setEditBody(template.body_html || template.body);
+    setIsEditDialogOpen(true);
   };
 
-  const handleSendTestEmail = async () => {
-    if (!selectedTemplate || !testEmail) {
+  const handleSaveTemplate = () => {
+    if (!editingTemplate) return;
+    
+    updateTemplateMutation.mutate({
+      id: editingTemplate.id,
+      updates: {
+        subject: editSubject,
+        body_html: editBody,
+        updated_at: new Date().toISOString()
+      }
+    });
+  };
+
+  const handleSendTestEmail = async (templateId: string) => {
+    if (!testEmail) {
       toast({
-        title: "Missing fields",
-        description: "Please select a template and enter an email address",
+        title: "Email required",
+        description: "Please enter a test email address",
         variant: "destructive"
       });
       return;
     }
-
-    try {
-      const { error } = await supabase.functions.invoke('send-domain-hosting-email', {
-        body: {
-          to: testEmail,
-          template: selectedTemplate,
-          data: {
-            customer_name: "Test Customer",
-            domain_name: "example.com",
-            hosting_package: "Premium Hosting",
-            expiry_date: "2024-12-31",
-            invoice_number: "INV-12345",
-            amount: "£29.99",
-            usage_percentage: 85,
-            ticket_number: "12345",
-            ticket_subject: "Test Support Request"
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Test email sent",
-        description: `Test email successfully sent to ${testEmail}`
-      });
-    } catch (error) {
-      toast({
-        title: "Failed to send email",
-        description: "Unable to send test email. Please try again.",
-        variant: "destructive"
-      });
-    }
+    
+    sendTestEmailMutation.mutate({ templateId, email: testEmail });
   };
 
-  const emailTemplates = [
-    { value: 'domain-registration-confirmation', label: 'Domain Registration Confirmation' },
-    { value: 'domain-transfer-initiated', label: 'Domain Transfer Initiated' },
-    { value: 'domain-transfer-completed', label: 'Domain Transfer Completed' },
-    { value: 'domain-renewal-reminder-30', label: 'Domain Renewal Reminder (30 days)' },
-    { value: 'domain-renewal-reminder-7', label: 'Domain Renewal Reminder (7 days)' },
-    { value: 'domain-expired', label: 'Domain Expired Notice' },
-    { value: 'domain-redemption', label: 'Domain Redemption Notice' },
-    { value: 'hosting-account-setup', label: 'Hosting Account Setup' },
-    { value: 'hosting-renewal-reminder-30', label: 'Hosting Renewal Reminder (30 days)' },
-    { value: 'hosting-renewal-reminder-7', label: 'Hosting Renewal Reminder (7 days)' },
-    { value: 'hosting-expired', label: 'Hosting Expired Notice' },
-    { value: 'resource-usage-alert', label: 'Resource Usage Alert' },
-    { value: 'nameserver-update', label: 'Nameserver Update Confirmation' },
-    { value: 'email-hosting-setup', label: 'Email Hosting Setup' },
-    { value: 'invoice-payment-receipt', label: 'Invoice Payment Receipt' },
-    { value: 'failed-payment-retry', label: 'Failed Payment Retry' },
-    { value: 'auto-renewal-confirmation', label: 'Auto-Renewal Confirmation' },
-    { value: 'account-verification', label: 'Account Verification' },
-    { value: 'password-reset', label: 'Password Reset' },
-    { value: 'hosting-suspension', label: 'Hosting Suspension Notice' },
-    { value: 'hosting-termination', label: 'Hosting Termination Notice' },
-    { value: 'support-ticket-opened', label: 'Support Ticket Opened' },
-    { value: 'support-ticket-update', label: 'Support Ticket Update' },
-    { value: 'support-ticket-closed', label: 'Support Ticket Closed' }
-  ];
+  const handleResetTemplate = async (templateId: string) => {
+    // This would reset the template to its default value
+    // Implementation would need a way to store/retrieve default templates
+    toast({
+      title: "Reset template",
+      description: "Template reset functionality to be implemented",
+    });
+  };
 
-  if (isLoading || isPricingLoading) {
-    return <div>Loading settings...</div>;
+  if (isSettingsLoading || isPricingLoading || isTemplatesLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading domain & hosting settings...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!isSuperAdmin) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-semibold mb-2">Access Restricted</h3>
-            <p className="text-muted-foreground">
-              Only super administrators can access domain & hosting settings
-            </p>
-          </div>
-        </CardContent>
+        <CardHeader>
+          <CardTitle className="text-destructive">Access Denied</CardTitle>
+          <CardDescription>
+            You need super admin privileges to access domain & hosting settings.
+          </CardDescription>
+        </CardHeader>
       </Card>
     );
   }
 
+  const templatesByCategory = emailTemplates?.reduce((acc: any, template: any) => {
+    const category = template.category || 'uncategorized';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(template);
+    return acc;
+  }, {}) || {};
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Globe className="h-6 w-6" />
-        <h2 className="text-xl font-semibold">Domain & Hosting Settings</h2>
+        <Globe className="h-5 w-5" />
+        <h2 className="text-2xl font-bold">Domain & Hosting Settings</h2>
       </div>
 
-      <Tabs defaultValue="general" className="space-y-6">
+      <Tabs defaultValue="general" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="pricing">Pricing</TabsTrigger>
           <TabsTrigger value="nameservers">Nameservers</TabsTrigger>
-          <TabsTrigger value="emails">Email Templates</TabsTrigger>
+          <TabsTrigger value="email-templates">Email Templates</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Service Toggles</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Service Toggles
+              </CardTitle>
               <CardDescription>
-                Enable or disable domain registration and hosting services
+                Control which services are available to customers
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="domain-registration">Domain Registration</Label>
+                  <Label>Domain Registration</Label>
                   <p className="text-sm text-muted-foreground">
-                    Allow customers to search and register domains
+                    Allow customers to register new domains
                   </p>
                 </div>
                 <Switch
-                  id="domain-registration"
-                  checked={settings?.domain_registration_enabled || false}
-                  onCheckedChange={(checked) => 
-                    handleToggleUpdate('domain_registration_enabled', checked)
-                  }
+                  checked={domainSettings?.allow_domains || false}
+                  onCheckedChange={(checked) => handleToggleUpdate('allow_domains', checked)}
                 />
               </div>
               
+              <Separator />
+              
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="hosting-orders">Hosting Orders</Label>
+                  <Label>Hosting Orders</Label>
                   <p className="text-sm text-muted-foreground">
                     Allow customers to order hosting packages
                   </p>
                 </div>
                 <Switch
-                  id="hosting-orders"
-                  checked={settings?.hosting_orders_enabled || false}
-                  onCheckedChange={(checked) => 
-                    handleToggleUpdate('hosting_orders_enabled', checked)
-                  }
+                  checked={domainSettings?.allow_hosting || false}
+                  onCheckedChange={(checked) => handleToggleUpdate('allow_hosting', checked)}
                 />
               </div>
-
+              
+              <Separator />
+              
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="auto-provisioning">Auto Provisioning</Label>
+                  <Label>Auto Provisioning</Label>
                   <p className="text-sm text-muted-foreground">
-                    Automatically provision services upon payment
+                    Automatically provision services after payment
                   </p>
                 </div>
                 <Switch
-                  id="auto-provisioning"
-                  checked={settings?.auto_provisioning || false}
-                  onCheckedChange={(checked) => 
-                    handleToggleUpdate('auto_provisioning', checked)
-                  }
+                  checked={domainSettings?.auto_provisioning || false}
+                  onCheckedChange={(checked) => handleToggleUpdate('auto_provisioning', checked)}
                 />
               </div>
             </CardContent>
@@ -345,27 +385,32 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         <TabsContent value="pricing" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Domain Pricing</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                Domain Pricing Management
+              </CardTitle>
               <CardDescription>
-                Set default pricing for different domain TLDs
+                Manage domain TLD pricing and sync with Enom
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Add TLD Form */}
               <div className="flex gap-2">
                 <Input
-                  placeholder="TLD (e.g., com, net, org)"
+                  placeholder="TLD (e.g., .com)"
                   value={newTld}
                   onChange={(e) => setNewTld(e.target.value)}
                 />
                 <Input
+                  placeholder="Price (GBP)"
                   type="number"
-                  placeholder="Price (£)"
+                  step="0.01"
                   value={newTldPrice}
                   onChange={(e) => setNewTldPrice(e.target.value)}
                 />
                 <Button onClick={handleAddTldPricing}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add
+                  Add TLD
                 </Button>
               </div>
 
@@ -471,29 +516,45 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         <TabsContent value="nameservers" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Default Nameservers</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Server className="h-4 w-4" />
+                Default Nameservers
+              </CardTitle>
               <CardDescription>
                 Configure default nameservers for new domain registrations
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {(settings?.default_nameservers || []).map((ns: string, index: number) => (
-                <Input
-                  key={index}
-                  value={ns}
-                  onChange={(e) => {
-                    const updated = [...(settings?.default_nameservers || [])];
-                    updated[index] = e.target.value;
-                    handleNameserverUpdate(updated);
-                  }}
-                  placeholder={`Nameserver ${index + 1}`}
-                />
-              ))}
+              <div className="space-y-2">
+                {domainSettings?.nameservers?.map((ns: string, index: number) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      value={ns}
+                      onChange={(e) => {
+                        const newNameservers = [...(domainSettings.nameservers || [])];
+                        newNameservers[index] = e.target.value;
+                        handleNameserverUpdate(newNameservers);
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const newNameservers = domainSettings.nameservers?.filter((_: any, i: number) => i !== index) || [];
+                        handleNameserverUpdate(newNameservers);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              
               <Button
                 variant="outline"
                 onClick={() => {
-                  const updated = [...(settings?.default_nameservers || []), ''];
-                  handleNameserverUpdate(updated);
+                  const newNameservers = [...(domainSettings?.nameservers || []), ''];
+                  handleNameserverUpdate(newNameservers);
                 }}
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -503,107 +564,134 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
           </Card>
         </TabsContent>
 
-        <TabsContent value="emails" className="space-y-4">
+        <TabsContent value="email-templates" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Professional Email Templates
+                <Mail className="h-4 w-4" />
+                Email Templates Management
               </CardTitle>
               <CardDescription>
-                Manage all domain and hosting email templates. These are professionally designed React Email templates that are automatically sent for various events.
+                Manage email templates for domain and hosting notifications
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Test Email Templates</Label>
-                  <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a template to test" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {emailTemplates.map((template) => (
-                        <SelectItem key={template.value} value={template.value}>
-                          {template.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Test Email Address</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="email"
-                      placeholder="test@example.com"
-                      value={testEmail}
-                      onChange={(e) => setTestEmail(e.target.value)}
-                    />
-                    <Button 
-                      onClick={handleSendTestEmail}
-                      disabled={!selectedTemplate || !testEmail}
-                    >
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Test
-                    </Button>
-                  </div>
-                </div>
+              {/* Test Email Input */}
+              <div className="flex gap-2 p-4 bg-muted/50 rounded-lg">
+                <Input
+                  placeholder="Enter test email address"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  type="email"
+                />
+                <Button variant="outline" size="sm" disabled={!testEmail}>
+                  Set Test Email
+                </Button>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">Available Email Templates</h4>
-                  <Badge variant="secondary">{emailTemplates.length} Templates</Badge>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[
-                    { category: 'Domain Management', templates: emailTemplates.slice(0, 7), color: 'bg-blue-50 dark:bg-blue-950' },
-                    { category: 'Hosting Services', templates: emailTemplates.slice(7, 12), color: 'bg-green-50 dark:bg-green-950' },
-                    { category: 'Technical & DNS', templates: emailTemplates.slice(12, 14), color: 'bg-purple-50 dark:bg-purple-950' },
-                    { category: 'Billing & Payments', templates: emailTemplates.slice(14, 17), color: 'bg-orange-50 dark:bg-orange-950' },
-                    { category: 'Security & Support', templates: emailTemplates.slice(17), color: 'bg-red-50 dark:bg-red-950' }
-                  ].map((category) => (
-                    <Card key={category.category} className={category.color}>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm font-medium">{category.category}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {category.templates.map((template) => (
-                          <div key={template.value} className="flex items-center justify-between p-2 bg-background/60 rounded text-xs">
-                            <span className="font-medium">{template.label}</span>
-                            <Badge variant="outline" className="text-xs">
-                              <Eye className="h-3 w-3 mr-1" />
-                              Ready
-                            </Badge>
+              {/* Templates by Category */}
+              {Object.entries(templatesByCategory).map(([category, templates]: [string, any]) => (
+                <div key={category} className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-lg font-semibold capitalize">
+                      {category.replace('_', ' ')}
+                    </h3>
+                    <Badge variant="secondary">{templates.length}</Badge>
+                  </div>
+                  
+                  <div className="grid gap-4">
+                    {templates.map((template: any) => (
+                      <div key={template.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">{template.name.replace('_', ' ')}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Subject: {template.subject}
+                            </p>
                           </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              <Card className="border-2 border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-8 text-center">
-                  <Mail className="h-12 w-12 text-muted-foreground mb-4" />
-                  <h3 className="font-semibold mb-2">Professional Email Templates Ready</h3>
-                  <p className="text-muted-foreground mb-4 max-w-md">
-                    All email templates are professionally designed React Email components that automatically send beautiful, branded emails for domain and hosting events.
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <Badge variant="secondary">✅ Responsive Design</Badge>
-                    <Badge variant="secondary">✅ Dark Mode Support</Badge>
-                    <Badge variant="secondary">✅ Brand Customisable</Badge>
-                    <Badge variant="secondary">✅ Dynamic Content</Badge>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditTemplate(template)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleSendTestEmail(template.id)}
+                              disabled={!testEmail || sendTestEmailMutation.isPending}
+                            >
+                              <Send className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleResetTemplate(template.id)}
+                            >
+                              <RotateCcw className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="text-sm text-muted-foreground">
+                          Last updated: {new Date(template.updated_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Template Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Email Template</DialogTitle>
+            <DialogDescription>
+              Modify the subject and body of the email template. Use {"{{variable}}"} for dynamic content.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="subject">Subject</Label>
+              <Input
+                id="subject"
+                value={editSubject}
+                onChange={(e) => setEditSubject(e.target.value)}
+                placeholder="Email subject line"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="body">Body (HTML)</Label>
+              <Textarea
+                id="body"
+                value={editBody}
+                onChange={(e) => setEditBody(e.target.value)}
+                placeholder="Email body content"
+                rows={15}
+                className="font-mono"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveTemplate} disabled={updateTemplateMutation.isPending}>
+              {updateTemplateMutation.isPending ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
