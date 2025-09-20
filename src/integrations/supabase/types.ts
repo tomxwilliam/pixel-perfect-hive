@@ -520,10 +520,16 @@ export type Database = {
           is_override: boolean | null
           last_synced_at: string | null
           margin_percent: number | null
+          register_price_gbp: number | null
+          register_price_usd: number | null
+          renew_price_gbp: number | null
+          renew_price_usd: number | null
           retail_gbp: number
           retail_usd: number
           source: string | null
           tld: string
+          transfer_price_gbp: number | null
+          transfer_price_usd: number | null
           updated_at: string
         }
         Insert: {
@@ -534,10 +540,16 @@ export type Database = {
           is_override?: boolean | null
           last_synced_at?: string | null
           margin_percent?: number | null
+          register_price_gbp?: number | null
+          register_price_usd?: number | null
+          renew_price_gbp?: number | null
+          renew_price_usd?: number | null
           retail_gbp: number
           retail_usd: number
           source?: string | null
           tld: string
+          transfer_price_gbp?: number | null
+          transfer_price_usd?: number | null
           updated_at?: string
         }
         Update: {
@@ -548,10 +560,16 @@ export type Database = {
           is_override?: boolean | null
           last_synced_at?: string | null
           margin_percent?: number | null
+          register_price_gbp?: number | null
+          register_price_usd?: number | null
+          renew_price_gbp?: number | null
+          renew_price_usd?: number | null
           retail_gbp?: number
           retail_usd?: number
           source?: string | null
           tld?: string
+          transfer_price_gbp?: number | null
+          transfer_price_usd?: number | null
           updated_at?: string
         }
         Relationships: []

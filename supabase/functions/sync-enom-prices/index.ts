@@ -111,13 +111,18 @@ const handler = async (req: Request): Promise<Response> => {
             const enomResponse = data['interface-response'];
             
             if (enomResponse.ErrCount && parseInt(enomResponse.ErrCount) === 0) {
-              // Extract pricing data
+              // Extract pricing data - eNom typically returns register, renew, transfer prices
               const priceData = enomResponse.pricing || enomResponse;
-              const retailPriceUSD = parseFloat(priceData.retailPrice || priceData.Price || '12.99');
-              const renewalPriceUSD = parseFloat(priceData.renewalPrice || priceData.RenewalPrice || retailPriceUSD);
               
-              // Convert to GBP
-              const retailPriceGBP = Math.round((retailPriceUSD * exchangeRate + 0.01) * 100) / 100;
+              // Get different pricing tiers (register, renew, transfer)
+              const registerPriceUSD = parseFloat(priceData.registerPrice || priceData.Price || '12.99');
+              const renewPriceUSD = parseFloat(priceData.renewPrice || priceData.RenewalPrice || registerPriceUSD);
+              const transferPriceUSD = parseFloat(priceData.transferPrice || priceData.TransferPrice || registerPriceUSD);
+              
+              // Convert all prices to GBP
+              const registerPriceGBP = Math.round((registerPriceUSD * exchangeRate + 0.01) * 100) / 100;
+              const renewPriceGBP = Math.round((renewPriceUSD * exchangeRate + 0.01) * 100) / 100;
+              const transferPriceGBP = Math.round((transferPriceUSD * exchangeRate + 0.01) * 100) / 100;
               const idProtectPriceGBP = Math.round((9.95 * exchangeRate + 0.01) * 100) / 100;
 
               // Check if we have an override for this TLD
@@ -133,8 +138,14 @@ const handler = async (req: Request): Promise<Response> => {
                   .from('domain_prices')
                   .upsert({
                     tld,
-                    retail_usd: retailPriceUSD,
-                    retail_gbp: retailPriceGBP,
+                    retail_usd: registerPriceUSD, // Keep for backward compatibility
+                    retail_gbp: registerPriceGBP, // Keep for backward compatibility
+                    register_price_usd: registerPriceUSD,
+                    register_price_gbp: registerPriceGBP,
+                    renew_price_usd: renewPriceUSD,
+                    renew_price_gbp: renewPriceGBP,
+                    transfer_price_usd: transferPriceUSD,
+                    transfer_price_gbp: transferPriceGBP,
                     id_protect_usd: 9.95,
                     id_protect_gbp: idProtectPriceGBP,
                     margin_percent: 0.05,
@@ -146,12 +157,16 @@ const handler = async (req: Request): Promise<Response> => {
 
                 updatedPrices.push({
                   tld,
-                  retail_usd: retailPriceUSD,
-                  retail_gbp: retailPriceGBP,
+                  register_usd: registerPriceUSD,
+                  register_gbp: registerPriceGBP,
+                  renew_usd: renewPriceUSD,
+                  renew_gbp: renewPriceGBP,
+                  transfer_usd: transferPriceUSD,
+                  transfer_gbp: transferPriceGBP,
                   updated: true
                 });
 
-                console.log(`Updated ${tld}: $${retailPriceUSD} USD -> £${retailPriceGBP} GBP`);
+                console.log(`Updated ${tld}: Register $${registerPriceUSD}→£${registerPriceGBP}, Renew $${renewPriceUSD}→£${renewPriceGBP}, Transfer $${transferPriceUSD}→£${transferPriceGBP}`);
               } else {
                 console.log(`Skipped ${tld}: admin override in place`);
                 updatedPrices.push({

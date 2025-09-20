@@ -455,19 +455,25 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
                           
                           {/* Register Price */}
                           <div className="text-center">
-                            <span className="font-medium text-green-600">£{pricing.retail_gbp}</span>
+                            <span className="font-medium text-green-600">
+                              £{pricing.register_price_gbp || pricing.retail_gbp}
+                            </span>
                             <p className="text-xs text-muted-foreground">registration</p>
                           </div>
                           
                           {/* Renew Price */}
                           <div className="text-center">
-                            <span className="font-medium text-blue-600">£{pricing.retail_gbp}</span>
+                            <span className="font-medium text-blue-600">
+                              £{pricing.renew_price_gbp || pricing.retail_gbp}
+                            </span>
                             <p className="text-xs text-muted-foreground">renewal</p>
                           </div>
                           
                           {/* Transfer Price */}
                           <div className="text-center">
-                            <span className="font-medium text-purple-600">£{pricing.retail_gbp}</span>
+                            <span className="font-medium text-purple-600">
+                              £{pricing.transfer_price_gbp || pricing.retail_gbp}
+                            </span>
                             <p className="text-xs text-muted-foreground">transfer</p>
                           </div>
                           
