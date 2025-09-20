@@ -255,44 +255,44 @@ const WebPortfolio = () => {
               gradient="primary"
             />
 
-            {/* SparkleClean */}
+            {/* Sweet Crumbs */}
             <ProjectSlideshow
-              title="SparkleClean"
-              description="Professional cleaning service website featuring service galleries, customer testimonials, and online booking to help Londoners maintain spotless homes and offices."
+              title="Sweet Crumbs"
+              description="Custom cake shop website featuring flavor browsing, cake galleries, and personalized order forms to help customers create their dream celebrations."
               features={[
                 { icon: <Palette className="h-6 w-6 text-accent" />, text: "" },
-                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Before/after transformation galleries" },
-                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Online quote request system" },
-                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Service area coverage maps" }
+                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Interactive flavor and design galleries" },
+                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Custom order form builder" },
+                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Event consultation booking" }
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/sc1-2.png", 
-                  alt: "SparkleClean Homepage",
-                  caption: "Homepage featuring London's premier cleaning service"
+                  src: "/lovable-uploads/sc1.png", 
+                  alt: "Sweet Crumbs Homepage",
+                  caption: "Homepage featuring premium chocolate cake with hero section"
                 },
                 { 
-                  src: "/lovable-uploads/sc2-2.png", 
-                  alt: "SparkleClean About Page",
-                  caption: "About page showcasing mission, values and team"
+                  src: "/lovable-uploads/sc2.png", 
+                  alt: "Sweet Crumbs About Page",
+                  caption: "About page showcasing team and baking expertise"
                 },
                 { 
-                  src: "/lovable-uploads/sc3-2.png", 
-                  alt: "SparkleClean Services",
-                  caption: "Comprehensive cleaning services with pricing"
+                  src: "/lovable-uploads/sc3.png", 
+                  alt: "Sweet Crumbs Flavours",
+                  caption: "Interactive flavour selection and pricing page"
                 },
                 { 
-                  src: "/lovable-uploads/sc4-2.png", 
-                  alt: "SparkleClean Gallery",
-                  caption: "Gallery featuring before/after transformations"
+                  src: "/lovable-uploads/sc4.png", 
+                  alt: "Sweet Crumbs Gallery",
+                  caption: "Gallery showcasing custom cake portfolio"
                 },
                 { 
-                  src: "/lovable-uploads/sc5-2.png", 
-                  alt: "SparkleClean Contact",
-                  caption: "Contact page with quote form and service areas"
+                  src: "/lovable-uploads/sc5.png", 
+                  alt: "Sweet Crumbs Contact",
+                  caption: "Contact page with cake order enquiry form"
                 }
               ]}
-              liveUrl="https://sparkleclean.example.com"
+              liveUrl="https://404codelab.com/sweet-crumbs/index.html"
               gradient="accent"
             />
 
