@@ -51,12 +51,12 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     queryKey: ['domain-prices'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('domain_prices')
+        .from('domain_prices' as any)
         .select('*')
         .order('tld');
       
       if (error) throw error;
-      return data;
+      return data as any[];
     }
   });
 
@@ -65,12 +65,12 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     queryKey: ['email-templates'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('email_templates')
+        .from('email_templates' as any)
         .select('*')
         .order('category, name');
       
       if (error) throw error;
-      return data;
+      return data as any[];
     }
   });
 
@@ -104,7 +104,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
   const updateTemplateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string, updates: any }) => {
       const { error } = await supabase
-        .from('email_templates')
+        .from('email_templates' as any)
         .update(updates)
         .eq('id', id);
       
@@ -165,7 +165,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     if (!newTld || !newTldPrice) return;
     
     const { error } = await supabase
-      .from('domain_prices')
+      .from('domain_prices' as any)
       .insert({
         tld: newTld.startsWith('.') ? newTld : `.${newTld}`,
         retail_gbp: parseFloat(newTldPrice),
@@ -194,7 +194,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
 
   const handleRemoveTldPricing = async (tld: string) => {
     const { error } = await supabase
-      .from('domain_prices')
+      .from('domain_prices' as any)
       .delete()
       .eq('tld', tld);
     
