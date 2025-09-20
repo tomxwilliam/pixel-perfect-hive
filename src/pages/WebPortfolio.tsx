@@ -183,9 +183,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/de1286a6-6683-4438-a78c-c5995a51478e.png", 
-                  alt: "SparkleClean Website Preview",
-                  caption: "Homepage showcasing cleaning services and gallery"
+                  src: "/lovable-uploads/sc1-3.png", 
+                  alt: "SparkleClean Homepage",
+                  caption: "Homepage showcasing cleaning services with professional design"
+                },
+                { 
+                  src: "/lovable-uploads/sc2-3.png", 
+                  alt: "SparkleClean About Page",
+                  caption: "About page highlighting company mission and team values"
+                },
+                { 
+                  src: "/lovable-uploads/sc3-3.png", 
+                  alt: "SparkleClean Services",
+                  caption: "Services page with detailed cleaning packages and pricing"
+                },
+                { 
+                  src: "/lovable-uploads/sc4-3.png", 
+                  alt: "SparkleClean Gallery",
+                  caption: "Before and after gallery showcasing cleaning transformations"
+                },
+                { 
+                  src: "/lovable-uploads/sc5-3.png", 
+                  alt: "SparkleClean Contact",
+                  caption: "Contact page with quote request form and service areas"
                 }
               ]}
               liveUrl="https://404codelab.com/sparkleclean/index.html"
