@@ -625,6 +625,36 @@ export type Database = {
           },
         ]
       }
+      domain_settings: {
+        Row: {
+          allow_domains: boolean | null
+          allow_hosting: boolean | null
+          auto_provisioning: boolean | null
+          created_at: string
+          id: string
+          nameservers: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          allow_domains?: boolean | null
+          allow_hosting?: boolean | null
+          auto_provisioning?: boolean | null
+          created_at?: string
+          id?: string
+          nameservers?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          allow_domains?: boolean | null
+          allow_hosting?: boolean | null
+          auto_provisioning?: boolean | null
+          created_at?: string
+          id?: string
+          nameservers?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       domains: {
         Row: {
           auto_renew: boolean | null

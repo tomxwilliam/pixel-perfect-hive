@@ -37,12 +37,12 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
     queryKey: ['domain-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('domain_settings')
+        .from('domain_settings' as any)
         .select('*')
         .single();
       
       if (error) throw error;
-      return data;
+      return data as any;
     }
   });
 
@@ -78,7 +78,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
   const updateSettingsMutation = useMutation({
     mutationFn: async (updates: any) => {
       const { error } = await supabase
-        .from('domain_settings')
+        .from('domain_settings' as any)
         .update(updates)
         .eq('id', domainSettings?.id);
       
