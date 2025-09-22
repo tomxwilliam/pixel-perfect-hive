@@ -429,9 +429,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/ae042420-8758-4f7f-89c6-368216ad3dd5.png", 
-                  alt: "Crafted Joinery Website Preview",
-                  caption: "Bespoke joinery portfolio with consultation booking"
+                  src: "/lovable-uploads/cj1.png", 
+                  alt: "Crafted Joinery Homepage",
+                  caption: "Homepage featuring bespoke joinery and kitchen fitting services"
+                },
+                { 
+                  src: "/lovable-uploads/cj2.png", 
+                  alt: "Crafted Joinery About",
+                  caption: "About page showcasing craftsman expertise and workshop facilities"
+                },
+                { 
+                  src: "/lovable-uploads/cj3.png", 
+                  alt: "Crafted Joinery Services",
+                  caption: "Comprehensive services page with kitchen fitting and bespoke furniture options"
+                },
+                { 
+                  src: "/lovable-uploads/cj4.png", 
+                  alt: "Crafted Joinery Portfolio",
+                  caption: "Portfolio gallery showcasing completed projects and craftsmanship quality"
+                },
+                { 
+                  src: "/lovable-uploads/cj5.png", 
+                  alt: "Crafted Joinery Contact",
+                  caption: "Contact page with quote request form and service areas coverage"
                 }
               ]}
               liveUrl="https://404codelab.com/crafted-joinery/index.html"
