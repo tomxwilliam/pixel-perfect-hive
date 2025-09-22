@@ -388,9 +388,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/5deb9273-b749-4781-803a-ac052ba93374.png", 
-                  alt: "Happy Paws Website Preview",
-                  caption: "Dog grooming & daycare with online booking"
+                  src: "/lovable-uploads/hp1.png", 
+                  alt: "Happy Paws Homepage",
+                  caption: "Homepage featuring premium dog grooming and daycare services"
+                },
+                { 
+                  src: "/lovable-uploads/hp2.png", 
+                  alt: "Happy Paws About",
+                  caption: "About page showcasing team expertise and facility features"
+                },
+                { 
+                  src: "/lovable-uploads/hp3.png", 
+                  alt: "Happy Paws Services",
+                  caption: "Comprehensive services page with grooming packages and daycare options"
+                },
+                { 
+                  src: "/lovable-uploads/hp4.png", 
+                  alt: "Happy Paws Gallery",
+                  caption: "Before and after gallery showcasing grooming transformations"
+                },
+                { 
+                  src: "/lovable-uploads/hp5.png", 
+                  alt: "Happy Paws Contact",
+                  caption: "Contact page with appointment booking and emergency services"
                 }
               ]}
               liveUrl="https://404codelab.com/happy-paws/index.html"
