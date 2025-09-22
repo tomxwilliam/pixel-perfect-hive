@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mail, MapPin, Send, Zap, Phone, Loader2 } from "lucide-react";
-import { StaticNavigation } from "@/components/StaticNavigation";
+import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -88,7 +88,7 @@ const Contact = () => {
         description="Get in touch with 404 Code Lab for web development, mobile apps, games, and AI integration. Free project consultation and competitive quotes."
         canonicalUrl="https://404codelab.com/contact"
       />
-      <StaticNavigation />
+      <Navigation />
       
       {/* Hero Section */}
       <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">

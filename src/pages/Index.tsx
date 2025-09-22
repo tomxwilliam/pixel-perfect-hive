@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Zap, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import { StaticNavigation } from "@/components/StaticNavigation";
+import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
 const Index = () => {
   return <div className="min-h-screen bg-background text-foreground">
-      <StaticNavigation />
+      <Navigation />
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
