@@ -265,9 +265,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/9bf1d85f-9e5f-4fb0-9ce8-f74db644a586.png", 
-                  alt: "Shear Perfection Website Preview",
-                  caption: "Hair & beauty salon with online booking"
+                  src: "/lovable-uploads/sp1.png", 
+                  alt: "Shear Perfection Homepage",
+                  caption: "Homepage showcasing beauty services and online booking"
+                },
+                { 
+                  src: "/lovable-uploads/sp2.png", 
+                  alt: "Shear Perfection About Page",
+                  caption: "About page featuring salon story, values, and expert team"
+                },
+                { 
+                  src: "/lovable-uploads/sp3.png", 
+                  alt: "Shear Perfection Treatments",
+                  caption: "Comprehensive treatments page with pricing and service packages"
+                },
+                { 
+                  src: "/lovable-uploads/sp4.png", 
+                  alt: "Shear Perfection Gallery",
+                  caption: "Before and after gallery showcasing hair transformations and beauty treatments"
+                },
+                { 
+                  src: "/lovable-uploads/sp5.png", 
+                  alt: "Shear Perfection Contact",
+                  caption: "Contact page with appointment booking form and salon information"
                 }
               ]}
               liveUrl="https://404codelab.com/shear-perfection/index.html"
