@@ -306,9 +306,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/c4140cc5-49a7-448f-a499-fa51ef6ff6c9.png", 
-                  alt: "Padrino's Pizza Website Preview",
-                  caption: "Pizza restaurant with interactive menu builder"
+                  src: "/lovable-uploads/pp1.png", 
+                  alt: "Padrino's Pizza Homepage",
+                  caption: "Homepage featuring authentic wood-fired pizzas and family tradition"
+                },
+                { 
+                  src: "/lovable-uploads/pp2.png", 
+                  alt: "Padrino's Pizza About",
+                  caption: "Family story and values with expert team profiles"
+                },
+                { 
+                  src: "/lovable-uploads/pp3.png", 
+                  alt: "Padrino's Pizza Menu",
+                  caption: "Complete menu with wood-fired pizzas, starters, and desserts"
+                },
+                { 
+                  src: "/lovable-uploads/pp4.png", 
+                  alt: "Padrino's Pizza Gallery",
+                  caption: "Mouth-watering pizza gallery and behind-the-scenes photos"
+                },
+                { 
+                  src: "/lovable-uploads/pp5.png", 
+                  alt: "Padrino's Pizza Contact",
+                  caption: "Contact page with delivery information and opening hours"
                 }
               ]}
               liveUrl="https://404codelab.com/padrinos-pizza/index.html"
