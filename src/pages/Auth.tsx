@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Navigation } from '@/components/Navigation';
+import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 
 const Auth = () => {
@@ -154,7 +154,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <StaticNavigation />
       <div className="flex items-center justify-center min-h-[calc(100vh-140px)] p-4">
         <div className="w-full max-w-md space-y-6">
           <Card>
