@@ -149,77 +149,92 @@ const AIChat = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/5 to-accent/5">
       <StaticNavigation />
       
       <div className="pt-20 pb-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/dashboard')}
-              className="mr-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Brain className="h-8 w-8 mr-3 text-primary" />
-              <div>
-                <h1 className="text-3xl font-bold">Portal AI Assistant</h1>
-                <div className="flex items-center gap-2">
-                  <p className="text-muted-foreground">404 Code Lab Operations Brain</p>
-                  <Badge variant="secondary" className="text-xs flex items-center gap-1">
-                    <CheckCircle className="h-3 w-3" />
-                    UK Compliant
-                  </Badge>
-                  <Badge variant="outline" className="text-xs flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    GMT
-                  </Badge>
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/dashboard')}
+                className="mr-4 hover:bg-muted/50"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              <div className="flex items-center">
+                <div className="relative">
+                  <Brain className="h-8 w-8 mr-3 text-primary" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-background" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Portal AI Assistant</h1>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-muted-foreground">404 Code Lab Operations Brain</p>
+                    <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      UK Compliant
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <Card className="h-[700px] flex flex-col border-0 shadow-2xl backdrop-blur-sm bg-gradient-to-br from-background to-muted/20">
-            <CardHeader className="flex-shrink-0 bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10 rounded-t-lg border-b border-border/30">
-              <CardTitle className="flex items-center text-lg">
-                <div className="ai-avatar w-7 h-7 rounded-full flex items-center justify-center mr-3 pulse-glow">
-                  <Bot className="h-4 w-4 text-primary-foreground" />
+          {/* Chat Container */}
+          <div className="bg-card/80 backdrop-blur-md rounded-2xl border border-border/50 shadow-2xl h-[75vh] flex flex-col overflow-hidden">
+            {/* Chat Header */}
+            <div className="flex-shrink-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 px-6 py-4 border-b border-border/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="relative mr-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                      <Bot className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-background flex items-center justify-center">
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">404 Code Lab Portal AI</h3>
+                    <p className="text-xs text-muted-foreground">Online • Autonomous Operations Assistant</p>
+                  </div>
                 </div>
-                404 Code Lab Portal AI
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-xs text-muted-foreground">Online</span>
-                </div>
-              </CardTitle>
-              <CardDescription className="text-sm text-muted-foreground/80">
-                Your autonomous operations assistant for support, sales, projects, and comprehensive customer service
-              </CardDescription>
-            </CardHeader>
+                <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
+                  <Clock className="h-3 w-3 mr-1" />
+                  GMT
+                </Badge>
+              </div>
+            </div>
             
-            <CardContent className="flex-1 flex flex-col">
+            {/* Chat Content */}
+            <div className="flex-1 flex flex-col bg-gradient-to-b from-muted/5 to-background/50">
               {/* Messages Area */}
-              <ScrollArea ref={scrollAreaRef} className="flex-1 mb-6 px-2">
-                <div className="space-y-6 py-4">
+              <ScrollArea ref={scrollAreaRef} className="flex-1 px-6 py-4">
+                <div className="space-y-4">
                   {messages.map((message, index) => (
                     <div
                       key={message.id}
-                      className={`message-appear flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} mb-4`}
                     >
-                      <div className="flex items-start space-x-3 max-w-[85%]">
+                      <div className={`flex items-end space-x-3 max-w-[80%] ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
                         {!message.isUser && (
-                          <div className="ai-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
-                            <Brain className="h-5 w-5 text-primary-foreground" />
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
+                            <Brain className="h-4 w-4 text-primary-foreground" />
+                          </div>
+                        )}
+                        {message.isUser && (
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-muted-foreground flex items-center justify-center shadow-md">
+                            <User className="h-4 w-4 text-secondary-foreground" />
                           </div>
                         )}
                         <div
-                          className={`message-bubble rounded-2xl px-5 py-4 ${
+                          className={`rounded-2xl px-4 py-3 shadow-sm max-w-full ${
                             message.isUser
-                              ? 'user-message'
-                              : 'ai-message'
+                              ? 'bg-gradient-to-br from-primary to-primary/90 text-primary-foreground ml-auto'
+                              : 'bg-card border border-border/50 text-card-foreground'
                           }`}
                         >
                           <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
@@ -243,26 +258,23 @@ const AIChat = () => {
                               </div>
                             </div>
                           )}
-                          <p className="text-xs opacity-60 mt-2 font-medium">
-                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                        {message.isUser && (
-                          <div className="user-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
-                            <User className="h-5 w-5 text-secondary-foreground" />
+                          <div className={`text-xs mt-2 flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+                            <span className={`${message.isUser ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
                           </div>
-                        )}
+                        </div>
                       </div>
                     </div>
                   ))}
                   
                   {(isLoading || isTyping) && (
-                    <div className="message-appear flex justify-start">
-                      <div className="flex items-start space-x-3">
-                        <div className="ai-avatar flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center">
-                          <Brain className="h-5 w-5 text-primary-foreground animate-pulse" />
+                    <div className="flex justify-start mb-4">
+                      <div className="flex items-end space-x-3 max-w-[80%]">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
+                          <Brain className="h-4 w-4 text-primary-foreground animate-pulse" />
                         </div>
-                        <div className="ai-message message-bubble rounded-2xl px-5 py-4">
+                        <div className="bg-card border border-border/50 text-card-foreground rounded-2xl px-4 py-3 shadow-sm">
                           <div className="flex items-center space-x-2">
                             <Loader2 className="h-4 w-4 animate-spin text-primary" />
                             <span className="text-sm">Processing your request...</span>
@@ -281,39 +293,40 @@ const AIChat = () => {
               </ScrollArea>
 
               {/* Quick Actions */}
-              <div className="mb-6 p-5 bg-gradient-to-r from-muted/20 to-muted/10 rounded-xl border border-border/30 backdrop-blur-sm">
-                <div className="flex items-center gap-2 mb-4">
+              <div className="mx-6 mb-4 p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-border/30">
+                <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  <p className="text-sm font-semibold text-foreground">Quick Actions</p>
+                  <p className="text-sm font-medium text-foreground">Quick Actions</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {quickActions.map((action, index) => (
                     <Button
                       key={index}
                       variant="ghost"
                       size="sm"
                       onClick={() => setInputMessage(action)}
-                      className="quick-action text-xs text-left justify-start h-auto p-4 rounded-xl bg-background/50"
+                      className="text-xs text-left justify-start h-auto p-3 rounded-lg bg-background/80 hover:bg-background border border-border/30 hover:border-primary/30 transition-colors"
                     >
-                      <ArrowRight className="h-4 w-4 mr-3 flex-shrink-0 text-primary" />
-                      <span className="text-left font-medium">{action}</span>
+                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0 text-primary" />
+                      <span className="text-left">{action}</span>
                     </Button>
                   ))}
                 </div>
               </div>
 
               {/* Input Area */}
-              <div className="space-y-4 border-t border-border/30 pt-5">
-                <div className="relative">
+              <div className="border-t border-border/30 bg-background/50 p-4">
+                <div className="relative mb-3">
                   <Textarea
                     placeholder="Ask me anything about 404 Code Lab services..."
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyDown={handleKeyPress}
                     disabled={isLoading}
-                    className="chat-input resize-none h-20 text-sm rounded-xl pr-12 bg-background/80"
+                    className="resize-none h-16 text-sm rounded-xl pr-12 bg-background border-border/50 focus:border-primary/50 transition-colors"
+                    maxLength={500}
                   />
-                  <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
+                  <div className="absolute bottom-2 right-3 text-xs text-muted-foreground">
                     {inputMessage.length}/500
                   </div>
                 </div>
@@ -321,7 +334,7 @@ const AIChat = () => {
                   <Button 
                     onClick={sendMessage} 
                     disabled={isLoading || !inputMessage.trim()}
-                    className="flex-1 h-11 rounded-xl bg-gradient-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/25 transition-all duration-200"
+                    className="flex-1 h-10 rounded-xl bg-gradient-to-r from-primary to-accent hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 text-sm"
                   >
                     {isLoading ? (
                       <>
@@ -339,14 +352,15 @@ const AIChat = () => {
                     variant="outline"
                     onClick={() => setInputMessage('')}
                     disabled={isLoading || !inputMessage.trim()}
-                    className="h-11 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all duration-200"
+                    className="h-10 px-4 rounded-xl hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20 transition-all duration-200"
                   >
                     Clear
                   </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        </div>
+      </div>
+    </div>
+  );
+          </div>
         </div>
       </div>
     </div>
