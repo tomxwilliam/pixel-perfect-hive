@@ -511,9 +511,29 @@ const WebPortfolio = () => {
               ]}
               images={[
                 { 
-                  src: "/lovable-uploads/0f5fc07e-8b2a-49a3-b4d4-1e7a3adb62b1.png", 
-                  alt: "Inkspire Website Preview",
-                  caption: "Professional tattoo parlor with artist portfolios"
+                  src: "/lovable-uploads/is1.png", 
+                  alt: "Inkspire Homepage",
+                  caption: "Homepage featuring premium tattoo artistry in the heart of London"
+                },
+                { 
+                  src: "/lovable-uploads/is2.png", 
+                  alt: "Inkspire About Page",
+                  caption: "About page showcasing studio story, values, and hygiene standards"
+                },
+                { 
+                  src: "/lovable-uploads/is3.png", 
+                  alt: "Inkspire Artists",
+                  caption: "Meet our talented artists with unique styles and specialties"
+                },
+                { 
+                  src: "/lovable-uploads/is4.png", 
+                  alt: "Inkspire Gallery",
+                  caption: "Tattoo gallery showcasing exceptional artistry and diverse styles"
+                },
+                { 
+                  src: "/lovable-uploads/is5.png", 
+                  alt: "Inkspire Contact",
+                  caption: "Contact page with consultation booking and studio location"
                 }
               ]}
               liveUrl="https://404codelab.com/inkspire/index.html"
