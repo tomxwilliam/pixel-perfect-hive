@@ -157,7 +157,12 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
   };
 
   const handlePromoteToAdmin = async () => {
+    console.log('handlePromoteToAdmin called');
+    console.log('isSuperAdmin:', isSuperAdmin);
+    console.log('newAdminEmail:', newAdminEmail);
+    
     if (!isSuperAdmin) {
+      console.log('Access denied - not super admin');
       toast({
         title: "Access Denied",
         description: "Only super admin can promote users to admin",
@@ -167,6 +172,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
     }
 
     if (!newAdminEmail.trim()) {
+      console.log('Email field is empty');
       toast({
         title: "Error",
         description: "Please enter an email address",
@@ -176,6 +182,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
     }
 
     const email = newAdminEmail.trim().toLowerCase();
+    console.log('Processing email:', email);
 
     setLoading(true);
     try {
