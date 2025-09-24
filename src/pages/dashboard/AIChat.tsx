@@ -184,7 +184,7 @@ const AIChat = () => {
           </div>
 
           {/* Chat Container */}
-          <div className="bg-card/80 backdrop-blur-md rounded-2xl border border-border/50 shadow-2xl h-[75vh] flex flex-col overflow-hidden">
+          <div className="bg-card/80 backdrop-blur-md rounded-2xl border border-border/50 shadow-2xl overflow-hidden flex flex-col" style={{height: 'calc(100vh - 200px)'}}>
             {/* Chat Header */}
             <div className="flex-shrink-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 px-6 py-4 border-b border-border/30">
               <div className="flex items-center justify-between">
@@ -209,11 +209,10 @@ const AIChat = () => {
               </div>
             </div>
             
-            {/* Chat Content */}
-            <div className="flex-1 flex flex-col bg-gradient-to-b from-muted/5 to-background/50">
-              {/* Messages Area */}
-              <ScrollArea ref={scrollAreaRef} className="flex-1 px-6 py-4">
-                <div className="space-y-4">
+            {/* Messages Area with proper scrolling */}
+            <div className="flex-1 overflow-hidden flex flex-col bg-gradient-to-b from-muted/5 to-background/50">
+              <ScrollArea className="flex-1 px-6 py-4">
+                <div className="space-y-4 min-h-full">
                   {messages.map((message, index) => (
                     <div
                       key={message.id}
@@ -291,31 +290,36 @@ const AIChat = () => {
                   <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
+            </div>
 
+            {/* Bottom Section - Quick Actions & Input */}
+            <div className="flex-shrink-0 border-t border-border/30 bg-background/50">
               {/* Quick Actions */}
-              <div className="mx-6 mb-4 p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-border/30">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <p className="text-sm font-medium text-foreground">Quick Actions</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {quickActions.map((action, index) => (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setInputMessage(action)}
-                      className="text-xs text-left justify-start h-auto p-3 rounded-lg bg-background/80 hover:bg-background border border-border/30 hover:border-primary/30 transition-colors"
-                    >
-                      <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0 text-primary" />
-                      <span className="text-left">{action}</span>
-                    </Button>
-                  ))}
+              <div className="px-6 pt-4 pb-2">
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl border border-border/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <p className="text-sm font-medium text-foreground">Quick Actions</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {quickActions.map((action, index) => (
+                      <Button
+                        key={index}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setInputMessage(action)}
+                        className="text-xs text-left justify-start h-auto p-3 rounded-lg bg-background/80 hover:bg-background border border-border/30 hover:border-primary/30 transition-colors"
+                      >
+                        <ArrowRight className="h-3 w-3 mr-2 flex-shrink-0 text-primary" />
+                        <span className="text-left">{action}</span>
+                      </Button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               {/* Input Area */}
-              <div className="border-t border-border/30 bg-background/50 p-4">
+              <div className="px-6 pb-4">
                 <div className="relative mb-3">
                   <Textarea
                     placeholder="Ask me anything about 404 Code Lab services..."
@@ -356,10 +360,9 @@ const AIChat = () => {
                   >
                     Clear
                   </Button>
-        </div>
-      </div>
-    </div>
-  );
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
