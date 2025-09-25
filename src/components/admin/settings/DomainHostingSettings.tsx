@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { DomainPricingManagement } from "@/components/admin/DomainPricingManagement";
 
 interface DomainHostingSettingsProps {
   isSuperAdmin: boolean;
@@ -383,140 +384,7 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         </TabsContent>
 
         <TabsContent value="pricing" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Domain Pricing Management
-              </CardTitle>
-              <CardDescription>
-                Manage domain TLD pricing and sync with Enom
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Add TLD Form */}
-              <div className="flex gap-2">
-                <Input
-                  placeholder="TLD (e.g., .com)"
-                  value={newTld}
-                  onChange={(e) => setNewTld(e.target.value)}
-                />
-                <Input
-                  placeholder="Price (GBP)"
-                  type="number"
-                  step="0.01"
-                  value={newTldPrice}
-                  onChange={(e) => setNewTldPrice(e.target.value)}
-                />
-                <Button onClick={handleAddTldPricing}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add TLD
-                </Button>
-              </div>
-
-              {/* Sync from Enom Button */}
-              <div className="flex gap-2 mb-4">
-                <Button 
-                  onClick={handleSyncFromEnom}
-                  disabled={isSyncing}
-                  variant="outline"
-                >
-                  {isSyncing ? "Syncing..." : "Sync from Enom"}
-                </Button>
-              </div>
-
-              {/* Domain Pricing Table */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-muted/50 border-b">
-                  <div className="grid grid-cols-6 gap-4 p-4 font-medium text-sm">
-                    <div>TLD</div>
-                    <div className="text-center">Register Price</div>
-                    <div className="text-center">Renew Price</div>
-                    <div className="text-center">Transfer Price</div>
-                    <div className="text-center">Status</div>
-                    <div className="text-center">Actions</div>
-                  </div>
-                </div>
-                <div className="divide-y">
-                  {isPricingLoading ? (
-                    <div className="p-8 text-center text-muted-foreground">
-                      Loading pricing data...
-                    </div>
-                  ) : (
-                    <>
-                      {domainPricing?.map((pricing) => (
-                        <div key={pricing.id} className="grid grid-cols-6 gap-4 p-4 items-center">
-                          {/* TLD */}
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="font-mono">
-                              {pricing.tld}
-                            </Badge>
-                          </div>
-                          
-                          {/* Register Price */}
-                          <div className="text-center">
-                            <span className="font-medium text-green-600">
-                              £{pricing.register_price_gbp || pricing.retail_gbp}
-                            </span>
-                            <p className="text-xs text-muted-foreground">registration</p>
-                          </div>
-                          
-                          {/* Renew Price */}
-                          <div className="text-center">
-                            <span className="font-medium text-blue-600">
-                              £{pricing.renew_price_gbp || pricing.retail_gbp}
-                            </span>
-                            <p className="text-xs text-muted-foreground">renewal</p>
-                          </div>
-                          
-                          {/* Transfer Price */}
-                          <div className="text-center">
-                            <span className="font-medium text-purple-600">
-                              £{pricing.transfer_price_gbp || pricing.retail_gbp}
-                            </span>
-                            <p className="text-xs text-muted-foreground">transfer</p>
-                          </div>
-                          
-                          {/* Status */}
-                          <div className="text-center">
-                            <Badge variant={pricing.source === 'enom' ? 'default' : 'secondary'} className="text-xs">
-                              {pricing.source === 'enom' ? 'Enom Sync' : 'Manual'}
-                            </Badge>
-                            <p className="text-xs text-muted-foreground">
-                              {pricing.last_synced_at ? 
-                                new Date(pricing.last_synced_at).toLocaleDateString() : 
-                                new Date(pricing.updated_at).toLocaleDateString()
-                              }
-                            </p>
-                          </div>
-                          
-                          {/* Actions */}
-                          <div className="text-center">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleRemoveTldPricing(pricing.tld)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      
-                      {/* Empty state */}
-                      {(!domainPricing || domainPricing.length === 0) && (
-                        <div className="p-8 text-center text-muted-foreground">
-                          <Globe className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                          <p>No domain pricing configured</p>
-                          <p className="text-sm">Add TLDs above or sync from Enom</p>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <DomainPricingManagement />
         </TabsContent>
 
         <TabsContent value="nameservers" className="space-y-4">
