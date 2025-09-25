@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Tag } from 'lucide-react';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -20,6 +20,7 @@ import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
 import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
 import { AdminAccounting } from '@/components/admin/AdminAccounting';
+import { DomainPricingManagement } from '@/components/admin/DomainPricingManagement';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -108,6 +109,10 @@ const AdminDashboard = () => {
               <Globe className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Domains</span>
             </MobileTabsTrigger>
+            <MobileTabsTrigger value="domain-pricing" className="flex items-center gap-2">
+              <Tag className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Pricing</span>
+            </MobileTabsTrigger>
             <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
               <Server className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Hosting</span>
@@ -195,6 +200,12 @@ const AdminDashboard = () => {
           <MobileTabsContent value="domains">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminDomainManagement />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="domain-pricing">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <DomainPricingManagement />
             </React.Suspense>
           </MobileTabsContent>
 

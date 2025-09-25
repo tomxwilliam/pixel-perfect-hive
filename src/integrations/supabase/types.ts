@@ -673,6 +673,72 @@ export type Database = {
         }
         Relationships: []
       }
+      domain_tld_pricing: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          reg_10y_gbp: number | null
+          reg_10y_usd: number | null
+          reg_1y_gbp: number | null
+          reg_1y_usd: number | null
+          reg_2y_gbp: number | null
+          reg_2y_usd: number | null
+          reg_5y_gbp: number | null
+          reg_5y_usd: number | null
+          renew_1y_gbp: number | null
+          renew_1y_usd: number | null
+          source: string
+          tld: string
+          transfer_1y_gbp: number | null
+          transfer_1y_usd: number | null
+          updated_at: string
+          usd_to_gbp_rate: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          reg_10y_gbp?: number | null
+          reg_10y_usd?: number | null
+          reg_1y_gbp?: number | null
+          reg_1y_usd?: number | null
+          reg_2y_gbp?: number | null
+          reg_2y_usd?: number | null
+          reg_5y_gbp?: number | null
+          reg_5y_usd?: number | null
+          renew_1y_gbp?: number | null
+          renew_1y_usd?: number | null
+          source?: string
+          tld: string
+          transfer_1y_gbp?: number | null
+          transfer_1y_usd?: number | null
+          updated_at?: string
+          usd_to_gbp_rate?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          reg_10y_gbp?: number | null
+          reg_10y_usd?: number | null
+          reg_1y_gbp?: number | null
+          reg_1y_usd?: number | null
+          reg_2y_gbp?: number | null
+          reg_2y_usd?: number | null
+          reg_5y_gbp?: number | null
+          reg_5y_usd?: number | null
+          renew_1y_gbp?: number | null
+          renew_1y_usd?: number | null
+          source?: string
+          tld?: string
+          transfer_1y_gbp?: number | null
+          transfer_1y_usd?: number | null
+          updated_at?: string
+          usd_to_gbp_rate?: number
+        }
+        Relationships: []
+      }
       domains: {
         Row: {
           auto_renew: boolean | null
