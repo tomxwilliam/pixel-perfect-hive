@@ -110,39 +110,78 @@ export function DomainPricingManagement() {
   const csvImportMutation = useMutation({
     mutationFn: async (file: File) => {
       const text = await file.text();
-      const lines = text.split('\n').filter(line => line.trim());
-      const headers = lines[0].split(',').map(h => h.trim());
       
-      const data = lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
-        const row: any = {};
-        headers.forEach((header, index) => {
-          const value = values[index];
-          if (header.includes('usd') || header.includes('gbp')) {
-            row[header] = value ? parseFloat(value) : null;
-          } else {
-            row[header] = value || null;
+      // Handle RTF format files
+      let csvData = '';
+      if (text.includes('\\rtf1') || text.includes('\\f0\\fs24')) {
+        // Extract CSV data from RTF format
+        const rtfLines = text.split('\n');
+        const csvLines: string[] = [];
+        
+        for (const line of rtfLines) {
+          // Look for lines that contain CSV data (TLD entries)
+          if (line.includes('\\') && (line.includes('.,') || line.includes('TLD,'))) {
+            // Clean up RTF formatting
+            let cleanLine = line
+              .replace(/\\f0\\fs24 \\cf0 /g, '')
+              .replace(/\\/g, '')
+              .replace(/\{|\}/g, '')
+              .trim();
+            
+            if (cleanLine && (cleanLine.includes(',') || cleanLine.includes('TLD'))) {
+              csvLines.push(cleanLine);
+            }
           }
-        });
-        return row;
-      });
+        }
+        csvData = csvLines.join('\n');
+      } else {
+        csvData = text;
+      }
+      
+      const lines = csvData.split('\n').filter(line => line.trim());
+      if (lines.length === 0) throw new Error('No valid CSV data found');
+      
+      // Handle the pricing format from your file
+      const data: any[] = [];
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || line.startsWith('TLD,') || line.includes('Register Price')) continue;
+        
+        const values = line.split(',').map(v => v.trim());
+        if (values.length >= 4) {
+          const tld = values[0];
+          const registerPrice = values[1] === 'N/A' ? null : parseFloat(values[1]);
+          const renewPrice = values[2] === 'N/A' ? null : parseFloat(values[2]);
+          const transferPrice = values[3] === 'N/A' ? null : parseFloat(values[3]);
+          
+          if (tld && tld.startsWith('.')) {
+            data.push({
+              tld: tld,
+              reg_1y_gbp: registerPrice,
+              renew_1y_gbp: renewPrice,
+              transfer_1y_gbp: transferPrice
+            });
+          }
+        }
+      }
 
-      // Convert USD to GBP and prepare for upsert
+      // Prepare for upsert with proper data structure
       const upsertData = data.map((row: any) => ({
         tld: row.tld,
-        category: row.category || 'gTLD',
-        reg_1y_gbp: row.reg_1y_usd ? Math.round(row.reg_1y_usd * 0.7397 * 100) / 100 : null,
-        reg_2y_gbp: row.reg_2y_usd ? Math.round(row.reg_2y_usd * 0.7397 * 100) / 100 : null,
-        reg_5y_gbp: row.reg_5y_usd ? Math.round(row.reg_5y_usd * 0.7397 * 100) / 100 : null,
-        reg_10y_gbp: row.reg_10y_usd ? Math.round(row.reg_10y_usd * 0.7397 * 100) / 100 : null,
-        renew_1y_gbp: row.renew_1y_usd ? Math.round(row.renew_1y_usd * 0.7397 * 100) / 100 : null,
-        transfer_1y_gbp: row.transfer_1y_usd ? Math.round(row.transfer_1y_usd * 0.7397 * 100) / 100 : null,
-        reg_1y_usd: row.reg_1y_usd,
-        reg_2y_usd: row.reg_2y_usd,
-        reg_5y_usd: row.reg_5y_usd,
-        reg_10y_usd: row.reg_10y_usd,
-        renew_1y_usd: row.renew_1y_usd,
-        transfer_1y_usd: row.transfer_1y_usd,
+        category: 'gTLD', // Default category
+        reg_1y_gbp: row.reg_1y_gbp,
+        reg_2y_gbp: row.reg_1y_gbp ? row.reg_1y_gbp * 2 : null,
+        reg_5y_gbp: row.reg_1y_gbp ? row.reg_1y_gbp * 5 : null,
+        reg_10y_gbp: row.reg_1y_gbp ? row.reg_1y_gbp * 10 : null,
+        renew_1y_gbp: row.renew_1y_gbp,
+        transfer_1y_gbp: row.transfer_1y_gbp,
+        reg_1y_usd: row.reg_1y_gbp ? Math.round(row.reg_1y_gbp / 0.7397 * 100) / 100 : null,
+        reg_2y_usd: row.reg_1y_gbp ? Math.round((row.reg_1y_gbp * 2) / 0.7397 * 100) / 100 : null,
+        reg_5y_usd: row.reg_1y_gbp ? Math.round((row.reg_1y_gbp * 5) / 0.7397 * 100) / 100 : null,
+        reg_10y_usd: row.reg_1y_gbp ? Math.round((row.reg_1y_gbp * 10) / 0.7397 * 100) / 100 : null,
+        renew_1y_usd: row.renew_1y_gbp ? Math.round(row.renew_1y_gbp / 0.7397 * 100) / 100 : null,
+        transfer_1y_usd: row.transfer_1y_gbp ? Math.round(row.transfer_1y_gbp / 0.7397 * 100) / 100 : null,
         usd_to_gbp_rate: 0.7397,
         source: 'csv_upload',
         updated_at: new Date().toISOString()
