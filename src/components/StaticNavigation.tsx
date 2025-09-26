@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -51,30 +52,30 @@ export const StaticNavigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <img
                 src={logoSrc}
                 alt="404 Code Lab"
                 className="h-16 w-auto"
               />
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="text-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Home
-              </a>
-              <a
-                href="/about"
+              </Link>
+              <Link
+                to="/about"
                 className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 About
-              </a>
+              </Link>
               
               {/* Services Dropdown */}
               <div 
@@ -93,40 +94,40 @@ export const StaticNavigation = () => {
                     onMouseEnter={handleServicesEnter}
                     onMouseLeave={handleServicesLeave}
                   >
-                    <a
-                      href="/portfolio/web"
+                    <Link
+                      to="/portfolio/web"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       Web Development
-                    </a>
-                    <a
-                      href="/portfolio/apps"
+                    </Link>
+                    <Link
+                      to="/portfolio/apps"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       App Development
-                    </a>
-                    <a
-                      href="/portfolio/games"
+                    </Link>
+                    <Link
+                      to="/portfolio/games"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       Game Development
-                    </a>
-                    <a
-                      href="/services/ai-integration"
+                    </Link>
+                    <Link
+                      to="/services/ai-integration"
                       className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors"
                     >
                       AI Integration
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
 
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Contact
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -159,21 +160,21 @@ export const StaticNavigation = () => {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <a href="/dashboard" className="w-full">Dashboard</a>
+                    <Link to="/dashboard" className="w-full">Dashboard</Link>
                   </DropdownMenuItem>
                   {isCodeLabEmail && (
                     <>
                       <DropdownMenuItem>
-                        <a href="/project-management" className="w-full">Project Management</a>
+                        <Link to="/project-management" className="w-full">Project Management</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <a href="/admin" className="w-full">Admin Panel</a>
+                        <Link to="/admin" className="w-full">Admin Panel</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <a href="/accounting" className="w-full">Accounting</a>
+                        <Link to="/accounting" className="w-full">Accounting</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
-                        <a href="/admin/settings" className="w-full">Settings</a>
+                        <Link to="/admin/settings" className="w-full">Settings</Link>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -185,7 +186,7 @@ export const StaticNavigation = () => {
               </DropdownMenu>
             ) : (
               <Button asChild variant="default">
-                <a href="/auth">Sign In</a>
+                <Link to="/auth">Sign In</Link>
               </Button>
             )}
           </div>
@@ -207,61 +208,61 @@ export const StaticNavigation = () => {
         {isOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background border-t border-border">
-              <a
-                href="/"
+              <Link
+                to="/"
                 className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Home
-              </a>
-              <a
-                href="/about"
+              </Link>
+              <Link
+                to="/about"
                 className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 About
-              </a>
+              </Link>
               
               {/* Mobile Services */}
               <div className="space-y-1">
                 <div className="text-muted-foreground px-3 py-2 text-base font-medium">Services</div>
-                <a
-                  href="/portfolio/web"
+                <Link
+                  to="/portfolio/web"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Web Development
-                </a>
-                <a
-                  href="/portfolio/apps"
+                </Link>
+                <Link
+                  to="/portfolio/apps"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   App Development
-                </a>
-                <a
-                  href="/portfolio/games"
+                </Link>
+                <Link
+                  to="/portfolio/games"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Game Development
-                </a>
-                <a
-                  href="/services/ai-integration"
+                </Link>
+                <Link
+                  to="/services/ai-integration"
                   className="text-muted-foreground hover:text-primary block px-6 py-2 rounded-md text-sm transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   AI Integration
-                </a>
+                </Link>
               </div>
 
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Contact
-              </a>
+              </Link>
 
               {/* Mobile user menu */}
               <div className="pt-4 border-t border-border">
@@ -272,43 +273,43 @@ export const StaticNavigation = () => {
                       <div className="text-base font-medium text-foreground">{profile.first_name} {profile.last_name}</div>
                       <div className="text-sm text-muted-foreground">{profile.email}</div>
                        <div className="mt-2 space-y-1">
-                        <a
-                          href="/dashboard"
+                        <Link
+                          to="/dashboard"
                           className="block text-muted-foreground hover:text-primary text-sm"
                           onClick={() => setIsOpen(false)}
                         >
                           Dashboard
-                        </a>
+                        </Link>
                         {isCodeLabEmail && (
                           <>
-                            <a
-                              href="/project-management"
+                            <Link
+                              to="/project-management"
                               className="block text-muted-foreground hover:text-primary text-sm"
                               onClick={() => setIsOpen(false)}
                             >
                               Project Management
-                            </a>
-                            <a
-                              href="/admin"
+                            </Link>
+                            <Link
+                              to="/admin"
                               className="block text-muted-foreground hover:text-primary text-sm"
                               onClick={() => setIsOpen(false)}
                             >
                               Admin Panel
-                            </a>
-                            <a
-                              href="/accounting"
+                            </Link>
+                            <Link
+                              to="/accounting"
                               className="block text-muted-foreground hover:text-primary text-sm"
                               onClick={() => setIsOpen(false)}
                             >
                               Accounting
-                            </a>
-                            <a
-                              href="/admin/settings"
+                            </Link>
+                            <Link
+                              to="/admin/settings"
                               className="block text-muted-foreground hover:text-primary text-sm"
                               onClick={() => setIsOpen(false)}
                             >
                               Settings
-                            </a>
+                            </Link>
                           </>
                         )}
                         <button
@@ -324,7 +325,7 @@ export const StaticNavigation = () => {
                     </div>
                   ) : (
                     <Button asChild variant="default" className="flex-1">
-                      <a href="/auth" onClick={() => setIsOpen(false)}>Sign In</a>
+                      <Link to="/auth" onClick={() => setIsOpen(false)}>Sign In</Link>
                     </Button>
                   )}
                 </div>
