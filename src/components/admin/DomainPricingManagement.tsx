@@ -305,7 +305,28 @@ export function DomainPricingManagement() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4 mb-4">
+        <div className="flex flex-wrap gap-4 mb-4">
+          <Button 
+            onClick={handleSync}
+            disabled={syncMutation.isPending}
+            variant="outline"
+          >
+            {syncMutation.isPending ? 'Syncing...' : 'Sync from eNom'}
+          </Button>
+          
+          <Button 
+            onClick={async () => {
+              const response = await fetch('/domain-pricing.csv');
+              const blob = await response.blob();
+              const file = new File([blob], 'domain-pricing.csv', { type: 'text/csv' });
+              setCsvFile(file);
+              handleCsvImport();
+            }}
+            disabled={csvImportMutation.isPending}
+            variant="default"
+          >
+            {csvImportMutation.isPending ? 'Importing...' : 'Import All TLDs from CSV'}
+          </Button>
             <Button 
               onClick={handleSync}
               disabled={syncMutation.isPending}

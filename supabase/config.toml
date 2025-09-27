@@ -78,3 +78,6 @@ verify_jwt = false
 
 [functions.checkout-session]
 verify_jwt = true
+
+[functions.import-domain-csv]
+verify_jwt = true
