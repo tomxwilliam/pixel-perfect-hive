@@ -55,7 +55,7 @@ export function DomainPricingManagement() {
   // Sync from eNom mutation
   const syncMutation = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('sync-enom-domain-pricing', {
+      const { data, error } = await supabase.functions.invoke('sync-enom-prices', {
         method: 'POST'
       });
       
