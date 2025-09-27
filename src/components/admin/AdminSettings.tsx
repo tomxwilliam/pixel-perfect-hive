@@ -112,7 +112,7 @@ const AdminSettings = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5" />
-                  Domain & Hosting Settings
+                  Domain Settings
                 </CardTitle>
               </CardHeader>
               <CardContent>
