@@ -312,11 +312,6 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Globe className="h-5 w-5" />
-        <h2 className="text-2xl font-bold">Domain & Hosting Settings</h2>
-      </div>
-
       <Tabs defaultValue="general" className="space-y-4">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="general">General</TabsTrigger>
