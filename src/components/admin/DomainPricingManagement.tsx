@@ -320,7 +320,7 @@ export function DomainPricingManagement() {
               const blob = await response.blob();
               const file = new File([blob], 'domain-pricing.csv', { type: 'text/csv' });
               setCsvFile(file);
-              handleCsvImport();
+              csvImportMutation.mutate(file);
             }}
             disabled={csvImportMutation.isPending}
             variant="default"
