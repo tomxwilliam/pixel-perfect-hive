@@ -34,18 +34,23 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Searching for domain: ${domain}`);
 
-    // Get domain pricing from settings
-    const { data: settings } = await supabase
-      .from('domain_hosting_settings')
-      .select('domain_pricing')
-      .single();
+    // Get domain pricing from domain_tld_pricing table
+    const { data: tldPricing } = await supabase
+      .from('domain_tld_pricing')
+      .select('tld, registration_price');
 
-    const domainPricing = settings?.domain_pricing || {
-      '.com': 12.99,
-      '.co.uk': 9.99,
-      '.org': 14.99,
-      '.net': 13.99
-    };
+    const domainPricing: Record<string, number> = {};
+    if (tldPricing && tldPricing.length > 0) {
+      tldPricing.forEach((item) => {
+        domainPricing[item.tld] = item.registration_price;
+      });
+    } else {
+      // Fallback pricing if no data in table
+      domainPricing['.com'] = 12.99;
+      domainPricing['.co.uk'] = 9.99;
+      domainPricing['.org'] = 14.99;
+      domainPricing['.net'] = 13.99;
+    }
 
     const enomUser = Deno.env.get('ENOM_API_USER');
     const enomToken = Deno.env.get('ENOM_API_TOKEN');

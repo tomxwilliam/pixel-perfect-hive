@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.51.0';
 import Stripe from "https://esm.sh/stripe@14.21.0";
+import { handleDomainRegistrationPayment } from './_handlers/domain-registration.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -75,7 +76,13 @@ const handler = async (req: Request): Promise<Response> => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        await handleCheckoutCompleted(supabase, session);
+        
+        // Check if this is a domain registration payment
+        if (session.metadata?.type === 'domain_registration') {
+          await handleDomainRegistrationPayment(supabase, session);
+        } else {
+          await handleCheckoutCompleted(supabase, session);
+        }
         break;
       }
 

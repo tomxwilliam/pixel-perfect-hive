@@ -44,44 +44,43 @@ export default function DomainPurchaseModal({
   });
   const { toast } = useToast();
 
-  const registerDomainMutation = useMutation({
+  const registerMutation = useMutation({
     mutationFn: async () => {
-      if (!domain) throw new Error('No domain selected');
+      if (!domain || !domain.available) {
+        throw new Error('Domain not available');
+      }
 
-      // First create the domain registration
-      const { data: registrationData, error: registrationError } = await supabase.functions.invoke('domain-register', {
+      const { data, error } = await supabase.functions.invoke('domain-register', {
         body: {
           domain: domain.domain.split('.')[0],
-          tld: domain.tld,
-          registrationPeriod: 1,
-          customerDetails,
-          nameservers: ['ns1.404codelab.com', 'ns2.404codelab.com'],
-          autoRenew: true
+          tld: `.${domain.domain.split('.').slice(1).join('.')}`,
+          years: 1,
+          customer_details: {
+            first_name: customerDetails.firstName,
+            last_name: customerDetails.lastName,
+            email: customerDetails.email,
+            phone: customerDetails.phone,
+            address: customerDetails.address,
+            city: customerDetails.city,
+            postal_code: customerDetails.postcode,
+            country: customerDetails.country
+          }
         }
       });
 
-      if (registrationError) throw registrationError;
-
-      // Process payment via Stripe
-      const { data: paymentData, error: paymentError } = await supabase.functions.invoke('process-payment', {
-        body: {
-          invoiceId: registrationData.invoice.id
-        }
-      });
-
-      if (paymentError) throw paymentError;
-
-      return { registration: registrationData, payment: paymentData };
+      if (error) throw error;
+      return data;
     },
     onSuccess: (data) => {
-      toast({
-        title: "Domain registration initiated",
-        description: "Redirecting to payment...",
-      });
-      
-      // Redirect to Stripe checkout
-      if (data.payment?.checkoutUrl) {
-        window.location.href = data.payment.checkoutUrl;
+      if (data.checkout_url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkout_url;
+      } else {
+        toast({
+          title: "Registration successful",
+          description: "Your domain has been registered successfully!",
+        });
+        onPurchaseComplete();
       }
     },
     onError: (error: any) => {
@@ -113,7 +112,7 @@ export default function DomainPurchaseModal({
       return;
     }
 
-    registerDomainMutation.mutate();
+    registerMutation.mutate();
   };
 
   if (!domain) return null;
@@ -264,11 +263,11 @@ export default function DomainPurchaseModal({
             </Button>
             <Button 
               onClick={handlePurchase}
-              disabled={!domain.available || registerDomainMutation.isPending}
+              disabled={!domain.available || registerMutation.isPending}
               className="flex-1"
             >
               <CreditCard className="h-4 w-4 mr-2" />
-              {registerDomainMutation.isPending ? "Processing..." : `Register Domain - £${domain.price.toFixed(2)}`}
+              {registerMutation.isPending ? "Processing..." : `Register Domain - £${domain.price.toFixed(2)}`}
             </Button>
           </div>
         </div>

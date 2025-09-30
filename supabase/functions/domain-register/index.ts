@@ -122,36 +122,26 @@ const handler = async (req: Request): Promise<Response> => {
       registrationSuccess = true;
     }
 
-    if (!registrationSuccess) {
-      throw new Error('Domain registration failed');
-    }
-
-    // Get domain pricing
-    const { data: settings } = await supabase
-      .from('domain_hosting_settings')
-      .select('domain_pricing')
+    // Get domain pricing from domain_tld_pricing table
+    const { data: tldPricing } = await supabase
+      .from('domain_tld_pricing')
+      .select('registration_price')
+      .eq('tld', registrationData.tld)
       .single();
 
-    const domainPricing = settings?.domain_pricing || {
-      '.com': 12.99,
-      '.co.uk': 9.99,
-      '.org': 14.99,
-      '.net': 13.99
-    };
-
-    const price = domainPricing[registrationData.tld] || 12.99;
+    const price = tldPricing?.registration_price || 12.99;
     const totalAmount = price * registrationData.years;
 
-    // Create domain record
+    // Create domain record - status pending_payment awaiting Stripe payment
     const { data: domainRecord, error: domainError } = await supabase
       .from('domains')
       .insert({
         customer_id: user.id,
         domain_name: `${registrationData.domain}${registrationData.tld}`,
         tld: registrationData.tld,
-        status: 'pending',
+        status: 'pending_payment',
         price: totalAmount,
-        enom_domain_id: enomDomainId,
+        enom_domain_id: null, // Will be set after payment
         auto_renew: true,
         dns_management: false
       })
@@ -162,78 +152,78 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`Failed to create domain record: ${domainError.message}`);
     }
 
-    // Create invoice
-    const { data: invoice, error: invoiceError } = await supabase
-      .from('invoices')
-      .insert({
-        customer_id: user.id,
-        amount: totalAmount,
-        status: 'pending',
-        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        invoice_number: `DOM-${Date.now()}`
-      })
-      .select()
+    // Create Stripe checkout session
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      throw new Error('Stripe not configured');
+    }
+
+    const stripe = (await import('https://esm.sh/stripe@14.21.0')).default(stripeKey);
+
+    // Get or create Stripe customer
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id, email')
+      .eq('id', user.id)
       .single();
 
-    if (invoiceError) {
-      throw new Error(`Failed to create invoice: ${invoiceError.message}`);
+    let stripeCustomerId = profile?.stripe_customer_id;
+
+    if (!stripeCustomerId) {
+      const customer = await stripe.customers.create({
+        email: profile?.email || registrationData.customer_details.email,
+        metadata: { supabase_user_id: user.id }
+      });
+      stripeCustomerId = customer.id;
+
+      await supabase
+        .from('profiles')
+        .update({ stripe_customer_id: stripeCustomerId })
+        .eq('id', user.id);
     }
 
-    // Update domain with invoice ID
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      customer: stripeCustomerId,
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'gbp',
+          product_data: {
+            name: `Domain Registration: ${registrationData.domain}${registrationData.tld}`,
+            description: `${registrationData.years} year(s) registration`
+          },
+          unit_amount: Math.round(totalAmount * 100), // Convert to pence
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `${Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '.lovable.app') || 'http://localhost:5173'}/dashboard?domain_success=true`,
+      cancel_url: `${Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '.lovable.app') || 'http://localhost:5173'}/dashboard?domain_cancelled=true`,
+      metadata: {
+        domain_id: domainRecord.id,
+        customer_id: user.id,
+        domain_name: `${registrationData.domain}${registrationData.tld}`,
+        tld: registrationData.tld,
+        years: registrationData.years.toString(),
+        type: 'domain_registration'
+      }
+    });
+
+    // Store session ID in domain record
     await supabase
       .from('domains')
-      .update({ invoice_id: invoice.id })
+      .update({ 
+        stripe_session_id: session.id,
+        registration_data: registrationData
+      })
       .eq('id', domainRecord.id);
-
-    // Create provisioning request
-    await supabase
-      .from('provisioning_requests')
-      .insert({
-        customer_id: user.id,
-        request_type: 'domain_registration',
-        domain_id: domainRecord.id,
-        status: 'pending',
-        priority: 'medium',
-        request_data: {
-          domain: `${registrationData.domain}${registrationData.tld}`,
-          years: registrationData.years,
-          enom_order_id: enomDomainId
-        }
-      });
-
-    // Send notifications
-    const adminUsers = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('role', 'admin');
-
-    for (const admin of adminUsers.data || []) {
-      await supabase.rpc('send_notification', {
-        p_user_id: admin.id,
-        p_title: 'New Domain Registration',
-        p_message: `Domain ${registrationData.domain}${registrationData.tld} registered by customer`,
-        p_type: 'info',
-        p_category: 'domain_registration',
-        p_related_id: domainRecord.id,
-        p_created_by: user.id
-      });
-    }
-
-    await supabase.rpc('send_notification', {
-      p_user_id: user.id,
-      p_title: 'Domain Registration Submitted',
-      p_message: `Your domain registration for ${registrationData.domain}${registrationData.tld} has been submitted and will be processed shortly.`,
-      p_type: 'success',
-      p_category: 'domain_registration',
-      p_related_id: domainRecord.id,
-      p_created_by: user.id
-    });
 
     return new Response(JSON.stringify({
       success: true,
+      checkout_url: session.url,
       domain: domainRecord,
-      invoice: invoice,
-      message: 'Domain registration submitted successfully'
+      message: 'Please complete payment to register your domain'
     }), {
       status: 200,
       headers: {
