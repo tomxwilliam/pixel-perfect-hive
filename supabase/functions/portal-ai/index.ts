@@ -45,38 +45,13 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get Google Cloud service account for Vertex AI
-    const serviceAccountJson = Deno.env.get('GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON');
-    if (!serviceAccountJson) {
-      console.error('Google Cloud service account not configured');
+    // Get Lovable AI API key
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      console.error('Lovable AI API key not configured');
       return new Response(JSON.stringify({ 
         response: "I'm currently being set up. Please try again in a few moments, or I can escalate this to our human team.",
         escalation_needed: false
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    let serviceAccount;
-    try {
-      serviceAccount = JSON.parse(serviceAccountJson);
-    } catch (parseError) {
-      console.error('Failed to parse service account JSON:', parseError);
-      return new Response(JSON.stringify({ 
-        response: "I'm experiencing a configuration issue. Let me escalate this to our human team.",
-        escalation_needed: true
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    let accessToken;
-    try {
-      accessToken = await getGoogleCloudAccessToken(serviceAccount);
-    } catch (tokenError) {
-      console.error('Failed to get Google Cloud access token:', tokenError);
-      return new Response(JSON.stringify({ 
-        response: "I'm having trouble connecting to my AI service. Let me escalate this to our human team for immediate assistance.",
-        escalation_needed: true
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -95,47 +70,66 @@ serve(async (req) => {
       }
     }
 
-    // Call Vertex AI with enhanced context
+    // Call Lovable AI with enhanced context
     let aiResponse = "Hello! I'm the 404 Code Lab Portal AI assistant. I can help with support tickets, quotes, projects, and general inquiries. How can I assist you today?";
     
     try {
       const response = await fetch(
-        `https://us-central1-aiplatform.googleapis.com/v1/projects/${serviceAccount.project_id}/locations/us-central1/publishers/google/models/gemini-1.5-pro:generateContent`,
+        'https://ai.gateway.lovable.dev/v1/chat/completions',
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${lovableApiKey}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            contents: [{
-              role: 'user',
-              parts: [{
-                text: `${SYSTEM_PROMPT}\n\nUser Role: ${user_role}\nContext: ${context}\n\nUser Query: ${enhancedQuery}`
-              }]
-            }],
-            generationConfig: {
-              temperature: 0.3,
-              topK: 40,
-              topP: 0.8,
-              maxOutputTokens: 2048,
-            }
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              {
+                role: 'system',
+                content: SYSTEM_PROMPT
+              },
+              {
+                role: 'user',
+                content: `User Role: ${user_role}\nContext: ${context}\n\nUser Query: ${enhancedQuery}`
+              }
+            ],
+            temperature: 0.3,
+            max_tokens: 2048
           })
         }
       );
 
       if (!response.ok) {
         const error = await response.text();
-        console.error('Vertex AI API error:', error);
-        throw new Error(`Vertex AI API error: ${response.status}`);
+        console.error('Lovable AI API error:', error, 'Status:', response.status);
+        
+        // Handle rate limiting
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again in a moment.');
+        }
+        
+        // Handle payment required
+        if (response.status === 402) {
+          throw new Error('AI credits depleted. Please contact support.');
+        }
+        
+        throw new Error(`Lovable AI API error: ${response.status}`);
       }
 
       const data = await response.json();
-      aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || aiResponse;
+      aiResponse = data.choices?.[0]?.message?.content || aiResponse;
     } catch (aiError) {
       console.error('AI service error:', aiError);
-      // Use fallback response, don't fail the entire request
-      aiResponse = `I understand you're asking: "${query}". I'm currently experiencing some technical difficulties with my AI processing, but I can still help you with basic operations. Would you like me to escalate this to our human support team?`;
+      
+      // More specific error messages
+      if (aiError.message.includes('Rate limit')) {
+        aiResponse = `I'm currently experiencing high demand. Please try again in a few moments, or I can escalate this to our human team.`;
+      } else if (aiError.message.includes('credits depleted')) {
+        aiResponse = `I'm experiencing a service issue. Let me escalate this to our human team for immediate assistance.`;
+      } else {
+        aiResponse = `I understand you're asking: "${query}". I'm currently experiencing some technical difficulties with my AI processing, but I can still help you with basic operations. Would you like me to escalate this to our human support team?`;
+      }
     }
 
     // Log interaction for audit trail
@@ -655,72 +649,4 @@ async function auditLog(supabase: any, userId: string, action: string, entityTyp
   } catch (error) {
     console.error('Audit log error:', error);
   }
-}
-
-// Google Cloud authentication (reused from original)
-async function getGoogleCloudAccessToken(serviceAccount: any): Promise<string> {
-  const now = Math.floor(Date.now() / 1000);
-  const exp = now + 3600;
-
-  const header = { alg: 'RS256', typ: 'JWT' };
-  const payload = {
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/cloud-platform',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp, iat: now
-  };
-
-  const headerB64 = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const payloadB64 = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  
-  const privateKey = await crypto.subtle.importKey(
-    'pkcs8',
-    pemToArrayBuffer(serviceAccount.private_key),
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signatureBuffer = await crypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    privateKey,
-    new TextEncoder().encode(`${headerB64}.${payloadB64}`)
-  );
-
-  const signature = btoa(String.fromCharCode(...new Uint8Array(signatureBuffer)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-  const jwt = `${headerB64}.${payloadB64}.${signature}`;
-
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt
-    })
-  });
-
-  if (!tokenResponse.ok) {
-    throw new Error(`Failed to get access token: ${tokenResponse.status}`);
-  }
-
-  const tokenData = await tokenResponse.json();
-  return tokenData.access_token;
-}
-
-function pemToArrayBuffer(pem: string): ArrayBuffer {
-  const pemContents = pem
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\s/g, '');
-  
-  const binaryString = atob(pemContents);
-  const bytes = new Uint8Array(binaryString.length);
-  
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  
-  return bytes.buffer;
 }
