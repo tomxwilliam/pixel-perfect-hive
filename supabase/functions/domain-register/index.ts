@@ -9,17 +9,9 @@ const corsHeaders = {
 interface DomainRegistrationRequest {
   domain: string;
   tld: string;
-  years: number;
-  customer_details: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    address: string;
-    city: string;
-    postal_code: string;
-    country: string;
-  };
+  price: number;
+  customerId: string;
+  years?: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -62,65 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log('Domain registration request:', registrationData);
 
-    const enomUser = Deno.env.get('ENOM_API_USER');
-    const enomToken = Deno.env.get('ENOM_API_TOKEN');
-
-    let enomDomainId: string | null = null;
-    let registrationSuccess = false;
-
-    if (enomUser && enomToken) {
-      try {
-        console.log('Attempting eNom domain registration');
-        
-        // Prepare eNom registration request
-        const registerUrl = new URL('https://reseller.enom.com/interface.asp');
-        registerUrl.searchParams.set('command', 'Purchase');
-        registerUrl.searchParams.set('uid', enomUser);
-        registerUrl.searchParams.set('pw', enomToken);
-        registerUrl.searchParams.set('responsetype', 'JSON');
-        registerUrl.searchParams.set('domain', registrationData.domain);
-        registerUrl.searchParams.set('tld', registrationData.tld.replace('.', ''));
-        registerUrl.searchParams.set('numyears', registrationData.years.toString());
-        
-        // Contact information
-        registerUrl.searchParams.set('RegistrantFirstName', registrationData.customer_details.first_name);
-        registerUrl.searchParams.set('RegistrantLastName', registrationData.customer_details.last_name);
-        registerUrl.searchParams.set('RegistrantEmailAddress', registrationData.customer_details.email);
-        registerUrl.searchParams.set('RegistrantPhone', registrationData.customer_details.phone);
-        registerUrl.searchParams.set('RegistrantAddress1', registrationData.customer_details.address);
-        registerUrl.searchParams.set('RegistrantCity', registrationData.customer_details.city);
-        registerUrl.searchParams.set('RegistrantPostalCode', registrationData.customer_details.postal_code);
-        registerUrl.searchParams.set('RegistrantCountry', registrationData.customer_details.country);
-
-        const response = await fetch(registerUrl.toString(), {
-          method: 'POST'
-        });
-
-        if (!response.ok) {
-          throw new Error(`eNom API request failed: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('eNom registration response:', data);
-
-        if (data.RRPCode === '200' || data.OrderID) {
-          registrationSuccess = true;
-          enomDomainId = data.OrderID || data.DomainID || `enom_${Date.now()}`;
-        } else {
-          throw new Error(data.RRPText || 'Registration failed');
-        }
-
-      } catch (error) {
-        console.error('eNom registration error:', error);
-        // Continue with mock registration for demo
-        enomDomainId = `mock_enom_${Date.now()}`;
-        registrationSuccess = true;
-      }
-    } else {
-      console.log('eNom credentials not configured, using mock registration');
-      enomDomainId = `mock_enom_${Date.now()}`;
-      registrationSuccess = true;
-    }
+    const years = registrationData.years || 1;
 
     // Get domain pricing from domain_tld_pricing table
     const { data: tldPricing } = await supabase
@@ -129,8 +63,8 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('tld', registrationData.tld)
       .single();
 
-    const price = tldPricing?.registration_price || 12.99;
-    const totalAmount = price * registrationData.years;
+    const price = registrationData.price || tldPricing?.registration_price || 12.99;
+    const totalAmount = price * years;
 
     // Create domain record - status pending_payment awaiting Stripe payment
     const { data: domainRecord, error: domainError } = await supabase
@@ -161,17 +95,17 @@ const handler = async (req: Request): Promise<Response> => {
     const stripe = (await import('https://esm.sh/stripe@14.21.0')).default(stripeKey);
 
     // Get or create Stripe customer
-    const { data: profile } = await supabase
+    const { data: userProfile } = await supabase
       .from('profiles')
       .select('stripe_customer_id, email')
       .eq('id', user.id)
       .single();
 
-    let stripeCustomerId = profile?.stripe_customer_id;
+    let stripeCustomerId = userProfile?.stripe_customer_id;
 
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({
-        email: profile?.email || registrationData.customer_details.email,
+        email: userProfile?.email || user.email,
         metadata: { supabase_user_id: user.id }
       });
       stripeCustomerId = customer.id;
@@ -191,7 +125,7 @@ const handler = async (req: Request): Promise<Response> => {
           currency: 'gbp',
           product_data: {
             name: `Domain Registration: ${registrationData.domain}${registrationData.tld}`,
-            description: `${registrationData.years} year(s) registration`
+            description: `${years} year(s) registration`
           },
           unit_amount: Math.round(totalAmount * 100), // Convert to pence
         },
@@ -205,7 +139,7 @@ const handler = async (req: Request): Promise<Response> => {
         customer_id: user.id,
         domain_name: `${registrationData.domain}${registrationData.tld}`,
         tld: registrationData.tld,
-        years: registrationData.years.toString(),
+        years: years.toString(),
         type: 'domain_registration'
       }
     });
@@ -214,8 +148,7 @@ const handler = async (req: Request): Promise<Response> => {
     await supabase
       .from('domains')
       .update({ 
-        stripe_session_id: session.id,
-        registration_data: registrationData
+        stripe_session_id: session.id
       })
       .eq('id', domainRecord.id);
 
