@@ -25,11 +25,45 @@ export default function DomainSearch() {
   const { toast } = useToast();
 
   const searchMutation = useMutation({
-    mutationFn: async (domain: string) => {
+    mutationFn: async (searchInput: string) => {
+      // Parse domain input to extract domain name and any specified TLD
+      const parseDomainInput = (input: string) => {
+        const cleaned = input.trim().toLowerCase();
+        const commonTlds = ['.com', '.co.uk', '.org', '.net', '.uk', '.io', '.ai', '.app'];
+        
+        // Check if input includes a TLD
+        let domainName = cleaned;
+        let specifiedTld: string | null = null;
+        
+        for (const tld of commonTlds) {
+          if (cleaned.endsWith(tld)) {
+            domainName = cleaned.slice(0, -tld.length);
+            specifiedTld = tld;
+            break;
+          }
+        }
+        
+        // Remove any remaining special characters from domain name
+        domainName = domainName.replace(/[^a-z0-9-]/g, '');
+        
+        return { domainName, specifiedTld };
+      };
+      
+      const { domainName, specifiedTld } = parseDomainInput(searchInput);
+      
+      // Build TLD list, prioritizing user's specified TLD if any
+      let tldList = ['.com', '.co.uk', '.org', '.net', '.uk'];
+      if (specifiedTld && !tldList.includes(specifiedTld)) {
+        tldList = [specifiedTld, ...tldList];
+      } else if (specifiedTld) {
+        // Move specified TLD to front
+        tldList = [specifiedTld, ...tldList.filter(t => t !== specifiedTld)];
+      }
+      
       const { data, error } = await supabase.functions.invoke('domain-search', {
         body: {
-          domain: domain.replace(/[^a-zA-Z0-9]/g, ''), // Remove special characters
-          tlds: ['.com', '.co.uk', '.org', '.net', '.uk']
+          domain: domainName,
+          tlds: tldList
         }
       });
 

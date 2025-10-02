@@ -32,7 +32,21 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { domain, tlds = ['.com', '.co.uk', '.org', '.net'] }: DomainSearchRequest = await req.json();
 
-    console.log(`Searching for domain: ${domain}`);
+    // Ensure domain doesn't already contain a TLD
+    let cleanDomain = domain.toLowerCase().trim();
+    const allTlds = ['.com', '.co.uk', '.org', '.net', '.uk', '.io', '.ai', '.app', '.dev', '.co'];
+    
+    for (const tld of allTlds) {
+      if (cleanDomain.endsWith(tld)) {
+        cleanDomain = cleanDomain.slice(0, -tld.length);
+        break;
+      }
+    }
+    
+    // Remove any special characters except hyphens
+    cleanDomain = cleanDomain.replace(/[^a-z0-9-]/g, '');
+
+    console.log(`Searching for domain: ${cleanDomain} with TLDs:`, tlds);
 
     // Get domain pricing from domain_tld_pricing table
     const { data: tldPricing } = await supabase
@@ -70,7 +84,7 @@ const handler = async (req: Request): Promise<Response> => {
           searchUrl.searchParams.set('uid', enomUser);
           searchUrl.searchParams.set('pw', enomToken);
           searchUrl.searchParams.set('responsetype', 'JSON');
-          searchUrl.searchParams.set('domain', domain);
+          searchUrl.searchParams.set('domain', cleanDomain);
           searchUrl.searchParams.set('tld', cleanTld);
 
           const response = await fetch(searchUrl.toString());
@@ -102,7 +116,7 @@ const handler = async (req: Request): Promise<Response> => {
           }
           
           results.push({
-            domain: `${domain}.${cleanTld}`,
+            domain: `${cleanDomain}.${cleanTld}`,
             available: isAvailable,
             price: domainPricing[tld] || domainPricing[`.${cleanTld}`] || 12.99,
             tld: tld,
@@ -113,12 +127,12 @@ const handler = async (req: Request): Promise<Response> => {
       } catch (error) {
         console.error('eNom API error:', error);
         // Fall back to mock data if API fails
-        results = generateMockResults(domain, tlds, domainPricing);
+        results = generateMockResults(cleanDomain, tlds, domainPricing);
       }
     } else {
       console.log('eNom credentials not configured, using mock data');
       // Mock data when credentials not provided
-      results = generateMockResults(domain, tlds, domainPricing);
+      results = generateMockResults(cleanDomain, tlds, domainPricing);
     }
 
     return new Response(JSON.stringify({ results }), {
