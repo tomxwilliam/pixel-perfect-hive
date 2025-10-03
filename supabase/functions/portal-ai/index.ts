@@ -40,128 +40,220 @@ serve(async (req) => {
   try {
     const { query, context, user_role, user_id, ticket_id, contact_id } = await req.json();
 
+    console.log('Received query:', query);
+    console.log('Context:', context);
+    console.log('User role:', user_role);
+
     // Initialize Supabase clients
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false } }
+    );
 
-    // Get Lovable AI API key
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!lovableApiKey) {
-      console.error('Lovable AI API key not configured');
-      return new Response(JSON.stringify({ 
-        response: "I'm currently being set up. Please try again in a few moments, or I can escalate this to our human team.",
-        escalation_needed: false
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    // Get Google Cloud service account
+    const serviceAccountJson = Deno.env.get('GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON');
+    if (!serviceAccountJson) {
+      console.error('Google Cloud service account not configured');
+      return new Response(
+        JSON.stringify({ 
+          error: 'AI service not configured',
+          response: 'I apologize, but the AI service is not properly configured. Please contact support.',
+          escalation_needed: true
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
-    // Process query with tool functions
-    let toolResults = [];
-    let enhancedQuery = query;
+    const serviceAccount = JSON.parse(serviceAccountJson);
 
-    // Detect if query requires tool usage
-    if (shouldUseTool(query, context)) {
-      const toolResult = await executeTools(query, context, user_id, contact_id, ticket_id, supabase);
-      if (toolResult) {
-        toolResults.push(toolResult);
-        enhancedQuery = `${query}\n\nTool Results: ${JSON.stringify(toolResult)}`;
-      }
+    // Check if we need to use tools
+    const needsTools = shouldUseTool(query, context);
+    let toolResults: any[] = [];
+    
+    if (needsTools && user_id) {
+      console.log('Query requires tool execution');
+      toolResults = await executeTools(query, context, user_role, user_id, supabaseAdmin);
     }
 
-    // Call Lovable AI with enhanced context
-    let aiResponse = "Hello! I'm the 404 Code Lab Portal AI assistant. I can help with support tickets, quotes, projects, and general inquiries. How can I assist you today?";
+    // Prepare the prompt for Vertex AI
+    const prompt = `${SYSTEM_PROMPT}\n\nContext: ${context}\n\nUser Query: ${query}${toolResults.length > 0 ? '\n\nTool Results: ' + JSON.stringify(toolResults) : ''}`;
+
+    console.log('Calling Vertex AI...');
     
     try {
-      const response = await fetch(
-        'https://ai.gateway.lovable.dev/v1/chat/completions',
+      // Get access token for Google Cloud
+      const accessToken = await getGoogleCloudAccessToken(serviceAccount);
+      
+      // Call Vertex AI API
+      const aiResponse = await fetch(
+        `https://us-central1-aiplatform.googleapis.com/v1/projects/${serviceAccount.project_id}/locations/us-central1/publishers/google/models/gemini-1.5-pro:generateContent`,
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${lovableApiKey}`,
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
-            messages: [
-              {
-                role: 'system',
-                content: SYSTEM_PROMPT
-              },
-              {
-                role: 'user',
-                content: `User Role: ${user_role}\nContext: ${context}\n\nUser Query: ${enhancedQuery}`
-              }
-            ],
-            temperature: 0.3,
-            max_tokens: 2048
-          })
+            contents: [{
+              role: 'user',
+              parts: [{ text: prompt }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 1000,
+            }
+          }),
         }
       );
 
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('Lovable AI API error:', error, 'Status:', response.status);
-        
-        // Handle rate limiting
-        if (response.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again in a moment.');
-        }
-        
-        // Handle payment required
-        if (response.status === 402) {
-          throw new Error('AI credits depleted. Please contact support.');
-        }
-        
-        throw new Error(`Lovable AI API error: ${response.status}`);
+      if (!aiResponse.ok) {
+        const errorText = await aiResponse.text();
+        console.error('Vertex AI API error:', aiResponse.status, errorText);
+        throw new Error(`Vertex AI API error: ${aiResponse.status} ${errorText}`);
       }
 
-      const data = await response.json();
-      aiResponse = data.choices?.[0]?.message?.content || aiResponse;
-    } catch (aiError) {
-      console.error('AI service error:', aiError);
+      const aiData = await aiResponse.json();
+      console.log('Vertex AI response received');
       
-      // More specific error messages
-      if (aiError.message.includes('Rate limit')) {
-        aiResponse = `I'm currently experiencing high demand. Please try again in a few moments, or I can escalate this to our human team.`;
-      } else if (aiError.message.includes('credits depleted')) {
-        aiResponse = `I'm experiencing a service issue. Let me escalate this to our human team for immediate assistance.`;
-      } else {
-        aiResponse = `I understand you're asking: "${query}". I'm currently experiencing some technical difficulties with my AI processing, but I can still help you with basic operations. Would you like me to escalate this to our human support team?`;
+      const responseText = aiData.candidates?.[0]?.content?.parts?.[0]?.text || 
+                          'I apologize, but I was unable to generate a response. Please try again.';
+      
+      // Extract next action and check if escalation is needed
+      const nextAction = extractNextAction(responseText);
+      const escalationNeeded = shouldEscalate(query, responseText);
+
+      // Log the AI interaction
+      if (user_id) {
+        await auditLog(
+          supabaseAdmin,
+          user_id,
+          'ai_interaction',
+          'ai_chat',
+          null,
+          `AI Query: ${query.substring(0, 100)}...`,
+          null,
+          { response: responseText.substring(0, 200), tools_used: toolResults.length > 0 }
+        );
       }
+
+      return new Response(
+        JSON.stringify({ 
+          response: responseText,
+          tool_results: toolResults,
+          next_action: nextAction,
+          escalation_needed: escalationNeeded
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+
+    } catch (error) {
+      console.error('AI processing error:', error);
+      return new Response(
+        JSON.stringify({ 
+          error: error.message,
+          response: 'I apologize, but I encountered an error processing your request. Please try again or contact support if the issue persists.',
+          escalation_needed: true
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
-
-    // Log interaction for audit trail
-    await auditLog(supabase, user_id, 'ai_interaction', 'ai_conversation', null, {
-      query,
-      context,
-      response: aiResponse,
-      tool_results: toolResults,
-      timestamp: new Date().toISOString()
-    });
-
-    return new Response(JSON.stringify({ 
-      response: aiResponse,
-      tool_results: toolResults,
-      next_action: extractNextAction(aiResponse),
-      escalation_needed: shouldEscalate(query, aiResponse)
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
 
   } catch (error) {
     console.error('Error in portal-ai function:', error);
-    return new Response(JSON.stringify({ 
-      error: 'I apologize, but I encountered an error. Let me escalate this to our human team for immediate assistance.',
-      details: error.message,
-      escalation_needed: true
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        response: 'I apologize, but I encountered an error processing your request. Please try again or contact support if the issue persists.',
+        escalation_needed: true
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
+    );
   }
 });
+
+// Helper function to get Google Cloud access token
+async function getGoogleCloudAccessToken(serviceAccount: any): Promise<string> {
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT',
+    kid: serviceAccount.private_key_id,
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: serviceAccount.client_email,
+    sub: serviceAccount.client_email,
+    aud: 'https://oauth2.googleapis.com/token',
+    iat: now,
+    exp: now + 3600,
+    scope: 'https://www.googleapis.com/auth/cloud-platform',
+  };
+
+  const encodedHeader = btoa(JSON.stringify(header));
+  const encodedPayload = btoa(JSON.stringify(payload));
+  const unsignedToken = `${encodedHeader}.${encodedPayload}`;
+
+  const key = await crypto.subtle.importKey(
+    'pkcs8',
+    pemToArrayBuffer(serviceAccount.private_key),
+    {
+      name: 'RSASSA-PKCS1-v1_5',
+      hash: 'SHA-256',
+    },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign(
+    'RSASSA-PKCS1-v1_5',
+    key,
+    new TextEncoder().encode(unsignedToken)
+  );
+
+  const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=/g, '');
+
+  const jwt = `${unsignedToken}.${encodedSignature}`;
+
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
+  });
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
+}
+
+function pemToArrayBuffer(pem: string): ArrayBuffer {
+  const b64 = pem
+    .replace(/-----BEGIN PRIVATE KEY-----/, '')
+    .replace(/-----END PRIVATE KEY-----/, '')
+    .replace(/\s/g, '');
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
 
 // Tool detection and execution
 function shouldUseTool(query: string, context: string): boolean {
@@ -181,48 +273,58 @@ function shouldUseTool(query: string, context: string): boolean {
   );
 }
 
-async function executeTools(query: string, context: string, userId: string, contactId?: string, ticketId?: string, supabase: any): Promise<ToolResult> {
+async function executeTools(query: string, context: string, user_role: string, user_id: string, supabase: any): Promise<any[]> {
+  const results: any[] = [];
+  
   try {
     // Ticket creation
     if (query.toLowerCase().includes('create ticket') || query.toLowerCase().includes('new ticket')) {
-      return await createTicket(supabase, contactId || userId, query);
+      const result = await createTicket(supabase, user_id, query);
+      results.push(result);
     }
 
     // Quote generation
     if (query.toLowerCase().includes('quote') || query.toLowerCase().includes('estimate')) {
-      return await generateQuote(supabase, contactId || userId, query);
+      const result = await generateQuote(supabase, user_id, query);
+      results.push(result);
     }
 
     // Contact search
     if (query.toLowerCase().includes('search') || query.toLowerCase().includes('find customer')) {
-      return await searchContacts(supabase, query);
+      const result = await searchContacts(supabase, query);
+      results.push(result);
     }
 
     // Project creation
     if (query.toLowerCase().includes('create project')) {
-      return await createProject(supabase, contactId || userId, query);
+      const result = await createProject(supabase, user_id, query);
+      results.push(result);
     }
 
     // Hosting management
     if (query.toLowerCase().includes('hosting') || query.toLowerCase().includes('domain') || query.toLowerCase().includes('cpanel') || query.toLowerCase().includes('server')) {
-      return await manageHosting(supabase, contactId || userId, query);
+      const result = await manageHosting(supabase, user_id, query);
+      results.push(result);
     }
 
     // Email management
     if (query.toLowerCase().includes('email') && (query.toLowerCase().includes('create') || query.toLowerCase().includes('setup'))) {
-      return await manageEmailAccounts(supabase, contactId || userId, query);
+      const result = await manageEmailAccounts(supabase, user_id, query);
+      results.push(result);
     }
 
     // Database management
     if (query.toLowerCase().includes('database') && (query.toLowerCase().includes('create') || query.toLowerCase().includes('backup'))) {
-      return await manageDatabases(supabase, contactId || userId, query);
+      const result = await manageDatabases(supabase, user_id, query);
+      results.push(result);
     }
 
-    return { success: false, error: 'No matching tool found' };
   } catch (error) {
     console.error('Tool execution error:', error);
-    return { success: false, error: error.message };
+    results.push({ success: false, error: error.message });
   }
+  
+  return results;
 }
 
 // Core tool functions
@@ -501,21 +603,28 @@ function analyzeServiceRequirements(requirements: string): { description: string
   
   if (lowercaseReq.includes('app') || lowercaseReq.includes('mobile')) {
     return {
-      description: 'Mobile App Development Service',
-      estimatedAmount: 15000
+      description: 'Mobile App Development',
+      estimatedAmount: 12000
     };
   }
   
   if (lowercaseReq.includes('game')) {
     return {
-      description: 'Game Development Service',
+      description: 'Game Development',
+      estimatedAmount: 15000
+    };
+  }
+  
+  if (lowercaseReq.includes('ai') || lowercaseReq.includes('machine learning')) {
+    return {
+      description: 'AI Integration Service',
       estimatedAmount: 10000
     };
   }
   
   return {
     description: 'Custom Development Service',
-    estimatedAmount: 3000
+    estimatedAmount: 5000
   };
 }
 
@@ -523,31 +632,26 @@ function analyzeProjectRequirements(description: string): { title: string, type:
   const lowercaseDesc = description.toLowerCase();
   
   let type = 'web';
-  if (lowercaseDesc.includes('app') || lowercaseDesc.includes('mobile')) type = 'app';
-  if (lowercaseDesc.includes('game')) type = 'game';
-  if (lowercaseDesc.includes('ai')) type = 'ai';
+  if (lowercaseDesc.includes('app') || lowercaseDesc.includes('mobile')) {
+    type = 'app';
+  } else if (lowercaseDesc.includes('game')) {
+    type = 'game';
+  } else if (lowercaseDesc.includes('ai')) {
+    type = 'ai';
+  }
   
-  const words = description.split(' ').slice(0, 8);
-  const title = words.join(' ').replace(/[^\w\s]/gi, '').trim();
+  const title = description.split(/[.!?]/)[0]?.trim().substring(0, 100) || 'New Project';
   
-  return {
-    title: title || 'New Development Project',
-    type
-  };
+  return { title, type };
 }
 
 function extractSearchTerm(query: string): string {
-  // Extract search term from queries like "find customer John" or "search for Smith"
-  const words = query.split(' ');
-  const searchIndex = words.findIndex(word => 
-    ['find', 'search', 'lookup', 'customer', 'client'].includes(word.toLowerCase())
+  const lowercaseQuery = query.toLowerCase();
+  const searchWords = lowercaseQuery.split(' ').filter(word => 
+    word.length > 3 && 
+    !['search', 'find', 'lookup', 'customer', 'contact', 'for'].includes(word)
   );
-  
-  if (searchIndex !== -1 && searchIndex < words.length - 1) {
-    return words.slice(searchIndex + 1).join(' ').replace(/[^\w\s]/gi, '');
-  }
-  
-  return query.replace(/[^\w\s]/gi, '');
+  return searchWords[0] || '';
 }
 
 function analyzeHostingRequirements(query: string): { domain: string, packageType: string, billingCycle: string } {
@@ -555,30 +659,30 @@ function analyzeHostingRequirements(query: string): { domain: string, packageTyp
   
   // Extract domain if mentioned
   const domainMatch = query.match(/([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/);
-  const domain = domainMatch ? domainMatch[1] : 'pending-domain.com';
+  const domain = domainMatch ? domainMatch[0] : 'domain-to-be-configured.com';
   
-  // Determine package based on requirements
-  let packageType = 'basic';
-  if (lowercaseQuery.includes('business') || lowercaseQuery.includes('premium')) {
-    packageType = 'business';
-  } else if (lowercaseQuery.includes('enterprise') || lowercaseQuery.includes('dedicated')) {
-    packageType = 'enterprise';
+  // Determine package type
+  let packageType = 'shared';
+  if (lowercaseQuery.includes('vps') || lowercaseQuery.includes('virtual')) {
+    packageType = 'vps';
+  } else if (lowercaseQuery.includes('dedicated')) {
+    packageType = 'dedicated';
   }
   
   // Determine billing cycle
   let billingCycle = 'monthly';
-  if (lowercaseQuery.includes('yearly') || lowercaseQuery.includes('annual')) {
-    billingCycle = 'yearly';
+  if (lowercaseQuery.includes('annual') || lowercaseQuery.includes('yearly')) {
+    billingCycle = 'annual';
   }
   
   return { domain, packageType, billingCycle };
 }
 
 function analyzeEmailRequirements(query: string): { email: string, domain: string } {
-  const emailMatch = query.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
-  const domainMatch = query.match(/([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/);
+  const emailMatch = query.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  const email = emailMatch ? emailMatch[0] : 'email@domain.com';
   
-  const email = emailMatch ? emailMatch[1] : 'info@domain.com';
+  const domainMatch = query.match(/@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
   const domain = domainMatch ? domainMatch[1] : 'domain.com';
   
   return { email, domain };
@@ -587,64 +691,68 @@ function analyzeEmailRequirements(query: string): { email: string, domain: strin
 function analyzeDatabaseRequirements(query: string): { type: string, description: string } {
   const lowercaseQuery = query.toLowerCase();
   
-  let type = 'mysql'; // default
-  if (lowercaseQuery.includes('postgresql') || lowercaseQuery.includes('postgres')) {
-    type = 'postgresql';
-  } else if (lowercaseQuery.includes('mongodb') || lowercaseQuery.includes('mongo')) {
-    type = 'mongodb';
+  let type = 'MySQL';
+  if (lowercaseQuery.includes('postgres') || lowercaseQuery.includes('postgresql')) {
+    type = 'PostgreSQL';
+  } else if (lowercaseQuery.includes('mongo')) {
+    type = 'MongoDB';
   }
   
-  let description = 'Database setup request';
-  if (lowercaseQuery.includes('backup')) {
-    description = 'Database backup request';
-  } else if (lowercaseQuery.includes('restore')) {
-    description = 'Database restore request';
-  } else if (lowercaseQuery.includes('migrate')) {
-    description = 'Database migration request';
-  }
+  const description = query.split(/[.!?]/)[0]?.trim() || 'Database management request';
   
   return { type, description };
 }
 
-function extractNextAction(response: string): string | null {
-  // Extract actionable next steps from AI response
-  const actionPatterns = [
-    /next step:?\s*(.+?)(?:\.|$)/i,
-    /please\s+(.+?)(?:\.|$)/i,
-    /you should\s+(.+?)(?:\.|$)/i,
-    /i recommend\s+(.+?)(?:\.|$)/i
-  ];
+function extractNextAction(response: string): string | undefined {
+  const lowercaseResponse = response.toLowerCase();
   
-  for (const pattern of actionPatterns) {
-    const match = response.match(pattern);
-    if (match) return match[1].trim();
+  if (lowercaseResponse.includes('ticket') && lowercaseResponse.includes('created')) {
+    return 'view_ticket';
+  }
+  if (lowercaseResponse.includes('quote') && lowercaseResponse.includes('generated')) {
+    return 'view_quote';
+  }
+  if (lowercaseResponse.includes('project') && lowercaseResponse.includes('created')) {
+    return 'view_project';
   }
   
-  return null;
+  return undefined;
 }
 
 function shouldEscalate(query: string, response: string): boolean {
   const escalationKeywords = [
-    'error', 'failed', 'cannot', 'unable', 'legal', 'refund', 'complaint',
-    'urgent', 'critical', 'emergency', 'escalate', 'manager', 'supervisor'
+    'urgent', 'critical', 'emergency', 'asap', 
+    'legal', 'lawyer', 'refund', 'cancel', 
+    'complaint', 'dispute', 'breach', 'violation'
   ];
   
-  const combinedText = `${query} ${response}`.toLowerCase();
+  const combinedText = (query + ' ' + response).toLowerCase();
+  
   return escalationKeywords.some(keyword => combinedText.includes(keyword));
 }
 
-async function auditLog(supabase: any, userId: string, action: string, entityType: string, entityId: string | null, details: any): Promise<void> {
+async function auditLog(
+  supabase: any, 
+  userId: string, 
+  action: string, 
+  entityType: string, 
+  entityId: string | null, 
+  description: string,
+  oldValues: any = null,
+  newValues: any = null
+) {
   try {
     await supabase
       .from('activity_log')
       .insert({
         user_id: userId,
         actor_id: userId,
-        action,
+        action: action,
         entity_type: entityType,
         entity_id: entityId,
-        description: `AI Portal: ${action}`,
-        new_values: details
+        description: description,
+        old_values: oldValues,
+        new_values: newValues
       });
   } catch (error) {
     console.error('Audit log error:', error);

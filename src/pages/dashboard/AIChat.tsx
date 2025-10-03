@@ -199,7 +199,7 @@ const AIChat = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground">404 Code Lab Portal AI</h3>
-                    <p className="text-xs text-muted-foreground">Online • Powered by Lovable AI</p>
+                    <p className="text-xs text-muted-foreground">Online • Powered by Google Gemini</p>
                   </div>
                 </div>
                 <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
