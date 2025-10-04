@@ -5,11 +5,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 
 type Profile = Tables<'profiles'>;
+type UserRole = Tables<'user_roles'>;
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
+  userRoles: UserRole[] | null;
+  isAdmin: boolean;
   loading: boolean;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -31,6 +34,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userRoles, setUserRoles] = useState<UserRole[] | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -70,83 +75,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  // Separate effect to fetch profile when user changes
+  // Separate effect to fetch profile and roles when user changes
   useEffect(() => {
     let mounted = true;
 
-    const fetchProfile = async () => {
+    const fetchProfileAndRoles = async () => {
       if (!user) {
-        if (mounted) setProfile(null);
+        if (mounted) {
+          setProfile(null);
+          setUserRoles(null);
+          setIsAdmin(false);
+        }
         return;
       }
 
       try {
-        console.log('Fetching profile for user:', user.id);
-        const { data: profileData, error } = await supabase
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle();
         
+        // Fetch user roles from secure table
+        const { data: rolesData, error: rolesError } = await supabase
+          .from('user_roles')
+          .select('*')
+          .eq('user_id', user.id);
+        
         if (!mounted) return;
 
-        const createFallbackProfile = (): Profile => {
-          const isAdmin = user.email?.includes('@404codelab.com') || false;
-          return {
-            id: user.id,
-            email: user.email || '',
-            first_name: user.user_metadata?.first_name || '',
-            last_name: user.user_metadata?.last_name || '',
-            role: isAdmin ? 'admin' : 'customer',
-            company_name: null,
-            phone: null,
-            avatar_url: null,
-            stripe_customer_id: null,
-            email_notifications: true,
-            notification_preferences: { invoices: true, quotes: true, projects: true },
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
-        };
-        
-        if (error) {
-          console.error('Error fetching profile:', error);
-          const fallbackProfile = createFallbackProfile();
-          console.log('Using fallback profile:', fallbackProfile);
-          setProfile(fallbackProfile);
-        } else if (profileData) {
-          console.log('Profile loaded:', profileData);
+        // Handle profile
+        if (profileData) {
           setProfile(profileData);
-        } else {
-          console.log('No profile found, creating fallback');
-          const fallbackProfile = createFallbackProfile();
-          setProfile(fallbackProfile);
+        } else if (profileError) {
+          console.error('Error fetching profile:', profileError);
+        }
+
+        // Handle roles - this is the secure source of truth
+        if (rolesData) {
+          setUserRoles(rolesData);
+          setIsAdmin(rolesData.some(r => r.role === 'admin'));
+        } else if (rolesError) {
+          console.error('Error fetching roles:', rolesError);
+          setUserRoles(null);
+          setIsAdmin(false);
         }
       } catch (err) {
         if (!mounted) return;
-        
-        console.error('Profile fetch exception:', err);
-        const isAdmin = user.email?.includes('@404codelab.com') || false;
-        const fallbackProfile: Profile = {
-          id: user.id,
-          email: user.email || '',
-          first_name: user.user_metadata?.first_name || '',
-          last_name: user.user_metadata?.last_name || '',
-          role: isAdmin ? 'admin' : 'customer',
-          company_name: null,
-          phone: null,
-          avatar_url: null,
-          stripe_customer_id: null,
-          email_notifications: true,
-          notification_preferences: { invoices: true, quotes: true, projects: true },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        setProfile(fallbackProfile);
+        console.error('Profile/roles fetch exception:', err);
+        setUserRoles(null);
+        setIsAdmin(false);
       }
     };
 
-    fetchProfile();
+    fetchProfileAndRoles();
     
     return () => {
       mounted = false;
@@ -228,6 +211,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     profile,
+    userRoles,
+    isAdmin,
     loading,
     signUp,
     signIn,

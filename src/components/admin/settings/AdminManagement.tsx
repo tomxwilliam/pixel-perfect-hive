@@ -45,11 +45,23 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
   const fetchAdminUsers = async () => {
     try {
+      // Fetch user_roles with admin role and join with profiles
       const { data, error } = await supabase
-        .from('profiles')
-        .select('id, email, first_name, last_name, created_at')
+        .from('user_roles')
+        .select(`
+          user_id,
+          role,
+          created_at,
+          profiles!inner(
+            id,
+            email,
+            first_name,
+            last_name,
+            created_at
+          )
+        `)
         .eq('role', 'admin')
-        .order('email');
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching admin users:', error);
@@ -61,7 +73,19 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         return;
       }
 
-      setAdminUsers(data || []);
+      // Extract profiles from the joined data
+      const adminProfiles = data?.map(item => {
+        const profile = Array.isArray(item.profiles) ? item.profiles[0] : item.profiles;
+        return {
+          id: profile.id,
+          email: profile.email,
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          created_at: profile.created_at,
+          role_created_at: item.created_at
+        };
+      }) || [];
+      setAdminUsers(adminProfiles);
     } catch (error) {
       console.error('Error fetching admin users:', error);
       toast({
@@ -197,13 +221,32 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         .single();
 
       if (profile && !profileError) {
-        // User exists in profiles, update their role directly
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ role: 'admin' })
-          .eq('id', profile.id);
+        // Check if user already has admin role
+        const { data: existingRole } = await supabase
+          .from('user_roles')
+          .select('*')
+          .eq('user_id', profile.id)
+          .eq('role', 'admin')
+          .maybeSingle();
 
-        if (updateError) throw updateError;
+        if (existingRole) {
+          toast({
+            title: "Already Admin",
+            description: `${email} already has admin privileges`,
+          });
+          setNewAdminEmail('');
+          return;
+        }
+
+        // Add admin role to user_roles table
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: profile.id,
+            role: 'admin'
+          });
+
+        if (roleError) throw roleError;
 
         toast({
           title: "Success",
@@ -211,6 +254,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         });
         
         setNewAdminEmail('');
+        fetchAdminUsers();
       } else if (is404CodeLabEmail) {
         // For @404codelab.com emails, they'll automatically be admin when they sign up
         toast({
@@ -261,10 +305,12 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
+      // Remove admin role from user_roles table
       const { error } = await supabase
-        .from('profiles')
-        .update({ role: 'customer' })
-        .eq('id', userId);
+        .from('user_roles')
+        .delete()
+        .eq('user_id', userId)
+        .eq('role', 'admin');
 
       if (error) throw error;
 
@@ -396,7 +442,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Admin since: {new Date(admin.created_at).toLocaleDateString()}
+                    Admin since: {new Date(admin.role_created_at || admin.created_at).toLocaleDateString()}
                   </div>
                 </div>
               ))}

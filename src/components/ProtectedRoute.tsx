@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requireAdmin = false,
   requireCodeLabEmail = false 
 }) => {
-  const { user, profile, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const location = useLocation();
 
   // Show loading only when truly loading (no user data at all)
@@ -26,23 +26,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // If we have a user but no profile yet, allow render to continue
-  // The auth hook will handle profile loading
+  // If we have a user but no roles yet, allow render to continue
+  // The auth hook will handle role loading
   if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (requireAdmin && profile) {
-    console.log('Admin check:', { 
-      role: profile.role, 
-      email: profile.email,
-      isAdmin: profile.role === 'admin' || profile.email === 'admin@404codelab.com'
-    });
-    
-    if (profile.role !== 'admin' && profile.email !== 'admin@404codelab.com') {
-      console.log('Access denied - redirecting to dashboard');
-      return <Navigate to="/dashboard" replace />;
-    }
+  if (requireAdmin && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (requireCodeLabEmail && user && !user.email?.endsWith('@404codelab.com')) {
