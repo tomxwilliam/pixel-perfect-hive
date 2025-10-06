@@ -30,10 +30,12 @@ import AIIntegration from "./pages/services/AIIntegration";
 import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
-import AIChat from "./pages/dashboard/AIChat";
+import Domains from "./pages/Domains";
+import CustomerOrders from "./pages/CustomerOrders";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDomainOrders from "./pages/admin/AdminDomainOrders";
 import { AdminAccounting } from "./components/admin/AdminAccounting";
 import AdminSettings from "./components/admin/AdminSettings";
 
@@ -93,23 +95,14 @@ const App = () => (
                   <NewTicket />
                 </ProtectedRoute>
               } />
-              <Route path="/dashboard/book-call" element={
-                <ProtectedRoute>
-                  <BookCall />
-                </ProtectedRoute>
-              } />
-              <Route path="/dashboard/chat" element={
-                <ProtectedRoute>
-                  <AIChat />
-                </ProtectedRoute>
-              } />
+            <Route path="/dashboard/new-project" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
+            <Route path="/dashboard/new-ticket" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
+            <Route path="/dashboard/book-call" element={<ProtectedRoute><BookCall /></ProtectedRoute>} />
+            <Route path="/domains" element={<Domains />} />
+            <Route path="/account/orders" element={<ProtectedRoute><CustomerOrders /></ProtectedRoute>} />
               
-              {/* Admin pages */}
-              <Route path="/admin" element={
-                <ProtectedRoute requireCodeLabEmail={true}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } />
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/domains" element={<ProtectedRoute requireAdmin><AdminDomainOrders /></ProtectedRoute>} />
               <Route path="/project-management" element={
                 <ProtectedRoute requireCodeLabEmail={true}>
                   <ProjectManagement />

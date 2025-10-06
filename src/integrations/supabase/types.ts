@@ -1808,6 +1808,78 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_domain_orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          domain_name: string
+          domain_price: number
+          hosting_plan_id: string | null
+          hosting_price: number | null
+          id: string
+          invoice_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          tld: string
+          total_estimate: number
+          updated_at: string
+          user_id: string
+          years: number
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          domain_name: string
+          domain_price: number
+          hosting_plan_id?: string | null
+          hosting_price?: number | null
+          id?: string
+          invoice_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          tld: string
+          total_estimate: number
+          updated_at?: string
+          user_id: string
+          years?: number
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          domain_name?: string
+          domain_price?: number
+          hosting_plan_id?: string | null
+          hosting_price?: number | null
+          id?: string
+          invoice_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          tld?: string
+          total_estimate?: number
+          updated_at?: string
+          user_id?: string
+          years?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_domain_orders_hosting_plan_id_fkey"
+            columns: ["hosting_plan_id"]
+            isOneToOne: false
+            referencedRelation: "hosting_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_domain_orders_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_stages: {
         Row: {
           color: string | null

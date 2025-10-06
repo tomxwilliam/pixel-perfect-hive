@@ -72,11 +72,11 @@ const Dashboard = () => {
       color: 'bg-purple-500'
     },
     {
-      title: 'AI Assistant',
-      description: '404 Code Lab Operations Brain',
-      icon: MessageCircle,
-      href: '/dashboard/chat',
-      color: 'bg-gradient-to-r from-purple-500 to-pink-500'
+      title: 'Search Domains',
+      description: 'Find your perfect domain',
+      icon: Server,
+      href: '/domains',
+      color: 'bg-gradient-to-r from-cyan-500 to-blue-500'
     }
   ];
 
