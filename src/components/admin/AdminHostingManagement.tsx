@@ -50,6 +50,7 @@ const AdminHostingManagement = () => {
   }, []);
 
   // Fetch all hosting subscriptions with simplified query
+  // Note: Passwords are encrypted and can only be decrypted by admins via decrypt_hosting_credential()
   const { data: subscriptions, isLoading: subscriptionsLoading } = useQuery({
     queryKey: ['admin-hosting-subscriptions'],
     queryFn: async () => {

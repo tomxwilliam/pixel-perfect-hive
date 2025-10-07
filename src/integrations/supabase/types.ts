@@ -1010,7 +1010,7 @@ export type Database = {
       }
       hosting_accounts: {
         Row: {
-          cpanel_password: string | null
+          cpanel_password_encrypted: string | null
           cpanel_username: string | null
           created_at: string | null
           customer_id: string
@@ -1025,7 +1025,7 @@ export type Database = {
           whm_account_id: string | null
         }
         Insert: {
-          cpanel_password?: string | null
+          cpanel_password_encrypted?: string | null
           cpanel_username?: string | null
           created_at?: string | null
           customer_id: string
@@ -1040,7 +1040,7 @@ export type Database = {
           whm_account_id?: string | null
         }
         Update: {
-          cpanel_password?: string | null
+          cpanel_password_encrypted?: string | null
           cpanel_username?: string | null
           created_at?: string | null
           customer_id?: string
@@ -1081,7 +1081,7 @@ export type Database = {
       hosting_orders: {
         Row: {
           billing_cycle: string | null
-          cpanel_password: string | null
+          cpanel_password_encrypted: string | null
           cpanel_username: string | null
           created_at: string
           customer_id: string
@@ -1101,7 +1101,7 @@ export type Database = {
         }
         Insert: {
           billing_cycle?: string | null
-          cpanel_password?: string | null
+          cpanel_password_encrypted?: string | null
           cpanel_username?: string | null
           created_at?: string
           customer_id: string
@@ -1121,7 +1121,7 @@ export type Database = {
         }
         Update: {
           billing_cycle?: string | null
-          cpanel_password?: string | null
+          cpanel_password_encrypted?: string | null
           cpanel_username?: string | null
           created_at?: string
           customer_id?: string
@@ -4035,6 +4035,14 @@ export type Database = {
           project_type_param: string
           requirements_json?: Json
         }
+        Returns: string
+      }
+      decrypt_hosting_credential: {
+        Args: { encrypted: string }
+        Returns: string
+      }
+      encrypt_hosting_credential: {
+        Args: { plaintext: string }
         Returns: string
       }
       has_role: {

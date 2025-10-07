@@ -139,7 +139,14 @@ const handler = async (req: Request): Promise<Response> => {
         if (provisioningResult.accountDetails) {
           updates.hosting_provider_account_id = provisioningResult.accountDetails.accountId;
           updates.cpanel_username = provisioningResult.accountDetails.username;
-          updates.cpanel_password = provisioningResult.accountDetails.password;
+          
+          // Encrypt password before storing using database function
+          const { data: encryptedPassword } = await supabase
+            .rpc('encrypt_hosting_credential', { 
+              plaintext: provisioningResult.accountDetails.password 
+            });
+          
+          updates.cpanel_password_encrypted = encryptedPassword;
           updates.server_ip = provisioningResult.accountDetails.serverIp;
         }
         break;
