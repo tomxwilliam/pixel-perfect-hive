@@ -36,7 +36,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/dashboard" replace />;
   }
 
-  if (requireCodeLabEmail && user && !user.email?.endsWith('@404codelab.com')) {
+  if (requireCodeLabEmail && user && !isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 

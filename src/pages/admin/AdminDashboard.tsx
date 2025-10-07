@@ -23,7 +23,7 @@ import { AdminAccounting } from '@/components/admin/AdminAccounting';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, isAdmin, loading } = useAuth();
   const isMobile = useIsMobile();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = React.useState('overview');
@@ -54,8 +54,7 @@ const AdminDashboard = () => {
     );
   }
 
-  const isAdmin = profile.role === 'admin' || profile.email === 'admin@404codelab.com';
-  
+  // Redirect if user is not admin (isAdmin from useAuth uses user_roles table)
   if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -112,13 +111,13 @@ const AdminDashboard = () => {
               <Server className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Hosting</span>
             </MobileTabsTrigger>
-            {user?.email?.endsWith('@404codelab.com') && (
+            {isAdmin && (
               <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
                 <span className="text-xs sm:text-sm">Accounting</span>
               </MobileTabsTrigger>
             )}
-            {user?.email?.endsWith('@404codelab.com') && (
+            {isAdmin && (
               <MobileTabsTrigger value="settings" className="flex items-center gap-2">
                 <Settings className="h-4 w-4" />
                 <span className="text-xs sm:text-sm">Settings</span>
@@ -168,7 +167,7 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
 
-          {user?.email?.endsWith('@404codelab.com') && (
+          {isAdmin && (
             <MobileTabsContent value="accounting">
               <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
                 <AdminAccounting />
@@ -176,7 +175,7 @@ const AdminDashboard = () => {
             </MobileTabsContent>
           )}
 
-          {user?.email?.endsWith('@404codelab.com') && (
+          {isAdmin && (
             <MobileTabsContent value="settings">
               <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
                 <AdminSettings />

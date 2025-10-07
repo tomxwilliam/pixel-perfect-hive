@@ -27,9 +27,10 @@ interface AdminRequest {
 
 interface AdminManagementProps {
   isSuperAdmin: boolean;
+  superAdminUserId?: string; // Add super admin user ID to prevent removal
 }
 
-const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
+const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAdminUserId }) => {
   const [adminRequests, setAdminRequests] = useState<AdminRequest[]>([]);
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -210,7 +211,9 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
-      // Check if it's a @404codelab.com email
+      // BUSINESS LOGIC: Check if it's a company domain email
+      // Note: This is a business rule for automatic admin assignment during signup
+      // It's not used for authorization checks - those use the user_roles table
       const is404CodeLabEmail = email.endsWith('@404codelab.com');
       
       // First check if user exists in profiles
@@ -256,10 +259,11 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         setNewAdminEmail('');
         fetchAdminUsers();
       } else if (is404CodeLabEmail) {
-        // For @404codelab.com emails, they'll automatically be admin when they sign up
+        // BUSINESS LOGIC: For company domain emails, they'll automatically be admin when they sign up
+        // This is handled by the handle_new_user() trigger in the database
         toast({
           title: "Admin Role Configured",
-          description: `${email} will automatically have admin privileges when they sign up. All @404codelab.com emails are automatically assigned admin role.`,
+          description: `${email} will automatically have admin privileges when they sign up via the automatic role assignment for company domain emails.`,
         });
         
         setNewAdminEmail('');
@@ -293,8 +297,8 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
       return;
     }
 
-    // Prevent removing tom@404codelab.com
-    if (userEmail === 'tom@404codelab.com') {
+    // Prevent removing the super admin (first admin user)
+    if (superAdminUserId && userId === superAdminUserId) {
       toast({
         title: "Cannot Remove Super Admin",
         description: "The super admin account cannot be removed",
@@ -339,7 +343,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
         <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="text-lg font-medium text-foreground mb-2">Super Admin Access Required</h3>
         <p className="text-muted-foreground">
-          Only the super admin (tom@404codelab.com) can manage admin permissions.
+          Only administrators with super admin privileges can manage admin permissions.
         </p>
       </div>
     );
@@ -422,7 +426,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
                         <Shield className="h-3 w-3" />
                         Admin
                       </Badge>
-                      {admin.email !== 'tom@404codelab.com' && (
+                      {(!superAdminUserId || admin.id !== superAdminUserId) && (
                         <Button
                           size="sm"
                           variant="destructive"
@@ -434,7 +438,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin }) => {
                           Remove Admin
                         </Button>
                       )}
-                      {admin.email === 'tom@404codelab.com' && (
+                      {superAdminUserId && admin.id === superAdminUserId && (
                         <Badge variant="outline" className="text-xs">
                           Super Admin
                         </Badge>

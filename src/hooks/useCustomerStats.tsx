@@ -45,7 +45,9 @@ export const useCustomerStats = () => {
         .in('status', ['open', 'in_progress']);
 
       // Fetch invoice data - admin sees all, customers see their own
-      const isAdmin = profile.role === 'admin' || profile.email === 'admin@404codelab.com';
+      // Use isAdmin from the auth context (already based on user_roles table)
+      const { isAdmin: adminStatus } = useAuth();
+      const isAdmin = adminStatus;
       
       const invoiceQuery = supabase
         .from('invoices')

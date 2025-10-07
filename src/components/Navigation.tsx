@@ -16,7 +16,7 @@ import { Menu, X, User, Settings, LogOut, Home, Info, Mail, Briefcase, GamepadIc
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -137,7 +137,7 @@ const Navigation = () => {
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
-                  {user.email?.endsWith('@404codelab.com') && (
+                  {isAdmin && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/projects" className="flex items-center">
@@ -250,7 +250,7 @@ const Navigation = () => {
                   <User className="inline-block w-5 h-5 mr-3" />
                   Dashboard
                 </Link>
-                {user.email?.endsWith('@404codelab.com') && (
+                {isAdmin && (
                   <>
                     <Link
                       to="/projects"

@@ -39,15 +39,15 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Authentication failed');
     }
 
-    // Check if user is admin or customer
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Check if user has valid role using secure has_role() function
+    const { data: isAdmin } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    
+    const { data: isCustomer } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'customer' });
 
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'customer')) {
-      throw new Error('Unauthorized');
+    if (!isAdmin && !isCustomer) {
+      throw new Error('Unauthorized: User must have admin or customer role');
     }
 
     const registrationData: DomainRegistrationRequest = await req.json();

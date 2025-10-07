@@ -16,10 +16,10 @@ import { QuoteTemplateSettings } from './QuoteTemplateSettings';
 import { InvoiceSettings } from './settings/InvoiceSettings';
 
 const AdminSettings = () => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   
-  // Check if user is super admin (tom@404codelab.com)
-  const isSuperAdmin = profile?.email === 'tom@404codelab.com';
+  // Check if user is admin - using isAdmin from useAuth hook
+  const { isAdmin: isSuperAdmin } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -79,7 +79,7 @@ const AdminSettings = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <AdminManagement isSuperAdmin={isSuperAdmin} />
+                <AdminManagement isSuperAdmin={isSuperAdmin} superAdminUserId={user?.id} />
               </CardContent>
             </Card>
           </MobileTabsContent>

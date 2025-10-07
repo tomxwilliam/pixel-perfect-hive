@@ -250,7 +250,7 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
         <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <h3 className="text-lg font-medium text-foreground mb-2">Super Admin Access Required</h3>
         <p className="text-muted-foreground">
-          Only the super admin (tom@404codelab.com) can configure AI agent settings.
+          Only administrators with super admin privileges can configure AI agent settings.
         </p>
       </div>
     );

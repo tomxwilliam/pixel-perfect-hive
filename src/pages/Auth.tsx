@@ -25,7 +25,9 @@ const Auth = () => {
   useEffect(() => {
     if (user && !loading) {
       // Use email-based fallback for admin detection if profile isn't available yet
-      const isAdmin = profile?.role === 'admin' || user.email?.includes('@404codelab.com');
+      // Use isAdmin from useAuth hook which checks user_roles table
+      const { isAdmin: adminStatus } = useAuth();
+      const isAdmin = adminStatus;
       const redirectPath = isAdmin ? '/admin' : '/dashboard';
       console.log('Redirecting authenticated user to:', redirectPath, { 
         hasProfile: !!profile, 

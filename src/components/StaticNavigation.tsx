@@ -44,7 +44,7 @@ export const StaticNavigation = () => {
     }
   };
 
-  const isCodeLabEmail = user?.email?.endsWith('@404codelab.com');
+  const { isAdmin } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
@@ -162,7 +162,7 @@ export const StaticNavigation = () => {
                   <DropdownMenuItem>
                     <Link to="/dashboard" className="w-full">Dashboard</Link>
                   </DropdownMenuItem>
-                  {isCodeLabEmail && (
+          {isAdmin && (
                     <>
                       <DropdownMenuItem>
                         <Link to="/project-management" className="w-full">Project Management</Link>
@@ -280,7 +280,7 @@ export const StaticNavigation = () => {
                         >
                           Dashboard
                         </Link>
-                        {isCodeLabEmail && (
+                        {isAdmin && (
                           <>
                             <Link
                               to="/project-management"

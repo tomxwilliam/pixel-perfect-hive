@@ -34,14 +34,12 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Check if user is admin using secure has_role() function
+    const { data: isAdmin } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'admin' });
 
-    if (profile?.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
     }
 
     const { subscriptionId, action }: HostingProvisionRequest = await req.json();
