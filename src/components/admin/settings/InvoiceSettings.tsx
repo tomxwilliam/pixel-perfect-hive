@@ -10,12 +10,12 @@ import { Save, Eye, CreditCard } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BillingSettings {
-  id: string;
   account_name: string;
   sort_code: string;
   account_number: string;
   iban: string;
-  swift_code?: string; // Make optional for backward compatibility
+  swift_code?: string;
+  bank_name?: string;
   notes_bacs: string;
 }
 
@@ -36,12 +36,12 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
 
   const fetchSettings = async () => {
     try {
+      // Use secure RPC to get decrypted banking details (admin only via RLS)
       const { data, error } = await supabase
-        .from('org_billing_settings')
-        .select('*')
+        .rpc('get_payment_banking_details')
         .single();
 
-      if (error && error.code !== 'PGRST116') { // Not found error
+      if (error && error.code !== 'PGRST116') {
         throw error;
       }
 
@@ -55,6 +55,7 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
           account_number: '12345678',
           iban: '',
           swift_code: '',
+          bank_name: '',
           notes_bacs: 'Please use your invoice number as the payment reference when making your bank transfer. Payments are typically processed within 1-2 business days.'
         };
         setSettings(defaultSettings as BillingSettings);
@@ -114,19 +115,27 @@ export const InvoiceSettings: React.FC<InvoiceSettingsProps> = ({ isSuperAdmin }
 
     setSaving(true);
     try {
+      // Use secure RPC to update banking details (encrypts automatically)
       const { data, error } = await supabase
-        .from('org_billing_settings')
-        .upsert(settings, { onConflict: 'id' })
-        .select()
-        .single();
+        .rpc('update_banking_details', {
+          p_account_name: settings.account_name,
+          p_sort_code: settings.sort_code,
+          p_account_number: settings.account_number,
+          p_iban: settings.iban || null,
+          p_swift_code: settings.swift_code || null,
+          p_bank_name: settings.bank_name || null,
+          p_notes_bacs: settings.notes_bacs
+        });
 
       if (error) throw error;
 
-      setSettings(data);
       toast({
         title: "Settings Saved",
-        description: "Bank details have been updated successfully",
+        description: "Bank details have been encrypted and updated successfully",
       });
+      
+      // Refresh settings to show current state
+      fetchSettings();
     } catch (error) {
       console.error('Error saving billing settings:', error);
       toast({

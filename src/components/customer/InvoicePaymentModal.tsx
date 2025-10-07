@@ -13,11 +13,12 @@ import { Tables } from '@/integrations/supabase/types';
 type Invoice = Tables<'invoices'>;
 
 interface BillingSettings {
-  id: string;
   account_name: string;
   sort_code: string;
   account_number: string;
   iban: string;
+  swift_code?: string;
+  bank_name?: string;
   notes_bacs: string;
 }
 
@@ -47,9 +48,9 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
   const fetchBillingSettings = async () => {
     setLoading(true);
     try {
+      // Use secure RPC to get decrypted banking details for payment
       const { data, error } = await supabase
-        .from('org_billing_settings')
-        .select('*')
+        .rpc('get_payment_banking_details')
         .single();
 
       if (error && error.code !== 'PGRST116') {
@@ -239,15 +240,15 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
                       </div>
                     </div>
                     
-                    {billingSettings.iban && (
+                    {billingSettings.swift_code && (
                       <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">IBAN:</span>
+                        <span className="text-muted-foreground">SWIFT/BIC:</span>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-medium">{billingSettings.iban}</span>
+                          <span className="font-mono font-medium">{billingSettings.swift_code}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => copyToClipboard(billingSettings.iban, 'IBAN')}
+                            onClick={() => copyToClipboard(billingSettings.swift_code!, 'SWIFT/BIC')}
                           >
                             <Copy className="h-3 w-3" />
                           </Button>

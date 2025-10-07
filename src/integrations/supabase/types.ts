@@ -4057,6 +4057,18 @@ export type Database = {
         Args: { p_connection_id: string }
         Returns: string
       }
+      get_payment_banking_details: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          account_name: string
+          account_number: string
+          bank_name: string
+          iban: string
+          notes_bacs: string
+          sort_code: string
+          swift_code: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -4105,6 +4117,18 @@ export type Database = {
           p_scope?: string
         }
         Returns: string
+      }
+      update_banking_details: {
+        Args: {
+          p_account_name: string
+          p_account_number: string
+          p_bank_name?: string
+          p_iban?: string
+          p_notes_bacs?: string
+          p_sort_code: string
+          p_swift_code?: string
+        }
+        Returns: Json
       }
       update_oauth_tokens: {
         Args: {
