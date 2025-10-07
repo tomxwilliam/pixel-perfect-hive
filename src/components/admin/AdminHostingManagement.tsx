@@ -28,6 +28,8 @@ const AdminHostingManagement = () => {
   const [hostingIntegration, setHostingIntegration] = useState<any>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [subscriptionToDelete, setSubscriptionToDelete] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState<string | null>(null);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
   // Fetch hosting integration status with error handling
   useEffect(() => {
@@ -171,6 +173,35 @@ const AdminHostingManagement = () => {
     onError: (error) => {
       toast({
         title: "Delete Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Reset hosting password (admin only)
+  const resetHostingPassword = useMutation({
+    mutationFn: async (accountId: string) => {
+      // @ts-ignore - Function exists but types not yet regenerated
+      const { data, error } = await supabase.rpc('reset_hosting_password', {
+        account_id: accountId
+      });
+
+      if (error) throw error;
+      return data as string;
+    },
+    onSuccess: (newPwd) => {
+      setNewPassword(newPwd);
+      setShowPasswordDialog(true);
+      queryClient.invalidateQueries({ queryKey: ['admin-hosting-subscriptions'] });
+      toast({
+        title: "Password Reset Complete",
+        description: "The cPanel password has been reset successfully. Make sure to save the new password!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Password Reset Failed",
         description: error.message,
         variant: "destructive",
       });
@@ -1007,7 +1038,7 @@ const AdminHostingManagement = () => {
                                  )}
                                  {selectedSubscription?.cpanel_username && hostingIntegration?.is_connected && (
                                    <div>
-                                     <label className="text-sm font-medium">cPanel Access</label>
+                                     <label className="text-sm font-medium">cPanel Access & Security</label>
                                      <div className="flex gap-2 mt-2">
                                        <Button
                                          variant="outline"
@@ -1018,6 +1049,18 @@ const AdminHostingManagement = () => {
                                        >
                                          <ExternalLink className="h-4 w-4 mr-1" />
                                          Open cPanel
+                                       </Button>
+                                       <Button
+                                         variant="outline"
+                                         onClick={() => {
+                                           if (confirm('Reset cPanel password for this account? A new secure password will be generated.')) {
+                                             resetHostingPassword.mutate(selectedSubscription.id);
+                                           }
+                                         }}
+                                         disabled={resetHostingPassword.isPending}
+                                       >
+                                         <Lock className="h-4 w-4 mr-1" />
+                                         {resetHostingPassword.isPending ? 'Resetting...' : 'Reset Password'}
                                        </Button>
                                      </div>
                                    </div>
@@ -1153,6 +1196,62 @@ const AdminHostingManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Password Display Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-green-500" />
+              New cPanel Password Generated
+            </DialogTitle>
+            <DialogDescription>
+              Save this password immediately. It will not be shown again for security reasons.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-2">
+                ⚠️ Important Security Notice
+              </p>
+              <p className="text-xs text-amber-800 dark:text-amber-200">
+                This password will only be displayed once. Make sure to copy it and securely share it with the customer. 
+                For security, encrypted passwords cannot be retrieved later.
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium">New Password:</label>
+              <div className="bg-muted/50 rounded-lg p-4 font-mono text-lg mt-2 break-all select-all">
+                {newPassword}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(newPassword || '');
+                  toast({
+                    title: "Copied!",
+                    description: "Password copied to clipboard",
+                  });
+                }}
+                className="flex-1"
+              >
+                Copy Password
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPasswordDialog(false);
+                  setNewPassword(null);
+                }}
+                className="flex-1"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDeleteDialog
         open={deleteDialogOpen}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tables } from '@/integrations/supabase/types';
-import { Server, Calendar, DollarSign, Globe, ExternalLink, Key, Shield, Database, HardDrive, Mail } from 'lucide-react';
+import { Server, Calendar, DollarSign, Globe, ExternalLink, Key, Shield, Database, HardDrive, Mail, RefreshCw } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 type HostingSubscription = Tables<'hosting_subscriptions'> & {
   hosting_packages: Tables<'hosting_packages'>;
@@ -29,6 +31,9 @@ export const HostingDetailsModal: React.FC<HostingDetailsModalProps> = ({
   open,
   onOpenChange,
 }) => {
+  const { toast } = useToast();
+  const [isRequestingReset, setIsRequestingReset] = useState(false);
+  
   if (!subscription) return null;
 
   const getStatusColor = (status: string) => {
@@ -58,9 +63,29 @@ export const HostingDetailsModal: React.FC<HostingDetailsModalProps> = ({
     }
   };
 
-  const maskPassword = (password: string | null) => {
-    if (!password) return 'Not available';
-    return '•'.repeat(8) + password.slice(-2);
+  const handlePasswordReset = async () => {
+    setIsRequestingReset(true);
+    try {
+      // @ts-ignore - Function exists but types not yet regenerated
+      const { error } = await supabase.rpc('request_hosting_password_reset', {
+        account_id: subscription.id
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password Reset Requested",
+        description: "Our team has been notified and will reset your cPanel password shortly. You'll receive an email with the new credentials.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Request Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsRequestingReset(false);
+    }
   };
 
   return (
@@ -170,13 +195,32 @@ export const HostingDetailsModal: React.FC<HostingDetailsModalProps> = ({
                       </div>
                     </div>
                   )}
-                  {/* For security, we do not expose passwords in the client */}
-                  {subscription.cpanel_username && subscription.server_ip && (
-                    <Button onClick={handleCPanelAccess} className="w-full">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Access cPanel
+                  
+                  {/* Security Notice */}
+                  <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                    <p className="text-xs text-amber-900 dark:text-amber-100">
+                      <Shield className="h-3 w-3 inline mr-1" />
+                      For security, passwords are never displayed. If you need to reset your cPanel password, use the button below.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    {subscription.cpanel_username && subscription.server_ip && (
+                      <Button onClick={handleCPanelAccess} className="w-full">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Access cPanel
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={handlePasswordReset} 
+                      variant="outline"
+                      disabled={isRequestingReset}
+                      className="w-full"
+                    >
+                      <RefreshCw className={`h-4 w-4 mr-2 ${isRequestingReset ? 'animate-spin' : ''}`} />
+                      {isRequestingReset ? 'Requesting...' : 'Reset Password'}
                     </Button>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
