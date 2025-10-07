@@ -3993,48 +3993,7 @@ export type Database = {
       }
     }
     Views: {
-      admin_oauth_connections_view: {
-        Row: {
-          access_token_status: string | null
-          account_id: string | null
-          created_at: string | null
-          expires_at: string | null
-          id: string | null
-          meta: Json | null
-          provider: string | null
-          refresh_token_status: string | null
-          scope: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          access_token_status?: never
-          account_id?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string | null
-          meta?: Json | null
-          provider?: string | null
-          refresh_token_status?: never
-          scope?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          access_token_status?: never
-          account_id?: string | null
-          created_at?: string | null
-          expires_at?: string | null
-          id?: string | null
-          meta?: Json | null
-          provider?: string | null
-          refresh_token_status?: never
-          scope?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       approve_project: {
