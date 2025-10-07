@@ -1679,40 +1679,40 @@ export type Database = {
       }
       oauth_connections: {
         Row: {
-          access_token: string
+          access_token_encrypted: string | null
           account_id: string | null
           created_at: string
           expires_at: string
           id: string
           meta: Json | null
           provider: string
-          refresh_token: string | null
+          refresh_token_encrypted: string | null
           scope: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          access_token: string
+          access_token_encrypted?: string | null
           account_id?: string | null
           created_at?: string
           expires_at: string
           id?: string
           meta?: Json | null
           provider: string
-          refresh_token?: string | null
+          refresh_token_encrypted?: string | null
           scope?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
-          access_token?: string
+          access_token_encrypted?: string | null
           account_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
           meta?: Json | null
           provider?: string
-          refresh_token?: string | null
+          refresh_token_encrypted?: string | null
           scope?: string | null
           updated_at?: string
           user_id?: string
@@ -3993,7 +3993,48 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_oauth_connections_view: {
+        Row: {
+          access_token_status: string | null
+          account_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          meta: Json | null
+          provider: string | null
+          refresh_token_status: string | null
+          scope: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          access_token_status?: never
+          account_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          meta?: Json | null
+          provider?: string | null
+          refresh_token_status?: never
+          scope?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          access_token_status?: never
+          account_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          meta?: Json | null
+          provider?: string | null
+          refresh_token_status?: never
+          scope?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       approve_project: {
@@ -4041,8 +4082,20 @@ export type Database = {
         Args: { encrypted: string }
         Returns: string
       }
+      decrypt_oauth_token: {
+        Args: { encrypted: string }
+        Returns: string
+      }
       encrypt_hosting_credential: {
         Args: { plaintext: string }
+        Returns: string
+      }
+      encrypt_oauth_token: {
+        Args: { plaintext: string }
+        Returns: string
+      }
+      get_oauth_access_token: {
+        Args: { p_connection_id: string }
         Returns: string
       }
       has_role: {
@@ -4081,6 +4134,27 @@ export type Database = {
           p_user_id: string
         }
         Returns: undefined
+      }
+      store_oauth_connection: {
+        Args: {
+          p_access_token: string
+          p_account_id?: string
+          p_expires_at?: string
+          p_meta?: Json
+          p_provider: string
+          p_refresh_token?: string
+          p_scope?: string
+        }
+        Returns: string
+      }
+      update_oauth_tokens: {
+        Args: {
+          p_connection_id: string
+          p_new_access_token: string
+          p_new_expires_at?: string
+          p_new_refresh_token?: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
