@@ -96,24 +96,48 @@ const handler = async (req: Request): Promise<Response> => {
           const data = await response.json();
           console.log('eNom API response:', data);
           
-          // Parse eNom response - handle API errors gracefully
-          let isAvailable = true; // Default to available if API has issues
+          // Parse eNom response - safe default is unavailable
+          let isAvailable = false;
+          let hasError = false;
           
           if (data['interface-response']) {
             const response = data['interface-response'];
+            
             // Check for errors first
             if (response.ErrCount && parseInt(response.ErrCount) > 0) {
-              console.log(`eNom API error for ${domain}.${cleanTld}:`, response.errors);
-              // If it's an IP whitelist error, default to available
+              console.log(`eNom API error for ${cleanDomain}.${cleanTld}:`, response.errors);
+              hasError = true;
+              isAvailable = false; // Safe default on error
+            } else if (response.RRPCode) {
+              // Explicit RRP code handling
+              console.log(`eNom RRPCode for ${cleanDomain}.${cleanTld}: ${response.RRPCode}`);
+              if (response.RRPCode === '210') {
+                isAvailable = true; // Domain is available
+              } else if (response.RRPCode === '211') {
+                isAvailable = false; // Domain is not available
+              } else {
+                // Other codes (212 = invalid, etc.) - treat as unavailable
+                isAvailable = false;
+              }
+            } else if (response.DomainAvailable === '1') {
               isAvailable = true;
-            } else {
-              // Use proper eNom response codes
-              isAvailable = response.RRPCode === '210' || response.DomainAvailable === '1';
+            } else if (response.DomainAvailable === '0') {
+              isAvailable = false;
             }
           } else if (data.RRPCode || data.DomainAvailable) {
-            // Fallback to original parsing
-            isAvailable = data.RRPCode === '210' || data.DomainAvailable === '1';
+            // Fallback to direct response parsing
+            console.log(`eNom direct response for ${cleanDomain}.${cleanTld}:`, data.RRPCode);
+            if (data.RRPCode === '210' || data.DomainAvailable === '1') {
+              isAvailable = true;
+            } else {
+              isAvailable = false;
+            }
+          } else {
+            hasError = true;
+            console.log(`Unexpected eNom response format for ${cleanDomain}.${cleanTld}`);
           }
+          
+          console.log(`Domain ${cleanDomain}.${cleanTld} availability: ${isAvailable}`);
           
           results.push({
             domain: `${cleanDomain}.${cleanTld}`,
@@ -156,11 +180,12 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 function generateMockResults(domain: string, tlds: string[], pricing: Record<string, number>): DomainResult[] {
+  console.log('WARNING: Using mock data - cannot verify actual domain availability');
   return tlds.map(tld => {
     const cleanTld = tld.replace('.', '');
     return {
       domain: `${domain}${tld}`,
-      available: true, // Default to available for better UX
+      available: false, // Safe default - cannot verify availability
       price: pricing[tld] || pricing[`.${cleanTld}`] || pricing[cleanTld] || 12.99,
       tld: tld,
       premium: false
