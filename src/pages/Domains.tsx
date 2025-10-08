@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Seo from "@/components/Seo";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -178,7 +180,7 @@ export default function Domains() {
         title="Search Domains & Hosting"
         description="Find your perfect domain name and optional web hosting packages"
       />
-      
+      <Navigation />
       <div className="min-h-screen bg-background py-12">
         <div className="container max-w-6xl">
           <div className="text-center mb-12">
@@ -394,6 +396,7 @@ export default function Domains() {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 }
