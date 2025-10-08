@@ -18,16 +18,12 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
-  const { signIn, signUp, user, profile, loading } = useAuth();
+  const { signIn, signUp, user, profile, loading, isAdmin } = useAuth();
   const { toast } = useToast();
 
   // Redirect if already logged in based on role
   useEffect(() => {
     if (user && !loading) {
-      // Use email-based fallback for admin detection if profile isn't available yet
-      // Use isAdmin from useAuth hook which checks user_roles table
-      const { isAdmin: adminStatus } = useAuth();
-      const isAdmin = adminStatus;
       const redirectPath = isAdmin ? '/admin' : '/dashboard';
       console.log('Redirecting authenticated user to:', redirectPath, { 
         hasProfile: !!profile, 
@@ -36,7 +32,7 @@ const Auth = () => {
       });
       navigate(redirectPath, { replace: true });
     }
-  }, [user, profile, loading, navigate]);
+  }, [user, profile, loading, isAdmin, navigate]);
 
   // Don't render the form if user is already authenticated
   if (user && !loading) {
