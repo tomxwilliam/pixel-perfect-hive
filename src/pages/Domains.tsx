@@ -181,7 +181,7 @@ export default function Domains() {
         description="Find your perfect domain name and optional web hosting packages"
       />
       <Navigation />
-      <div className="min-h-screen bg-background py-12">
+      <div className="min-h-screen bg-background pt-24 pb-12">
         <div className="container max-w-6xl">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Find Your Perfect Domain</h1>
