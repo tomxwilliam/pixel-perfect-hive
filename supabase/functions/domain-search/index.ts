@@ -66,96 +66,70 @@ const handler = async (req: Request): Promise<Response> => {
       domainPricing['.net'] = 13.99;
     }
 
-    const enomUser = Deno.env.get('ENOM_API_USER');
-    const enomToken = Deno.env.get('ENOM_API_TOKEN');
+    const proxyUrl = Deno.env.get('DOMAIN_PROXY_URL');
+    const proxyApiKey = Deno.env.get('DOMAIN_PROXY_API_KEY');
 
     let results: DomainResult[] = [];
 
-    if (enomUser && enomToken) {
-      // Real eNom API integration
+    if (proxyUrl && proxyApiKey) {
+      // Use proxy server for eNom API calls
       try {
-        console.log('Using eNom API for domain search');
+        console.log('Using proxy server for domain search');
         
-        // Check each domain with eNom API
+        // Check each domain through the proxy
         for (const tld of tlds) {
           const cleanTld = tld.replace('.', '');
-          const searchUrl = new URL('https://reseller.enom.com/interface.asp');
-          searchUrl.searchParams.set('command', 'Check');
-          searchUrl.searchParams.set('uid', enomUser);
-          searchUrl.searchParams.set('pw', enomToken);
-          searchUrl.searchParams.set('responsetype', 'JSON');
-          searchUrl.searchParams.set('domain', cleanDomain);
-          searchUrl.searchParams.set('tld', cleanTld);
-
-          const response = await fetch(searchUrl.toString());
           
+          const response = await fetch(`${proxyUrl}/check-domain`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': proxyApiKey,
+            },
+            body: JSON.stringify({
+              domain: cleanDomain,
+              tld: cleanTld,
+            }),
+          });
+
           if (!response.ok) {
-            throw new Error(`eNom API request failed: ${response.status}`);
+            throw new Error(`Proxy request failed: ${response.status}`);
           }
 
           const data = await response.json();
-          console.log('eNom API response:', data);
-          
-          // Parse eNom response - safe default is unavailable
-          let isAvailable = false;
-          let hasError = false;
-          
-          if (data['interface-response']) {
-            const response = data['interface-response'];
-            
-            // Check for errors first
-            if (response.ErrCount && parseInt(response.ErrCount) > 0) {
-              console.log(`eNom API error for ${cleanDomain}.${cleanTld}:`, response.errors);
-              hasError = true;
-              isAvailable = false; // Safe default on error
-            } else if (response.RRPCode) {
-              // Explicit RRP code handling
-              console.log(`eNom RRPCode for ${cleanDomain}.${cleanTld}: ${response.RRPCode}`);
-              if (response.RRPCode === '210') {
-                isAvailable = true; // Domain is available
-              } else if (response.RRPCode === '211') {
-                isAvailable = false; // Domain is not available
-              } else {
-                // Other codes (212 = invalid, etc.) - treat as unavailable
-                isAvailable = false;
-              }
-            } else if (response.DomainAvailable === '1') {
-              isAvailable = true;
-            } else if (response.DomainAvailable === '0') {
-              isAvailable = false;
-            }
-          } else if (data.RRPCode || data.DomainAvailable) {
-            // Fallback to direct response parsing
-            console.log(`eNom direct response for ${cleanDomain}.${cleanTld}:`, data.RRPCode);
-            if (data.RRPCode === '210' || data.DomainAvailable === '1') {
-              isAvailable = true;
-            } else {
-              isAvailable = false;
-            }
+          console.log(`Proxy response for ${cleanDomain}.${cleanTld}:`, data);
+
+          // Handle proxy errors
+          if (data.error) {
+            console.error(`Proxy error for ${cleanDomain}.${cleanTld}:`, data.errorMessage);
+            // Fall back to unavailable on error
+            results.push({
+              domain: `${cleanDomain}.${cleanTld}`,
+              available: false,
+              price: domainPricing[tld] || domainPricing[`.${cleanTld}`] || 12.99,
+              tld: tld,
+              premium: false
+            });
           } else {
-            hasError = true;
-            console.log(`Unexpected eNom response format for ${cleanDomain}.${cleanTld}`);
+            // Use proxy result
+            results.push({
+              domain: data.domain,
+              available: data.available,
+              price: domainPricing[tld] || domainPricing[`.${cleanTld}`] || 12.99,
+              tld: tld,
+              premium: data.premium || false
+            });
           }
-          
-          console.log(`Domain ${cleanDomain}.${cleanTld} availability: ${isAvailable}`);
-          
-          results.push({
-            domain: `${cleanDomain}.${cleanTld}`,
-            available: isAvailable,
-            price: domainPricing[tld] || domainPricing[`.${cleanTld}`] || 12.99,
-            tld: tld,
-            premium: data.IsPremium === '1' || false
-          });
         }
 
       } catch (error) {
-        console.error('eNom API error:', error);
-        // Fall back to mock data if API fails
+        console.error('Proxy server error:', error);
+        // Fall back to mock data if proxy fails
         results = generateMockResults(cleanDomain, tlds, domainPricing);
       }
     } else {
-      console.log('eNom credentials not configured, using mock data');
-      // Mock data when credentials not provided
+      console.log('Proxy not configured, using mock data');
+      // Mock data when proxy not configured
       results = generateMockResults(cleanDomain, tlds, domainPricing);
     }
 
