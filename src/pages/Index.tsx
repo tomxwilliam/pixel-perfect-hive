@@ -7,8 +7,14 @@ import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
 const Index = () => {
-  return <div className="min-h-screen bg-background text-foreground">
-      <StaticNavigation />
+  return (
+    <>
+      <Seo 
+        title="404 Code Lab - Building the Future of Play"
+        description="Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality."
+      />
+      <div className="min-h-screen bg-background text-foreground">
+        <StaticNavigation />
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
@@ -141,7 +147,9 @@ const Index = () => {
         </div>
       </section>
 
-      <Footer />
-    </div>;
+        <Footer />
+      </div>
+    </>
+  );
 };
 export default Index;

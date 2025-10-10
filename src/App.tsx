@@ -17,6 +17,7 @@ import ProjectManagement from "./pages/ProjectManagement";
 import NotFound from "./pages/NotFound";
 import Support from "./pages/Support";
 import UserSettings from "./pages/UserSettings";
+import HostingDomain from "./pages/HostingDomain";
 
 // Portfolio pages
 import GamePortfolio from "./pages/GamePortfolio";
@@ -99,6 +100,7 @@ const App = () => (
             <Route path="/dashboard/new-ticket" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
             <Route path="/dashboard/book-call" element={<ProtectedRoute><BookCall /></ProtectedRoute>} />
             <Route path="/domains" element={<Domains />} />
+            <Route path="/hosting-domain" element={<HostingDomain />} />
             <Route path="/account/orders" element={<ProtectedRoute><CustomerOrders /></ProtectedRoute>} />
               
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
