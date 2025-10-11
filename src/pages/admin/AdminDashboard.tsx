@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2 } from 'lucide-react';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -20,6 +20,7 @@ import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
 import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
 import { AdminAccounting } from '@/components/admin/AdminAccounting';
+import { AdminGames } from '@/components/admin/AdminGames';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -102,7 +103,10 @@ const AdminDashboard = () => {
               <Calendar className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Calendar</span>
             </MobileTabsTrigger>
-            {/* Social media tab removed */}
+            <MobileTabsTrigger value="games" className="flex items-center gap-2">
+              <Gamepad2 className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Games</span>
+            </MobileTabsTrigger>
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Domains</span>
@@ -189,7 +193,11 @@ const AdminDashboard = () => {
             </React.Suspense>
           </MobileTabsContent>
 
-          {/* Social media content removed */}
+          <MobileTabsContent value="games">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminGames />
+            </React.Suspense>
+          </MobileTabsContent>
 
           <MobileTabsContent value="domains">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>

@@ -972,6 +972,75 @@ export type Database = {
         }
         Relationships: []
       }
+      games: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string
+          display_order: number | null
+          feature_image_url: string | null
+          google_play_link: string | null
+          id: string
+          ios_link: string | null
+          is_featured: boolean | null
+          is_new: boolean | null
+          key_point_1: string | null
+          key_point_1_icon: string | null
+          key_point_2: string | null
+          key_point_2_icon: string | null
+          key_point_3: string | null
+          key_point_3_icon: string | null
+          logo_url: string | null
+          name: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          google_play_link?: string | null
+          id?: string
+          ios_link?: string | null
+          is_featured?: boolean | null
+          is_new?: boolean | null
+          key_point_1?: string | null
+          key_point_1_icon?: string | null
+          key_point_2?: string | null
+          key_point_2_icon?: string | null
+          key_point_3?: string | null
+          key_point_3_icon?: string | null
+          logo_url?: string | null
+          name: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          google_play_link?: string | null
+          id?: string
+          ios_link?: string | null
+          is_featured?: boolean | null
+          is_new?: boolean | null
+          key_point_1?: string | null
+          key_point_1_icon?: string | null
+          key_point_2?: string | null
+          key_point_2_icon?: string | null
+          key_point_3?: string | null
+          key_point_3_icon?: string | null
+          logo_url?: string | null
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       hashtag_suggestions: {
         Row: {
           category: string | null

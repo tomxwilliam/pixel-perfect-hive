@@ -1,13 +1,33 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download, ExternalLink, Star, Zap, TrendingUp } from "lucide-react";
+import { Download } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
+import { useGames, useFeaturedGame } from "@/hooks/useGames";
+import { Skeleton } from "@/components/ui/skeleton";
+
 const GamePortfolio = () => {
-  return <div className="min-h-screen bg-background text-foreground">
+  const { data: games = [], isLoading } = useGames();
+  const { data: featuredGame } = useFeaturedGame();
+
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      in_concept: 'In Concept',
+      early_development: 'Early Development',
+      active_development: 'Active Development',
+      launched: 'Launched',
+    };
+    return labels[status] || status;
+  };
+
+  const nonFeaturedGames = games.filter(game => !game.is_featured);
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
       <Seo 
         title="Game Portfolio | Mobile Games by 404 Code Lab"
         description="Explore our collection of addictive mobile games including BeeVerse. Professional game development with Unity, engaging gameplay, and monetization strategies."
@@ -32,135 +52,197 @@ const GamePortfolio = () => {
         </div>
       </section>
 
-      {/* Featured Game */}
-      <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <Card className="bg-gradient-to-r from-accent/10 to-primary/10 border-accent/30 mb-12">
-            <CardContent className="p-8 lg:p-12">
-              <div className="grid lg:grid-cols-2 gap-8 items-center">
-                <div>
-                  <div className="flex items-center mb-6">
-                    <img src="/assets/beevers-icon.png" alt="Beevers Game Icon" className="w-16 h-16 mr-4 rounded-lg" />
-                    <div>
-                      <h2 className="text-3xl font-bold text-accent mb-2">BeeVerse</h2>
-                      <Badge className="text-accent border-accent/30 bg-accent/20">
-                        Featured Game
-                      </Badge>
+      {/* Featured Game Section */}
+      {featuredGame && (
+        <section className="py-20 px-4 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-950/20 dark:via-yellow-950/20 dark:to-orange-950/20">
+          <div className="container mx-auto max-w-6xl">
+            <Card className="overflow-hidden border-2 shadow-xl">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="p-8 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 mb-4">
+                      {featuredGame.logo_url && (
+                        <img src={featuredGame.logo_url} alt={featuredGame.name} className="w-16 h-16 rounded-lg" />
+                      )}
+                      <div>
+                        <h2 className="text-3xl font-bold text-foreground">{featuredGame.name}</h2>
+                        <Badge className="mt-2">{getStatusLabel(featuredGame.status)}</Badge>
+                      </div>
+                    </div>
+                    
+                    <p className="text-lg text-muted-foreground mb-6">
+                      {featuredGame.description}
+                    </p>
+
+                    <div className="space-y-4 mb-6">
+                      {featuredGame.key_point_1 && (
+                        <div className="flex items-start gap-3">
+                          {(() => {
+                            const Icon = (LucideIcons as any)[featuredGame.key_point_1_icon || 'Star'];
+                            return Icon ? <Icon className="w-5 h-5 text-primary mt-1" /> : null;
+                          })()}
+                          <span className="text-foreground">{featuredGame.key_point_1}</span>
+                        </div>
+                      )}
+                      {featuredGame.key_point_2 && (
+                        <div className="flex items-start gap-3">
+                          {(() => {
+                            const Icon = (LucideIcons as any)[featuredGame.key_point_2_icon || 'Zap'];
+                            return Icon ? <Icon className="w-5 h-5 text-primary mt-1" /> : null;
+                          })()}
+                          <span className="text-foreground">{featuredGame.key_point_2}</span>
+                        </div>
+                      )}
+                      {featuredGame.key_point_3 && (
+                        <div className="flex items-start gap-3">
+                          {(() => {
+                            const Icon = (LucideIcons as any)[featuredGame.key_point_3_icon || 'TrendingUp'];
+                            return Icon ? <Icon className="w-5 h-5 text-primary mt-1" /> : null;
+                          })()}
+                          <span className="text-foreground">{featuredGame.key_point_3}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  
-                  <p className="text-xl mb-6 leading-relaxed text-foreground">
-                    The ultimate idle bee empire game where bees run the economy. 
-                    Build your hive, manage your workers, and watch your empire grow!
-                  </p>
-                  
-                  <div className="space-y-4 mb-8 text-muted-foreground">
-                    <div className="flex items-center">
-                      <Star className="h-5 w-5 text-accent mr-3" />
-                      <span>Strategic upgrades and prestige systems</span>
+
+                  {(featuredGame.ios_link || featuredGame.google_play_link) && (
+                    <div className="flex flex-wrap gap-3">
+                      {featuredGame.ios_link && (
+                        <Button size="lg" asChild>
+                          <a href={featuredGame.ios_link} target="_blank" rel="noopener noreferrer">
+                            <Download className="mr-2 h-5 w-5" />
+                            Download on iOS
+                          </a>
+                        </Button>
+                      )}
+                      {featuredGame.google_play_link && (
+                        <Button size="lg" variant="outline" asChild>
+                          <a href={featuredGame.google_play_link} target="_blank" rel="noopener noreferrer">
+                            <Download className="mr-2 h-5 w-5" />
+                            Get it on Android
+                          </a>
+                        </Button>
+                      )}
                     </div>
-                    <div className="flex items-center">
-                      <Zap className="h-5 w-5 text-primary mr-3" />
-                      <span>Smart buff mechanics and automation</span>
-                    </div>
-                    <div className="flex items-center">
-                      <TrendingUp className="h-5 w-5 text-accent mr-3" />
-                      <span>Currently in active development</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                      <Download className="mr-2 h-5 w-5" />
-                      Download on iOS
-                    </Button>
-                  </div>
+                  )}
                 </div>
-                
-                <div className="relative">
-                  <div className="bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-4 overflow-hidden">
+
+                {featuredGame.feature_image_url && (
+                  <div className="relative h-64 md:h-auto">
                     <img 
-                      src="/lovable-uploads/621f61df-74f7-45ba-b1d7-4c1b7251d429.png"
-                      alt="BeeVerse game screenshot showing a lush meadow environment with bees, flowers, and game UI"
-                      className="w-full h-auto rounded-xl shadow-lg"
+                      src={featuredGame.feature_image_url}
+                      alt={`${featuredGame.name} screenshot`}
+                      className="absolute inset-0 w-full h-full object-cover"
                     />
                   </div>
-                </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </Card>
+          </div>
+        </section>
+      )}
 
-          {/* Upcoming Games */}
+      {/* Other Games Section */}
+      <section className="py-20 px-4 bg-background">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-primary">🎲 More Games in Development</h2>
-            <p className="text-xl text-muted-foreground">
-              Our hive is buzzing with new projects. Stay tuned for exciting announcements!
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              {nonFeaturedGames.length > 0 ? 'More Games' : 'Games Coming Soon'}
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              {nonFeaturedGames.length > 0 
+                ? 'Explore our other exciting projects in development'
+                : 'Stay tuned for more amazing games'
+              }
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="text-4xl mb-4">🎯</div>
-                <h3 className="text-xl font-bold mb-4 text-primary">Strategy Game</h3>
-                <p className="text-muted-foreground mb-4">
-                  Deep strategic gameplay with resource management and tactical combat.
-                </p>
-                <Badge className="bg-primary/20 text-primary border-primary/30">
-                  In Concept
-                </Badge>
-              </CardContent>
-            </Card>
+          {isLoading ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i}>
+                  <CardHeader>
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : nonFeaturedGames.length > 0 ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {nonFeaturedGames.map((game) => (
+                <Card key={game.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        {game.logo_url && (
+                          <img src={game.logo_url} alt={game.name} className="w-10 h-10 rounded" />
+                        )}
+                        <CardTitle className="text-xl">{game.name}</CardTitle>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        {game.is_new && <Badge variant="secondary">New</Badge>}
+                        <Badge variant="outline">{getStatusLabel(game.status)}</Badge>
+                      </div>
+                    </div>
+                    <CardDescription className="text-base">
+                      {game.description}
+                    </CardDescription>
+                    
+                    {(game.ios_link || game.google_play_link) && (
+                      <div className="flex gap-2 mt-4">
+                        {game.ios_link && (
+                          <Button size="sm" variant="outline" asChild>
+                            <a href={game.ios_link} target="_blank" rel="noopener noreferrer">
+                              iOS
+                            </a>
+                          </Button>
+                        )}
+                        {game.google_play_link && (
+                          <Button size="sm" variant="outline" asChild>
+                            <a href={game.google_play_link} target="_blank" rel="noopener noreferrer">
+                              Android
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No additional games available yet. Check back soon!</p>
+            </div>
+          )}
+        </div>
+      </section>
 
-            <Card className="bg-card border-border hover:border-accent/50 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="text-4xl mb-4">🏃</div>
-                <h3 className="text-xl font-bold mb-4 text-accent">Idle Clicker</h3>
-                <p className="text-muted-foreground mb-4">
-                  Fast-paced action with unique mechanics and stunning visual effects.
-                </p>
-                <Badge className="bg-accent/20 text-accent border-accent/30">
-                  Early Development
-                </Badge>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300">
-              <CardContent className="p-8 text-center">
-                <div className="text-4xl mb-4">🧩</div>
-                <h3 className="text-xl font-bold mb-4 text-primary">Puzzle Adventure</h3>
-                <p className="text-muted-foreground mb-4">
-                  Mind-bending puzzles wrapped in an engaging narrative experience.
-                </p>
-                <Badge className="bg-primary/20 text-primary border-primary/30">
-                  Planning Phase
-                </Badge>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* CTA Section */}
-          <div className="mt-16 text-center">
-            <Card className="bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-4 text-foreground">Have a Game Idea?</h3>
-                <p className="mb-6 max-w-2xl mx-auto text-muted-foreground">
-                  Whether you have a complete concept or just a spark of an idea, 
-                  we'd love to hear about it. Let's build the next addictive mobile game together!
-                </p>
-                <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                  <Link to="/contact">
-                    <Zap className="mr-2 h-5 w-5" />
-                    Discuss Your Game
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-br from-primary/10 to-accent/10">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="border-primary/30">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-2xl font-bold mb-4 text-foreground">Have a Game Idea?</h3>
+              <p className="mb-6 max-w-2xl mx-auto text-muted-foreground">
+                Whether you have a complete concept or just a spark of an idea, 
+                we'd love to hear about it. Let's build the next addictive mobile game together!
+              </p>
+              <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                <Link to="/contact">
+                  Discuss Your Game
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default GamePortfolio;
