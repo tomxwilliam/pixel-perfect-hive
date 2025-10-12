@@ -9,9 +9,12 @@ import { Link } from "react-router-dom";
 import Seo from "@/components/Seo";
 import { useGames } from "@/hooks/useGames";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const GamePortfolio = () => {
   const { data: games = [], isLoading } = useGames();
+  const [processDialogOpen, setProcessDialogOpen] = useState(false);
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
@@ -229,13 +232,154 @@ const GamePortfolio = () => {
             </Card>
           </div>
 
-          <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-            <Link to="/services/games">
-              See How the Full Process Works
-            </Link>
+          <Button 
+            size="lg" 
+            onClick={() => setProcessDialogOpen(true)}
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+          >
+            See How the Full Process Works
           </Button>
         </div>
       </section>
+
+      {/* Process Dialog */}
+      <Dialog open={processDialogOpen} onOpenChange={setProcessDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-bold">Our Game Development Process</DialogTitle>
+            <DialogDescription className="text-lg">
+              From initial concept to successful launch - here's how we bring your game to life
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-8 mt-6">
+            {/* Phase 1 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 1</Badge>
+                <h3 className="text-2xl font-bold">Discovery & Concept</h3>
+              </div>
+              <p className="text-muted-foreground">
+                We start by understanding your vision and target audience. Together, we define the core gameplay loop, 
+                unique mechanics, and what will make your game stand out in the market.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>Initial consultation and vision alignment</li>
+                <li>Market research and competitor analysis</li>
+                <li>Core gameplay mechanics definition</li>
+                <li>Monetization strategy planning</li>
+                <li>Technical feasibility assessment</li>
+              </ul>
+            </div>
+
+            {/* Phase 2 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 2</Badge>
+                <h3 className="text-2xl font-bold">Design & Prototyping</h3>
+              </div>
+              <p className="text-muted-foreground">
+                We create detailed game design documents and build interactive prototypes to validate the fun factor 
+                before committing to full development.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>Game design document creation</li>
+                <li>UI/UX wireframes and mockups</li>
+                <li>Playable prototype development</li>
+                <li>Core loop testing and refinement</li>
+                <li>Art style and visual direction</li>
+              </ul>
+            </div>
+
+            {/* Phase 3 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 3</Badge>
+                <h3 className="text-2xl font-bold">Full Development</h3>
+              </div>
+              <p className="text-muted-foreground">
+                Using Unity, we build your game with clean, scalable code. Regular builds keep you in the loop as 
+                features come to life.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>Unity development for iOS and Android</li>
+                <li>Feature implementation in sprints</li>
+                <li>Backend integration (if needed)</li>
+                <li>In-app purchases and ads setup</li>
+                <li>Regular playable builds for feedback</li>
+              </ul>
+            </div>
+
+            {/* Phase 4 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 4</Badge>
+                <h3 className="text-2xl font-bold">Testing & Polish</h3>
+              </div>
+              <p className="text-muted-foreground">
+                We rigorously test across devices, optimize performance, and add that final layer of polish that 
+                separates good games from great ones.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>Quality assurance testing</li>
+                <li>Performance optimization</li>
+                <li>Device compatibility testing</li>
+                <li>Bug fixing and refinement</li>
+                <li>Balance and difficulty tuning</li>
+              </ul>
+            </div>
+
+            {/* Phase 5 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 5</Badge>
+                <h3 className="text-2xl font-bold">Launch & App Store Submission</h3>
+              </div>
+              <p className="text-muted-foreground">
+                We handle all the technical details of getting your game onto the App Store and Google Play, 
+                including optimization for discoverability.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>App Store and Google Play account setup</li>
+                <li>Store listing optimization (ASO)</li>
+                <li>Marketing assets preparation</li>
+                <li>Submission and review process management</li>
+                <li>Launch day support</li>
+              </ul>
+            </div>
+
+            {/* Phase 6 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Badge className="text-lg px-4 py-2">Phase 6</Badge>
+                <h3 className="text-2xl font-bold">Post-Launch & Growth</h3>
+              </div>
+              <p className="text-muted-foreground">
+                After launch, we monitor analytics, gather player feedback, and release updates to improve retention 
+                and monetization.
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
+                <li>Analytics integration and monitoring</li>
+                <li>Player feedback analysis</li>
+                <li>Regular content updates</li>
+                <li>Performance optimization based on data</li>
+                <li>Ongoing technical support</li>
+              </ul>
+            </div>
+
+            <div className="pt-6 border-t">
+              <p className="text-center text-muted-foreground">
+                Ready to start your game development journey?
+              </p>
+              <div className="flex justify-center mt-4">
+                <Button asChild size="lg" className="bg-gradient-to-r from-primary to-accent">
+                  <Link to="/contact">Get Started</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/10 to-accent/10">
