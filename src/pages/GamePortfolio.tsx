@@ -183,6 +183,60 @@ const GamePortfolio = () => {
         </section>
       )}
 
+      {/* Game Development Section */}
+      <section className="py-20 px-4 bg-background">
+        <div className="container mx-auto max-w-4xl text-center">
+          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2">
+            Our Game Development Process
+          </Badge>
+          
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+            From Concept to Launch
+          </h2>
+          
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
+            We specialize in creating addictive mobile games with engaging gameplay loops, 
+            smart monetization strategies, and polished user experiences. Our full-stack 
+            approach covers everything from initial concept to App Store launch and beyond.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-10 text-left">
+            <Card className="p-6">
+              <CardContent className="p-0">
+                <h3 className="text-xl font-bold mb-3 text-foreground">Design & Concept</h3>
+                <p className="text-muted-foreground">
+                  Game mechanics, progression systems, and monetization strategy tailored to your vision.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="p-6">
+              <CardContent className="p-0">
+                <h3 className="text-xl font-bold mb-3 text-foreground">Development</h3>
+                <p className="text-muted-foreground">
+                  Built with Unity and optimized for both iOS and Android platforms with native performance.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="p-6">
+              <CardContent className="p-0">
+                <h3 className="text-xl font-bold mb-3 text-foreground">Launch & Support</h3>
+                <p className="text-muted-foreground">
+                  App Store optimization, analytics integration, and ongoing updates to keep players engaged.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+            <Link to="/services/games">
+              See How the Full Process Works
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-primary/10 to-accent/10">
         <div className="container mx-auto max-w-4xl">
