@@ -110,8 +110,8 @@ export const CreateEditGameDialog = ({ game, open, onOpenChange, onSuccess }: Cr
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        form.setError('name', { message: 'Logo must be less than 2MB' });
+      if (file.size > 50 * 1024 * 1024) {
+        form.setError('name', { message: 'Logo must be less than 50MB' });
         return;
       }
       setLogoFile(file);
@@ -124,8 +124,8 @@ export const CreateEditGameDialog = ({ game, open, onOpenChange, onSuccess }: Cr
   const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        form.setError('name', { message: 'Feature image must be less than 2MB' });
+      if (file.size > 50 * 1024 * 1024) {
+        form.setError('name', { message: 'Feature image must be less than 50MB' });
         return;
       }
       setFeatureFile(file);
@@ -379,7 +379,7 @@ export const CreateEditGameDialog = ({ game, open, onOpenChange, onSuccess }: Cr
                     ) : (
                       <div className="space-y-2">
                         <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">Upload logo (max 2MB)</p>
+                        <p className="text-sm text-muted-foreground">Upload logo (max 50MB)</p>
                       </div>
                     )}
                     <Input
@@ -413,7 +413,7 @@ export const CreateEditGameDialog = ({ game, open, onOpenChange, onSuccess }: Cr
                     ) : (
                       <div className="space-y-2">
                         <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">Upload screenshot (max 2MB)</p>
+                        <p className="text-sm text-muted-foreground">Upload screenshot (max 50MB)</p>
                       </div>
                     )}
                     <Input
