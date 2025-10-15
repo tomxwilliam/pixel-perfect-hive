@@ -217,6 +217,66 @@ export type Database = {
         }
         Relationships: []
       }
+      app_projects: {
+        Row: {
+          android_link: string | null
+          app_category: string
+          client_name: string | null
+          created_at: string | null
+          description: string
+          display_order: number | null
+          feature_image_url: string | null
+          features: Json | null
+          id: string
+          ios_link: string | null
+          is_featured: boolean | null
+          logo_url: string | null
+          name: string
+          status: string
+          technologies: Json | null
+          updated_at: string | null
+          web_demo_url: string | null
+        }
+        Insert: {
+          android_link?: string | null
+          app_category: string
+          client_name?: string | null
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          features?: Json | null
+          id?: string
+          ios_link?: string | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          name: string
+          status?: string
+          technologies?: Json | null
+          updated_at?: string | null
+          web_demo_url?: string | null
+        }
+        Update: {
+          android_link?: string | null
+          app_category?: string
+          client_name?: string | null
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          features?: Json | null
+          id?: string
+          ios_link?: string | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          name?: string
+          status?: string
+          technologies?: Json | null
+          updated_at?: string | null
+          web_demo_url?: string | null
+        }
+        Relationships: []
+      }
       app_store_links: {
         Row: {
           created_at: string
@@ -4033,6 +4093,63 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      web_projects: {
+        Row: {
+          client_name: string | null
+          created_at: string | null
+          description: string
+          display_order: number | null
+          feature_image_url: string | null
+          features: Json | null
+          id: string
+          is_charity: boolean | null
+          is_featured: boolean | null
+          logo_url: string | null
+          name: string
+          project_type: string
+          project_url: string | null
+          status: string
+          technologies: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_name?: string | null
+          created_at?: string | null
+          description: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          features?: Json | null
+          id?: string
+          is_charity?: boolean | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          name: string
+          project_type: string
+          project_url?: string | null
+          status?: string
+          technologies?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_name?: string | null
+          created_at?: string | null
+          description?: string
+          display_order?: number | null
+          feature_image_url?: string | null
+          features?: Json | null
+          id?: string
+          is_charity?: boolean | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          name?: string
+          project_type?: string
+          project_url?: string | null
+          status?: string
+          technologies?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
       }

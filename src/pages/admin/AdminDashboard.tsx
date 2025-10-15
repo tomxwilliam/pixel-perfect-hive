@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2 } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone } from 'lucide-react';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -21,6 +21,8 @@ import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
 import { AdminAccounting } from '@/components/admin/AdminAccounting';
 import { AdminGames } from '@/components/admin/AdminGames';
+import { AdminWebProjects } from '@/components/admin/AdminWebProjects';
+import { AdminAppProjects } from '@/components/admin/AdminAppProjects';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -106,6 +108,14 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="games" className="flex items-center gap-2">
               <Gamepad2 className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Games</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="web" className="flex items-center gap-2">
+              <Code className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Web</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="apps" className="flex items-center gap-2">
+              <Smartphone className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Apps</span>
             </MobileTabsTrigger>
             <MobileTabsTrigger value="domains" className="flex items-center gap-2">
               <Globe className="h-4 w-4" />
@@ -196,6 +206,18 @@ const AdminDashboard = () => {
           <MobileTabsContent value="games">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminGames />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="web">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminWebProjects />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="apps">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminAppProjects />
             </React.Suspense>
           </MobileTabsContent>
 
