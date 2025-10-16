@@ -1,5 +1,8 @@
 project_id = "ucsxwhnscgbcshaghyrq"
 
+[functions.send-auth-email]
+verify_jwt = false
+
 [functions.sync-enom-domain-pricing]
 verify_jwt = true
 
