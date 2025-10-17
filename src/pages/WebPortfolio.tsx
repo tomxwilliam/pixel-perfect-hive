@@ -9,6 +9,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProjectSlideshow } from "@/components/portfolio/ProjectSlideshow";
 import Seo from "@/components/Seo";
+import { Link } from "react-router-dom";
 const WebPortfolio = () => {
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
@@ -158,7 +159,7 @@ const WebPortfolio = () => {
               Contact us and we'll create a simple, professional website for your charity to help you get started with your online presence - at no cost.
             </p>
             <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <a href="/contact">Contact Us for Charity Websites</a>
+              <Link to="/contact">Contact Us for Charity Websites</Link>
             </Button>
           </div>
 
@@ -691,10 +692,10 @@ const WebPortfolio = () => {
 
                         <div className="text-center pt-4">
                           <Button asChild className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                            <a href="/contact">
+                            <Link to="/contact">
                               Start Your Project
                               <ArrowRight className="ml-2 h-4 w-4" />
-                            </a>
+                            </Link>
                           </Button>
                         </div>
                       </div>
