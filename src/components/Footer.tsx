@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
 import { FaTiktok, FaDiscord, FaXTwitter, FaBehance } from "react-icons/fa6";
 import { useTheme } from "@/hooks/useTheme";
+import { useCookieConsent } from "@/hooks/useCookieConsent";
 
 export const Footer = () => {
   const { theme } = useTheme();
+  const { openPreferenceCenter } = useCookieConsent();
   
   // Determine if we're in dark mode
   const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -126,6 +128,12 @@ export const Footer = () => {
               <Link to="/legal/cookies" className="text-muted-foreground hover:text-primary transition-colors">
                 Cookie Policy
               </Link>
+              <button
+                onClick={openPreferenceCenter}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
+                Cookie Settings
+              </button>
             </div>
             
             <div className="flex items-center space-x-2 text-muted-foreground text-sm">

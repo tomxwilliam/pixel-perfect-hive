@@ -8,6 +8,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { CookieConsentProvider } from "@/hooks/useCookieConsent";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import { CookiePreferenceCenter } from "@/components/CookiePreferenceCenter";
 // Pages
 import Index from "./pages/Index";
 import About from "./pages/About";
@@ -54,12 +57,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
+        <CookieConsentProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <Routes>
               {/* Main pages */}
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
@@ -133,9 +137,11 @@ const App = () => (
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-
+            <CookieConsentBanner />
+            <CookiePreferenceCenter />
           </BrowserRouter>
         </TooltipProvider>
+        </CookieConsentProvider>
       </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>

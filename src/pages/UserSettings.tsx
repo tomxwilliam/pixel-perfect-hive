@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import Seo from '@/components/Seo';
+import { CookieSettings } from '@/components/CookieSettings';
 
 const UserSettings = () => {
   const { profile, updateProfile } = useAuth();
@@ -115,6 +116,8 @@ const UserSettings = () => {
                 </form>
               </CardContent>
             </Card>
+
+            <CookieSettings />
           </div>
         </div>
         <Footer />
