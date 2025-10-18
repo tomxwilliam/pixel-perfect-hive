@@ -1,0 +1,121 @@
+-- Insert 9 web projects for portfolio showcase
+INSERT INTO public.web_projects (
+  name,
+  description,
+  client_name,
+  project_type,
+  status,
+  features,
+  technologies,
+  is_featured,
+  is_charity,
+  display_order
+) VALUES
+(
+  'SparkleClean',
+  'Professional cleaning service website with online booking system and service area coverage map.',
+  'SparkleClean Services Ltd',
+  'business-website',
+  'completed',
+  '["Online booking system", "Service area map", "Pricing calculator", "Customer testimonials", "Mobile responsive design"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Supabase"]'::jsonb,
+  false,
+  false,
+  0
+),
+(
+  'FixRight Plumbing',
+  'Emergency plumbing service website featuring 24/7 contact, service showcase, and customer reviews.',
+  'FixRight Plumbing',
+  'business-website',
+  'completed',
+  '["24/7 emergency contact", "Service gallery", "Online quote requests", "Customer reviews", "Service area locator"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Google Maps API"]'::jsonb,
+  false,
+  false,
+  1
+),
+(
+  'Shear Perfection',
+  'Modern hair salon website with appointment booking, style gallery, and team profiles.',
+  'Shear Perfection Salon',
+  'business-website',
+  'completed',
+  '["Online appointment booking", "Style gallery", "Stylist profiles", "Price list", "Product recommendations"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Booking API"]'::jsonb,
+  false,
+  false,
+  2
+),
+(
+  'Padrino''s Pizza',
+  'Italian restaurant website with online ordering, menu showcase, and delivery tracking.',
+  'Padrino''s Pizza',
+  'business-website',
+  'completed',
+  '["Online ordering system", "Interactive menu", "Delivery tracking", "Special offers", "Customer loyalty program"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Payment integration", "Real-time tracking"]'::jsonb,
+  false,
+  false,
+  3
+),
+(
+  'Sweet Crumbs',
+  'Artisan bakery website featuring custom cake orders, daily specials, and pickup scheduling.',
+  'Sweet Crumbs Bakery',
+  'business-website',
+  'completed',
+  '["Custom cake order forms", "Daily specials board", "Pickup scheduling", "Product gallery", "Allergen information"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Image optimization"]'::jsonb,
+  false,
+  false,
+  4
+),
+(
+  'Happy Paws',
+  'Pet care service website with grooming appointments, pet profiles, and care tips blog.',
+  'Happy Paws Pet Care',
+  'business-website',
+  'completed',
+  '["Grooming appointments", "Pet profile management", "Service packages", "Care tips blog", "Photo gallery"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "CMS integration"]'::jsonb,
+  false,
+  false,
+  5
+),
+(
+  'Crafted Joinery',
+  'Bespoke carpentry and joinery service website showcasing portfolio and custom quote system.',
+  'Crafted Joinery',
+  'business-website',
+  'completed',
+  '["Portfolio showcase", "Custom quote calculator", "Project gallery", "Materials guide", "Contact form"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Image gallery"]'::jsonb,
+  false,
+  false,
+  6
+),
+(
+  'IronHouse Gym',
+  'Fitness center website with class schedules, membership plans, and trainer profiles.',
+  'IronHouse Gym',
+  'business-website',
+  'completed',
+  '["Class timetable", "Membership plans", "Trainer profiles", "Virtual tour", "Progress tracking"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Calendar integration"]'::jsonb,
+  false,
+  false,
+  7
+),
+(
+  'Inkspire',
+  'Creative design agency portfolio website with project showcase and client collaboration portal.',
+  'Inkspire Design Studio',
+  'business-website',
+  'completed',
+  '["Project portfolio", "Case studies", "Client testimonials", "Service breakdown", "Contact form"]'::jsonb,
+  '["React", "TypeScript", "Tailwind CSS", "Animation libraries"]'::jsonb,
+  false,
+  false,
+  8
+);
