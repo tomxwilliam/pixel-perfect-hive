@@ -1,16 +1,17 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { CookieConsentProvider } from "@/hooks/useCookieConsent";
+import { CookieConsentProvider, useCookieConsent } from "@/hooks/useCookieConsent";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { CookiePreferenceCenter } from "@/components/CookiePreferenceCenter";
+import { initializeAnalytics, trackPageView } from "@/lib/analytics";
+import { useEffect } from "react";
 // Pages
 import Index from "./pages/Index";
 import About from "./pages/About";
@@ -53,6 +54,27 @@ import CookiePolicy from "./pages/legal/CookiePolicy";
 
 const queryClient = new QueryClient();
 
+function AnalyticsTracker() {
+  const { hasConsent } = useCookieConsent();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Initialize analytics if user has given consent
+    if (hasConsent('analytics')) {
+      initializeAnalytics(true);
+    }
+  }, [hasConsent]);
+
+  useEffect(() => {
+    // Track page views on route change
+    if (hasConsent('analytics')) {
+      trackPageView(location.pathname + location.search);
+    }
+  }, [location, hasConsent]);
+
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -62,6 +84,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <AnalyticsTracker />
               <ScrollToTop />
               <Routes>
               {/* Main pages */}
