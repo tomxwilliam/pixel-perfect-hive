@@ -232,6 +232,7 @@ export type Database = {
           is_featured: boolean | null
           logo_url: string | null
           name: string
+          screenshots: string[] | null
           status: string
           technologies: Json | null
           updated_at: string | null
@@ -251,6 +252,7 @@ export type Database = {
           is_featured?: boolean | null
           logo_url?: string | null
           name: string
+          screenshots?: string[] | null
           status?: string
           technologies?: Json | null
           updated_at?: string | null
@@ -270,6 +272,7 @@ export type Database = {
           is_featured?: boolean | null
           logo_url?: string | null
           name?: string
+          screenshots?: string[] | null
           status?: string
           technologies?: Json | null
           updated_at?: string | null

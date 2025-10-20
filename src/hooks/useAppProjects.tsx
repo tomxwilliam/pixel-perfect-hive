@@ -18,6 +18,7 @@ export interface AppProject {
   status: string;
   is_featured: boolean;
   display_order: number;
+  screenshots: string[];
   created_at: string;
   updated_at: string;
 }
@@ -94,7 +95,7 @@ export const useDeleteAppProject = () => {
       // Get the project to find associated images
       const { data: project } = await supabase
         .from("app_projects")
-        .select("logo_url, feature_image_url")
+        .select("logo_url, feature_image_url, screenshots")
         .eq("id", id)
         .single();
 
@@ -110,6 +111,14 @@ export const useDeleteAppProject = () => {
         if (project.feature_image_url) {
           const featurePath = project.feature_image_url.split("/").pop();
           if (featurePath) filesToDelete.push(featurePath);
+        }
+
+        // Delete screenshots
+        if (project.screenshots && project.screenshots.length > 0) {
+          project.screenshots.forEach(screenshot => {
+            const screenshotPath = screenshot.split("/").pop();
+            if (screenshotPath) filesToDelete.push(screenshotPath);
+          });
         }
 
         if (filesToDelete.length > 0) {
