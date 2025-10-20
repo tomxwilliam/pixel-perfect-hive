@@ -202,6 +202,25 @@ export const ProjectSlideshow = ({
               </div>
             ))}
           </div>
+
+          {/* Visit Website Button */}
+          {liveUrl && (
+            <div className="flex justify-center pt-4">
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: "default" }),
+                  "text-white font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2",
+                  styles.button
+                )}
+              >
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span>Visit Website</span>
+              </a>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
