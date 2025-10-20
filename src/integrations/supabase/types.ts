@@ -4114,6 +4114,7 @@ export type Database = {
           name: string
           project_type: string
           project_url: string | null
+          screenshots: string[] | null
           status: string
           technologies: Json | null
           updated_at: string | null
@@ -4132,6 +4133,7 @@ export type Database = {
           name: string
           project_type: string
           project_url?: string | null
+          screenshots?: string[] | null
           status?: string
           technologies?: Json | null
           updated_at?: string | null
@@ -4150,6 +4152,7 @@ export type Database = {
           name?: string
           project_type?: string
           project_url?: string | null
+          screenshots?: string[] | null
           status?: string
           technologies?: Json | null
           updated_at?: string | null

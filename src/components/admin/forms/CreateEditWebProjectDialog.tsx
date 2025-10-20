@@ -40,6 +40,7 @@ const formSchema = z.object({
   status: z.string().min(1, "Status is required"),
   is_featured: z.boolean(),
   is_charity: z.boolean(),
+  screenshots: z.array(z.string()).max(5, "Maximum 5 screenshots allowed"),
 });
 
 interface CreateEditWebProjectDialogProps {
@@ -61,6 +62,8 @@ export function CreateEditWebProjectDialog({
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [featureFile, setFeatureFile] = useState<File | null>(null);
   const [featurePreview, setFeaturePreview] = useState<string>("");
+  const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
+  const [existingScreenshots, setExistingScreenshots] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
   const [technologies, setTechnologies] = useState<string[]>([]);
   const [currentFeature, setCurrentFeature] = useState("");
@@ -91,20 +94,24 @@ export function CreateEditWebProjectDialog({
         status: project.status,
         is_featured: project.is_featured,
         is_charity: project.is_charity,
+        screenshots: project.screenshots || [],
       });
       setLogoPreview(project.logo_url || "");
       setFeaturePreview(project.feature_image_url || "");
+      setExistingScreenshots(project.screenshots || []);
       setFeatures(project.features || []);
       setTechnologies(project.technologies || []);
     } else {
       form.reset();
       setLogoPreview("");
       setFeaturePreview("");
+      setExistingScreenshots([]);
       setFeatures([]);
       setTechnologies([]);
     }
     setLogoFile(null);
     setFeatureFile(null);
+    setScreenshotFiles([]);
   }, [project, form]);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,6 +168,33 @@ export function CreateEditWebProjectDialog({
     setTechnologies(technologies.filter((_, i) => i !== index));
   };
 
+  const handleScreenshotsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const totalScreenshots = existingScreenshots.length + screenshotFiles.length + files.length;
+    
+    if (totalScreenshots > 5) {
+      form.setError("name", { message: "Maximum 5 screenshots allowed" });
+      return;
+    }
+
+    for (const file of files) {
+      if (file.size > 50 * 1024 * 1024) {
+        form.setError("name", { message: "Each screenshot must be less than 50MB" });
+        return;
+      }
+    }
+
+    setScreenshotFiles([...screenshotFiles, ...files]);
+  };
+
+  const removeExistingScreenshot = (index: number) => {
+    setExistingScreenshots(existingScreenshots.filter((_, i) => i !== index));
+  };
+
+  const removeNewScreenshot = (index: number) => {
+    setScreenshotFiles(screenshotFiles.filter((_, i) => i !== index));
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       let logoUrl = project?.logo_url || "";
@@ -180,6 +214,19 @@ export function CreateEditWebProjectDialog({
         });
       }
 
+      // Upload new screenshots
+      const newScreenshotUrls: string[] = [];
+      for (const file of screenshotFiles) {
+        const url = await uploadImage.mutateAsync({
+          file,
+          path: "",
+        });
+        newScreenshotUrls.push(url);
+      }
+
+      // Combine existing and new screenshots
+      const allScreenshots = [...existingScreenshots, ...newScreenshotUrls];
+
       const projectData = {
         name: values.name,
         description: values.description,
@@ -191,6 +238,7 @@ export function CreateEditWebProjectDialog({
         is_charity: values.is_charity,
         logo_url: logoUrl,
         feature_image_url: featureUrl,
+        screenshots: allScreenshots,
         features,
         technologies,
         display_order: project?.display_order || 0,
@@ -433,6 +481,88 @@ export function CreateEditWebProjectDialog({
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <FormLabel>Screenshots Gallery (Max 5)</FormLabel>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {existingScreenshots.length + screenshotFiles.length} / 5 screenshots
+                </p>
+
+                {/* Existing Screenshots */}
+                {existingScreenshots.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">Current Screenshots</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {existingScreenshots.map((url, index) => (
+                        <div key={`existing-${index}`} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Screenshot ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeExistingScreenshot(index)}
+                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* New Screenshot Previews */}
+                {screenshotFiles.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm font-medium mb-2">New Screenshots</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {screenshotFiles.map((file, index) => (
+                        <div key={`new-${index}`} className="relative group">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`New screenshot ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeNewScreenshot(index)}
+                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                {existingScreenshots.length + screenshotFiles.length < 5 && (
+                  <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Add screenshots (max 50MB each)
+                    </p>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleScreenshotsChange}
+                      className="hidden"
+                      id="screenshots-upload"
+                    />
+                    <label htmlFor="screenshots-upload">
+                      <Button type="button" variant="outline" size="sm" asChild>
+                        <span className="cursor-pointer">Choose Files</span>
+                      </Button>
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
 

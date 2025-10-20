@@ -10,6 +10,7 @@ export interface WebProject {
   project_url?: string;
   logo_url?: string;
   feature_image_url?: string;
+  screenshots: string[];
   features: string[];
   technologies: string[];
   project_type: string;
@@ -93,7 +94,7 @@ export const useDeleteWebProject = () => {
       // Get the project to find associated images
       const { data: project } = await supabase
         .from("web_projects")
-        .select("logo_url, feature_image_url")
+        .select("logo_url, feature_image_url, screenshots")
         .eq("id", id)
         .single();
 
@@ -109,6 +110,14 @@ export const useDeleteWebProject = () => {
         if (project.feature_image_url) {
           const featurePath = project.feature_image_url.split("/").pop();
           if (featurePath) filesToDelete.push(featurePath);
+        }
+
+        // Delete all screenshots
+        if (project.screenshots && project.screenshots.length > 0) {
+          project.screenshots.forEach((screenshotUrl: string) => {
+            const screenshotPath = screenshotUrl.split("/").pop();
+            if (screenshotPath) filesToDelete.push(screenshotPath);
+          });
         }
 
         if (filesToDelete.length > 0) {
