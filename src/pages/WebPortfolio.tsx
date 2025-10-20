@@ -10,7 +10,36 @@ import { cn } from "@/lib/utils";
 import { ProjectSlideshow } from "@/components/portfolio/ProjectSlideshow";
 import Seo from "@/components/Seo";
 import { Link } from "react-router-dom";
+import { useWebProjects } from "@/hooks/useWebProjects";
+
 const WebPortfolio = () => {
+  const { data: projects, isLoading } = useWebProjects();
+  
+  // Map features to icons
+  const getFeatureIcon = (index: number) => {
+    const icons = [
+      <Globe className="h-6 w-6 text-primary" />,
+      <Zap className="h-6 w-6 text-accent" />,
+      <Palette className="h-6 w-6 text-accent" />,
+      <Code className="h-6 w-6 text-primary" />,
+      <Users className="h-6 w-6 text-accent" />,
+    ];
+    return icons[index % icons.length];
+  };
+  
+  const getFeatureItemIcon = (index: number) => {
+    const icons = [
+      <Palette className="h-5 w-5 text-primary mr-3" />,
+      <Users className="h-5 w-5 text-accent mr-3" />,
+      <Smartphone className="h-5 w-5 text-primary mr-3" />,
+      <Rocket className="h-5 w-5 text-accent mr-3" />,
+      <Code className="h-5 w-5 text-accent/70 mr-3" />,
+      <Eye className="h-5 w-5 text-accent mr-3" />,
+      <TrendingUp className="h-5 w-5 text-accent mr-3" />,
+      <HeadphonesIcon className="h-5 w-5 text-accent mr-3" />,
+    ];
+    return icons[index % icons.length];
+  };
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
         title="Web Portfolio | Professional Website Development by 404 Code Lab"
@@ -171,377 +200,39 @@ const WebPortfolio = () => {
             </p>
           </div>
 
-          <div className="space-y-12">
-            {/* SparkleClean */}
-            <ProjectSlideshow
-              title="SparkleClean"
-              description="A modern cleaning service website featuring an elegant gallery showcase, streamlined contact forms, and service booking system designed to convert visitors into customers."
-              features={[
-                { icon: <Globe className="h-6 w-6 text-primary" />, text: "" },
-                { icon: <Palette className="h-5 w-5 text-primary mr-3" />, text: "Modern gallery with before/after photos" },
-                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Streamlined contact and booking forms" },
-                { icon: <Smartphone className="h-5 w-5 text-primary mr-3" />, text: "Mobile-optimised for on-the-go bookings" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/sc1-3.png", 
-                  alt: "SparkleClean Homepage",
-                  caption: "Homepage showcasing cleaning services with professional design"
-                },
-                { 
-                  src: "/lovable-uploads/sc2-3.png", 
-                  alt: "SparkleClean About Page",
-                  caption: "About page highlighting company mission and team values"
-                },
-                { 
-                  src: "/lovable-uploads/sc3-3.png", 
-                  alt: "SparkleClean Services",
-                  caption: "Services page with detailed cleaning packages and pricing"
-                },
-                { 
-                  src: "/lovable-uploads/sc4-3.png", 
-                  alt: "SparkleClean Gallery",
-                  caption: "Before and after gallery showcasing cleaning transformations"
-                },
-                { 
-                  src: "/lovable-uploads/sc5-3.png", 
-                  alt: "SparkleClean Contact",
-                  caption: "Contact page with quote request form and service areas"
-                }
-              ]}
-              liveUrl="https://404codelab.com/sparkleclean/index.html"
-              gradient="primary"
-            />
-
-            {/* FixRight Plumbing */}
-            <ProjectSlideshow
-              title="FixRight Plumbing"
-              description="Emergency plumbing service website with 24/7 booking system, boiler service scheduling, and instant quote calculator to help customers get immediate assistance."
-              features={[
-                { icon: <Zap className="h-6 w-6 text-accent" />, text: "" },
-                { icon: <Rocket className="h-5 w-5 text-accent mr-3" />, text: "24/7 emergency booking system" },
-                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Instant quote calculator" },
-                { icon: <HeadphonesIcon className="h-5 w-5 text-accent mr-3" />, text: "Live chat support integration" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/fr1.png", 
-                  alt: "FixRight Plumbing Homepage",
-                  caption: "Homepage showcasing professional plumbing & heating services"
-                },
-                { 
-                  src: "/lovable-uploads/fr2.png", 
-                  alt: "FixRight Plumbing About Page",
-                  caption: "About page highlighting 15+ years of experience and qualifications"
-                },
-                { 
-                  src: "/lovable-uploads/fr3.png", 
-                  alt: "FixRight Plumbing Services",
-                  caption: "Comprehensive services page with emergency callout options"
-                },
-                { 
-                  src: "/lovable-uploads/fr4.png", 
-                  alt: "FixRight Plumbing Projects",
-                  caption: "Recent projects gallery with customer testimonials"
-                },
-                { 
-                  src: "/lovable-uploads/fr5.png", 
-                  alt: "FixRight Plumbing Contact",
-                  caption: "Contact page with emergency callout and quote request forms"
-                }
-              ]}
-              liveUrl="https://404codelab.com/fixright-plumbing/index.html"
-              gradient="accent"
-            />
-
-            {/* Shear Perfection */}
-            <ProjectSlideshow
-              title="Shear Perfection"
-              description="Hair & beauty salon website featuring online booking system, treatment galleries, and stylist profiles to showcase expertise and build client confidence."
-              features={[
-                { icon: <Palette className="h-6 w-6 text-accent" />, text: "" },
-                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Online appointment booking" },
-                { icon: <Eye className="h-5 w-5 text-accent/70 mr-3" />, text: "Treatment gallery showcase" },
-                { icon: <TrendingUp className="h-5 w-5 text-accent mr-3" />, text: "Stylist profiles and reviews" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/sp1.png", 
-                  alt: "Shear Perfection Homepage",
-                  caption: "Homepage showcasing beauty services and online booking"
-                },
-                { 
-                  src: "/lovable-uploads/sp2.png", 
-                  alt: "Shear Perfection About Page",
-                  caption: "About page featuring salon story, values, and expert team"
-                },
-                { 
-                  src: "/lovable-uploads/sp3.png", 
-                  alt: "Shear Perfection Treatments",
-                  caption: "Comprehensive treatments page with pricing and service packages"
-                },
-                { 
-                  src: "/lovable-uploads/sp4.png", 
-                  alt: "Shear Perfection Gallery",
-                  caption: "Before and after gallery showcasing hair transformations and beauty treatments"
-                },
-                { 
-                  src: "/lovable-uploads/sp5.png", 
-                  alt: "Shear Perfection Contact",
-                  caption: "Contact page with appointment booking form and salon information"
-                }
-              ]}
-              liveUrl="https://404codelab.com/shear-perfection/index.html"
-              gradient="primary"
-            />
-
-            {/* Padrino's Pizza */}
-            <ProjectSlideshow
-              title="Padrino's Pizza"
-              description="Takeaway pizza restaurant website with interactive menu builder, food gallery, and seamless online ordering system to boost delivery sales."
-              features={[
-                { icon: <Globe className="h-6 w-6 text-primary" />, text: "" },
-                { icon: <Code className="h-5 w-5 text-primary mr-3" />, text: "Interactive menu and pizza builder" },
-                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Appetizing food gallery" },
-                { icon: <Rocket className="h-5 w-5 text-primary mr-3" />, text: "One-click ordering system" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/pp1.png", 
-                  alt: "Padrino's Pizza Homepage",
-                  caption: "Homepage featuring authentic wood-fired pizzas and family tradition"
-                },
-                { 
-                  src: "/lovable-uploads/pp2.png", 
-                  alt: "Padrino's Pizza About",
-                  caption: "Family story and values with expert team profiles"
-                },
-                { 
-                  src: "/lovable-uploads/pp3.png", 
-                  alt: "Padrino's Pizza Menu",
-                  caption: "Complete menu with wood-fired pizzas, starters, and desserts"
-                },
-                { 
-                  src: "/lovable-uploads/pp4.png", 
-                  alt: "Padrino's Pizza Gallery",
-                  caption: "Mouth-watering pizza gallery and behind-the-scenes photos"
-                },
-                { 
-                  src: "/lovable-uploads/pp5.png", 
-                  alt: "Padrino's Pizza Contact",
-                  caption: "Contact page with delivery information and opening hours"
-                }
-              ]}
-              liveUrl="https://404codelab.com/padrinos-pizza/index.html"
-              gradient="primary"
-            />
-
-            {/* Sweet Crumbs */}
-            <ProjectSlideshow
-              title="Sweet Crumbs"
-              description="Custom cake shop website featuring flavor browsing, cake galleries, and personalized order forms to help customers create their dream celebrations."
-              features={[
-                { icon: <Palette className="h-6 w-6 text-accent" />, text: "" },
-                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Interactive flavor and design galleries" },
-                { icon: <Code className="h-5 w-5 text-accent/70 mr-3" />, text: "Custom order form builder" },
-                { icon: <Users className="h-5 w-5 text-accent mr-3" />, text: "Event consultation booking" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/sc1.png", 
-                  alt: "Sweet Crumbs Homepage",
-                  caption: "Homepage featuring premium chocolate cake with hero section"
-                },
-                { 
-                  src: "/lovable-uploads/sc2.png", 
-                  alt: "Sweet Crumbs About Page",
-                  caption: "About page showcasing team and baking expertise"
-                },
-                { 
-                  src: "/lovable-uploads/sc3.png", 
-                  alt: "Sweet Crumbs Flavours",
-                  caption: "Interactive flavour selection and pricing page"
-                },
-                { 
-                  src: "/lovable-uploads/sc4.png", 
-                  alt: "Sweet Crumbs Gallery",
-                  caption: "Gallery showcasing custom cake portfolio"
-                },
-                { 
-                  src: "/lovable-uploads/sc5.png", 
-                  alt: "Sweet Crumbs Contact",
-                  caption: "Contact page with cake order enquiry form"
-                }
-              ]}
-              liveUrl="https://404codelab.com/sweet-crumbs/index.html"
-              gradient="accent"
-            />
-
-            {/* Happy Paws */}
-            <ProjectSlideshow
-              title="Happy Paws"
-              description="Dog grooming & daycare website with service galleries, staff profiles, and online booking to help pet owners find trusted care for their furry friends."
-              features={[
-                { icon: <Users className="h-6 w-6 text-accent" />, text: "" },
-                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "Before/after grooming galleries" },
-                { icon: <Users className="h-5 w-5 text-accent/70 mr-3" />, text: "Staff profiles and credentials" },
-                { icon: <Rocket className="h-5 w-5 text-accent mr-3" />, text: "Online booking and scheduling" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/hp1.png", 
-                  alt: "Happy Paws Homepage",
-                  caption: "Homepage featuring premium dog grooming and daycare services"
-                },
-                { 
-                  src: "/lovable-uploads/hp2.png", 
-                  alt: "Happy Paws About",
-                  caption: "About page showcasing team expertise and facility features"
-                },
-                { 
-                  src: "/lovable-uploads/hp3.png", 
-                  alt: "Happy Paws Services",
-                  caption: "Comprehensive services page with grooming packages and daycare options"
-                },
-                { 
-                  src: "/lovable-uploads/hp4.png", 
-                  alt: "Happy Paws Gallery",
-                  caption: "Before and after gallery showcasing grooming transformations"
-                },
-                { 
-                  src: "/lovable-uploads/hp5.png", 
-                  alt: "Happy Paws Contact",
-                  caption: "Contact page with appointment booking and emergency services"
-                }
-              ]}
-              liveUrl="https://404codelab.com/happy-paws/index.html"
-              gradient="primary"
-            />
-
-            {/* Crafted Joinery */}
-            <ProjectSlideshow
-              title="Crafted Joinery"
-              description="Bespoke joinery portfolio website showcasing handcrafted furniture, project galleries, and consultation booking to attract high-value custom work clients."
-              features={[
-                { icon: <Code className="h-6 w-6 text-primary" />, text: "" },
-                { icon: <Eye className="h-5 w-5 text-primary mr-3" />, text: "High-quality project photo galleries" },
-                { icon: <Palette className="h-5 w-5 text-accent mr-3" />, text: "Material and finish showcases" },
-                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Consultation booking system" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/cj1.png", 
-                  alt: "Crafted Joinery Homepage",
-                  caption: "Homepage featuring bespoke joinery and kitchen fitting services"
-                },
-                { 
-                  src: "/lovable-uploads/cj2.png", 
-                  alt: "Crafted Joinery About",
-                  caption: "About page showcasing craftsman expertise and workshop facilities"
-                },
-                { 
-                  src: "/lovable-uploads/cj3.png", 
-                  alt: "Crafted Joinery Services",
-                  caption: "Comprehensive services page with kitchen fitting and bespoke furniture options"
-                },
-                { 
-                  src: "/lovable-uploads/cj4.png", 
-                  alt: "Crafted Joinery Portfolio",
-                  caption: "Portfolio gallery showcasing completed projects and craftsmanship quality"
-                },
-                { 
-                  src: "/lovable-uploads/cj5.png", 
-                  alt: "Crafted Joinery Contact",
-                  caption: "Contact page with quote request form and service areas coverage"
-                }
-              ]}
-              liveUrl="https://404codelab.com/crafted-joinery/index.html"
-              gradient="primary"
-            />
-
-            {/* IronHouse Gym */}
-            <ProjectSlideshow
-              title="IronHouse Gym"
-              description="Bold gym website featuring class timetables, trainer profiles, and membership sign-up to motivate visitors and convert them into dedicated members."
-              features={[
-                { icon: <Zap className="h-6 w-6 text-primary" />, text: "" },
-                { icon: <TrendingUp className="h-5 w-5 text-primary mr-3" />, text: "Interactive class timetables" },
-                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Trainer profiles and specialties" },
-                { icon: <Rocket className="h-5 w-5 text-primary mr-3" />, text: "Online membership sign-up" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/ih1.png", 
-                  alt: "IronHouse Gym Homepage",
-                  caption: "Homepage featuring strength revolution messaging"
-                },
-                { 
-                  src: "/lovable-uploads/ih2.png", 
-                  alt: "IronHouse Gym About Page",
-                  caption: "About page showcasing gym values and community"
-                },
-                { 
-                  src: "/lovable-uploads/ih3.png", 
-                  alt: "IronHouse Gym Timetable",
-                  caption: "Interactive class timetable and booking system"
-                },
-                { 
-                  src: "/lovable-uploads/ih4.png", 
-                  alt: "IronHouse Gym Trainers",
-                  caption: "Trainer profiles and specialties showcase"
-                },
-                { 
-                  src: "/lovable-uploads/ih5.png", 
-                  alt: "IronHouse Gym Contact",
-                  caption: "Contact page with membership options"
-                }
-              ]}
-              liveUrl="https://404codelab.com/ironhouse-gym/index.html"
-              gradient="primary"
-            />
-
-            {/* Inkspire */}
-            <ProjectSlideshow
-              title="Inkspire"
-              description="Professional tattoo parlor website featuring artist portfolios, design galleries, and consultation booking to help clients find the perfect artist for their vision."
-              features={[
-                { icon: <Palette className="h-6 w-6 text-primary" />, text: "" },
-                { icon: <Users className="h-5 w-5 text-primary mr-3" />, text: "Detailed artist bios and portfolios" },
-                { icon: <Eye className="h-5 w-5 text-accent mr-3" />, text: "High-res tattoo gallery showcase" },
-                { icon: <Code className="h-5 w-5 text-primary mr-3" />, text: "Design consultation booking" }
-              ]}
-              images={[
-                { 
-                  src: "/lovable-uploads/is1.png", 
-                  alt: "Inkspire Homepage",
-                  caption: "Homepage featuring premium tattoo artistry in the heart of London"
-                },
-                { 
-                  src: "/lovable-uploads/is2.png", 
-                  alt: "Inkspire About Page",
-                  caption: "About page showcasing studio story, values, and hygiene standards"
-                },
-                { 
-                  src: "/lovable-uploads/is3.png", 
-                  alt: "Inkspire Artists",
-                  caption: "Meet our talented artists with unique styles and specialties"
-                },
-                { 
-                  src: "/lovable-uploads/is4.png", 
-                  alt: "Inkspire Gallery",
-                  caption: "Tattoo gallery showcasing exceptional artistry and diverse styles"
-                },
-                { 
-                  src: "/lovable-uploads/is5.png", 
-                  alt: "Inkspire Contact",
-                  caption: "Contact page with consultation booking and studio location"
-                }
-              ]}
-              liveUrl="https://404codelab.com/inkspire/index.html"
-              gradient="primary"
-            />
-
-          </div>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Loading projects...</p>
+            </div>
+          ) : projects && projects.length > 0 ? (
+            <div className="space-y-12">
+              {projects.map((project, index) => (
+                <ProjectSlideshow
+                  key={project.id}
+                  title={project.name}
+                  description={project.description}
+                  features={[
+                    { icon: getFeatureIcon(index), text: "" },
+                    ...(project.features || []).slice(0, 3).map((feature, i) => ({
+                      icon: getFeatureItemIcon(i),
+                      text: feature
+                    }))
+                  ]}
+                  images={(project.screenshots || []).map((screenshot, i) => ({
+                    src: screenshot,
+                    alt: `${project.name} Screenshot ${i + 1}`,
+                    caption: `${project.name} - View ${i + 1}`
+                  }))}
+                  liveUrl={project.project_url || undefined}
+                  gradient={index % 2 === 0 ? "primary" : "accent"}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No projects to display yet.</p>
+            </div>
+          )}
 
           {/* CTA Section */}
           <div className="text-center mt-16">
