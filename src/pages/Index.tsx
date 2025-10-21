@@ -73,6 +73,18 @@ const Index = () => {
       {/* Services Section */}
       <section className="py-20 px-4 bg-muted/30">
         <div className="max-w-6xl mx-auto">
+          {/* SEO Introduction */}
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Expert Digital Solutions for Modern Businesses
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+              At 404 Code Lab, we specialise in creating cutting-edge mobile games, custom applications, and responsive web designs. 
+              Our team of experienced developers and designers transforms your vision into high-performance digital products that 
+              engage users and drive results. From concept to launch, we deliver pixel-perfect solutions tailored to your business needs.
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="bg-card border-border hover:border-primary/50 transition-all duration-300 hover:transform hover:scale-105">
               <CardContent className="p-8 text-center">
