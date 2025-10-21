@@ -268,22 +268,22 @@ export default function CreateEditFeaturedContentDialog({ open, onOpenChange, co
               </div>
 
               {showPreview && (
-                <Card className={`overflow-hidden border ${formValues.border_color ? `border-${formValues.border_color}/30` : "border-primary/30"}`}>
-                  <CardContent className={`p-4 bg-gradient-to-br ${formValues.gradient_from ? `from-${formValues.gradient_from}/5` : "from-primary/5"} ${formValues.gradient_to ? `to-${formValues.gradient_to}/5` : "to-accent/5"}`}>
-                    <div className="flex items-start gap-3">
+                <Card className={`overflow-hidden border ${formValues.border_color ? `border-${formValues.border_color}/20` : "border-primary/20"}`}>
+                  <CardContent className={`p-3 bg-gradient-to-br ${formValues.gradient_from ? `from-${formValues.gradient_from}/5` : "from-primary/5"} ${formValues.gradient_to ? `to-${formValues.gradient_to}/5` : "to-accent/5"}`}>
+                    <div className="flex items-start gap-2">
                       {formValues.icon && (
-                        <div className="text-2xl">{formValues.icon}</div>
+                        <div className="text-xl">{formValues.icon}</div>
                       )}
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold mb-1">{formValues.title || "Title"}</h3>
+                        <h3 className="text-base font-semibold mb-0.5">{formValues.title || "Title"}</h3>
                         {formValues.subtitle && (
-                          <p className="text-sm text-muted-foreground mb-1">{formValues.subtitle}</p>
+                          <p className="text-xs text-muted-foreground mb-0.5">{formValues.subtitle}</p>
                         )}
                         {formValues.description && (
-                          <p className="text-xs text-muted-foreground/80 mb-3">{formValues.description}</p>
+                          <p className="text-xs text-muted-foreground/70 mb-2">{formValues.description}</p>
                         )}
-                        <Button variant="default" size="sm" className="tap-target">
-                          {formValues.cta_text || "CTA Text"} <ArrowRight className="ml-2 h-3 w-3" />
+                        <Button variant="default" size="sm" className="tap-target h-8 text-xs px-3">
+                          {formValues.cta_text || "CTA Text"} <ArrowRight className="ml-1.5 h-3 w-3" />
                         </Button>
                       </div>
                     </div>

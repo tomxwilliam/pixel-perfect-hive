@@ -26,34 +26,34 @@ const FeaturedContentSection = () => {
         return (
           <Card 
             key={content.id}
-            className={`mb-6 overflow-hidden border border-${borderColor}/30 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-2xl mx-auto`}
+            className={`mb-4 overflow-hidden border border-${borderColor}/20 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-xl mx-auto`}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
+            <CardContent className="p-3">
+              <div className="flex items-start gap-2">
                 {content.icon && (
-                  <div className="text-2xl">{content.icon}</div>
+                  <div className="text-xl">{content.icon}</div>
                 )}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-1">{content.title}</h3>
+                  <h3 className="text-base font-semibold mb-0.5">{content.title}</h3>
                   {content.subtitle && (
-                    <p className="text-sm text-muted-foreground mb-1">{content.subtitle}</p>
+                    <p className="text-xs text-muted-foreground mb-0.5">{content.subtitle}</p>
                   )}
                   {content.description && (
-                    <p className="text-xs text-muted-foreground/80 mb-3">{content.description}</p>
+                    <p className="text-xs text-muted-foreground/70 mb-2">{content.description}</p>
                   )}
                   {isExternalLink ? (
                     <Button 
                       variant="default" 
                       size="sm"
                       onClick={() => window.open(content.cta_link, '_blank')}
-                      className="tap-target"
+                      className="tap-target h-8 text-xs px-3"
                     >
-                      {content.cta_text} <ArrowRight className="ml-2 h-3 w-3" />
+                      {content.cta_text} <ArrowRight className="ml-1.5 h-3 w-3" />
                     </Button>
                   ) : (
                     <Link to={content.cta_link}>
-                      <Button variant="default" size="sm" className="tap-target">
-                        {content.cta_text} <ArrowRight className="ml-2 h-3 w-3" />
+                      <Button variant="default" size="sm" className="tap-target h-8 text-xs px-3">
+                        {content.cta_text} <ArrowRight className="ml-1.5 h-3 w-3" />
                       </Button>
                     </Link>
                   )}
