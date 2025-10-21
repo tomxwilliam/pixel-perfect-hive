@@ -274,8 +274,8 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
         // BUSINESS LOGIC: For company domain emails, they'll automatically be admin when they sign up
         // This is handled by the handle_new_user() trigger in the database
         toast({
-          title: "Admin Role Configured",
-          description: `${email} will automatically have admin privileges when they sign up via the automatic role assignment for company domain emails.`,
+          title: "User Must Sign Up First",
+          description: `${email} will automatically receive admin privileges when they create an account. No action needed - this is handled automatically for @404codelab.com emails.`,
         });
         
         setNewAdminEmail('');
@@ -283,7 +283,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
         // User doesn't exist and it's not a @404codelab.com email
         toast({
           title: "User Not Found",
-          description: `No user found with email ${email}. The user must sign up and create an account first before being promoted to admin.`,
+          description: `No user found with email ${email}. The user must sign up first before you can promote them to admin.`,
           variant: "destructive",
         });
       }
