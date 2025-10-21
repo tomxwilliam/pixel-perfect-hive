@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useCreateFeaturedContent, useUpdateFeaturedContent, FeaturedContent } from "@/hooks/useFeaturedContent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
@@ -65,25 +65,51 @@ export default function CreateEditFeaturedContentDialog({ open, onOpenChange, co
     formState: { errors },
   } = useForm<FeaturedContentForm>({
     resolver: zodResolver(featuredContentSchema),
-    defaultValues: content ? {
-      title: content.title,
-      subtitle: content.subtitle || "",
-      description: content.description || "",
-      icon: content.icon || "",
-      cta_text: content.cta_text,
-      cta_link: content.cta_link,
-      gradient_from: content.gradient_from || "",
-      gradient_to: content.gradient_to || "",
-      border_color: content.border_color || "",
-      is_active: content.is_active,
-      start_date: content.start_date || "",
-      end_date: content.end_date || "",
-      display_order: content.display_order,
-    } : {
+    defaultValues: {
       is_active: false,
       display_order: 0,
+      title: "",
+      cta_text: "",
+      cta_link: "",
     },
   });
+
+  // Reset form when content changes (for edit mode)
+  useEffect(() => {
+    if (content) {
+      reset({
+        title: content.title,
+        subtitle: content.subtitle || "",
+        description: content.description || "",
+        icon: content.icon || "",
+        cta_text: content.cta_text,
+        cta_link: content.cta_link,
+        gradient_from: content.gradient_from || "",
+        gradient_to: content.gradient_to || "",
+        border_color: content.border_color || "",
+        is_active: content.is_active,
+        start_date: content.start_date || "",
+        end_date: content.end_date || "",
+        display_order: content.display_order,
+      });
+    } else {
+      reset({
+        is_active: false,
+        display_order: 0,
+        title: "",
+        cta_text: "",
+        cta_link: "",
+        subtitle: "",
+        description: "",
+        icon: "",
+        gradient_from: "",
+        gradient_to: "",
+        border_color: "",
+        start_date: "",
+        end_date: "",
+      });
+    }
+  }, [content, reset]);
 
   const formValues = watch();
 
