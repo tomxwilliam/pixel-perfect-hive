@@ -243,8 +243,11 @@ const Contact = () => {
                     <Phone className="h-6 w-6 text-green-400 mr-3" />
                     <h3 className="text-xl font-bold text-green-300">WhatsApp Us</h3>
                   </div>
-                  <p className="text-muted-foreground mb-6">
-                    Need instant support? Message us on WhatsApp for quick responses! 💬
+                  <p className="text-muted-foreground mb-4">
+                    Need instant support? Message us on WhatsApp for quick responses!
+                  </p>
+                  <p className="text-muted-foreground mb-6 font-medium">
+                    📱 07496 295759
                   </p>
                   <Button 
                     onClick={() => window.open('https://wa.me/447496295759?text=Hi%20404CodeLabs!%20I%27m%20interested%20in%20your%20services.', '_blank')}
