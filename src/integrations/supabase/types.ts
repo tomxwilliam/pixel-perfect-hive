@@ -993,6 +993,66 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_content: {
+        Row: {
+          border_color: string | null
+          created_at: string | null
+          created_by: string | null
+          cta_link: string
+          cta_text: string
+          description: string | null
+          display_order: number | null
+          end_date: string | null
+          gradient_from: string | null
+          gradient_to: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          start_date: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          border_color?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_link: string
+          cta_text: string
+          description?: string | null
+          display_order?: number | null
+          end_date?: string | null
+          gradient_from?: string | null
+          gradient_to?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          start_date?: string | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          border_color?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_link?: string
+          cta_text?: string
+          description?: string | null
+          display_order?: number | null
+          end_date?: string | null
+          gradient_from?: string | null
+          gradient_to?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          start_date?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       file_uploads: {
         Row: {
           entity_id: string | null

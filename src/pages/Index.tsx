@@ -1,11 +1,70 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Zap, Users } from "lucide-react";
+import { ArrowDown, Download, ExternalLink, Gamepad2, Smartphone, Globe, Code, Zap, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
+import { useFeaturedContent } from "@/hooks/useFeaturedContent";
+
+const FeaturedContentSection = () => {
+  const { data: featuredContent } = useFeaturedContent();
+
+  if (!featuredContent || featuredContent.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      {featuredContent.map((content) => {
+        const isExternalLink = content.cta_link.startsWith('http');
+        const gradientFrom = content.gradient_from || "primary";
+        const gradientTo = content.gradient_to || "accent";
+        const borderColor = content.border_color || "primary";
+
+        return (
+          <Card 
+            key={content.id}
+            className={`mb-8 overflow-hidden border-2 border-${borderColor}/50 bg-gradient-to-br from-${gradientFrom}/10 to-${gradientTo}/10 animate-in fade-in-0 slide-in-from-bottom-4 card-premium max-w-4xl mx-auto`}
+          >
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-start gap-4 md:gap-6">
+                {content.icon && (
+                  <div className="text-4xl md:text-5xl">{content.icon}</div>
+                )}
+                <div className="flex-1">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">{content.title}</h3>
+                  {content.subtitle && (
+                    <p className="text-sm md:text-base text-muted-foreground mb-2">{content.subtitle}</p>
+                  )}
+                  {content.description && (
+                    <p className="text-xs md:text-sm text-muted-foreground mb-4">{content.description}</p>
+                  )}
+                  {isExternalLink ? (
+                    <Button 
+                      variant="default" 
+                      onClick={() => window.open(content.cta_link, '_blank')}
+                      className="btn-glow tap-target"
+                    >
+                      {content.cta_text} <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Link to={content.cta_link}>
+                      <Button variant="default" className="btn-glow tap-target">
+                        {content.cta_text} <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </>
+  );
+};
 const Index = () => {
   return (
     <>
@@ -45,23 +104,7 @@ const Index = () => {
             Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
           </p>
 
-          {/* Featured Game - Only show from 2026 onwards */}
-          {new Date().getFullYear() >= 2026 && (
-            <Card className="mb-8 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 max-w-md mx-auto">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <span className="text-2xl mr-2">🐝</span>
-                  <h3 className="text-xl font-bold text-yellow-600 dark:text-yellow-300">Now Featuring: BeeVerse</h3>
-                </div>
-                <p className="mb-4 text-foreground">The ultimate idle bee empire game.</p>
-                <p className="text-sm text-muted-foreground mb-4">Download now on iPhone.</p>
-                <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
-                  <Download className="mr-2 h-4 w-4" />
-                  App Store
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+          <FeaturedContentSection />
 
           <div className="flex items-center justify-center text-muted-foreground animate-bounce">
             <span className="mr-2">Explore Our Work</span>
