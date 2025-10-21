@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
-import { FaTiktok, FaDiscord, FaXTwitter, FaBehance } from "react-icons/fa6";
+import { FaTiktok, FaXTwitter, FaBehance } from "react-icons/fa6";
 import { useTheme } from "@/hooks/useTheme";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
 
@@ -45,9 +45,6 @@ export const Footer = () => {
               </a>
               <a href="https://www.tiktok.com/@404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <FaTiktok className="h-5 w-5" />
-              </a>
-              <a href="https://discord.gg/KBq4nVVHug" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <FaDiscord className="h-5 w-5" />
               </a>
               <a href="https://www.behance.net/404codelab" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <FaBehance className="h-5 w-5" />
