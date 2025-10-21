@@ -46,8 +46,7 @@ export const useCustomerStats = () => {
 
       // Fetch invoice data - admin sees all, customers see their own
       // Use isAdmin from the auth context (already based on user_roles table)
-      const { isAdmin: adminStatus } = useAuth();
-      const isAdmin = adminStatus;
+      const isAdmin = profile?.role === 'admin';
       
       const invoiceQuery = supabase
         .from('invoices')
