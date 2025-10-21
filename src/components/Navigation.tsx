@@ -47,7 +47,7 @@ const Navigation = () => {
   return (
     <nav className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 md:h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
               <div className="w-24 h-24 flex items-center justify-center">
@@ -187,7 +187,8 @@ const Navigation = () => {
                 size="sm"
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
-                className="min-h-[44px] min-w-[44px] p-2"
+                aria-label="Toggle navigation menu"
+                className="tap-target"
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -198,11 +199,11 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="px-4 pt-4 pb-6 space-y-2 bg-background border-b border-border shadow-lg">
+        <div className="md:hidden fixed inset-0 top-14 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in-0">
+          <div className="bg-background border-b border-border shadow-xl animate-in slide-in-from-top-2 px-4 pt-4 pb-6 space-y-2">
             <Link
               to="/"
-              className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors min-h-[44px] flex items-center"
+              className="text-foreground hover:text-primary hover:bg-accent block px-4 py-3 text-base font-medium rounded-lg transition-colors tap-target"
               onClick={() => setIsOpen(false)}
             >
               <Home className="inline-block w-5 h-5 mr-3" />

@@ -14,6 +14,11 @@ const trackPartnerClick = (location: string) => {
   }
 };
 
+const handlePartnerClick = (location: string) => {
+  trackPartnerClick(location);
+  window.open(AFFILIATE_URL, '_blank', 'noopener,noreferrer');
+};
+
 export default function HostingPartner() {
   const features = [
     {
@@ -129,19 +134,12 @@ export default function HostingPartner() {
               <div className="flex flex-col items-center gap-4 pt-4">
                 <Button 
                   size="lg"
-                  className="text-lg px-8 py-6"
-                  asChild
-                  onClick={() => trackPartnerClick('hero_cta')}
+                  className="text-lg px-8 py-6 btn-glow tap-target"
+                  onClick={() => handlePartnerClick('hero_cta')}
+                  aria-label="Open 20i partner website in new tab"
                 >
-                  <a 
-                    href={AFFILIATE_URL} 
-                    target="_blank" 
-                    rel="noopener noreferrer nofollow sponsored"
-                    className="flex items-center gap-2"
-                  >
-                    Go to 20i
-                    <ExternalLink className="h-5 w-5" />
-                  </a>
+                  Go to 20i
+                  <ExternalLink className="h-5 w-5" />
                 </Button>
                 
                 <p className="text-sm text-muted-foreground">
@@ -159,15 +157,15 @@ export default function HostingPartner() {
               Why 20i?
             </h2>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {features.map((feature, index) => (
-                <Card key={index}>
+                <Card key={index} className="card-premium">
                   <CardHeader>
-                    <feature.icon className="h-10 w-10 text-primary mb-2" />
-                    <CardTitle>{feature.title}</CardTitle>
+                    <feature.icon className="h-10 w-10 md:h-12 md:w-12 text-primary mb-3" />
+                    <CardTitle className="text-lg md:text-xl">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-base">
+                    <CardDescription className="text-sm md:text-base">
                       {feature.description}
                     </CardDescription>
                   </CardContent>
@@ -271,18 +269,12 @@ export default function HostingPartner() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button 
                     size="lg"
-                    asChild
-                    onClick={() => trackPartnerClick('bottom_cta')}
+                    className="btn-glow tap-target"
+                    onClick={() => handlePartnerClick('bottom_cta')}
+                    aria-label="Open 20i partner website in new tab"
                   >
-                    <a 
-                      href={AFFILIATE_URL} 
-                      target="_blank" 
-                      rel="noopener noreferrer nofollow sponsored"
-                      className="flex items-center gap-2"
-                    >
-                      Go to 20i
-                      <ExternalLink className="h-5 w-5" />
-                    </a>
+                    Go to 20i
+                    <ExternalLink className="h-5 w-5" />
                   </Button>
                   
                   <Button size="lg" variant="outline" asChild>

@@ -49,7 +49,7 @@ export const StaticNavigation = () => {
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
@@ -197,7 +197,9 @@ export const StaticNavigation = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-muted-foreground hover:text-primary"
+              aria-expanded={isOpen}
+              aria-label="Toggle navigation menu"
+              className="tap-target"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -206,8 +208,8 @@ export const StaticNavigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background border-t border-border">
+          <div className="md:hidden fixed inset-0 top-14 z-50 bg-black/50 backdrop-blur-sm animate-in fade-in-0">
+            <div className="bg-background border-b border-border shadow-xl animate-in slide-in-from-top-2 px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <Link
                 to="/"
                 className="text-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium transition-colors"

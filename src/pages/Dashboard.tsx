@@ -19,6 +19,7 @@ import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
 import { CustomerAppointments } from '@/components/customer/CustomerAppointments';
+import PartnerBanner from '@/components/partner/PartnerBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   User, 
@@ -105,7 +106,7 @@ const Dashboard = () => {
       <div className="pt-6 pb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Welcome Header - Mobile Optimised */}
-          <div className={`${isMobile ? 'flex flex-col space-y-4' : 'flex items-center justify-between'} mb-8`}>
+          <div className={`${isMobile ? 'flex flex-col space-y-4' : 'flex items-center justify-between'} mb-6`}>
             <div className={`flex ${isMobile ? 'flex-col items-center text-center space-y-3' : 'items-center space-x-4'}`}>
               <Avatar className={`${isMobile ? 'h-20 w-20' : 'h-16 w-16'}`}>
                 <AvatarImage src={profile?.avatar_url || ''} />
@@ -115,7 +116,7 @@ const Dashboard = () => {
               </Avatar>
               <div>
                 <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>
-                  Welcome back, {profile?.first_name || 'there'}!
+                  👋 Welcome back, {profile?.first_name || 'there'}!
                 </h1>
                 <p className="text-muted-foreground">
                   {profile?.company_name && `${profile.company_name} • `}
@@ -128,11 +129,16 @@ const Dashboard = () => {
             </Badge>
           </div>
 
+          {/* Partner Banner */}
+          <div className="mb-6">
+            <PartnerBanner />
+          </div>
+
           {/* Stats Overview - Mobile Grid */}
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-3 gap-6'} mb-8`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'} mb-6`}>
             {statsCards.map((stat, index) => (
-              <Card key={index}>
-                <CardContent className="flex items-center p-6">
+              <Card key={index} className="card-premium">
+                <CardContent className="flex items-center p-5">
                   <div className="flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg mr-4">
                     <stat.icon className="h-6 w-6 text-primary" />
                   </div>
@@ -148,21 +154,16 @@ const Dashboard = () => {
           {/* Quick Actions - Mobile Grid */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'}`}>
+            <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'}`}>
               {quickActions.map((action, index) => (
                 <Link key={index} to={action.href}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                    <CardContent className={`${isMobile ? 'p-4' : 'p-6'} relative`}>
-                      {action.title === 'AI Assistant' && (
-                        <Badge variant="default" className="absolute top-2 right-2 text-xs bg-gradient-to-r from-purple-500 to-pink-500">
-                          Live
-                        </Badge>
-                      )}
+                  <Card className="card-premium hover:scale-[1.02] transition-transform tap-target cursor-pointer">
+                    <CardContent className={`${isMobile ? 'p-4' : 'p-5'} relative`}>
                       <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg ${action.color} text-white mb-3`}>
                         <action.icon className="h-5 w-5" />
                       </div>
-                      <h3 className="font-semibold mb-1">{action.title}</h3>
-                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>{action.description}</p>
+                      <h3 className="font-semibold mb-1 text-sm md:text-base">{action.title}</h3>
+                      <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground line-clamp-2`}>{action.description}</p>
                     </CardContent>
                   </Card>
                 </Link>
