@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { DomainPricingManagement } from "@/components/admin/DomainPricingManagement";
 
 interface DomainHostingSettingsProps {
   isSuperAdmin: boolean;
@@ -379,7 +378,22 @@ export default function DomainHostingSettings({ isSuperAdmin }: DomainHostingSet
         </TabsContent>
 
         <TabsContent value="pricing" className="space-y-4">
-          <DomainPricingManagement />
+          <Card>
+            <CardHeader>
+              <CardTitle>Domain Pricing (Legacy)</CardTitle>
+              <CardDescription>
+                Domain pricing management has been deprecated. We now partner with 20i for domain registration.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                <p className="text-sm text-amber-900 dark:text-amber-100">
+                  This feature is no longer active. Domain and hosting services are now provided through our partnership with 20i.
+                  Customers can register domains and purchase hosting at <a href="/partner/hosting" className="underline font-semibold">our partner page</a>.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="nameservers" className="space-y-4">

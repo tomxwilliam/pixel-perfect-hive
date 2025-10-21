@@ -16,8 +16,6 @@ import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminCalendar } from '@/components/admin/AdminCalendar';
 import { AdminCommunications } from '@/components/admin/AdminCommunications';
 // Social media removed
-import AdminDomainManagement from '@/components/admin/AdminDomainManagement';
-import AdminHostingManagement from '@/components/admin/AdminHostingManagement';
 import AdminSettings from '@/components/admin/AdminSettings';
 import { AdminAccounting } from '@/components/admin/AdminAccounting';
 import { AdminGames } from '@/components/admin/AdminGames';
@@ -117,14 +115,6 @@ const AdminDashboard = () => {
               <Smartphone className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Apps</span>
             </MobileTabsTrigger>
-            <MobileTabsTrigger value="domains" className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Domains</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="hosting" className="flex items-center gap-2">
-              <Server className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Hosting</span>
-            </MobileTabsTrigger>
             {isAdmin && (
               <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
@@ -218,19 +208,6 @@ const AdminDashboard = () => {
           <MobileTabsContent value="apps">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminAppProjects />
-            </React.Suspense>
-          </MobileTabsContent>
-
-          <MobileTabsContent value="domains">
-            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-              <AdminDomainManagement />
-            </React.Suspense>
-          </MobileTabsContent>
-
-
-          <MobileTabsContent value="hosting">
-            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-              <AdminHostingManagement />
             </React.Suspense>
           </MobileTabsContent>
           

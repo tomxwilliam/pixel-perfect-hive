@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -22,7 +22,6 @@ import ProjectManagement from "./pages/ProjectManagement";
 import NotFound from "./pages/NotFound";
 import Support from "./pages/Support";
 import UserSettings from "./pages/UserSettings";
-import HostingDomain from "./pages/HostingDomain";
 
 // Portfolio pages
 import GamePortfolio from "./pages/GamePortfolio";
@@ -36,12 +35,12 @@ import AIIntegration from "./pages/services/AIIntegration";
 import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
-import Domains from "./pages/Domains";
-import CustomerOrders from "./pages/CustomerOrders";
+
+// Partner pages
+import HostingPartner from "./pages/partner/HostingPartner";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminDomainOrders from "./pages/admin/AdminDomainOrders";
 import { AdminAccounting } from "./components/admin/AdminAccounting";
 import AdminSettings from "./components/admin/AdminSettings";
 
@@ -128,12 +127,11 @@ const App = () => (
             <Route path="/dashboard/new-project" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
             <Route path="/dashboard/new-ticket" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
             <Route path="/dashboard/book-call" element={<ProtectedRoute><BookCall /></ProtectedRoute>} />
-            <Route path="/domains" element={<Domains />} />
-            <Route path="/hosting-domain" element={<HostingDomain />} />
-            <Route path="/account/orders" element={<ProtectedRoute><CustomerOrders /></ProtectedRoute>} />
+              
+            {/* Partner pages */}
+            <Route path="/partner/hosting" element={<HostingPartner />} />
               
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/admin/domains" element={<ProtectedRoute requireAdmin><AdminDomainOrders /></ProtectedRoute>} />
               <Route path="/project-management" element={
                 <ProtectedRoute requireCodeLabEmail={true}>
                   <ProjectManagement />
@@ -155,6 +153,14 @@ const App = () => (
               <Route path="/legal/terms" element={<TermsOfService />} />
               <Route path="/legal/refunds" element={<RefundsPolicy />} />
               <Route path="/legal/cookies" element={<CookiePolicy />} />
+              
+              {/* Legacy domain/hosting redirects */}
+              <Route path="/domains" element={<Navigate to="/partner/hosting" replace />} />
+              <Route path="/domain-search" element={<Navigate to="/partner/hosting" replace />} />
+              <Route path="/hosting" element={<Navigate to="/partner/hosting" replace />} />
+              <Route path="/hosting-domain" element={<Navigate to="/partner/hosting" replace />} />
+              <Route path="/billing/domains" element={<Navigate to="/partner/hosting" replace />} />
+              <Route path="/account/orders" element={<Navigate to="/partner/hosting" replace />} />
               
               {/* 404 page */}
               <Route path="/404" element={<NotFound />} />

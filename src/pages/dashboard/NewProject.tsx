@@ -19,7 +19,6 @@ import { AIIntegrationForm } from '@/components/project-forms/AIIntegrationForm'
 import { FileUpload, FileList } from '@/components/ui/file-upload';
 import { UploadedFile } from '@/hooks/useFileUpload';
 import { useIsMobile } from '@/hooks/use-mobile';
-import DomainSearch from '@/components/customer/DomainSearch';
 
 interface ProjectFormData {
   title: string;
@@ -427,16 +426,45 @@ const NewProject = () => {
                       </div>
                     )}
 
-                    {/* Step 4: Domain Registration */}
+                    {/* Step 4: Domain & Hosting */}
                     {currentStep === 4 && (
                       <div className="space-y-6">
                         <div>
-                          <h3 className="text-lg font-medium mb-4">Domain Registration (Optional)</h3>
+                          <h3 className="text-lg font-medium mb-4">Domain & Hosting</h3>
                           <p className="text-sm text-muted-foreground mb-6">
-                            Search and register a domain for your project. This is optional and can be done later.
+                            Need a domain and hosting? We partner with 20i for fast, secure UK hosting.
                           </p>
                         </div>
-                        <DomainSearch />
+                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              Get Hosting & Domains via 20i
+                            </CardTitle>
+                            <CardDescription>
+                              Fast UK hosting + domain registration through our trusted partner
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                              <p className="text-sm">
+                                ✓ Managed cloud & WordPress hosting<br />
+                                ✓ Domain registration & transfers<br />
+                                ✓ Free SSL certificates & migrations<br />
+                                ✓ 24/7 UK-based support
+                              </p>
+                            </div>
+                            <Button 
+                              className="w-full" 
+                              onClick={() => window.open('/partner/hosting', '_blank')}
+                              type="button"
+                            >
+                              Learn More About 20i Hosting
+                            </Button>
+                            <p className="text-xs text-muted-foreground text-center">
+                              We may earn a commission at no extra cost to you
+                            </p>
+                          </CardContent>
+                        </Card>
                       </div>
                     )}
 

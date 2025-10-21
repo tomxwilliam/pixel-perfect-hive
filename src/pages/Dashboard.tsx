@@ -15,7 +15,7 @@ import { CustomerProjects } from '@/components/customer/CustomerProjects';
 import { CustomerTickets } from '@/components/customer/CustomerTickets';
 import { CustomerInvoices } from '@/components/customer/CustomerInvoices';
 import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
-import CustomerDomainsHosting from '@/components/customer/CustomerDomainsHosting';
+
 import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
 import { CustomerAppointments } from '@/components/customer/CustomerAppointments';
@@ -72,10 +72,10 @@ const Dashboard = () => {
       color: 'bg-purple-500'
     },
     {
-      title: 'Search Domains',
-      description: 'Find your perfect domain',
+      title: 'Get Hosting & Domains (20i)',
+      description: 'Fast UK hosting + domains via our trusted partner.',
       icon: Server,
-      href: '/domains',
+      href: '/partner/hosting',
       color: 'bg-gradient-to-r from-cyan-500 to-blue-500'
     }
   ];
@@ -193,10 +193,6 @@ const Dashboard = () => {
                 <FileText className="h-4 w-4" />
                 Quotes
               </MobileTabsTrigger>
-              <MobileTabsTrigger value="domains" className="flex items-center gap-2">
-                <Server className="h-4 w-4" />
-                Domains & Hosting
-              </MobileTabsTrigger>
               <MobileTabsTrigger value="appointments" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Appointments
@@ -229,10 +225,6 @@ const Dashboard = () => {
 
           <MobileTabsContent value="quotes">
             <CustomerQuotes />
-          </MobileTabsContent>
-
-          <MobileTabsContent value="domains">
-            <CustomerDomainsHosting />
           </MobileTabsContent>
 
           <MobileTabsContent value="appointments">
