@@ -26,33 +26,34 @@ const FeaturedContentSection = () => {
         return (
           <Card 
             key={content.id}
-            className={`mb-8 overflow-hidden border-2 border-${borderColor}/50 bg-gradient-to-br from-${gradientFrom}/10 to-${gradientTo}/10 animate-in fade-in-0 slide-in-from-bottom-4 card-premium max-w-4xl mx-auto`}
+            className={`mb-6 overflow-hidden border border-${borderColor}/30 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-2xl mx-auto`}
           >
-            <CardContent className="p-6 md:p-8">
-              <div className="flex items-start gap-4 md:gap-6">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
                 {content.icon && (
-                  <div className="text-4xl md:text-5xl">{content.icon}</div>
+                  <div className="text-2xl">{content.icon}</div>
                 )}
                 <div className="flex-1">
-                  <h3 className="text-xl md:text-2xl font-bold mb-2">{content.title}</h3>
+                  <h3 className="text-lg font-semibold mb-1">{content.title}</h3>
                   {content.subtitle && (
-                    <p className="text-sm md:text-base text-muted-foreground mb-2">{content.subtitle}</p>
+                    <p className="text-sm text-muted-foreground mb-1">{content.subtitle}</p>
                   )}
                   {content.description && (
-                    <p className="text-xs md:text-sm text-muted-foreground mb-4">{content.description}</p>
+                    <p className="text-xs text-muted-foreground/80 mb-3">{content.description}</p>
                   )}
                   {isExternalLink ? (
                     <Button 
                       variant="default" 
+                      size="sm"
                       onClick={() => window.open(content.cta_link, '_blank')}
-                      className="btn-glow tap-target"
+                      className="tap-target"
                     >
-                      {content.cta_text} <ArrowRight className="ml-2 h-4 w-4" />
+                      {content.cta_text} <ArrowRight className="ml-2 h-3 w-3" />
                     </Button>
                   ) : (
                     <Link to={content.cta_link}>
-                      <Button variant="default" className="btn-glow tap-target">
-                        {content.cta_text} <ArrowRight className="ml-2 h-4 w-4" />
+                      <Button variant="default" size="sm" className="tap-target">
+                        {content.cta_text} <ArrowRight className="ml-2 h-3 w-3" />
                       </Button>
                     </Link>
                   )}
