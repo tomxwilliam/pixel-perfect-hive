@@ -26,7 +26,7 @@ const FeaturedContentSection = () => {
         return (
           <Card 
             key={content.id}
-            className={`mb-4 overflow-hidden border border-${borderColor}/20 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-sm mx-auto`}
+            className={`mb-4 overflow-hidden border border-${borderColor}/20 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-xs mx-auto`}
           >
             <CardContent className="p-3">
               <div className="flex items-start gap-2">
