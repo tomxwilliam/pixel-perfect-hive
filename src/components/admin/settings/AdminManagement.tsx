@@ -46,26 +46,15 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
 
   const fetchAdminUsers = async () => {
     try {
-      // Fetch user_roles with admin role and join with profiles
-      const { data, error } = await supabase
+      // Fetch user_roles with admin role
+      const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
-        .select(`
-          user_id,
-          role,
-          created_at,
-          profiles!inner(
-            id,
-            email,
-            first_name,
-            last_name,
-            created_at
-          )
-        `)
+        .select('user_id, role, created_at')
         .eq('role', 'admin')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching admin users:', error);
+      if (rolesError) {
+        console.error('Error fetching admin roles:', rolesError);
         toast({
           title: "Error",
           description: "Failed to fetch admin users",
@@ -74,18 +63,41 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
         return;
       }
 
-      // Extract profiles from the joined data
-      const adminProfiles = data?.map(item => {
-        const profile = Array.isArray(item.profiles) ? item.profiles[0] : item.profiles;
+      if (!userRoles || userRoles.length === 0) {
+        setAdminUsers([]);
+        return;
+      }
+
+      // Fetch profiles for all admin user IDs
+      const userIds = userRoles.map(role => role.user_id);
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, email, first_name, last_name, created_at')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching admin profiles:', profilesError);
+        toast({
+          title: "Error",
+          description: "Failed to fetch admin user details",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Merge the data
+      const adminProfiles = userRoles.map(role => {
+        const profile = profiles?.find(p => p.id === role.user_id);
         return {
-          id: profile.id,
-          email: profile.email,
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          created_at: profile.created_at,
-          role_created_at: item.created_at
+          id: profile?.id || role.user_id,
+          email: profile?.email || 'Unknown',
+          first_name: profile?.first_name,
+          last_name: profile?.last_name,
+          created_at: profile?.created_at,
+          role_created_at: role.created_at
         };
-      }) || [];
+      });
+      
       setAdminUsers(adminProfiles);
     } catch (error) {
       console.error('Error fetching admin users:', error);
