@@ -35,6 +35,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [requestFilter, setRequestFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -361,10 +362,25 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
     );
   }
 
+  const filteredRequests = adminRequests.filter(request => {
+    if (requestFilter === 'all') return true;
+    return request.status === requestFilter;
+  });
+
+  const pendingCount = adminRequests.filter(r => r.status === 'pending').length;
+
   return (
     <div className="space-y-6">
-      <div className="text-muted-foreground">
-        <p>Manage admin permissions and review admin access requests.</p>
+      <div className="flex items-center justify-between">
+        <div className="text-muted-foreground">
+          <p>Manage admin permissions and review admin access requests.</p>
+        </div>
+        {pendingCount > 0 && (
+          <Badge variant="destructive" className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {pendingCount} Pending Request{pendingCount !== 1 ? 's' : ''}
+          </Badge>
+        )}
       </div>
 
       {/* Promote User to Admin */}
@@ -470,20 +486,64 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
       {/* Admin Requests */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Admin Access Requests
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Admin Access Requests
+              {pendingCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {pendingCount} Pending
+                </Badge>
+              )}
+            </CardTitle>
+          </div>
+          <div className="flex gap-2 mt-4 flex-wrap">
+            <Button
+              size="sm"
+              variant={requestFilter === 'pending' ? 'default' : 'outline'}
+              onClick={() => setRequestFilter('pending')}
+            >
+              <Clock className="h-4 w-4 mr-2" />
+              Pending {pendingCount > 0 && `(${pendingCount})`}
+            </Button>
+            <Button
+              size="sm"
+              variant={requestFilter === 'approved' ? 'default' : 'outline'}
+              onClick={() => setRequestFilter('approved')}
+            >
+              <UserCheck className="h-4 w-4 mr-2" />
+              Approved
+            </Button>
+            <Button
+              size="sm"
+              variant={requestFilter === 'rejected' ? 'default' : 'outline'}
+              onClick={() => setRequestFilter('rejected')}
+            >
+              <UserX className="h-4 w-4 mr-2" />
+              Rejected
+            </Button>
+            <Button
+              size="sm"
+              variant={requestFilter === 'all' ? 'default' : 'outline'}
+              onClick={() => setRequestFilter('all')}
+            >
+              All
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          {adminRequests.length === 0 ? (
+          {filteredRequests.length === 0 ? (
             <div className="text-center py-8">
               <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No admin requests found</p>
+              <p className="text-muted-foreground">
+                {requestFilter === 'pending' 
+                  ? 'No pending admin requests' 
+                  : `No ${requestFilter} requests found`}
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {adminRequests.map((request) => (
+              {filteredRequests.map((request) => (
                 <div key={request.id} className={`p-4 border rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
                   <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
                     <div className={`flex items-center gap-3 ${isMobile ? 'mb-2' : ''}`}>
