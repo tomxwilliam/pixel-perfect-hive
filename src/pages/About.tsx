@@ -118,18 +118,91 @@ const About = () => {
             </Card>
           </div>
 
-          {/* Current Focus */}
+          {/* Services & Expertise Section - SEO Optimized */}
           <div className="mt-16">
-            <Card className="bg-gradient-to-r from-accent/10 to-primary/10 border-accent/30">
-              <CardContent className="p-8 text-center">
-                <div className="flex items-center justify-center mb-6">
-                  <span className="text-3xl mr-3">🐝</span>
-                  <h3 className="text-2xl font-bold text-accent">Currently Buzzing: BeeVerse</h3>
-                </div>
-                <p className="text-lg mb-6 max-w-2xl mx-auto text-foreground">Our flagship game BeeVerse showcases everything we stand for: addictive gameplay, smart systems, and polish that keeps players coming back. It's not just a game — it's a demonstration of our technical capabilities and design philosophy.</p>
-                <p className="text-accent font-medium">
-                  The tech stack behind Beevers is rock solid — and reusable across industries.
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4 text-foreground">
+                Professional Digital Development Services in Scotland
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                From web development to game design, we deliver custom solutions for businesses across the UK and worldwide
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              <Card className="bg-card border-border hover:border-primary/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold mb-4 text-primary">Custom Web Development</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Scotland-based web development studio specializing in responsive websites, progressive web applications, 
+                    and custom e-commerce solutions built with React, TypeScript, and modern frameworks.
+                  </p>
+                  <a href="/portfolio/web" className="text-primary hover:text-primary/80 font-medium">
+                    View Web Projects →
+                  </a>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-border hover:border-accent/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold mb-4 text-accent">Game Development Studio</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Independent game development creating engaging mobile games and browser-based gaming experiences. 
+                    Expert in Unity, game mechanics, and player retention systems.
+                  </p>
+                  <a href="/portfolio/games" className="text-accent hover:text-accent/80 font-medium">
+                    Explore Our Games →
+                  </a>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-border hover:border-primary/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold mb-4 text-primary">Mobile App Development</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Professional mobile application development for iOS and Android. Creating intuitive, 
+                    high-performance apps for startups and established businesses throughout Scotland and the UK.
+                  </p>
+                  <a href="/portfolio/apps" className="text-primary hover:text-primary/80 font-medium">
+                    View App Portfolio →
+                  </a>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-card border-border hover:border-accent/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold mb-4 text-accent">AI Integration Services</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Cutting-edge artificial intelligence integration for businesses. Chatbots, automation, 
+                    machine learning solutions, and custom AI implementations to enhance your digital products.
+                  </p>
+                  <a href="/services/ai-integration" className="text-accent hover:text-accent/80 font-medium">
+                    Learn About AI Services →
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Local SEO Section */}
+            <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-4 text-center text-foreground">
+                  Scottish Digital Development Studio Serving Global Clients
+                </h3>
+                <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-6">
+                  Based in Scotland, 404 Code Lab provides professional software development, web design, game development, 
+                  and mobile app creation services to clients across the United Kingdom and internationally. 
+                  We combine local Scottish creativity with global technical expertise.
                 </p>
+                <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+                  <span>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland-based</span>
+                  <span>•</span>
+                  <span>🇬🇧 UK-wide service</span>
+                  <span>•</span>
+                  <span>🌍 International clients</span>
+                  <span>•</span>
+                  <span>💼 Professional development</span>
+                </div>
               </CardContent>
             </Card>
           </div>
