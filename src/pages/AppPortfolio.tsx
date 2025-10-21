@@ -3,10 +3,241 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Smartphone, Zap, Code, TrendingUp, Star, Shield, CheckCircle, Users, Clock, Lightbulb } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Smartphone, Zap, Code, TrendingUp, Star, Shield, CheckCircle, Users, Clock, Lightbulb, ExternalLink, Download } from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { useAppProjects, AppProject } from "@/hooks/useAppProjects";
+
+const getStatusBadgeVariant = (status: string) => {
+  const colors: Record<string, { bg: string; text: string; border: string }> = {
+    completed: { bg: "bg-green-500/20", text: "text-green-500", border: "border-green-500/30" },
+    launched: { bg: "bg-green-500/20", text: "text-green-500", border: "border-green-500/30" },
+    in_development: { bg: "bg-primary/20", text: "text-primary", border: "border-primary/30" },
+    beta: { bg: "bg-accent/20", text: "text-accent", border: "border-accent/30" },
+    planning: { bg: "bg-muted/20", text: "text-muted-foreground", border: "border-muted/30" },
+  };
+  return colors[status] || colors.in_development;
+};
+
+const AppCard = ({ app, index }: { app: AppProject; index: number }) => {
+  const statusColors = getStatusBadgeVariant(app.status);
+  const isEven = index % 2 === 0;
+  
+  return (
+    <Card className={`${isEven ? "bg-gradient-to-br from-primary/5 to-accent/5" : "bg-gradient-to-br from-accent/5 to-primary/5"} border-border overflow-hidden`}>
+      <CardContent className="p-0">
+        <div className={`grid md:grid-cols-2 gap-6 ${isEven ? "" : "md:grid-flow-dense"}`}>
+          {/* Image Section */}
+          <div className={`relative ${isEven ? "" : "md:col-start-2"} h-64 md:h-auto`}>
+            {app.feature_image_url ? (
+              <img
+                src={app.feature_image_url}
+                alt={app.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                <Smartphone className="h-20 w-20 text-muted-foreground/30" />
+              </div>
+            )}
+            {app.is_featured && (
+              <Badge className="absolute top-4 right-4 bg-accent text-white border-0">
+                <Star className="h-3 w-3 mr-1" />
+                Featured
+              </Badge>
+            )}
+          </div>
+
+          {/* Content Section */}
+          <div className={`p-8 flex flex-col justify-center ${isEven ? "" : "md:col-start-1 md:row-start-1"}`}>
+            <div className="flex items-start gap-3 mb-4">
+              {app.logo_url && (
+                <img
+                  src={app.logo_url}
+                  alt={`${app.name} logo`}
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
+              )}
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-foreground mb-1">{app.name}</h3>
+                {app.client_name && (
+                  <p className="text-sm text-muted-foreground">Client: {app.client_name}</p>
+                )}
+              </div>
+            </div>
+
+            <p className="text-muted-foreground mb-4">{app.description}</p>
+
+            {/* Features */}
+            {app.features && app.features.length > 0 && (
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold text-foreground mb-2">Key Features:</h4>
+                <ul className="space-y-1">
+                  {app.features.slice(0, 4).map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Technologies */}
+            {app.technologies && app.technologies.length > 0 && (
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2">
+                  {app.technologies.slice(0, 6).map((tech, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      {tech}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Status and Category */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Badge className={`${statusColors.bg} ${statusColors.text} ${statusColors.border}`}>
+                {app.status.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+              </Badge>
+              <Badge variant="outline">{app.app_category}</Badge>
+            </div>
+
+            {/* Download Links */}
+            <div className="flex flex-wrap gap-3">
+              {app.ios_link && (
+                <Button
+                  asChild
+                  variant="default"
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <a href={app.ios_link} target="_blank" rel="noopener noreferrer">
+                    <Download className="h-4 w-4 mr-2" />
+                    iOS App
+                  </a>
+                </Button>
+              )}
+              {app.android_link && (
+                <Button
+                  asChild
+                  variant="default"
+                  size="sm"
+                  className="bg-accent hover:bg-accent/90"
+                >
+                  <a href={app.android_link} target="_blank" rel="noopener noreferrer">
+                    <Download className="h-4 w-4 mr-2" />
+                    Android App
+                  </a>
+                </Button>
+              )}
+              {app.web_demo_url && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                >
+                  <a href={app.web_demo_url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Web Demo
+                  </a>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const AppProjectsSection = () => {
+  const { data: appProjects = [], isLoading } = useAppProjects();
+
+  // Filter out hidden projects if needed
+  const visibleProjects = appProjects.filter(app => app.status !== 'hidden');
+
+  if (isLoading) {
+    return (
+      <div className="mb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-4 text-accent">Our App Portfolio</h2>
+          <p className="text-xl text-muted-foreground">
+            Loading our latest app projects...
+          </p>
+        </div>
+        <div className="space-y-8">
+          {[1, 2].map((i) => (
+            <Card key={i} className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <Skeleton className="h-64 md:h-96 w-full" />
+                  <div className="p-8 space-y-4">
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-8 w-24" />
+                      <Skeleton className="h-8 w-24" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (visibleProjects.length === 0) {
+    return (
+      <div className="mb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-4 text-accent">Our App Portfolio</h2>
+          <p className="text-xl text-muted-foreground">
+            Our app portfolio is coming soon! Check back later for exciting mobile projects.
+          </p>
+        </div>
+        <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-border">
+          <CardContent className="p-12 text-center">
+            <Smartphone className="h-20 w-20 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">No Apps Yet</h3>
+            <p className="text-muted-foreground mb-6">
+              We're working on some exciting mobile app projects. In the meantime, check out our{" "}
+              <a href="/portfolio/games" className="text-primary hover:underline">
+                game development portfolio
+              </a>{" "}
+              to see what we can build.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-12">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold mb-4 text-accent">Our App Portfolio</h2>
+        <p className="text-xl text-muted-foreground">
+          Explore our mobile app development work across various platforms and industries.
+        </p>
+      </div>
+
+      <div className="space-y-8">
+        {visibleProjects.map((app, index) => (
+          <AppCard key={app.id} app={app} index={index} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 const AppPortfolio = () => {
   return (
@@ -163,49 +394,8 @@ const AppPortfolio = () => {
             </Card>
           </div>
 
-          {/* Current Projects */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-accent">Apps In Progress</h2>
-            <p className="text-xl text-muted-foreground">
-              We're currently working on several exciting projects. Here's what's cooking:
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <Card className="bg-card border-border">
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  <Star className="h-6 w-6 text-primary mr-3" />
-                  <h3 className="text-xl font-bold text-primary">Client Website & Portal</h3>
-                </div>
-                <p className="text-muted-foreground mb-4">
-                  A comprehensive website with customer portal and companion mobile app 
-                  currently in development for a key client, featuring user management, 
-                  data visualization, and seamless cross-platform integration.
-                </p>
-                <Badge className="bg-primary/20 text-primary border-primary/30">
-                  Development
-                </Badge>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card border-border">
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  <Smartphone className="h-6 w-6 text-accent mr-3" />
-                  <h3 className="text-xl font-bold text-accent">Directory Platform</h3>
-                </div>
-                <p className="text-muted-foreground mb-4">
-                  A comprehensive directory-style website and companion mobile app 
-                  currently in development, featuring advanced search, filtering, 
-                  user profiles, and location-based services.
-                </p>
-                <Badge className="bg-accent/20 text-accent border-accent/30">
-                  Development
-                </Badge>
-              </CardContent>
-            </Card>
-          </div>
+          {/* Dynamic App Projects */}
+          <AppProjectsSection />
 
           {/* CTA Section */}
           <div className="text-center">
