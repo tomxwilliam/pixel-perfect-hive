@@ -4323,24 +4323,18 @@ export type Database = {
         Args: { encrypted: string }
         Returns: string
       }
-      decrypt_oauth_token: {
-        Args: { encrypted: string }
-        Returns: string
-      }
+      decrypt_oauth_token: { Args: { encrypted: string }; Returns: string }
       encrypt_hosting_credential: {
         Args: { plaintext: string }
         Returns: string
       }
-      encrypt_oauth_token: {
-        Args: { plaintext: string }
-        Returns: string
-      }
+      encrypt_oauth_token: { Args: { plaintext: string }; Returns: string }
       get_oauth_access_token: {
         Args: { p_connection_id: string }
         Returns: string
       }
       get_payment_banking_details: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           account_name: string
           account_number: string
@@ -4357,10 +4351,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin_user: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin_user: { Args: never; Returns: boolean }
       log_activity: {
         Args: {
           p_action: string

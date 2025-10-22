@@ -53,6 +53,7 @@ export const QuoteTemplateSettings = () => {
         .select('*')
         .eq('is_default', true)
         .eq('template_type', 'quote')
+        .order('updated_at', { ascending: false })
         .maybeSingle();
 
       if (error) throw error;
@@ -74,6 +75,14 @@ export const QuoteTemplateSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      // First, clear any other default quote templates
+      await supabase
+        .from('invoice_templates')
+        .update({ is_default: false })
+        .eq('template_type', 'quote')
+        .eq('is_default', true)
+        .neq('id', template?.id || '00000000-0000-0000-0000-000000000000');
+
       const templateData = {
         name: 'Default Quote Template',
         is_default: true,

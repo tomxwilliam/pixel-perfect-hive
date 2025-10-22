@@ -76,7 +76,9 @@ export const InvoiceTemplateSettings = () => {
         .from('invoice_templates')
         .select('*')
         .eq('is_default', true)
-        .single();
+        .eq('template_type', 'invoice')
+        .order('updated_at', { ascending: false })
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
 
@@ -115,9 +117,18 @@ export const InvoiceTemplateSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      // First, clear any other default invoice templates
+      await supabase
+        .from('invoice_templates')
+        .update({ is_default: false })
+        .eq('template_type', 'invoice')
+        .eq('is_default', true)
+        .neq('id', template?.id || '00000000-0000-0000-0000-000000000000');
+
       const templateData = {
         name: 'Default Template',
         is_default: true,
+        template_type: 'invoice' as const,
         company_details: companyDetails as any,
         branding: branding as any,
         layout_settings: layoutSettings as any
