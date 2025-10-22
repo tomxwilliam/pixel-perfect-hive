@@ -360,6 +360,17 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
 
             {/* Projects and Tasks */}
             <div ref={timelineRef} className="relative">
+              {/* Vertical Grid Lines */}
+              <div className="absolute inset-0 pointer-events-none" style={{ left: '256px' }}>
+                {timelineHeaders.map((_, index) => (
+                  <div
+                    key={index}
+                    className="absolute top-0 bottom-0 border-r border-muted-foreground/20"
+                    style={{ left: index * dayWidth * 7 }}
+                  />
+                ))}
+              </div>
+
               {projects.map((project) => (
                 <div key={project.id}>
                   {/* Project Row */}
