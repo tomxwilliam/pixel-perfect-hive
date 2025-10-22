@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Plus, Calendar, MessageSquare, Paperclip, Clock } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Plus, Calendar, MessageSquare, Paperclip, Clock, Trash2 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useProjects, Task } from '@/hooks/useProjects';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -58,9 +59,10 @@ const getInitials = (name: string) => {
 };
 
 const KanbanBoard = () => {
-  const { tasks, projects, updateTask } = useProjects();
+  const { tasks, projects, updateTask, deleteTask } = useProjects();
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
 
   // Organise tasks into columns based on status
   useEffect(() => {
@@ -164,10 +166,10 @@ const KanbanBoard = () => {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 h-full">
+        <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 h-full items-stretch">
           {columns.map((column) => (
             <div key={column.id} className="flex-shrink-0 w-72 md:w-80">
-              <Card className="h-full">
+              <Card className="h-full flex flex-col">
                 <CardHeader className={`pb-3 ${column.color} rounded-t-lg`}>
                   <CardTitle className="flex items-center justify-between">
                     <span>{column.title}</span>
@@ -180,7 +182,7 @@ const KanbanBoard = () => {
                     <CardContent
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className={`p-4 space-y-3 min-h-[500px] ${
+                      className={`p-4 space-y-3 flex-1 ${
                         snapshot.isDraggingOver ? 'bg-muted/50' : ''
                       }`}
                     >
@@ -195,17 +197,30 @@ const KanbanBoard = () => {
                                 snapshot.isDragging ? 'rotate-2 shadow-lg' : ''
                               }`}
                             >
-                              <Card className="cursor-pointer hover:shadow-md transition-shadow touch-manipulation">
+                              <Card className="cursor-pointer hover:shadow-md transition-shadow touch-manipulation group">
                                 <CardContent className="p-3 md:p-4">
                                   <div className="space-y-2 md:space-y-3">
                                     {/* Header */}
-                                    <div className="flex items-start justify-between">
-                                      <h4 className="font-medium text-sm leading-5 line-clamp-2">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <h4 className="font-medium text-sm leading-5 line-clamp-2 flex-1">
                                         {task.title}
                                       </h4>
-                                      <Badge variant={getPriorityColor(task.priority)} className="ml-2 text-xs">
-                                        {task.priority}
-                                      </Badge>
+                                      <div className="flex items-center gap-1 flex-shrink-0">
+                                        <Badge variant={getPriorityColor(task.priority)} className="text-xs">
+                                          {task.priority}
+                                        </Badge>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDeleteTaskId(task.id);
+                                          }}
+                                        >
+                                          <Trash2 className="h-3 w-3 text-destructive" />
+                                        </Button>
+                                      </div>
                                     </div>
 
                                      {/* Description */}
@@ -288,6 +303,32 @@ const KanbanBoard = () => {
           />
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteTaskId} onOpenChange={() => setDeleteTaskId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Task</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this task? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteTaskId) {
+                  deleteTask(deleteTaskId);
+                  setDeleteTaskId(null);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -177,6 +177,31 @@ export const useProjects = () => {
     }
   };
 
+  const deleteTask = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('project_tasks')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Task deleted successfully",
+      });
+
+      fetchProjects(); // Refresh data
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      toast({
+        title: "Error",
+        description: "Failed to delete task",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchProjects();
 
@@ -213,5 +238,6 @@ export const useProjects = () => {
     updateProject,
     createTask,
     updateTask,
+    deleteTask,
   };
 };
