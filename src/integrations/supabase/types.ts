@@ -4410,7 +4410,7 @@ export type Database = {
           p_sort_code: string
           p_swift_code?: string
         }
-        Returns: Json
+        Returns: string
       }
       update_oauth_tokens: {
         Args: {
