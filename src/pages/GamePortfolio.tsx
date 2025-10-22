@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download } from "lucide-react";
+import { Download, Gamepad2, Target, Zap, Smartphone, Trophy, Users, Brain, Heart, Sparkles } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
@@ -157,8 +157,148 @@ const GamePortfolio = () => {
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2">
-            This is where we shine. We build fun-first mobile games with smart systems, satisfying loops, and polish that sticks.
+            We don't just make games — we craft addictive experiences. Fun-first gameplay, smart monetization, and polish that keeps players coming back.
           </p>
+        </div>
+      </section>
+
+      {/* Game Development Philosophy */}
+      <section className="py-12 md:py-20 px-4 bg-background">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Game Development Philosophy
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              We build games that players love, with mechanics that engage and monetization that feels natural.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            <Card className="p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0 space-y-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Gamepad2 className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground">Fun-First Design</h3>
+                <p className="text-muted-foreground">
+                  Every mechanic is playtested until it feels just right. We build games that are instantly engaging with depth that rewards mastery.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0 space-y-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Smartphone className="w-6 h-6 md:w-8 md:h-8 text-accent" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground">Mobile-Optimized</h3>
+                <p className="text-muted-foreground">
+                  Built for touch controls and short sessions. Optimized performance across all devices, from budget phones to flagship models.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 md:p-8 border-2 hover:border-primary/50 transition-colors">
+              <CardContent className="p-0 space-y-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Target className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground">Smart Monetization</h3>
+                <p className="text-muted-foreground">
+                  Ethical monetization that enhances gameplay. From rewarded ads to IAPs, we design systems that players actually appreciate.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Game Types We Create */}
+      <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-primary/5 via-accent/5 to-background">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Game Types We Create
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              From hyper-casual hits to complex strategy games, we've got the expertise to bring your vision to life.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Zap className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Hyper-Casual Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Quick, addictive gameplay loops designed for mass appeal. Perfect for ad-based monetization and viral growth.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Brain className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Puzzle Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Brain-teasing challenges with satisfying progression. From match-3 mechanics to innovative puzzle systems.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Trophy className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Arcade Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Fast-paced action with high replay value. Score chasing, endless runners, and reflex-based gameplay.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Strategy Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Deep strategic gameplay with progression systems. Tower defense, resource management, and tactical combat.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500/20 to-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Heart className="w-6 h-6 text-rose-600 dark:text-rose-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Casual Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Relaxing, accessible gameplay for all ages. Building, simulation, and social mechanics that keep players engaged.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="p-6 border-2 hover:border-primary/50 transition-all hover:shadow-xl group">
+              <CardContent className="p-0 space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Users className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">Multiplayer Games</h3>
+                <p className="text-muted-foreground text-sm">
+                  Real-time competition and cooperation. Matchmaking, leaderboards, and social features that drive engagement.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
