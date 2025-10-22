@@ -126,9 +126,7 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
       in_progress: 'bg-blue-100 text-blue-800',
       completed: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
-      on_hold: 'bg-gray-100 text-gray-800',
-      approved: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800'
+      on_hold: 'bg-gray-100 text-gray-800'
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -285,8 +283,6 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
                         <SelectItem value="completed">Completed</SelectItem>
                         <SelectItem value="on_hold">On Hold</SelectItem>
                         <SelectItem value="cancelled">Cancelled</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
                       </SelectContent>
                     </Select>
                   ) : (

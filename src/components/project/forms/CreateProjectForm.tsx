@@ -213,8 +213,6 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
                       <SelectItem value="on_hold">On Hold</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="approved">Approved</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
