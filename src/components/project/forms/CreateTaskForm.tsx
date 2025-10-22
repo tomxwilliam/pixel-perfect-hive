@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { CalendarIcon, Plus } from 'lucide-react';
+import { CalendarIcon, Plus, Save } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import type { Task } from '@/hooks/useProjects';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Task title is required'),
@@ -33,58 +34,102 @@ interface CreateTaskFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
   availableProjects?: Array<{ id: string; title: string }>;
+  taskData?: Task; // For edit mode
 }
 
 const CreateTaskForm: React.FC<CreateTaskFormProps> = ({ 
   projectId, 
   onSuccess, 
   onCancel, 
-  availableProjects = [] 
+  availableProjects = [],
+  taskData
 }) => {
   const { toast } = useToast();
+  const isEditMode = !!taskData;
   
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
-      status: 'todo',
-      priority: 'medium',
-      project_id: projectId || '',
+      status: (taskData?.status as any) || 'todo',
+      priority: (taskData?.priority as any) || 'medium',
+      project_id: taskData?.project_id || projectId || '',
+      title: taskData?.title || '',
+      description: taskData?.description || '',
+      estimated_hours: taskData?.estimated_hours || undefined,
     },
   });
+
+  // Update form when taskData changes (for edit mode)
+  useEffect(() => {
+    if (taskData) {
+      form.reset({
+        title: taskData.title,
+        description: taskData.description || '',
+        status: taskData.status as any,
+        priority: taskData.priority as any,
+        project_id: taskData.project_id,
+        estimated_hours: taskData.estimated_hours || undefined,
+        due_date: taskData.due_date ? new Date(taskData.due_date) : undefined,
+      });
+    }
+  }, [taskData, form]);
 
   const onSubmit = async (data: TaskFormData) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Create task
-      const { error: taskError } = await supabase
-        .from('project_tasks')
-        .insert({
-          title: data.title,
-          description: data.description,
-          status: data.status,
-          priority: data.priority,
-          project_id: data.project_id,
-          estimated_hours: data.estimated_hours,
-          due_date: data.due_date?.toISOString(),
-          created_by: user.id,
+      if (isEditMode && taskData) {
+        // Update existing task
+        const { error: taskError } = await supabase
+          .from('project_tasks')
+          .update({
+            title: data.title,
+            description: data.description,
+            status: data.status,
+            priority: data.priority,
+            project_id: data.project_id,
+            estimated_hours: data.estimated_hours,
+            due_date: data.due_date?.toISOString(),
+          })
+          .eq('id', taskData.id);
+
+        if (taskError) throw taskError;
+
+        toast({
+          title: 'Success',
+          description: 'Task updated successfully',
         });
+      } else {
+        // Create new task
+        const { error: taskError } = await supabase
+          .from('project_tasks')
+          .insert({
+            title: data.title,
+            description: data.description,
+            status: data.status,
+            priority: data.priority,
+            project_id: data.project_id,
+            estimated_hours: data.estimated_hours,
+            due_date: data.due_date?.toISOString(),
+            created_by: user.id,
+          });
 
-      if (taskError) throw taskError;
+        if (taskError) throw taskError;
 
-      toast({
-        title: 'Success',
-        description: 'Task created successfully',
-      });
+        toast({
+          title: 'Success',
+          description: 'Task created successfully',
+        });
+      }
 
       form.reset();
       onSuccess?.();
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} task:`, error);
       toast({
         title: 'Error',
-        description: 'Failed to create task',
+        description: `Failed to ${isEditMode ? 'update' : 'create'} task`,
         variant: 'destructive',
       });
     }
@@ -273,8 +318,17 @@ const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
             </Button>
           )}
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Task
+            {isEditMode ? (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Update Task
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Task
+              </>
+            )}
           </Button>
         </div>
       </form>

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Plus, Calendar, MessageSquare, Paperclip, Clock, Trash2 } from 'lucide-react';
+import { Plus, Calendar, MessageSquare, Paperclip, Clock, Trash2, Edit2 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useProjects, Task } from '@/hooks/useProjects';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -63,6 +63,7 @@ const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>(initialColumns);
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Organise tasks into columns based on status
   useEffect(() => {
@@ -215,6 +216,17 @@ const KanbanBoard = () => {
                                           className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                                           onClick={(e) => {
                                             e.stopPropagation();
+                                            setEditingTask(task);
+                                          }}
+                                        >
+                                          <Edit2 className="h-3 w-3" />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
                                             setDeleteTaskId(task.id);
                                           }}
                                         >
@@ -299,6 +311,22 @@ const KanbanBoard = () => {
             projectId=""
             onSuccess={() => setShowCreateTask(false)}
             onCancel={() => setShowCreateTask(false)}
+            availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Task Dialog */}
+      <Dialog open={!!editingTask} onOpenChange={() => setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+          </DialogHeader>
+          <CreateTaskForm 
+            projectId={editingTask?.project_id}
+            taskData={editingTask || undefined}
+            onSuccess={() => setEditingTask(null)}
+            onCancel={() => setEditingTask(null)}
             availableProjects={projects.map(p => ({ id: p.id, title: p.title }))}
           />
         </DialogContent>
