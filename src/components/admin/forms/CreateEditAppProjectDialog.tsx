@@ -431,11 +431,15 @@ export function CreateEditAppProjectDialog({
                     className="hidden"
                     id="logo-upload"
                   />
-                  <label htmlFor="logo-upload" className="cursor-pointer">
-                    <Button type="button" variant="outline" size="sm" className="mt-2">
-                      Choose File
-                    </Button>
-                  </label>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2"
+                    onClick={() => document.getElementById('logo-upload')?.click()}
+                  >
+                    Choose File
+                  </Button>
                 </div>
               </div>
 
@@ -457,11 +461,15 @@ export function CreateEditAppProjectDialog({
                     className="hidden"
                     id="feature-upload"
                   />
-                  <label htmlFor="feature-upload" className="cursor-pointer">
-                    <Button type="button" variant="outline" size="sm" className="mt-2">
-                      Choose File
-                    </Button>
-                  </label>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2"
+                    onClick={() => document.getElementById('feature-upload')?.click()}
+                  >
+                    Choose File
+                  </Button>
                 </div>
               </div>
             </div>
