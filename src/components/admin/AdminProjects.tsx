@@ -374,11 +374,11 @@ export const AdminProjects = () => {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className={isMobile ? "w-full" : "w-[180px]"}>
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className={isMobile ? "w-full" : "w-[200px]"}>
+                <SelectValue placeholder="Workflow Status" />
               </SelectTrigger>
               <SelectContent className="bg-popover">
-                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="all">All Workflow Status</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="in_progress">In Progress</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
@@ -387,11 +387,11 @@ export const AdminProjects = () => {
               </SelectContent>
             </Select>
             <Select value={approvalFilter} onValueChange={setApprovalFilter}>
-              <SelectTrigger className={isMobile ? "w-full" : "w-[180px]"}>
-                <SelectValue placeholder="Filter by approval" />
+              <SelectTrigger className={isMobile ? "w-full" : "w-[200px]"}>
+                <SelectValue placeholder="Approval Status" />
               </SelectTrigger>
               <SelectContent className="bg-popover">
-                <SelectItem value="all">All Approvals</SelectItem>
+                <SelectItem value="all">All Approval Status</SelectItem>
                 <SelectItem value="pending">Pending Approval</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
@@ -488,8 +488,8 @@ export const AdminProjects = () => {
                 <TableHead>Project</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Approval</TableHead>
+                <TableHead>Workflow Status</TableHead>
+                <TableHead>Approval Status</TableHead>
                 <TableHead>Budget</TableHead>
                 <TableHead>Files</TableHead>
                 <TableHead>Timeline</TableHead>
