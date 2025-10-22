@@ -360,17 +360,6 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
 
             {/* Projects and Tasks */}
             <div ref={timelineRef} className="relative">
-              {/* Vertical Grid Lines */}
-              <div className="absolute inset-0 pointer-events-none" style={{ left: '256px' }}>
-                {timelineHeaders.map((_, index) => (
-                  <div
-                    key={index}
-                    className="absolute top-0 bottom-0 border-r border-muted-foreground/20"
-                    style={{ left: index * dayWidth * 7 }}
-                  />
-                ))}
-              </div>
-
               {projects.map((project) => (
                 <div key={project.id}>
                   {/* Project Row */}
@@ -383,7 +372,13 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
                     </div>
                     <div 
                       className="relative flex-1 p-2 cursor-pointer"
-                      style={{ width: timelineWidth, minHeight: '48px' }}
+                      style={{ 
+                        width: timelineWidth, 
+                        minHeight: '48px',
+                        backgroundImage: `repeating-linear-gradient(to right, hsl(var(--muted-foreground) / 0.15) 0px, hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px, transparent ${dayWidth * 7}px)`,
+                        backgroundSize: `${dayWidth * 7}px 100%`,
+                        backgroundPosition: '0 0'
+                      }}
                       onClick={(e) => handleTimelineClick(e, project.id)}
                     >
                       {/* Project Timeline Bar */}
@@ -401,10 +396,18 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
                   {/* Task Rows */}
                   {project.tasks.length === 0 ? (
                     <div className="flex border-b">
-                      <div className="w-64 p-3 border-r">
-                        <p className="text-sm text-muted-foreground italic">No tasks yet</p>
-                      </div>
-                      <div className="flex-1 p-2" style={{ width: timelineWidth }} />
+                        <div className="w-64 p-3 border-r">
+                          <p className="text-sm text-muted-foreground italic">No tasks yet</p>
+                        </div>
+                        <div 
+                          className="flex-1 p-2" 
+                          style={{ 
+                            width: timelineWidth,
+                            backgroundImage: `repeating-linear-gradient(to right, hsl(var(--muted-foreground) / 0.15) 0px, hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px, transparent ${dayWidth * 7}px)`,
+                            backgroundSize: `${dayWidth * 7}px 100%`,
+                            backgroundPosition: '0 0'
+                          }}
+                        />
                     </div>
                   ) : (
                     project.tasks.map((task) => (
@@ -457,7 +460,13 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
                         </div>
                         <div 
                           className="relative flex-1 p-2"
-                          style={{ width: timelineWidth, minHeight: '80px' }}
+                          style={{ 
+                            width: timelineWidth, 
+                            minHeight: '80px',
+                            backgroundImage: `repeating-linear-gradient(to right, hsl(var(--muted-foreground) / 0.15) 0px, hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px, transparent ${dayWidth * 7}px)`,
+                            backgroundSize: `${dayWidth * 7}px 100%`,
+                            backgroundPosition: '0 0'
+                          }}
                         >
                           <ContextMenu>
                             <ContextMenuTrigger asChild>
