@@ -25,6 +25,14 @@ interface AdminRequest {
   };
 }
 
+interface PendingInvitation {
+  id: string;
+  email: string;
+  invited_at: string;
+  invited_by?: string;
+  notes?: string;
+}
+
 interface AdminManagementProps {
   isSuperAdmin: boolean;
   superAdminUserId?: string; // Add super admin user ID to prevent removal
@@ -32,6 +40,7 @@ interface AdminManagementProps {
 
 const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAdminUserId }) => {
   const [adminRequests, setAdminRequests] = useState<AdminRequest[]>([]);
+  const [pendingInvitations, setPendingInvitations] = useState<PendingInvitation[]>([]);
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -42,6 +51,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
     if (isSuperAdmin) {
       fetchAdminRequests();
       fetchAdminUsers();
+      fetchPendingInvitations();
     }
   }, [isSuperAdmin]);
 
@@ -107,6 +117,24 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
         description: "Failed to fetch admin users",
         variant: "destructive",
       });
+    }
+  };
+
+  const fetchPendingInvitations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('pending_admin_invitations')
+        .select('*')
+        .order('invited_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching pending invitations:', error);
+        return;
+      }
+
+      setPendingInvitations(data || []);
+    } catch (error) {
+      console.error('Error fetching pending invitations:', error);
     }
   };
 
@@ -271,22 +299,42 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
         
         setNewAdminEmail('');
         fetchAdminUsers();
-      } else if (is404CodeLabEmail) {
-        // BUSINESS LOGIC: For company domain emails, they'll automatically be admin when they sign up
-        // This is handled by the handle_new_user() trigger in the database
+      } else {
+        // User doesn't exist - create a pending invitation
+        // Check if invitation already exists
+        const { data: existingInvitation } = await supabase
+          .from('pending_admin_invitations')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle();
+
+        if (existingInvitation) {
+          toast({
+            title: "Invitation Already Exists",
+            description: `${email} already has a pending admin invitation. They will receive admin privileges when they sign up.`,
+          });
+          setNewAdminEmail('');
+          return;
+        }
+
+        // Create pending invitation
+        const { error: inviteError } = await supabase
+          .from('pending_admin_invitations')
+          .insert({
+            email: email,
+            invited_by: (await supabase.auth.getUser()).data.user?.id,
+            notes: is404CodeLabEmail ? 'Company domain - auto-approved' : 'Manual invitation'
+          });
+
+        if (inviteError) throw inviteError;
+
         toast({
-          title: "User Must Sign Up First",
-          description: `${email} will automatically receive admin privileges when they create an account. No action needed - this is handled automatically for @404codelab.com emails.`,
+          title: "Pending Invitation Created",
+          description: `${email} will automatically receive admin privileges when they create an account. You can delete this invitation from the Admin Access Requests section if needed.`,
         });
         
         setNewAdminEmail('');
-      } else {
-        // User doesn't exist and it's not a @404codelab.com email
-        toast({
-          title: "User Not Found",
-          description: `No user found with email ${email}. The user must sign up first before you can promote them to admin.`,
-          variant: "destructive",
-        });
+        fetchPendingInvitations();
       }
     } catch (error) {
       console.error('Error promoting user to admin:', error);
@@ -362,12 +410,49 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
     );
   }
 
+  const handleDeleteInvitation = async (invitationId: string, email: string) => {
+    if (!isSuperAdmin) {
+      toast({
+        title: "Access Denied",
+        description: "Only super admin can delete pending invitations",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('pending_admin_invitations')
+        .delete()
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Pending invitation for ${email} has been deleted`,
+      });
+
+      fetchPendingInvitations();
+    } catch (error) {
+      console.error('Error deleting invitation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete pending invitation",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredRequests = adminRequests.filter(request => {
     if (requestFilter === 'all') return true;
     return request.status === requestFilter;
   });
 
-  const pendingCount = adminRequests.filter(r => r.status === 'pending').length;
+  const pendingCount = adminRequests.filter(r => r.status === 'pending').length + pendingInvitations.length;
 
   return (
     <div className="space-y-6">
@@ -532,7 +617,54 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
           </div>
         </CardHeader>
         <CardContent>
-          {filteredRequests.length === 0 ? (
+          {/* Pending Invitations Section */}
+          {requestFilter === 'pending' && pendingInvitations.length > 0 && (
+            <div className="space-y-4 mb-6">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>Pending Invitations (waiting for signup)</span>
+              </div>
+              {pendingInvitations.map((invitation) => (
+                <div key={invitation.id} className={`p-4 border border-dashed rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
+                  <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
+                    <div className={`flex items-center gap-3 ${isMobile ? 'mb-2' : ''}`}>
+                      <UserPlus className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <h4 className="font-medium">{invitation.email}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Invited: {new Date(invitation.invited_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`flex items-center gap-2 ${isMobile ? 'flex-col w-full' : ''}`}>
+                      <Badge variant="secondary" className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        Pending Signup
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDeleteInvitation(invitation.id, invitation.email)}
+                        disabled={loading}
+                        className={isMobile ? 'w-full' : ''}
+                      >
+                        <UserX className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                  {invitation.notes && (
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      {invitation.notes}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Admin Requests Section */}
+          {filteredRequests.length === 0 && (requestFilter !== 'pending' || pendingInvitations.length === 0) ? (
             <div className="text-center py-8">
               <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">
@@ -541,7 +673,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
                   : `No ${requestFilter} requests found`}
               </p>
             </div>
-          ) : (
+          ) : filteredRequests.length > 0 ? (
             <div className="space-y-4">
               {filteredRequests.map((request) => (
                 <div key={request.id} className={`p-4 border rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
@@ -611,7 +743,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
         </CardContent>
       </Card>
     </div>

@@ -2000,6 +2000,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_admin_invitations: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          invited_at: string
+          invited_by: string | null
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pending_domain_orders: {
         Row: {
           admin_notes: string | null
