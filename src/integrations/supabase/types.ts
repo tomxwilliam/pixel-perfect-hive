@@ -4344,7 +4344,6 @@ export type Database = {
         Returns: {
           account_name: string
           account_number: string
-          bank_name: string
           iban: string
           notes_bacs: string
           sort_code: string
@@ -4404,7 +4403,6 @@ export type Database = {
         Args: {
           p_account_name: string
           p_account_number: string
-          p_bank_name?: string
           p_iban?: string
           p_notes_bacs?: string
           p_sort_code: string
