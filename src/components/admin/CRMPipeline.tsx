@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Phone, Mail, DollarSign, Calendar, Activity, TrendingUp } from 'lucide-react';
+import { Plus, Phone, Mail, DollarSign, Calendar, Activity, TrendingUp, Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
@@ -29,6 +30,8 @@ export const CRMPipeline = () => {
   const [selectedStage, setSelectedStage] = useState<string>('all');
   const [draggedLead, setDraggedLead] = useState<LeadWithStage | null>(null);
   const [showLeadDialog, setShowLeadDialog] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<LeadWithStage | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [newLead, setNewLead] = useState({
     name: '',
     email: '',
@@ -180,6 +183,42 @@ export const CRMPipeline = () => {
     }
   };
 
+  const handleDeleteLead = async () => {
+    if (!leadToDelete) return;
+
+    try {
+      // First, delete associated activities
+      await supabase
+        .from('lead_activities')
+        .delete()
+        .eq('lead_id', leadToDelete.id);
+
+      // Then delete the lead
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadToDelete.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Lead deleted successfully",
+      });
+
+      setShowDeleteDialog(false);
+      setLeadToDelete(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete lead",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getStageLeads = (stageId: string) => {
     return leads.filter(lead => lead.pipeline_stage_id === stageId);
   };
@@ -311,12 +350,25 @@ export const CRMPipeline = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium">{lead.name || lead.email}</h3>
-                  <Badge 
-                    style={{ backgroundColor: lead.pipeline_stage?.color }}
-                    className="text-white"
-                  >
-                    {lead.pipeline_stage?.name}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge 
+                      style={{ backgroundColor: lead.pipeline_stage?.color }}
+                      className="text-white"
+                    >
+                      {lead.pipeline_stage?.name}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => {
+                        setLeadToDelete(lead);
+                        setShowDeleteDialog(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
                 {lead.company && (
                   <p className="text-sm text-muted-foreground">{lead.company}</p>
@@ -337,6 +389,28 @@ export const CRMPipeline = () => {
             </Card>
           ))}
         </div>
+
+        {/* Delete confirmation dialog */}
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete the lead "{leadToDelete?.name || leadToDelete?.email}"? 
+                This action cannot be undone and will also delete all associated activities.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setLeadToDelete(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteLead}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   }
@@ -475,12 +549,26 @@ export const CRMPipeline = () => {
               {getStageLeads(stage.id).map(lead => (
                 <Card
                   key={lead.id}
-                  className="p-3 cursor-move hover:shadow-md transition-shadow"
+                  className="p-3 cursor-move hover:shadow-md transition-shadow group"
                   draggable
                   onDragStart={() => handleDragStart(lead)}
                 >
                   <div className="space-y-2">
-                    <h4 className="font-medium text-sm">{lead.name || lead.email}</h4>
+                    <div className="flex items-start justify-between">
+                      <h4 className="font-medium text-sm flex-1">{lead.name || lead.email}</h4>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLeadToDelete(lead);
+                          setShowDeleteDialog(true);
+                        }}
+                      >
+                        <Trash2 className="h-3 w-3 text-destructive" />
+                      </Button>
+                    </div>
                     {lead.company && (
                       <p className="text-xs text-muted-foreground">{lead.company}</p>
                     )}
@@ -511,6 +599,28 @@ export const CRMPipeline = () => {
           </div>
         ))}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Lead</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the lead "{leadToDelete?.name || leadToDelete?.email}"? 
+              This action cannot be undone and will also delete all associated activities.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setLeadToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteLead}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
