@@ -433,32 +433,33 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
                       className="relative flex-1 p-2"
                       style={{ width: timelineWidth }}
                     >
-                      <ContextMenuTrigger>
-                        <div
-                          data-task-id={task.id}
-                          className={`absolute top-2 h-8 ${getStatusColor(task.status)} ${getPriorityColor(task.priority)} border-l-4 rounded cursor-move hover:shadow-md transition-shadow group`}
-                          style={calculatePosition(task.startDate, task.endDate)}
-                          onMouseDown={(e) => handleDragStart(e, task)}
-                        >
-                          {/* Resize Handle - Left */}
+                      <ContextMenu>
+                        <ContextMenuTrigger asChild>
                           <div
-                            className="absolute left-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
-                            onMouseDown={(e) => handleResizeStart(e, task, 'left')}
-                          />
-                          
-                          {/* Task Content */}
-                          <div className="flex items-center justify-between h-full px-2 text-white text-xs">
-                            <span className="truncate font-medium">{task.title}</span>
-                            <span>{task.progress}%</span>
+                            data-task-id={task.id}
+                            className={`absolute top-2 h-8 ${getStatusColor(task.status)} ${getPriorityColor(task.priority)} border-l-4 rounded cursor-move hover:shadow-md transition-shadow group`}
+                            style={calculatePosition(task.startDate, task.endDate)}
+                            onMouseDown={(e) => handleDragStart(e, task)}
+                          >
+                            {/* Resize Handle - Left */}
+                            <div
+                              className="absolute left-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
+                              onMouseDown={(e) => handleResizeStart(e, task, 'left')}
+                            />
+                            
+                            {/* Task Content */}
+                            <div className="flex items-center justify-between h-full px-2 text-white text-xs">
+                              <span className="truncate font-medium">{task.title}</span>
+                              <span>{task.progress}%</span>
+                            </div>
+                            
+                            {/* Resize Handle - Right */}
+                            <div
+                              className="absolute right-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
+                              onMouseDown={(e) => handleResizeStart(e, task, 'right')}
+                            />
                           </div>
-                          
-                          {/* Resize Handle - Right */}
-                          <div
-                            className="absolute right-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
-                            onMouseDown={(e) => handleResizeStart(e, task, 'right')}
-                          />
-                        </div>
-
+                        </ContextMenuTrigger>
                         <ContextMenuContent>
                           <ContextMenuItem onClick={() => setEditingTask(task)}>
                             <Edit3 className="h-4 w-4 mr-2" />
@@ -477,7 +478,7 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
                             Delete Task
                           </ContextMenuItem>
                         </ContextMenuContent>
-                      </ContextMenuTrigger>
+                      </ContextMenu>
                     </div>
                   </div>
                 ))}
