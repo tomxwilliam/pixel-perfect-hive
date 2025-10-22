@@ -24,6 +24,7 @@ import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import CreateProjectForm from '@/components/project/forms/CreateProjectForm';
 import CreateTaskForm from '@/components/project/forms/CreateTaskForm';
+import { ProjectEditModal } from '@/components/admin/modals/ProjectEditModal';
 import InteractiveGanttChart from '@/components/project/InteractiveGanttChart';
 import AnalyticsDashboard from '@/components/project/AnalyticsDashboard';
 import NotificationCenter from '@/components/project/NotificationCenter';
@@ -171,6 +172,7 @@ const ProjectManagement = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProjectDetails, setSelectedProjectDetails] = useState<any>(null);
   const [showProjectDetails, setShowProjectDetails] = useState(false);
+  const [showEditProject, setShowEditProject] = useState(false);
 
   
   const filteredProjects = projects.filter(project => {
@@ -913,9 +915,7 @@ const ProjectManagement = () => {
                     variant="outline" 
                     className="flex-1"
                     onClick={() => {
-                      setShowCreateProject(true);
-                      // Note: You may want to implement edit mode for the CreateProjectForm
-                      console.log('Edit project:', selectedProjectDetails);
+                      setShowEditProject(true);
                     }}
                   >
                     Edit Project
@@ -928,6 +928,20 @@ const ProjectManagement = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Edit Project Modal */}
+        {selectedProjectDetails && (
+          <ProjectEditModal
+            project={selectedProjectDetails}
+            open={showEditProject}
+            onOpenChange={setShowEditProject}
+            onProjectUpdated={() => {
+              setShowEditProject(false);
+              // Refresh projects data
+              window.location.reload();
+            }}
+          />
+        )}
       </main>
 
       <Footer />
