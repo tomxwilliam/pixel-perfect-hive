@@ -28,6 +28,14 @@ interface AdminRequest {
 interface PendingInvitation {
   id: string;
   email: string;
+  invited_by?: string;
+  invited_at: string;
+  notes?: string;
+}
+
+interface PendingInvitation {
+  id: string;
+  email: string;
   invited_at: string;
   invited_by?: string;
   notes?: string;
@@ -674,8 +682,14 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
               </p>
             </div>
           ) : filteredRequests.length > 0 ? (
-            <div className="space-y-4">
-              {filteredRequests.map((request) => (
+                <div className="space-y-4">
+                  {requestFilter === 'pending' && filteredRequests.length > 0 && (
+                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      Admin Access Requests
+                    </div>
+                  )}
+                  {filteredRequests.map((request) => (
                 <div key={request.id} className={`p-4 border rounded-lg ${isMobile ? 'space-y-3' : ''}`}>
                   <div className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'}`}>
                     <div className={`flex items-center gap-3 ${isMobile ? 'mb-2' : ''}`}>
