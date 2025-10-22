@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/integrations/supabase/types';
-import { Calendar, DollarSign, FileText, Clock, Target, Download, Upload } from 'lucide-react';
+import { Calendar, DollarSign, FileText, Clock, Target, Download, Upload, Palette, Layers, Smartphone, Code, Brain, Gamepad2, Globe, Check } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { FileUpload, FileList } from '@/components/ui/file-upload';
 import { useState, useEffect } from 'react';
@@ -58,6 +58,72 @@ export const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
       month: 'long',
       year: 'numeric'
     });
+  };
+
+  const RequirementsDisplay = ({ requirements, projectType }: { requirements: any; projectType: string }) => {
+    const getProjectIcon = () => {
+      switch (projectType) {
+        case 'web_development': return <Globe className="h-4 w-4" />;
+        case 'app_development': return <Smartphone className="h-4 w-4" />;
+        case 'game_development': return <Gamepad2 className="h-4 w-4" />;
+        case 'ai_integration': return <Brain className="h-4 w-4" />;
+        default: return <Code className="h-4 w-4" />;
+      }
+    };
+
+    const formatLabel = (key: string) => {
+      return key
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, (str) => str.toUpperCase())
+        .trim();
+    };
+
+    const renderValue = (value: any) => {
+      if (Array.isArray(value)) {
+        if (value.length === 0) return <span className="text-muted-foreground italic">None specified</span>;
+        return (
+          <div className="flex flex-wrap gap-2">
+            {value.map((item, idx) => (
+              <Badge key={idx} variant="secondary" className="text-xs">
+                <Check className="h-3 w-3 mr-1" />
+                {typeof item === 'string' ? item : JSON.stringify(item)}
+              </Badge>
+            ))}
+          </div>
+        );
+      }
+      
+      if (typeof value === 'object' && value !== null) {
+        return (
+          <div className="space-y-2 pl-4 border-l-2 border-muted">
+            {Object.entries(value).map(([key, val]) => (
+              <div key={key} className="space-y-1">
+                <div className="text-sm font-medium text-muted-foreground">{formatLabel(key)}</div>
+                <div className="text-sm">{renderValue(val)}</div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+      
+      return <span className="text-sm">{String(value)}</span>;
+    };
+
+    return (
+      <div className="space-y-6">
+        {Object.entries(requirements).map(([key, value]) => (
+          <div key={key} className="space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              {getProjectIcon()}
+              {formatLabel(key)}
+            </div>
+            <div className="pl-6">
+              {renderValue(value)}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const FileSection = ({ projectId }: { projectId: string }) => {
@@ -212,12 +278,11 @@ export const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({
           {project.requirements && (
             <Card>
               <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Project Requirements</h3>
-                <div className="bg-muted/50 rounded-lg p-4">
-                  <pre className="whitespace-pre-wrap text-sm">
-                    {JSON.stringify(project.requirements, null, 2)}
-                  </pre>
-                </div>
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Layers className="h-5 w-5" />
+                  Project Requirements
+                </h3>
+                <RequirementsDisplay requirements={project.requirements} projectType={project.project_type} />
               </CardContent>
             </Card>
           )}
