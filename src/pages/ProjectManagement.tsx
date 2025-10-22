@@ -133,6 +133,8 @@ const getStatusColor = (status: string) => {
     case 'planning': return 'bg-blue-500';
     case 'on_hold': return 'bg-yellow-500';
     case 'completed': return 'bg-gray-500';
+    case 'approved': return 'bg-green-500';
+    case 'rejected': return 'bg-red-500';
     default: return 'bg-gray-400';
   }
 };
@@ -379,6 +381,8 @@ const ProjectManagement = () => {
                     <option value="on_hold">On Hold</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
                   </select>
                 </div>
                 
