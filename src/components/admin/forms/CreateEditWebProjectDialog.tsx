@@ -155,15 +155,14 @@ export function CreateEditWebProjectDialog({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // Upload new screenshots
-      const newScreenshotUrls: string[] = [];
-      for (const file of screenshotFiles) {
-        const url = await uploadImage.mutateAsync({
+      // Upload new screenshots in parallel for faster performance
+      const uploadPromises = screenshotFiles.map((file) =>
+        uploadImage.mutateAsync({
           file,
           path: "",
-        });
-        newScreenshotUrls.push(url);
-      }
+        })
+      );
+      const newScreenshotUrls = await Promise.all(uploadPromises);
 
       // Combine existing and new screenshots
       const allScreenshots = [...existingScreenshots, ...newScreenshotUrls];
@@ -488,11 +487,23 @@ export function CreateEditWebProjectDialog({
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => onOpenChange(false)}
+                disabled={createProject.isPending || updateProject.isPending || uploadImage.isPending}
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createProject.isPending || updateProject.isPending}>
-                {createProject.isPending || updateProject.isPending ? "Saving..." : project ? "Update" : "Create"}
+              <Button 
+                type="submit" 
+                disabled={createProject.isPending || updateProject.isPending || uploadImage.isPending}
+              >
+                {uploadImage.isPending 
+                  ? "Uploading images..." 
+                  : createProject.isPending || updateProject.isPending
+                  ? "Saving..."
+                  : project ? "Update" : "Create"}
               </Button>
             </div>
           </form>
