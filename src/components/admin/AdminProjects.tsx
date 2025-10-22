@@ -157,6 +157,7 @@ export const AdminProjects = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [approvalFilter, setApprovalFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState<ProjectWithCustomer | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -328,8 +329,9 @@ export const AdminProjects = () => {
       project.customer?.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+    const matchesApproval = approvalFilter === 'all' || project.approval_status === approvalFilter;
     
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesApproval;
   });
 
   if (loading) {
@@ -384,6 +386,17 @@ export const AdminProjects = () => {
                 <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={approvalFilter} onValueChange={setApprovalFilter}>
+              <SelectTrigger className={isMobile ? "w-full" : "w-[180px]"}>
+                <SelectValue placeholder="Filter by approval" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Approvals</SelectItem>
+                <SelectItem value="pending">Pending Approval</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex gap-2">
             <CreateProjectDialog onProjectCreated={handleProjectCreated} />
@@ -409,8 +422,19 @@ export const AdminProjects = () => {
                       <Badge className={getStatusColor(project.status)}>
                         {project.status.replace('_', ' ')}
                       </Badge>
+                      <Badge 
+                        variant={
+                          project.approval_status === 'approved' ? 'default' :
+                          project.approval_status === 'rejected' ? 'destructive' :
+                          'secondary'
+                        }
+                      >
+                        {project.approval_status || 'pending'}
+                      </Badge>
                       <span className="text-xs text-muted-foreground">
-                        {project.customer?.first_name} {project.customer?.last_name}
+                        {project.customer?.first_name && project.customer?.last_name
+                          ? `${project.customer.first_name} ${project.customer.last_name}`
+                          : project.customer?.email || 'Unassigned'}
                       </span>
                     </div>
                   </div>
@@ -465,6 +489,7 @@ export const AdminProjects = () => {
                 <TableHead>Customer</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Budget</TableHead>
                 <TableHead>Files</TableHead>
                 <TableHead>Timeline</TableHead>
@@ -488,7 +513,7 @@ export const AdminProjects = () => {
                         {project.customer?.first_name} {project.customer?.last_name}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {project.customer?.company_name || 'Individual'}
+                        {project.customer?.company_name || project.customer?.email || 'Unassigned'}
                       </div>
                     </div>
                   </TableCell>
@@ -501,6 +526,17 @@ export const AdminProjects = () => {
                   <TableCell>
                     <Badge className={getStatusColor(project.status)}>
                       {project.status.replace('_', ' ')}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={
+                        project.approval_status === 'approved' ? 'default' :
+                        project.approval_status === 'rejected' ? 'destructive' :
+                        'secondary'
+                      }
+                    >
+                      {project.approval_status || 'pending'}
                     </Badge>
                   </TableCell>
                   <TableCell>

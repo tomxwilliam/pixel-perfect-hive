@@ -38,9 +38,11 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [customers, setCustomers] = useState<Array<{ id: string; first_name: string; last_name: string; email: string }>>([]);
   const [formData, setFormData] = useState({
     title: project.title,
     description: project.description || '',
+    customer_id: project.customer_id,
     status: project.status,
     project_type: project.project_type,
     budget: project.budget ? Number(project.budget) : 0,
@@ -52,12 +54,27 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
       setFormData({
         title: project.title,
         description: project.description || '',
+        customer_id: project.customer_id,
         status: project.status,
         project_type: project.project_type,
         budget: project.budget ? Number(project.budget) : 0,
         estimated_completion_date: project.estimated_completion_date ? new Date(project.estimated_completion_date) : null
       });
       setIsEditing(false);
+
+      // Fetch customers
+      const fetchCustomers = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, first_name, last_name, email')
+          .order('first_name');
+        
+        if (!error && data) {
+          setCustomers(data);
+        }
+      };
+
+      fetchCustomers();
     }
   }, [open, project]);
 
@@ -69,6 +86,7 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
         .update({
           title: formData.title,
           description: formData.description,
+          customer_id: formData.customer_id,
           status: formData.status as any,
           project_type: formData.project_type as any,
           budget: formData.budget,
@@ -93,6 +111,7 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
     setFormData({
       title: project.title,
       description: project.description || '',
+      customer_id: project.customer_id,
       status: project.status,
       project_type: project.project_type,
       budget: project.budget ? Number(project.budget) : 0,
@@ -204,6 +223,32 @@ export const ProjectEditModal: React.FC<ProjectEditModalProps> = ({
                     />
                   ) : (
                     <p className="text-sm font-medium mt-1">{project.title}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="customer">Customer</Label>
+                  {isEditing ? (
+                    <Select value={formData.customer_id} onValueChange={(value) => setFormData({ ...formData, customer_id: value })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {customers.map((customer) => (
+                          <SelectItem key={customer.id} value={customer.id}>
+                            {customer.first_name && customer.last_name 
+                              ? `${customer.first_name} ${customer.last_name} (${customer.email})`
+                              : customer.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-sm mt-1">
+                      {project.customer?.first_name && project.customer?.last_name
+                        ? `${project.customer.first_name} ${project.customer.last_name}`
+                        : project.customer?.email || 'Unassigned'}
+                    </p>
                   )}
                 </div>
 

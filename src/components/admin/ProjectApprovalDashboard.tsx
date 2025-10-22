@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +22,8 @@ export const ProjectApprovalDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<ProjectWithCustomer | null>(null);
   const [approvalNotes, setApprovalNotes] = useState('');
+  const [newCustomerId, setNewCustomerId] = useState('');
+  const [customers, setCustomers] = useState<Array<{ id: string; first_name: string; last_name: string; email: string }>>([]);
   const [actionLoading, setActionLoading] = useState(false);
   const { toast } = useToast();
 
@@ -52,6 +55,20 @@ export const ProjectApprovalDashboard = () => {
   useEffect(() => {
     fetchPendingProjects();
 
+    // Fetch customers
+    const fetchCustomers = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email')
+        .order('first_name');
+      
+      if (!error && data) {
+        setCustomers(data);
+      }
+    };
+
+    fetchCustomers();
+
     // Real-time subscription for new approval requests
     const channel = supabase
       .channel('project-approvals')
@@ -69,11 +86,20 @@ export const ProjectApprovalDashboard = () => {
   const handleApproval = async (projectId: string, decision: 'approved' | 'rejected' | 'revision_requested') => {
     setActionLoading(true);
     try {
-      const { error } = await supabase.rpc('approve_project', {
-        project_id_param: projectId,
-        approval_decision: decision,
-        approval_notes_param: approvalNotes || null
-      });
+      // Update approval status and optionally customer_id
+      const updateData: any = {
+        approval_status: decision,
+        approval_notes: approvalNotes || null,
+      };
+
+      if (newCustomerId) {
+        updateData.customer_id = newCustomerId;
+      }
+
+      const { error } = await supabase
+        .from('projects')
+        .update(updateData)
+        .eq('id', projectId);
 
       if (error) throw error;
 
@@ -83,6 +109,7 @@ export const ProjectApprovalDashboard = () => {
       });
 
       setApprovalNotes('');
+      setNewCustomerId('');
       setSelectedProject(null);
       fetchPendingProjects();
     } catch (error) {
@@ -180,6 +207,7 @@ export const ProjectApprovalDashboard = () => {
                     <h4 className="font-semibold text-lg">{project.title}</h4>
                     <p className="text-muted-foreground line-clamp-2">{project.description}</p>
                     <div className="flex items-center gap-2 mt-2">
+                      <Badge variant="outline">{project.status}</Badge>
                       <Badge className={getApprovalStatusColor(project.approval_status || 'pending')}>
                         {project.approval_status || 'pending'}
                       </Badge>
@@ -208,10 +236,14 @@ export const ProjectApprovalDashboard = () => {
                             <h4 className="font-medium mb-2">Customer Information</h4>
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div>
-                                <span className="font-medium">Name:</span> {project.customer?.first_name} {project.customer?.last_name}
+                                <span className="font-medium">Name:</span> {
+                                  project.customer?.first_name && project.customer?.last_name
+                                    ? `${project.customer.first_name} ${project.customer.last_name}`
+                                    : project.customer?.email || <Badge variant="secondary">Unassigned</Badge>
+                                }
                               </div>
                               <div>
-                                <span className="font-medium">Email:</span> {project.customer?.email}
+                                <span className="font-medium">Email:</span> {project.customer?.email || 'N/A'}
                               </div>
                               {project.customer?.company_name && (
                                 <div>
@@ -230,6 +262,12 @@ export const ProjectApprovalDashboard = () => {
                           <div>
                             <h4 className="font-medium mb-2">Project Details</h4>
                             <div className="space-y-2 text-sm">
+                              <div>
+                                <span className="font-medium">Workflow Status:</span> <Badge variant="outline">{project.status}</Badge>
+                              </div>
+                              <div>
+                                <span className="font-medium">Approval Status:</span> <Badge variant="secondary">{project.approval_status || 'pending'}</Badge>
+                              </div>
                               <div>
                                 <span className="font-medium">Type:</span> {project.project_type}
                               </div>
@@ -263,6 +301,24 @@ export const ProjectApprovalDashboard = () => {
 
                           {/* Approval Actions */}
                           <div className="space-y-4 border-t pt-4">
+                            <div>
+                              <label className="block text-sm font-medium mb-2">Assign/Reassign Customer (Optional)</label>
+                              <Select value={newCustomerId} onValueChange={setNewCustomerId}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select customer (optional)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {customers.map((customer) => (
+                                    <SelectItem key={customer.id} value={customer.id}>
+                                      {customer.first_name && customer.last_name 
+                                        ? `${customer.first_name} ${customer.last_name} (${customer.email})`
+                                        : customer.email}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
                             <div>
                               <label className="block text-sm font-medium mb-2">Approval Notes</label>
                               <Textarea

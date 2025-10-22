@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 const projectSchema = z.object({
   title: z.string().min(1, 'Project title is required'),
   description: z.string().optional(),
+  customer_id: z.string().min(1, 'Customer is required'),
   status: z.enum(['pending', 'in_progress', 'completed', 'cancelled', 'on_hold']),
   priority: z.enum(['lowest', 'low', 'medium', 'high', 'highest']),
   start_date: z.date().optional(),
@@ -36,6 +37,25 @@ interface CreateProjectFormProps {
 
 const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCancel }) => {
   const { toast } = useToast();
+  const [customers, setCustomers] = useState<Array<{ id: string; first_name: string; last_name: string; email: string }>>([]);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, first_name, last_name, email')
+        .order('first_name');
+      
+      if (error) {
+        console.error('Error fetching customers:', error);
+        return;
+      }
+      
+      setCustomers(data || []);
+    };
+
+    fetchCustomers();
+  }, []);
   
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -55,11 +75,12 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
       const { error: projectError } = await supabase
         .from('projects')
         .insert({
-          title: data.title, // This field is required in the database
-          customer_id: user.id,
+          title: data.title,
+          customer_id: data.customer_id,
           description: data.description,
           project_type: data.project_type as 'web' | 'app' | 'game',
           status: data.status as 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'on_hold',
+          approval_status: 'pending',
           budget: data.budget,
           priority: data.priority,
           start_date: data.start_date?.toISOString().split('T')[0],
@@ -71,7 +92,7 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
 
       toast({
         title: 'Success',
-        description: 'Project created successfully',
+        description: 'Project created successfully and pending approval',
       });
 
       form.reset();
@@ -99,6 +120,33 @@ const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSuccess, onCanc
                 <FormControl>
                   <Input placeholder="Enter project title" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="customer_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Customer</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a customer" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {customers.map((customer) => (
+                      <SelectItem key={customer.id} value={customer.id}>
+                        {customer.first_name && customer.last_name 
+                          ? `${customer.first_name} ${customer.last_name} (${customer.email})`
+                          : customer.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
