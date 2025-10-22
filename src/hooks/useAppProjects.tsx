@@ -104,20 +104,20 @@ export const useDeleteAppProject = () => {
         const filesToDelete: string[] = [];
         
         if (project.logo_url) {
-          const logoPath = project.logo_url.split("/").pop();
-          if (logoPath) filesToDelete.push(logoPath);
+          const urlParts = project.logo_url.split("/storage/v1/object/public/uploads/")[1];
+          if (urlParts) filesToDelete.push(urlParts);
         }
         
         if (project.feature_image_url) {
-          const featurePath = project.feature_image_url.split("/").pop();
-          if (featurePath) filesToDelete.push(featurePath);
+          const urlParts = project.feature_image_url.split("/storage/v1/object/public/uploads/")[1];
+          if (urlParts) filesToDelete.push(urlParts);
         }
 
         // Delete screenshots
         if (project.screenshots && project.screenshots.length > 0) {
           project.screenshots.forEach(screenshot => {
-            const screenshotPath = screenshot.split("/").pop();
-            if (screenshotPath) filesToDelete.push(screenshotPath);
+            const urlParts = screenshot.split("/storage/v1/object/public/uploads/")[1];
+            if (urlParts) filesToDelete.push(urlParts);
           });
         }
 
@@ -147,15 +147,21 @@ export const useDeleteAppProject = () => {
 export const useUploadAppProjectImage = () => {
   return useMutation({
     mutationFn: async ({ file, path }: { file: File; path: string }) => {
+      // Get authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("User must be authenticated to upload files");
+
       // Delete existing file if it exists
-      const existingFileName = path.split("/").pop();
-      if (existingFileName) {
-        await supabase.storage.from("uploads").remove([existingFileName]);
+      if (path) {
+        const urlParts = path.split("/storage/v1/object/public/uploads/")[1];
+        if (urlParts) {
+          await supabase.storage.from("uploads").remove([urlParts]);
+        }
       }
 
-      // Upload new file
+      // Upload new file with user ID prefix
       const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const fileName = `${user.id}/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from("uploads")
