@@ -15,10 +15,12 @@ import { cn } from '@/lib/utils';
 interface ExportOptions {
   startDate: Date | undefined;
   endDate: Date | undefined;
-  format: 'csv' | 'excel';
+  format: 'csv' | 'excel' | 'xero-invoices' | 'xero-contacts';
   includeCustomers: boolean;
   includeProjects: boolean;
   includeTimeTracking: boolean;
+  xeroAccountCode: string;
+  xeroTaxType: string;
 }
 
 export const AdminAccounting = () => {
@@ -29,6 +31,8 @@ export const AdminAccounting = () => {
     includeCustomers: true,
     includeProjects: true,
     includeTimeTracking: true,
+    xeroAccountCode: '200',
+    xeroTaxType: '20% (VAT on Income)',
   });
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
@@ -84,6 +88,8 @@ export const AdminAccounting = () => {
           includeCustomers: exportOptions.includeCustomers,
           includeProjects: exportOptions.includeProjects,
           includeTimeTracking: exportOptions.includeTimeTracking,
+          xeroAccountCode: exportOptions.xeroAccountCode,
+          xeroTaxType: exportOptions.xeroTaxType,
         },
       });
 
@@ -94,7 +100,8 @@ export const AdminAccounting = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `accounting-export-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      const filename = data.filename || `accounting-export-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -251,7 +258,7 @@ export const AdminAccounting = () => {
                 <label className="text-sm font-medium">Export Format</label>
                 <Select
                   value={exportOptions.format}
-                  onValueChange={(value: 'csv' | 'excel') => 
+                  onValueChange={(value: 'csv' | 'excel' | 'xero-invoices' | 'xero-contacts') => 
                     setExportOptions(prev => ({ ...prev, format: value }))
                   }
                 >
@@ -259,54 +266,104 @@ export const AdminAccounting = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="csv">CSV (Recommended for Accountants)</SelectItem>
+                    <SelectItem value="csv">CSV - Comprehensive (All Data)</SelectItem>
                     <SelectItem value="excel">Excel Compatible CSV</SelectItem>
+                    <SelectItem value="xero-invoices">Xero Sales Invoices CSV</SelectItem>
+                    <SelectItem value="xero-contacts">Xero Contacts CSV</SelectItem>
                   </SelectContent>
                 </Select>
+                {exportOptions.format.startsWith('xero') && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    ✓ Ready for direct import to Xero.com - No manual formatting needed
+                  </p>
+                )}
               </div>
 
-              {/* Export Options */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium">Include in Export</label>
-                <div className="space-y-2">
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={exportOptions.includeCustomers}
-                      onChange={(e) => setExportOptions(prev => ({ 
-                        ...prev, 
-                        includeCustomers: e.target.checked 
-                      }))}
-                      className="rounded border-gray-300"
-                    />
-                    <span className="text-sm">Customer Information</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={exportOptions.includeProjects}
-                      onChange={(e) => setExportOptions(prev => ({ 
-                        ...prev, 
-                        includeProjects: e.target.checked 
-                      }))}
-                      className="rounded border-gray-300"
-                    />
-                    <span className="text-sm">Project Financial Data</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={exportOptions.includeTimeTracking}
-                      onChange={(e) => setExportOptions(prev => ({ 
-                        ...prev, 
-                        includeTimeTracking: e.target.checked 
-                      }))}
-                      className="rounded border-gray-300"
-                    />
-                    <span className="text-sm">Time Tracking & Billable Hours</span>
-                  </label>
+              {/* Xero Configuration Options */}
+              {exportOptions.format === 'xero-invoices' && (
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <h4 className="text-sm font-semibold">Xero Import Settings</h4>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Account Code</label>
+                      <input
+                        type="text"
+                        value={exportOptions.xeroAccountCode}
+                        onChange={(e) => setExportOptions(prev => ({ 
+                          ...prev, 
+                          xeroAccountCode: e.target.value 
+                        }))}
+                        className="w-full px-3 py-2 border rounded-md"
+                        placeholder="e.g., 200"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Default: 200 (Sales). Match your Xero chart of accounts.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Tax Type</label>
+                      <input
+                        type="text"
+                        value={exportOptions.xeroTaxType}
+                        onChange={(e) => setExportOptions(prev => ({ 
+                          ...prev, 
+                          xeroTaxType: e.target.value 
+                        }))}
+                        className="w-full px-3 py-2 border rounded-md"
+                        placeholder="e.g., 20% (VAT on Income)"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Must match your Xero tax rate exactly.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Export Options - Only show for comprehensive CSV */}
+              {!exportOptions.format.startsWith('xero') && (
+                <div className="space-y-3">
+                  <label className="text-sm font-medium">Include in Export</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={exportOptions.includeCustomers}
+                        onChange={(e) => setExportOptions(prev => ({ 
+                          ...prev, 
+                          includeCustomers: e.target.checked 
+                        }))}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm">Customer Information</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={exportOptions.includeProjects}
+                        onChange={(e) => setExportOptions(prev => ({ 
+                          ...prev, 
+                          includeProjects: e.target.checked 
+                        }))}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm">Project Financial Data</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={exportOptions.includeTimeTracking}
+                        onChange={(e) => setExportOptions(prev => ({ 
+                          ...prev, 
+                          includeTimeTracking: e.target.checked 
+                        }))}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm">Time Tracking & Billable Hours</span>
+                    </label>
+                  </div>
+                </div>
+              )}
 
               {/* Export Button */}
               <Button 
@@ -329,17 +386,42 @@ export const AdminAccounting = () => {
               </Button>
 
               <div className="text-sm text-muted-foreground space-y-1">
-                <p><strong>Export includes:</strong></p>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>All invoices with payment status and amounts</li>
-                  <li>Quotes with conversion tracking</li>
-                  <li>Project budgets and actual costs</li>
-                  <li>Domain registration and renewal costs</li>
-                  <li>Hosting subscription billing</li>
-                  <li>Time logs with billable hour calculations</li>
-                  <li>Customer details for cross-referencing</li>
-                  <li>Outstanding receivables and recurring revenue</li>
-                </ul>
+                {exportOptions.format === 'xero-invoices' ? (
+                  <>
+                    <p><strong>Xero Sales Invoices Export includes:</strong></p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Invoice numbers and dates in Xero format (DD/MM/YYYY)</li>
+                      <li>Customer contact information on each line</li>
+                      <li>Invoice totals, tax amounts, and payment status</li>
+                      <li>Status mapped to Xero values (PAID, AUTHORISED, DRAFT)</li>
+                      <li>Direct upload to Xero.com - no manual formatting needed</li>
+                    </ul>
+                  </>
+                ) : exportOptions.format === 'xero-contacts' ? (
+                  <>
+                    <p><strong>Xero Contacts Export includes:</strong></p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>Customer names and company information</li>
+                      <li>Email addresses and phone numbers</li>
+                      <li>Contact details in Xero-compatible format</li>
+                      <li>Ready for import to Xero contact list</li>
+                    </ul>
+                  </>
+                ) : (
+                  <>
+                    <p><strong>Comprehensive Export includes:</strong></p>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li>All invoices with payment status and amounts</li>
+                      <li>Quotes with conversion tracking</li>
+                      <li>Project budgets and actual costs</li>
+                      <li>Domain registration and renewal costs</li>
+                      <li>Hosting subscription billing</li>
+                      <li>Time logs with billable hour calculations</li>
+                      <li>Customer details for cross-referencing</li>
+                      <li>Outstanding receivables and recurring revenue</li>
+                    </ul>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

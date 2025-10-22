@@ -9,11 +9,183 @@ const corsHeaders = {
 interface ExportRequest {
   startDate?: string;
   endDate?: string;
-  format: 'csv' | 'excel';
+  format: 'csv' | 'excel' | 'xero-invoices' | 'xero-contacts';
   includeCustomers: boolean;
   includeProjects: boolean;
   includeTimeTracking: boolean;
+  xeroAccountCode?: string;
+  xeroTaxType?: string;
 }
+
+// Helper function to format dates for Xero (DD/MM/YYYY)
+const formatXeroDate = (isoDate: string | null): string => {
+  if (!isoDate) return '';
+  const date = new Date(isoDate);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+// Helper function to escape CSV values
+const escapeCsvValue = (value: any): string => {
+  if (value === null || value === undefined) return '';
+  const str = String(value);
+  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+};
+
+// Generate Xero Sales Invoices CSV
+const generateXeroInvoicesCSV = async (
+  supabaseClient: any,
+  startDate?: string,
+  endDate?: string,
+  accountCode: string = '200',
+  taxType: string = '20% (VAT on Income)'
+): Promise<string> => {
+  console.log('Generating Xero Invoices CSV...');
+
+  // Xero Sales Invoice required headers
+  const headers = [
+    'ContactName', 'EmailAddress', 'POAddressLine1', 'POAddressLine2', 'POAddressLine3', 
+    'POAddressLine4', 'POCity', 'PORegion', 'POPostalCode', 'POCountry',
+    'InvoiceNumber', 'Reference', 'InvoiceDate', 'DueDate', 'Total', 'TaxTotal',
+    'InvoiceAmountPaid', 'InvoiceAmountDue', 'Description', 'Quantity', 'UnitAmount',
+    'LineAmount', 'AccountCode', 'TaxType', 'Currency', 'Type', 'Status'
+  ];
+
+  let csv = headers.join(',') + '\n';
+
+  // Query invoices with customer data
+  let invoiceQuery = supabaseClient
+    .from('invoices')
+    .select(`
+      id,
+      invoice_number,
+      amount,
+      status,
+      due_date,
+      paid_at,
+      created_at,
+      project_id,
+      projects (title),
+      profiles!customer_id (
+        email,
+        first_name,
+        last_name,
+        company_name,
+        phone
+      )
+    `);
+
+  if (startDate) invoiceQuery = invoiceQuery.gte('created_at', startDate);
+  if (endDate) invoiceQuery = invoiceQuery.lte('created_at', endDate);
+
+  const { data: invoices, error } = await invoiceQuery;
+  
+  if (error) {
+    console.error('Error fetching invoices:', error);
+    throw error;
+  }
+
+  // Map invoice status to Xero status
+  const statusMap: { [key: string]: string } = {
+    'paid': 'PAID',
+    'pending': 'AUTHORISED',
+    'overdue': 'AUTHORISED',
+    'draft': 'DRAFT'
+  };
+
+  for (const invoice of invoices || []) {
+    const profile = invoice.profiles;
+    const contactName = profile?.company_name || 
+                       `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 
+                       'Unknown Customer';
+    const amount = Number(invoice.amount);
+    const taxAmount = amount * 0.2; // Assuming 20% VAT
+    const amountPaid = invoice.status === 'paid' ? amount : 0;
+    const amountDue = invoice.status === 'paid' ? 0 : amount;
+    const projectRef = invoice.projects?.title || '';
+    const description = projectRef ? `Invoice for ${projectRef}` : `Invoice ${invoice.invoice_number}`;
+
+    const row = [
+      escapeCsvValue(contactName),
+      escapeCsvValue(profile?.email || ''),
+      '', '', '', '', '', '', '', 'GB', // Address fields - empty for now
+      escapeCsvValue(invoice.invoice_number),
+      escapeCsvValue(projectRef),
+      formatXeroDate(invoice.created_at),
+      formatXeroDate(invoice.due_date),
+      amount.toFixed(2),
+      taxAmount.toFixed(2),
+      amountPaid.toFixed(2),
+      amountDue.toFixed(2),
+      escapeCsvValue(description),
+      '1',
+      amount.toFixed(2),
+      amount.toFixed(2),
+      accountCode,
+      taxType,
+      'GBP',
+      'ACCREC',
+      statusMap[invoice.status] || 'AUTHORISED'
+    ];
+
+    csv += row.join(',') + '\n';
+  }
+
+  console.log(`Generated Xero Invoices CSV with ${invoices?.length || 0} invoices`);
+  return csv;
+};
+
+// Generate Xero Contacts CSV
+const generateXeroContactsCSV = async (
+  supabaseClient: any
+): Promise<string> => {
+  console.log('Generating Xero Contacts CSV...');
+
+  // Xero Contacts required headers
+  const headers = [
+    'ContactName', 'FirstName', 'LastName', 'EmailAddress', 'ContactNumber',
+    'POAddressLine1', 'POAddressLine2', 'POAddressLine3', 'POAddressLine4',
+    'POCity', 'PORegion', 'POPostalCode', 'POCountry'
+  ];
+
+  let csv = headers.join(',') + '\n';
+
+  // Query all customer profiles
+  const { data: customers, error } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .neq('role', 'admin');
+
+  if (error) {
+    console.error('Error fetching customers:', error);
+    throw error;
+  }
+
+  for (const customer of customers || []) {
+    const contactName = customer.company_name || 
+                       `${customer.first_name || ''} ${customer.last_name || ''}`.trim() || 
+                       customer.email;
+
+    const row = [
+      escapeCsvValue(contactName),
+      escapeCsvValue(customer.first_name || ''),
+      escapeCsvValue(customer.last_name || ''),
+      escapeCsvValue(customer.email),
+      escapeCsvValue(customer.phone || ''),
+      '', '', '', '', '', '', '', 'GB' // Address fields - empty for now
+    ];
+
+    csv += row.join(',') + '\n';
+  }
+
+  console.log(`Generated Xero Contacts CSV with ${customers?.length || 0} contacts`);
+  return csv;
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -33,7 +205,9 @@ serve(async (req) => {
       format, 
       includeCustomers, 
       includeProjects, 
-      includeTimeTracking 
+      includeTimeTracking,
+      xeroAccountCode,
+      xeroTaxType
     }: ExportRequest = await req.json()
 
     console.log('Export request received:', { 
@@ -42,8 +216,53 @@ serve(async (req) => {
       format, 
       includeCustomers, 
       includeProjects, 
-      includeTimeTracking 
+      includeTimeTracking,
+      xeroAccountCode,
+      xeroTaxType
     });
+
+    // Handle Xero-specific exports
+    if (format === 'xero-invoices') {
+      const csvData = await generateXeroInvoicesCSV(
+        supabaseClient, 
+        startDate, 
+        endDate,
+        xeroAccountCode || '200',
+        xeroTaxType || '20% (VAT on Income)'
+      );
+
+      return new Response(
+        JSON.stringify({ 
+          csvData, 
+          message: 'Xero Invoices export generated successfully',
+          filename: `xero-invoices-${new Date().toISOString().split('T')[0]}.csv`
+        }),
+        {
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          },
+        },
+      );
+    }
+
+    if (format === 'xero-contacts') {
+      const csvData = await generateXeroContactsCSV(supabaseClient);
+
+      return new Response(
+        JSON.stringify({ 
+          csvData, 
+          message: 'Xero Contacts export generated successfully',
+          filename: `xero-contacts-${new Date().toISOString().split('T')[0]}.csv`
+        }),
+        {
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          },
+        },
+      );
+    }
 
     // Build date filter for queries
     const dateFilter = startDate && endDate ? 
