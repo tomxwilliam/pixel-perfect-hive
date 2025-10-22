@@ -58,10 +58,6 @@ export function CreateEditWebProjectDialog({
   const updateProject = useUpdateWebProject();
   const uploadImage = useUploadWebProjectImage();
 
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string>("");
-  const [featureFile, setFeatureFile] = useState<File | null>(null);
-  const [featurePreview, setFeaturePreview] = useState<string>("");
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
   const [existingScreenshots, setExistingScreenshots] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
@@ -96,55 +92,17 @@ export function CreateEditWebProjectDialog({
         is_charity: project.is_charity,
         screenshots: project.screenshots || [],
       });
-      setLogoPreview(project.logo_url || "");
-      setFeaturePreview(project.feature_image_url || "");
       setExistingScreenshots(project.screenshots || []);
       setFeatures(project.features || []);
       setTechnologies(project.technologies || []);
     } else {
       form.reset();
-      setLogoPreview("");
-      setFeaturePreview("");
       setExistingScreenshots([]);
       setFeatures([]);
       setTechnologies([]);
     }
-    setLogoFile(null);
-    setFeatureFile(null);
     setScreenshotFiles([]);
   }, [project, form]);
-
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        form.setError("name", { message: "Logo must be less than 50MB" });
-        return;
-      }
-      setLogoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        form.setError("name", { message: "Feature image must be less than 50MB" });
-        return;
-      }
-      setFeatureFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFeaturePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const addFeature = () => {
     if (currentFeature.trim()) {
@@ -197,23 +155,6 @@ export function CreateEditWebProjectDialog({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      let logoUrl = project?.logo_url || "";
-      let featureUrl = project?.feature_image_url || "";
-
-      if (logoFile) {
-        logoUrl = await uploadImage.mutateAsync({
-          file: logoFile,
-          path: logoUrl,
-        });
-      }
-
-      if (featureFile) {
-        featureUrl = await uploadImage.mutateAsync({
-          file: featureFile,
-          path: featureUrl,
-        });
-      }
-
       // Upload new screenshots
       const newScreenshotUrls: string[] = [];
       for (const file of screenshotFiles) {
@@ -236,8 +177,8 @@ export function CreateEditWebProjectDialog({
         status: values.status,
         is_featured: values.is_featured,
         is_charity: values.is_charity,
-        logo_url: logoUrl,
-        feature_image_url: featureUrl,
+        logo_url: project?.logo_url || "",
+        feature_image_url: project?.feature_image_url || "",
         screenshots: allScreenshots,
         features,
         technologies,
@@ -378,68 +319,6 @@ export function CreateEditWebProjectDialog({
                   </FormItem>
                 )}
               />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <FormLabel>Logo (Optional)</FormLabel>
-                <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors">
-                  {logoPreview ? (
-                    <img src={logoPreview} alt="Logo preview" className="w-32 h-32 object-cover mx-auto rounded" />
-                  ) : (
-                    <div className="space-y-2">
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">Upload logo (max 50MB)</p>
-                    </div>
-                  )}
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoChange}
-                    className="hidden"
-                    id="logo-upload"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    size="sm" 
-                    className="mt-2"
-                    onClick={() => document.getElementById('logo-upload')?.click()}
-                  >
-                    Choose File
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <FormLabel>Feature Image (Optional)</FormLabel>
-                <div className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors">
-                  {featurePreview ? (
-                    <img src={featurePreview} alt="Feature preview" className="w-32 h-32 object-cover mx-auto rounded" />
-                  ) : (
-                    <div className="space-y-2">
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">Upload screenshot (max 50MB)</p>
-                    </div>
-                  )}
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFeatureChange}
-                    className="hidden"
-                    id="feature-upload"
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    size="sm" 
-                    className="mt-2"
-                    onClick={() => document.getElementById('feature-upload')?.click()}
-                  >
-                    Choose File
-                  </Button>
-                </div>
-              </div>
             </div>
 
             <div className="space-y-2">
