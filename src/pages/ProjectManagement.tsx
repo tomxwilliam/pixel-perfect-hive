@@ -655,32 +655,30 @@ const ProjectManagement = () => {
           </MobileTabsContent>
 
           <MobileTabsContent value="gantt" className="space-y-6">
-            <div className="h-[800px]">
-              <InteractiveGanttChart 
-                projects={projects.map(p => ({
-                  id: p.id,
-                  title: p.title,
-                  startDate: new Date(p.created_at),
-                  endDate: p.estimated_completion_date ? new Date(p.estimated_completion_date) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                  tasks: tasks
-                    .filter(t => t.project_id === p.id)
-                    .map(t => ({
-                      id: t.id,
-                      title: t.title,
-                      startDate: t.start_date ? new Date(t.start_date) : new Date(t.created_at),
-                      endDate: t.due_date ? new Date(t.due_date) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                      status: t.status || 'todo',
-                      priority: t.priority || 'medium',
-                      assignee: t.assignee_id || 'Unassigned',
-                      progress: t.status === 'completed' ? 100 : t.status === 'in_progress' ? 50 : 0,
-                      dependencies: [],
-                      project_id: t.project_id,
-                      estimated_hours: t.estimated_hours,
-                      actual_hours: t.actual_hours
-                    }))
-                }))}
-              />
-            </div>
+            <InteractiveGanttChart 
+              projects={projects.map(p => ({
+                id: p.id,
+                title: p.title,
+                startDate: new Date(p.created_at),
+                endDate: p.estimated_completion_date ? new Date(p.estimated_completion_date) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                tasks: tasks
+                  .filter(t => t.project_id === p.id)
+                  .map(t => ({
+                    id: t.id,
+                    title: t.title,
+                    startDate: t.start_date ? new Date(t.start_date) : new Date(t.created_at),
+                    endDate: t.due_date ? new Date(t.due_date) : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                    status: t.status || 'todo',
+                    priority: t.priority || 'medium',
+                    assignee: t.assignee_id || 'Unassigned',
+                    progress: t.status === 'completed' ? 100 : t.status === 'in_progress' ? 50 : 0,
+                    dependencies: [],
+                    project_id: t.project_id,
+                    estimated_hours: t.estimated_hours,
+                    actual_hours: t.actual_hours
+                  }))
+              }))}
+            />
           </MobileTabsContent>
 
           <MobileTabsContent value="calendar">

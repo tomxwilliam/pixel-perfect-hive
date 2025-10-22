@@ -331,161 +331,178 @@ const InteractiveGanttChart: React.FC<InteractiveGanttChartProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto overflow-y-auto max-h-[400px] md:max-h-[600px]">
-          {/* Timeline Header */}
-          <div className="flex sticky top-0 bg-background z-10 border-b">
-            <div className="w-64 p-3 font-medium border-r bg-muted">
-              Project / Task
+        {projects.length === 0 || projects.every(p => p.tasks.length === 0) ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <Calendar className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">No tasks to display</h3>
+            <p className="text-muted-foreground">Create some tasks in your projects to see them on the Gantt chart.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
+            {/* Timeline Header */}
+            <div className="flex sticky top-0 bg-background z-10 border-b-2">
+              <div className="w-64 p-3 font-medium border-r bg-muted">
+                Project / Task
+              </div>
+              <div className="flex bg-muted" style={{ width: timelineWidth }}>
+                {timelineHeaders.map((date, index) => (
+                  <div
+                    key={index}
+                    className="border-r p-2 text-xs text-center"
+                    style={{ width: dayWidth * 7 }}
+                  >
+                    <div className="font-medium">{format(date, 'MMM dd')}</div>
+                    <div className="text-muted-foreground">{format(date, 'yyyy')}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex" style={{ width: timelineWidth }}>
-              {timelineHeaders.map((date, index) => (
-                <div
-                  key={index}
-                  className="border-r p-2 text-xs text-center bg-muted"
-                  style={{ width: dayWidth * 7 }}
-                >
-                  <div className="font-medium">{format(date, 'MMM dd')}</div>
-                  <div className="text-muted-foreground">{format(date, 'yyyy')}</div>
+
+            {/* Projects and Tasks */}
+            <div ref={timelineRef} className="relative">
+              {projects.map((project) => (
+                <div key={project.id}>
+                  {/* Project Row */}
+                  <div className="flex border-b hover:bg-muted/50">
+                    <div className="w-64 p-3 border-r bg-muted/30">
+                      <div className="font-medium text-primary">{project.title}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(project.startDate, 'MMM dd')} - {format(project.endDate, 'MMM dd')}
+                      </div>
+                    </div>
+                    <div 
+                      className="relative flex-1 p-2 cursor-pointer"
+                      style={{ width: timelineWidth, minHeight: '48px' }}
+                      onClick={(e) => handleTimelineClick(e, project.id)}
+                    >
+                      {/* Project Timeline Bar */}
+                      <div
+                        className="absolute top-3 h-6 bg-primary/20 border border-primary/40 rounded flex items-center px-2"
+                        style={calculatePosition(project.startDate, project.endDate)}
+                      >
+                        <span className="text-xs font-medium text-primary truncate">
+                          {project.title}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Task Rows */}
+                  {project.tasks.length === 0 ? (
+                    <div className="flex border-b">
+                      <div className="w-64 p-3 border-r">
+                        <p className="text-sm text-muted-foreground italic">No tasks yet</p>
+                      </div>
+                      <div className="flex-1 p-2" style={{ width: timelineWidth }} />
+                    </div>
+                  ) : (
+                    project.tasks.map((task) => (
+                      <div key={task.id} className="flex border-b hover:bg-muted/50">
+                        <div className="w-64 p-3 border-r">
+                          {editingTask?.id === task.id ? (
+                            <Input
+                              value={editingTask.title}
+                              onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                              onBlur={() => {
+                                handleTaskEdit(task, editingTask);
+                                setEditingTask(null);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  handleTaskEdit(task, editingTask);
+                                  setEditingTask(null);
+                                }
+                                if (e.key === 'Escape') {
+                                  setEditingTask(null);
+                                }
+                              }}
+                              className="text-sm"
+                              autoFocus
+                            />
+                          ) : (
+                            <div 
+                              className="cursor-pointer"
+                              onDoubleClick={() => setEditingTask(task)}
+                            >
+                              <div className="font-medium text-sm">{task.title}</div>
+                              <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                <Badge variant="outline" className={`text-xs ${getStatusColor(task.status)} text-white border-0`}>
+                                  {task.status}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {task.priority}
+                                </Badge>
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                {task.estimated_hours && (
+                                  <span className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    {task.actual_hours || 0}h / {task.estimated_hours}h
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div 
+                          className="relative flex-1 p-2"
+                          style={{ width: timelineWidth, minHeight: '80px' }}
+                        >
+                          <ContextMenu>
+                            <ContextMenuTrigger asChild>
+                              <div
+                                data-task-id={task.id}
+                                className={`absolute top-2 h-8 ${getStatusColor(task.status)} ${getPriorityColor(task.priority)} border-l-4 rounded cursor-move hover:shadow-md transition-shadow group`}
+                                style={calculatePosition(task.startDate, task.endDate)}
+                                onMouseDown={(e) => handleDragStart(e, task)}
+                              >
+                                {/* Resize Handle - Left */}
+                                <div
+                                  className="absolute left-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
+                                  onMouseDown={(e) => handleResizeStart(e, task, 'left')}
+                                />
+                                
+                                {/* Task Content */}
+                                <div className="flex items-center justify-between h-full px-2 text-white text-xs">
+                                  <span className="truncate font-medium">{task.title}</span>
+                                  <span>{task.progress}%</span>
+                                </div>
+                                
+                                {/* Resize Handle - Right */}
+                                <div
+                                  className="absolute right-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
+                                  onMouseDown={(e) => handleResizeStart(e, task, 'right')}
+                                />
+                              </div>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent>
+                              <ContextMenuItem onClick={() => setEditingTask(task)}>
+                                <Edit3 className="h-4 w-4 mr-2" />
+                                Edit Task
+                              </ContextMenuItem>
+                              <ContextMenuItem>
+                                <Link className="h-4 w-4 mr-2" />
+                                Add Dependency
+                              </ContextMenuItem>
+                              <ContextMenuItem>
+                                <Target className="h-4 w-4 mr-2" />
+                                Set Milestone
+                              </ContextMenuItem>
+                              <ContextMenuItem className="text-destructive">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete Task
+                              </ContextMenuItem>
+                            </ContextMenuContent>
+                          </ContextMenu>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Projects and Tasks */}
-          <div ref={timelineRef} className="relative">
-            {projects.map((project) => (
-              <div key={project.id}>
-                {/* Project Row */}
-                <div className="flex border-b hover:bg-muted/50">
-                  <div className="w-64 p-3 border-r">
-                    <div className="font-medium text-primary">{project.title}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {format(project.startDate, 'MMM dd')} - {format(project.endDate, 'MMM dd')}
-                    </div>
-                  </div>
-                  <div 
-                    className="relative flex-1 p-2 cursor-pointer"
-                    style={{ width: timelineWidth }}
-                    onClick={(e) => handleTimelineClick(e, project.id)}
-                  >
-                    {/* Project Timeline Bar */}
-                    <div
-                      className="absolute top-3 h-6 bg-primary/20 border border-primary/40 rounded flex items-center px-2"
-                      style={calculatePosition(project.startDate, project.endDate)}
-                    >
-                      <span className="text-xs font-medium text-primary truncate">
-                        {project.title}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Task Rows */}
-                {project.tasks.map((task) => (
-                  <div key={task.id} className="flex border-b hover:bg-muted/50">
-                    <div className="w-64 p-3 border-r">
-                      {editingTask?.id === task.id ? (
-                        <Input
-                          value={editingTask.title}
-                          onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                          onBlur={() => {
-                            handleTaskEdit(task, editingTask);
-                            setEditingTask(null);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleTaskEdit(task, editingTask);
-                              setEditingTask(null);
-                            }
-                            if (e.key === 'Escape') {
-                              setEditingTask(null);
-                            }
-                          }}
-                          className="text-sm"
-                          autoFocus
-                        />
-                      ) : (
-                        <div 
-                          className="cursor-pointer"
-                          onDoubleClick={() => setEditingTask(task)}
-                        >
-                          <div className="font-medium text-sm">{task.title}</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="outline" className={`text-xs ${getStatusColor(task.status)} text-white`}>
-                              {task.status}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {task.priority}
-                            </Badge>
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {task.estimated_hours && (
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {task.actual_hours || 0}h / {task.estimated_hours}h
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div 
-                      className="relative flex-1 p-2"
-                      style={{ width: timelineWidth }}
-                    >
-                      <ContextMenu>
-                        <ContextMenuTrigger asChild>
-                          <div
-                            data-task-id={task.id}
-                            className={`absolute top-2 h-8 ${getStatusColor(task.status)} ${getPriorityColor(task.priority)} border-l-4 rounded cursor-move hover:shadow-md transition-shadow group`}
-                            style={calculatePosition(task.startDate, task.endDate)}
-                            onMouseDown={(e) => handleDragStart(e, task)}
-                          >
-                            {/* Resize Handle - Left */}
-                            <div
-                              className="absolute left-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
-                              onMouseDown={(e) => handleResizeStart(e, task, 'left')}
-                            />
-                            
-                            {/* Task Content */}
-                            <div className="flex items-center justify-between h-full px-2 text-white text-xs">
-                              <span className="truncate font-medium">{task.title}</span>
-                              <span>{task.progress}%</span>
-                            </div>
-                            
-                            {/* Resize Handle - Right */}
-                            <div
-                              className="absolute right-0 top-0 w-2 h-full cursor-ew-resize opacity-0 group-hover:opacity-100 bg-white/20 hover:bg-white/40"
-                              onMouseDown={(e) => handleResizeStart(e, task, 'right')}
-                            />
-                          </div>
-                        </ContextMenuTrigger>
-                        <ContextMenuContent>
-                          <ContextMenuItem onClick={() => setEditingTask(task)}>
-                            <Edit3 className="h-4 w-4 mr-2" />
-                            Edit Task
-                          </ContextMenuItem>
-                          <ContextMenuItem>
-                            <Link className="h-4 w-4 mr-2" />
-                            Add Dependency
-                          </ContextMenuItem>
-                          <ContextMenuItem>
-                            <Target className="h-4 w-4 mr-2" />
-                            Set Milestone
-                          </ContextMenuItem>
-                          <ContextMenuItem className="text-destructive">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Task
-                          </ContextMenuItem>
-                        </ContextMenuContent>
-                      </ContextMenu>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Create Task Dialog */}
         <Dialog open={!!newTaskDialog} onOpenChange={() => setNewTaskDialog(null)}>
