@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Globe, Zap, Code, Smartphone, TrendingUp, Eye, ArrowRight, Users, Palette, Rocket, HeadphonesIcon } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import { buttonVariants } from "@/components/ui/button";
@@ -213,10 +214,22 @@ const WebPortfolio = () => {
                   description={project.description}
                   features={[
                     { icon: getFeatureIcon(index), text: "" },
-                    ...(project.features || []).slice(0, 3).map((feature, i) => ({
-                      icon: getFeatureItemIcon(i),
-                      text: feature
-                    }))
+                    ...(project.features || []).map((feature: string, i: number) => {
+                      // Parse "text|icon" format
+                      if (feature.includes('|')) {
+                        const [text, iconName] = feature.split('|');
+                        const Icon = (LucideIcons as any)[iconName] || Globe;
+                        return {
+                          icon: <Icon className="h-5 w-5 text-primary mr-3" />,
+                          text
+                        };
+                      }
+                      // Legacy format without icon
+                      return {
+                        icon: getFeatureItemIcon(i),
+                        text: feature
+                      };
+                    })
                   ]}
                   images={(project.screenshots || []).map((screenshot, i) => ({
                     src: screenshot,

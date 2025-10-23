@@ -21,7 +21,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { X, Upload, Plus } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { WebProject, useCreateWebProject, useUpdateWebProject, useUploadWebProjectImage } from "@/hooks/useWebProjects";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -47,8 +49,9 @@ export function CreateEditWebProjectDialog({
 
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
   const [existingScreenshots, setExistingScreenshots] = useState<string[]>([]);
-  const [features, setFeatures] = useState<string[]>([]);
+  const [features, setFeatures] = useState<Array<{ text: string; icon: string }>>([]);
   const [currentFeature, setCurrentFeature] = useState("");
+  const [currentIcon, setCurrentIcon] = useState("Star");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,7 +71,16 @@ export function CreateEditWebProjectDialog({
         screenshots: project.screenshots || [],
       });
       setExistingScreenshots(project.screenshots || []);
-      setFeatures(project.features || []);
+      // Parse features from "text|icon" format
+      const projectFeatures = project.features || [];
+      setFeatures(projectFeatures.map((f: string) => {
+        if (f.includes('|')) {
+          const [text, icon] = f.split('|');
+          return { text, icon };
+        }
+        // Legacy format without icon
+        return { text: f, icon: 'Star' };
+      }));
     } else {
       form.reset();
       setExistingScreenshots([]);
@@ -79,14 +91,17 @@ export function CreateEditWebProjectDialog({
 
   const addFeature = () => {
     if (currentFeature.trim()) {
-      setFeatures([...features, currentFeature.trim()]);
+      setFeatures([...features, { text: currentFeature.trim(), icon: currentIcon }]);
       setCurrentFeature("");
+      setCurrentIcon("Star");
     }
   };
 
   const removeFeature = (index: number) => {
     setFeatures(features.filter((_, i) => i !== index));
   };
+
+  const iconOptions = ['Star', 'Zap', 'TrendingUp', 'Sparkles', 'Trophy', 'Rocket', 'Target', 'Heart', 'Award', 'Globe', 'Code', 'Palette', 'Users', 'Smartphone', 'Eye', 'HeadphonesIcon'];
 
   const handleScreenshotsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -129,6 +144,9 @@ export function CreateEditWebProjectDialog({
       // Combine existing and new screenshots
       const allScreenshots = [...existingScreenshots, ...newScreenshotUrls];
 
+      // Encode features as "text|icon" strings
+      const encodedFeatures = features.map(f => `${f.text}|${f.icon}`);
+
       const projectData = {
         name: values.name,
         description: values.description,
@@ -141,7 +159,7 @@ export function CreateEditWebProjectDialog({
         logo_url: project?.logo_url || "",
         feature_image_url: project?.feature_image_url || "",
         screenshots: allScreenshots,
-        features,
+        features: encodedFeatures,
         technologies: project?.technologies || [],
         display_order: project?.display_order || 0,
       };
@@ -217,26 +235,48 @@ export function CreateEditWebProjectDialog({
 
             <div className="space-y-2">
               <FormLabel>Features</FormLabel>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-[1fr_150px_auto] gap-2">
                 <Input
                   value={currentFeature}
                   onChange={(e) => setCurrentFeature(e.target.value)}
                   placeholder="Add a feature"
                   onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())}
                 />
+                <Select value={currentIcon} onValueChange={setCurrentIcon}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {iconOptions.map((icon) => {
+                      const Icon = (LucideIcons as any)[icon];
+                      return (
+                        <SelectItem key={icon} value={icon}>
+                          <div className="flex items-center gap-2">
+                            {Icon && <Icon className="h-4 w-4" />}
+                            {icon}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
                 <Button type="button" onClick={addFeature} size="icon">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
-                {features.map((feature, index) => (
-                  <div key={index} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2">
-                    <span className="text-sm">{feature}</span>
-                    <button type="button" onClick={() => removeFeature(index)} className="hover:text-destructive">
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
+                {features.map((feature, index) => {
+                  const Icon = (LucideIcons as any)[feature.icon];
+                  return (
+                    <div key={index} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2">
+                      {Icon && <Icon className="h-3 w-3" />}
+                      <span className="text-sm">{feature.text}</span>
+                      <button type="button" onClick={() => removeFeature(index)} className="hover:text-destructive">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
