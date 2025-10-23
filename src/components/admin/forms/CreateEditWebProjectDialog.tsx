@@ -20,26 +20,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { X, Upload, Plus } from "lucide-react";
 import { WebProject, useCreateWebProject, useUpdateWebProject, useUploadWebProjectImage } from "@/hooks/useWebProjects";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().min(1, "Description is required"),
-  client_name: z.string().optional(),
   project_url: z.string().url().optional().or(z.literal("")),
-  project_type: z.string().min(1, "Project type is required"),
-  status: z.string().min(1, "Status is required"),
-  is_featured: z.boolean(),
-  is_charity: z.boolean(),
   screenshots: z.array(z.string()).max(5, "Maximum 5 screenshots allowed"),
 });
 
@@ -61,21 +48,14 @@ export function CreateEditWebProjectDialog({
   const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
   const [existingScreenshots, setExistingScreenshots] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
-  const [technologies, setTechnologies] = useState<string[]>([]);
   const [currentFeature, setCurrentFeature] = useState("");
-  const [currentTechnology, setCurrentTechnology] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
-      client_name: "",
       project_url: "",
-      project_type: "landing",
-      status: "completed",
-      is_featured: false,
-      is_charity: false,
     },
   });
 
@@ -84,22 +64,15 @@ export function CreateEditWebProjectDialog({
       form.reset({
         name: project.name,
         description: project.description,
-        client_name: project.client_name || "",
         project_url: project.project_url || "",
-        project_type: project.project_type,
-        status: project.status,
-        is_featured: project.is_featured,
-        is_charity: project.is_charity,
         screenshots: project.screenshots || [],
       });
       setExistingScreenshots(project.screenshots || []);
       setFeatures(project.features || []);
-      setTechnologies(project.technologies || []);
     } else {
       form.reset();
       setExistingScreenshots([]);
       setFeatures([]);
-      setTechnologies([]);
     }
     setScreenshotFiles([]);
   }, [project, form]);
@@ -113,17 +86,6 @@ export function CreateEditWebProjectDialog({
 
   const removeFeature = (index: number) => {
     setFeatures(features.filter((_, i) => i !== index));
-  };
-
-  const addTechnology = () => {
-    if (currentTechnology.trim()) {
-      setTechnologies([...technologies, currentTechnology.trim()]);
-      setCurrentTechnology("");
-    }
-  };
-
-  const removeTechnology = (index: number) => {
-    setTechnologies(technologies.filter((_, i) => i !== index));
   };
 
   const handleScreenshotsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,17 +132,17 @@ export function CreateEditWebProjectDialog({
       const projectData = {
         name: values.name,
         description: values.description,
-        client_name: values.client_name,
+        client_name: project?.client_name || "",
         project_url: values.project_url,
-        project_type: values.project_type,
-        status: values.status,
-        is_featured: values.is_featured,
-        is_charity: values.is_charity,
+        project_type: project?.project_type || "landing",
+        status: project?.status || "completed",
+        is_featured: project?.is_featured || false,
+        is_charity: project?.is_charity || false,
         logo_url: project?.logo_url || "",
         feature_image_url: project?.feature_image_url || "",
         screenshots: allScreenshots,
         features,
-        technologies,
+        technologies: project?.technologies || [],
         display_order: project?.display_order || 0,
       };
 
@@ -211,35 +173,19 @@ export function CreateEditWebProjectDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter project name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="client_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Client Name (Optional)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter client name" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter project name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -260,7 +206,7 @@ export function CreateEditWebProjectDialog({
               name="project_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project URL (Optional)</FormLabel>
+                  <FormLabel>Website URL (Optional)</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="https://example.com" />
                   </FormControl>
@@ -268,57 +214,6 @@ export function CreateEditWebProjectDialog({
                 </FormItem>
               )}
             />
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="project_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project Type</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="landing">Landing Page</SelectItem>
-                        <SelectItem value="business">Business Website</SelectItem>
-                        <SelectItem value="ecommerce">E-commerce</SelectItem>
-                        <SelectItem value="portfolio">Portfolio</SelectItem>
-                        <SelectItem value="webapp">Web App</SelectItem>
-                        <SelectItem value="pwa">PWA</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="launched">Launched</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <div className="space-y-2">
               <FormLabel>Features</FormLabel>
@@ -345,30 +240,6 @@ export function CreateEditWebProjectDialog({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <FormLabel>Technologies</FormLabel>
-              <div className="flex gap-2">
-                <Input
-                  value={currentTechnology}
-                  onChange={(e) => setCurrentTechnology(e.target.value)}
-                  placeholder="Add a technology"
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTechnology())}
-                />
-                <Button type="button" onClick={addTechnology} size="icon">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {technologies.map((tech, index) => (
-                  <div key={index} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-2">
-                    <span className="text-sm">{tech}</span>
-                    <button type="button" onClick={() => removeTechnology(index)} className="hover:text-destructive">
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             <div className="space-y-4">
               <div>
@@ -452,39 +323,6 @@ export function CreateEditWebProjectDialog({
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="is_featured"
-                render={({ field }) => (
-                  <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <FormLabel>Featured Project</FormLabel>
-                      <p className="text-sm text-muted-foreground">Highlight this project</p>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="is_charity"
-                render={({ field }) => (
-                  <FormItem className="flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <FormLabel>Charity Project</FormLabel>
-                      <p className="text-sm text-muted-foreground">Mark as charity work</p>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <div className="flex justify-end gap-2">
               <Button 
