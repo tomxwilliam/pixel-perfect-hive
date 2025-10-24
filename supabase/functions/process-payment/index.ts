@@ -114,7 +114,7 @@ const handler = async (req: Request): Promise<Response> => {
         },
       ],
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/dashboard?payment=success&invoice=${invoiceId}`,
+      success_url: `${req.headers.get('origin')}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}&invoice=${invoiceId}`,
       cancel_url: `${req.headers.get('origin')}/dashboard?payment=cancelled&invoice=${invoiceId}`,
       metadata: {
         invoice_id: invoiceId,

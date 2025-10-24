@@ -1,7 +1,9 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { CustomerStats } from '@/components/customer/CustomerStats';
 import { useCustomerStats } from '@/hooks/useCustomerStats';
 import { Button } from '@/components/ui/button';
@@ -33,7 +35,10 @@ import {
   FileText,
   BarChart,
   Bell,
-  Server
+  Server,
+  CheckCircle,
+  XCircle,
+  Loader2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -42,9 +47,79 @@ const Dashboard = () => {
   const { stats, loading: statsLoading } = useCustomerStats();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
 
   // Don't auto-redirect admins - let them access customer view if needed
   // Admins can use the "Admin Panel" link to go to admin dashboard
+
+  // Handle payment return from Stripe
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment');
+    const invoiceId = searchParams.get('invoice');
+    const sessionId = searchParams.get('session_id');
+
+    if (paymentStatus === 'success' && sessionId) {
+      handlePaymentSuccess(sessionId, invoiceId);
+    } else if (paymentStatus === 'cancelled' && invoiceId) {
+      handlePaymentCancelled(invoiceId);
+    }
+  }, [searchParams]);
+
+  const handlePaymentSuccess = async (sessionId: string, invoiceId: string | null) => {
+    setVerifyingPayment(true);
+    
+    try {
+      // Call verify-payment function to confirm payment status
+      const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { sessionId }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success('Payment Successful!', {
+          description: `Invoice #${data.invoiceNumber || invoiceId} has been paid. Thank you!`,
+          icon: <CheckCircle className="h-5 w-5" />,
+          duration: 5000,
+        });
+
+        // Refresh stats to show updated invoice count
+        window.location.reload();
+      } else {
+        toast.warning('Payment Pending', {
+          description: 'Your payment is being processed. You will receive a confirmation shortly.',
+          duration: 5000,
+        });
+      }
+    } catch (error: any) {
+      console.error('Payment verification error:', error);
+      toast.error('Verification Error', {
+        description: 'Unable to verify payment status. Please check your invoices or contact support.',
+        duration: 5000,
+      });
+    } finally {
+      setVerifyingPayment(false);
+      // Clean URL parameters
+      searchParams.delete('payment');
+      searchParams.delete('invoice');
+      searchParams.delete('session_id');
+      setSearchParams(searchParams, { replace: true });
+    }
+  };
+
+  const handlePaymentCancelled = (invoiceId: string) => {
+    toast.info('Payment Cancelled', {
+      description: 'Your payment was cancelled. You can retry payment anytime from your invoices.',
+      icon: <XCircle className="h-5 w-5" />,
+      duration: 5000,
+    });
+
+    // Clean URL parameters
+    searchParams.delete('payment');
+    searchParams.delete('invoice');
+    setSearchParams(searchParams, { replace: true });
+  };
 
   const getInitials = (firstName?: string | null, lastName?: string | null) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase() || 'U';
@@ -101,6 +176,22 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {verifyingPayment && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+          <Card className="w-[90%] max-w-md">
+            <CardContent className="pt-6 flex flex-col items-center space-y-4">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <div className="text-center">
+                <h3 className="font-semibold text-lg mb-2">Verifying Payment</h3>
+                <p className="text-sm text-muted-foreground">
+                  Please wait while we confirm your payment with Stripe...
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+      
       <StaticNavigation />
       
       <div className="pt-6 pb-8">
