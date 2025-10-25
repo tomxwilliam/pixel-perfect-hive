@@ -154,6 +154,11 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
 
     setCreatingTicket(true);
     try {
+      toast({
+        title: "Redirecting to payment...",
+        description: "Please wait while we prepare your secure checkout.",
+      });
+
       const { data, error } = await supabase.functions.invoke('process-payment', {
         body: { invoiceId: invoice.id }
       });
@@ -161,20 +166,24 @@ export const InvoicePaymentModal: React.FC<InvoicePaymentModalProps> = ({
       if (error) throw error;
 
       if (data?.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+        // Log the URL for debugging
+        console.log('Stripe checkout URL:', data.checkoutUrl);
+        
+        // Redirect to Stripe checkout
+        window.location.assign(data.checkoutUrl);
       } else {
         throw new Error('No checkout URL received');
       }
     } catch (error) {
       console.error('Error processing payment:', error);
+      setCreatingTicket(false);
       toast({
         title: "Payment Error",
         description: "Failed to initialize payment. Please try again or contact support.",
         variant: "destructive",
       });
-    } finally {
-      setCreatingTicket(false);
     }
+    // Don't setCreatingTicket(false) on success as we're redirecting away
   };
 
   if (!invoice) return null;
