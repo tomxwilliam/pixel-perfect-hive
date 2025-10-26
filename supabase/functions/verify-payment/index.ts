@@ -36,79 +36,95 @@ const handler = async (req: Request): Promise<Response> => {
     // Retrieve checkout session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
+    console.log('Session retrieved:', {
+      id: session.id,
+      payment_status: session.payment_status,
+      metadata: session.metadata
+    });
+
     if (session.payment_status === 'paid') {
       const invoiceId = session.metadata?.invoice_id;
       
-      if (invoiceId) {
-        // Update invoice status
-        const { error: invoiceError } = await supabase
-          .from('invoices')
-          .update({ 
-            status: 'paid',
-            paid_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', invoiceId);
+      if (!invoiceId) {
+        console.error('No invoice_id in session metadata');
+        throw new Error('Invoice ID not found in session metadata');
+      }
 
-        if (invoiceError) {
-          console.error('Error updating invoice:', invoiceError);
-        }
+      console.log('Processing payment for invoice:', invoiceId);
+      
+      // Update invoice status
+      const { error: invoiceError } = await supabase
+        .from('invoices')
+        .update({ 
+          status: 'paid',
+          paid_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', invoiceId);
 
-        // Check if this is for a domain or hosting service
-        const { data: invoice } = await supabase
-          .from('invoices')
-          .select(`
-            *,
-            domains!domains_invoice_id_fkey(*),
-            hosting_subscriptions!hosting_subscriptions_invoice_id_fkey(*)
-          `)
-          .eq('id', invoiceId)
-          .single();
+      if (invoiceError) {
+        console.error('Error updating invoice:', invoiceError);
+        throw invoiceError;
+      }
 
-        // Trigger provisioning if needed
-        if (invoice?.domains?.[0]) {
-          // Domain paid - trigger domain registration
-          await supabase.functions.invoke('domain-register', {
-            body: {
-              domainId: invoice.domains[0].id,
-              action: 'activate'
-            }
-          });
-        }
+      console.log('Invoice updated successfully:', invoiceId);
 
-        if (invoice?.hosting_subscriptions?.[0]) {
-          // Hosting paid - trigger hosting provisioning
-          await supabase.functions.invoke('hosting-provision', {
-            body: {
-              subscriptionId: invoice.hosting_subscriptions[0].id,
-              action: 'create'
-            }
-          });
-        }
+      // Check if this is for a domain or hosting service
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select(`
+          *,
+          domains!domains_invoice_id_fkey(*),
+          hosting_subscriptions!hosting_subscriptions_invoice_id_fkey(*)
+        `)
+        .eq('id', invoiceId)
+        .single();
 
-        // Send payment confirmation notification
-        await supabase.rpc('send_notification', {
-          p_user_id: session.metadata?.supabase_user_id,
-          p_title: 'Payment Successful',
-          p_message: `Your payment for invoice ${invoice?.invoice_number} has been processed successfully.`,
-          p_type: 'success',
-          p_category: 'billing',
-          p_related_id: invoiceId
-        });
-
-        // Log activity
-        await supabase.rpc('log_activity', {
-          p_user_id: session.metadata?.supabase_user_id,
-          p_actor_id: session.metadata?.supabase_user_id,
-          p_action: 'payment_completed',
-          p_entity_type: 'invoice',
-          p_entity_id: invoiceId,
-          p_description: `Payment completed for invoice ${invoice?.invoice_number}`
+      // Trigger provisioning if needed
+      if (invoice?.domains?.[0]) {
+        // Domain paid - trigger domain registration
+        await supabase.functions.invoke('domain-register', {
+          body: {
+            domainId: invoice.domains[0].id,
+            action: 'activate'
+          }
         });
       }
+
+      if (invoice?.hosting_subscriptions?.[0]) {
+        // Hosting paid - trigger hosting provisioning
+        await supabase.functions.invoke('hosting-provision', {
+          body: {
+            subscriptionId: invoice.hosting_subscriptions[0].id,
+            action: 'create'
+          }
+        });
+      }
+
+      // Send payment confirmation notification
+      await supabase.rpc('send_notification', {
+        p_user_id: session.metadata?.supabase_user_id,
+        p_title: 'Payment Successful',
+        p_message: `Your payment for invoice ${invoice?.invoice_number} has been processed successfully.`,
+        p_type: 'success',
+        p_category: 'billing',
+        p_related_id: invoiceId
+      });
+
+      // Log activity
+      await supabase.rpc('log_activity', {
+        p_user_id: session.metadata?.supabase_user_id,
+        p_actor_id: session.metadata?.supabase_user_id,
+        p_action: 'payment_completed',
+        p_entity_type: 'invoice',
+        p_entity_id: invoiceId,
+        p_description: `Payment completed for invoice ${invoice?.invoice_number}`
+      });
     }
 
-    return new Response(JSON.stringify({ 
+    console.log('Returning response with status:', session.payment_status);
+
+    return new Response(JSON.stringify({
       success: true, 
       paymentStatus: session.payment_status,
       paymentIntent: session.payment_intent

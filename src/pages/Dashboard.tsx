@@ -77,15 +77,17 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      if (data?.success) {
+      if (data?.paymentStatus === 'paid') {
         toast.success('Payment Successful!', {
-          description: `Invoice #${data.invoiceNumber || invoiceId} has been paid. Thank you!`,
+          description: `Your invoice has been paid successfully. Thank you!`,
           icon: <CheckCircle className="h-5 w-5" />,
           duration: 5000,
         });
 
-        // Refresh stats to show updated invoice count
-        window.location.reload();
+        // Refresh the page to update all data
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         toast.warning('Payment Pending', {
           description: 'Your payment is being processed. You will receive a confirmation shortly.',

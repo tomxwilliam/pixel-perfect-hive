@@ -53,6 +53,52 @@ const CustomerBilling = () => {
     setPaymentModalOpen(true);
   };
 
+  const handlePaymentModalClose = (open: boolean) => {
+    setPaymentModalOpen(open);
+    if (!open) {
+      // Refetch invoices when modal closes
+      refetchInvoices();
+    }
+  };
+
+  const handleRefreshStatus = async (invoice: any) => {
+    if (!invoice.stripe_payment_intent_id) {
+      toast({
+        title: "Cannot Verify",
+        description: "No payment session found for this invoice.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { sessionId: invoice.stripe_payment_intent_id }
+      });
+
+      if (error) throw error;
+
+      if (data?.paymentStatus === 'paid') {
+        toast({
+          title: "Status Updated",
+          description: "Invoice has been marked as paid!",
+        });
+        refetchInvoices();
+      } else {
+        toast({
+          title: "Payment Pending",
+          description: `Current status: ${data?.paymentStatus || 'unknown'}`,
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Verification Failed",
+        description: error.message || "Unable to verify payment status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'paid': return 'bg-green-500';
@@ -154,15 +200,27 @@ const CustomerBilling = () => {
                           {invoice.due_date ? format(new Date(invoice.due_date), 'PPP') : '-'}
                         </TableCell>
                         <TableCell>
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             {invoice.status === 'pending' && (
-                              <Button
-                                size="sm"
-                                onClick={() => handlePayInvoice(invoice)}
-                              >
-                                <CreditCard className="h-4 w-4 mr-1" />
-                                Pay Now
-                              </Button>
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() => handlePayInvoice(invoice)}
+                                >
+                                  <CreditCard className="h-4 w-4 mr-1" />
+                                  Pay Now
+                                </Button>
+                                {invoice.stripe_payment_intent_id && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleRefreshStatus(invoice)}
+                                  >
+                                    <CheckCircle className="h-4 w-4 mr-1" />
+                                    Refresh Status
+                                  </Button>
+                                )}
+                              </>
                             )}
                             <Button
                               variant="outline"
@@ -297,7 +355,7 @@ const CustomerBilling = () => {
       <InvoicePaymentModal
         invoice={selectedInvoice}
         open={paymentModalOpen}
-        onOpenChange={setPaymentModalOpen}
+        onOpenChange={handlePaymentModalClose}
       />
     </div>
   );
