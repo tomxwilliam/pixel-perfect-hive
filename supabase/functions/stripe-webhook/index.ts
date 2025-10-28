@@ -162,18 +162,54 @@ async function handleCheckoutCompleted(supabase: any, session: Stripe.Checkout.S
   const invoiceId = session.metadata?.invoice_id;
   const orderId = session.metadata?.order_id;
   
-  // Handle legacy invoice payments
+  // Handle invoice payments
   if (invoiceId) {
-    await supabase
-      .from('invoices')
-      .update({
-        status: 'paid',
-        paid_at: new Date().toISOString(),
-        stripe_payment_intent_id: session.payment_intent as string
-      })
-      .eq('id', invoiceId);
+    console.log(`Processing invoice payment for invoice ${invoiceId}`);
+    console.log(`Session payment status: ${session.payment_status}`);
+    console.log(`Session payment intent: ${session.payment_intent}`);
     
-    console.log(`Invoice ${invoiceId} marked as paid`);
+    const updateData: any = {
+      stripe_payment_intent_id: session.payment_intent as string,
+      stripe_session_id: session.id,
+      updated_at: new Date().toISOString()
+    };
+
+    // Only mark as paid if payment status is 'paid'
+    if (session.payment_status === 'paid') {
+      updateData.status = 'paid';
+      updateData.paid_at = new Date().toISOString();
+      console.log(`Marking invoice ${invoiceId} as paid`);
+    }
+
+    const { error: updateError } = await supabase
+      .from('invoices')
+      .update(updateData)
+      .eq('id', invoiceId);
+
+    if (updateError) {
+      console.error(`Error updating invoice ${invoiceId}:`, updateError);
+      throw updateError;
+    }
+    
+    console.log(`Invoice ${invoiceId} updated successfully with payment_status: ${session.payment_status}`);
+
+    // Send notification to customer if payment succeeded
+    if (session.payment_status === 'paid' && session.metadata?.supabase_user_id) {
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('invoice_number')
+        .eq('id', invoiceId)
+        .single();
+
+      await supabase.rpc('send_notification', {
+        p_user_id: session.metadata.supabase_user_id,
+        p_title: 'Payment Successful',
+        p_message: `Your payment for invoice ${invoice?.invoice_number} has been processed successfully.`,
+        p_type: 'success',
+        p_category: 'billing',
+        p_related_id: invoiceId
+      });
+    }
   }
   
   // Handle new combined hosting + domain orders

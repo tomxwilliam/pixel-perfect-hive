@@ -122,14 +122,16 @@ const handler = async (req: Request): Promise<Response> => {
       }
     });
 
-    // Update invoice with Stripe payment intent
+    // Update invoice with Stripe session ID (payment intent will be updated by webhook)
     await supabase
       .from('invoices')
       .update({ 
-        stripe_payment_intent_id: session.id,
+        stripe_session_id: session.id,
         updated_at: new Date().toISOString()
       })
       .eq('id', invoiceId);
+
+    console.log(`Updated invoice ${invoiceId} with session ID: ${session.id}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
