@@ -1,11 +1,5 @@
 project_id = "ucsxwhnscgbcshaghyrq"
 
-[functions.sync-enom-domain-pricing]
-verify_jwt = true
-
-[functions.domain-pricing-feed]
-verify_jwt = false
-
 [functions.test-vertex-ai]
 verify_jwt = true
 
@@ -42,22 +36,6 @@ verify_jwt = true
 [functions.admin-notifications]
 verify_jwt = true
 
-[functions.hosting-provision]
-verify_jwt = true
-
-[functions.hosting-order]
-verify_jwt = true
-
-[functions.domain-search]
-verify_jwt = true
-
-[functions.domain-register]
-verify_jwt = true
-
-
-[functions.send-domain-hosting-email]
-verify_jwt = true
-
 [functions.stripe-webhook]
 verify_jwt = false
 
@@ -67,17 +45,17 @@ verify_jwt = true
 [functions.create-portal-session]
 verify_jwt = true
 
-[functions.domain-quote]
-verify_jwt = true
-
 [functions.combined-checkout]
 verify_jwt = true
-
-[functions.sync-enom-prices]
-verify_jwt = false
 
 [functions.checkout-session]
 verify_jwt = true
 
 [functions.import-domain-csv]
+verify_jwt = true
+
+[functions.ai-assistant]
+verify_jwt = true
+
+[functions.send-test-email]
 verify_jwt = true
