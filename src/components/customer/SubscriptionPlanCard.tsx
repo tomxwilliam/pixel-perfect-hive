@@ -1,22 +1,68 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Loader2 } from "lucide-react";
 import type { SubscriptionPlan } from "@/hooks/useSubscriptionPlans";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SubscriptionPlanCardProps {
-  plan: SubscriptionPlan;
+  plan: SubscriptionPlan & {
+    stripe_price_id_monthly?: string | null;
+  };
 }
 
 export const SubscriptionPlanCard = ({ plan }: SubscriptionPlanCardProps) => {
-  const isPopular = plan.display_order === 2; // Middle tier is usually most popular
+  const isPopular = plan.display_order === 2;
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubscribe = () => {
-    // TODO: Implement subscription flow with Stripe or manual approval
-    toast.info("Subscription request", {
-      description: "Please contact us to set up your subscription. We'll reach out shortly!"
-    });
+  const handleSubscribe = async () => {
+    if (!plan.stripe_price_id_monthly) {
+      toast.error("Subscription unavailable", {
+        description: "Please contact us to set up your subscription."
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        toast.error("Authentication required", {
+          description: "Please sign in to subscribe to a plan."
+        });
+        return;
+      }
+
+      // Call the create-subscription edge function
+      const { data, error } = await supabase.functions.invoke('create-subscription', {
+        body: {
+          priceId: plan.stripe_price_id_monthly,
+          customer_id: user.id,
+          plan_id: plan.id,
+          userEmail: user.email,
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL received");
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Subscription failed", {
+        description: error instanceof Error ? error.message : "Unable to process subscription. Please try again."
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -75,8 +121,16 @@ export const SubscriptionPlanCard = ({ plan }: SubscriptionPlanCardProps) => {
           className="w-full" 
           variant={isPopular ? "default" : "outline"}
           onClick={handleSubscribe}
+          disabled={isLoading}
         >
-          Subscribe Now
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Subscribe Now"
+          )}
         </Button>
       </CardFooter>
     </Card>

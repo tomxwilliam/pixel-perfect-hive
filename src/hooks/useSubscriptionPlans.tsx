@@ -13,6 +13,8 @@ export interface SubscriptionPlan {
   display_order: number;
   created_at: string;
   updated_at: string;
+  stripe_product_id?: string | null;
+  stripe_price_id_monthly?: string | null;
 }
 
 export const useSubscriptionPlans = () => {
