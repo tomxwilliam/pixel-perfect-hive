@@ -319,7 +319,7 @@ export default function GoogleAdsLandingTemplate({
         </section>
 
         {/* Final CTA */}
-        <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <section className="py-16 md:py-24 bg-[url('/assets/cta-bg.png')] bg-cover bg-center bg-no-repeat text-primary-foreground">
           <div className="container text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">
               Ready to Get Started?
