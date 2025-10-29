@@ -114,11 +114,24 @@ export default function BlogPostEditor({ post, onClose }: BlogPostEditorProps) {
           Back to Posts
         </Button>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setValue("status", "draft")}>
+          <Button 
+            variant="outline" 
+            type="button"
+            onClick={() => {
+              setValue("status", "draft");
+              handleSubmit(onSubmit)();
+            }}
+          >
             <Save className="mr-2 h-4 w-4" />
             Save Draft
           </Button>
-          <Button onClick={handleSubmit(onSubmit)}>
+          <Button 
+            type="button"
+            onClick={() => {
+              setValue("status", "published");
+              handleSubmit(onSubmit)();
+            }}
+          >
             <Eye className="mr-2 h-4 w-4" />
             {post ? "Update Post" : "Publish Post"}
           </Button>
