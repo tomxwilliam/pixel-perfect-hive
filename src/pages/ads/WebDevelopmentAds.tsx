@@ -7,6 +7,11 @@ export default function WebDevelopmentAds() {
   const [projectType, setProjectType] = useState('');
   const [budget, setBudget] = useState('');
 
+  const getAdditionalFormData = () => ({
+    projectType,
+    budget,
+  });
+
   return (
     <GoogleAdsLandingTemplate
       title="Professional Web Development Starting at $2,999 | 404 Code Lab"
@@ -71,6 +76,7 @@ export default function WebDevelopmentAds() {
       ctaSubtext="No obligation. Receive your custom quote within 24 hours."
       
       formTitle="Get Your Custom Web Development Quote"
+      onGetAdditionalFormData={getAdditionalFormData}
       
       additionalFormFields={
         <>

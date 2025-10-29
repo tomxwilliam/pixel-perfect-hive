@@ -7,6 +7,11 @@ export default function AppDevelopmentAds() {
   const [appType, setAppType] = useState('');
   const [platform, setPlatform] = useState('');
 
+  const getAdditionalFormData = () => ({
+    appType,
+    platform,
+  });
+
   return (
     <GoogleAdsLandingTemplate
       title="Build Your Mobile App - iOS & Android | 404 Code Lab"
@@ -71,6 +76,7 @@ export default function AppDevelopmentAds() {
       ctaSubtext="No commitment required. Free 30-minute consultation included."
       
       formTitle="Start Building Your App Today"
+      onGetAdditionalFormData={getAdditionalFormData}
       
       additionalFormFields={
         <>

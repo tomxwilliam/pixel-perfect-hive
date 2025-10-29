@@ -7,6 +7,11 @@ export default function GameDevelopmentAds() {
   const [gameType, setGameType] = useState('');
   const [currentStage, setCurrentStage] = useState('');
 
+  const getAdditionalFormData = () => ({
+    gameType,
+    currentStage,
+  });
+
   return (
     <GoogleAdsLandingTemplate
       title="Mobile Game Development That Generates Revenue | 404 Code Lab"
@@ -71,6 +76,7 @@ export default function GameDevelopmentAds() {
       ctaSubtext="Free consultation included. Let's discuss your game idea."
       
       formTitle="Launch Your Hit Game"
+      onGetAdditionalFormData={getAdditionalFormData}
       
       additionalFormFields={
         <>

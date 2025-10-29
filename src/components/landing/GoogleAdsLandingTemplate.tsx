@@ -6,6 +6,7 @@ import { Phone, CheckCircle2, Star, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Seo from '@/components/Seo';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Benefit {
   icon: React.ReactNode;
@@ -51,6 +52,7 @@ interface GoogleAdsLandingProps {
   // Form
   formTitle: string;
   additionalFormFields?: React.ReactNode;
+  onGetAdditionalFormData?: () => Record<string, any>;
   
   // Urgency
   urgencyMessage?: string;
@@ -69,6 +71,7 @@ export default function GoogleAdsLandingTemplate({
   ctaSubtext,
   formTitle,
   additionalFormFields,
+  onGetAdditionalFormData,
   urgencyMessage,
 }: GoogleAdsLandingProps) {
   const { toast } = useToast();
@@ -87,12 +90,37 @@ export default function GoogleAdsLandingTemplate({
     // Capture UTM parameters if available
     const urlParams = new URLSearchParams(window.location.search);
     const utmData = {
-      source: urlParams.get('utm_source'),
-      medium: urlParams.get('utm_medium'),
-      campaign: urlParams.get('utm_campaign'),
+      utm_source: urlParams.get('utm_source'),
+      utm_medium: urlParams.get('utm_medium'),
+      utm_campaign: urlParams.get('utm_campaign'),
     };
 
     try {
+      // Determine the source based on current path
+      const path = window.location.pathname;
+      let source = 'google_ads';
+      if (path.includes('web-development')) source = 'google_ads_web';
+      else if (path.includes('app-development')) source = 'google_ads_app';
+      else if (path.includes('game-development')) source = 'google_ads_game';
+
+      // Get additional form data from parent if available
+      const additionalData = onGetAdditionalFormData ? onGetAdditionalFormData() : {};
+
+      // Submit form to edge function
+      const { data, error } = await supabase.functions.invoke('send-contact-notification', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          source,
+          ...utmData,
+          ...additionalData,
+        }
+      });
+
+      if (error) throw error;
+
       // Track conversion event
       if (window.gtag) {
         window.gtag('event', 'conversion', {
@@ -101,9 +129,6 @@ export default function GoogleAdsLandingTemplate({
           currency: 'USD',
         });
       }
-
-      // Submit form (integrate with your backend)
-      console.log('Form submitted:', { ...formData, ...utmData });
       
       toast({
         title: "Thank you!",
@@ -113,6 +138,7 @@ export default function GoogleAdsLandingTemplate({
       // Reset form
       setFormData({ name: '', email: '', phone: '', message: '' });
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
