@@ -141,7 +141,7 @@ const Dashboard = () => {
       description: 'Get help with existing projects',
       icon: TicketIcon,
       href: '/dashboard/tickets/new',
-      color: 'bg-ok'
+      color: 'bg-warn'
     },
     {
       title: 'Book a Call',
