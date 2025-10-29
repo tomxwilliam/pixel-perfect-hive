@@ -63,41 +63,17 @@ const Subscriptions = () => {
           )}
 
           {/* Available Plans */}
-          <Tabs defaultValue="it_support" className="space-y-6">
+          <Tabs defaultValue="website_care" className="space-y-6">
             <TabsList className="grid w-full max-w-md grid-cols-2">
-              <TabsTrigger value="it_support" className="gap-2">
-                <Monitor className="h-4 w-4" />
-                IT Support Plans
-              </TabsTrigger>
               <TabsTrigger value="website_care" className="gap-2">
                 <Globe className="h-4 w-4" />
                 Website Care Plans
               </TabsTrigger>
+              <TabsTrigger value="it_support" className="gap-2">
+                <Monitor className="h-4 w-4" />
+                IT Support Plans
+              </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="it_support" className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Monitor className="h-6 w-6 text-primary" />
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">IT Support Plans</h2>
-                    <p className="text-muted-foreground">Remote support and tech assistance</p>
-                  </div>
-                </div>
-
-                {plansLoading ? (
-                  <div className="flex justify-center py-12">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </div>
-                ) : (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {itSupportPlans.map((plan) => (
-                      <SubscriptionPlanCard key={plan.id} plan={plan} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </TabsContent>
 
             <TabsContent value="website_care" className="space-y-6">
               <div className="space-y-4">
@@ -116,6 +92,30 @@ const Subscriptions = () => {
                 ) : (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {websiteCarePlans.map((plan) => (
+                      <SubscriptionPlanCard key={plan.id} plan={plan} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="it_support" className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Monitor className="h-6 w-6 text-primary" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">IT Support Plans</h2>
+                    <p className="text-muted-foreground">Remote support and tech assistance</p>
+                  </div>
+                </div>
+
+                {plansLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : (
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {itSupportPlans.map((plan) => (
                       <SubscriptionPlanCard key={plan.id} plan={plan} />
                     ))}
                   </div>
