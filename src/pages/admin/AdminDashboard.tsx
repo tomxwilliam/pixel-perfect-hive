@@ -101,62 +101,115 @@ const AdminDashboard = () => {
                 <DollarSign className="h-4 w-4" />
                 <span className="text-xs sm:text-sm">Invoices</span>
               </MobileTabsTrigger>
+              
+              {/* Mobile-only: Show all remaining tabs in the sheet */}
+              {isMobile && (
+                <>
+                  <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Quotes</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Calendar</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="featured" className="flex items-center gap-2">
+                    <Star className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Featured</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="games" className="flex items-center gap-2">
+                    <Gamepad2 className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Games</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="blog" className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Blog</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="web" className="flex items-center gap-2">
+                    <Code className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Web Projects</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="apps" className="flex items-center gap-2">
+                    <Smartphone className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">App Projects</span>
+                  </MobileTabsTrigger>
+                  <MobileTabsTrigger value="ads" className="flex items-center gap-2">
+                    <Megaphone className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm">Ads Pages</span>
+                  </MobileTabsTrigger>
+                  {isAdmin && (
+                    <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
+                      <Calculator className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm">Accounting</span>
+                    </MobileTabsTrigger>
+                  )}
+                  {isAdmin && (
+                    <MobileTabsTrigger value="settings" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm">Settings</span>
+                    </MobileTabsTrigger>
+                  )}
+                </>
+              )}
             </MobileTabsList>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="hidden sm:inline">More</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-background z-50">
-                <DropdownMenuItem onClick={() => setActiveTab('quotes')} className="flex items-center gap-2 cursor-pointer">
-                  <FileText className="h-4 w-4" />
-                  <span>Quotes</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('calendar')} className="flex items-center gap-2 cursor-pointer">
-                  <Calendar className="h-4 w-4" />
-                  <span>Calendar</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('featured')} className="flex items-center gap-2 cursor-pointer">
-                  <Star className="h-4 w-4" />
-                  <span>Featured</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('games')} className="flex items-center gap-2 cursor-pointer">
-                  <Gamepad2 className="h-4 w-4" />
-                  <span>Games</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('blog')} className="flex items-center gap-2 cursor-pointer">
-                  <FileText className="h-4 w-4" />
-                  <span>Blog</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('web')} className="flex items-center gap-2 cursor-pointer">
-                  <Code className="h-4 w-4" />
-                  <span>Web Projects</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('apps')} className="flex items-center gap-2 cursor-pointer">
-                  <Smartphone className="h-4 w-4" />
-                  <span>App Projects</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('ads')} className="flex items-center gap-2 cursor-pointer">
-                  <Megaphone className="h-4 w-4" />
-                  <span>Ads Pages</span>
-                </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="flex items-center gap-2 cursor-pointer">
-                    <Calculator className="h-4 w-4" />
-                    <span>Accounting</span>
+            {/* Desktop-only: Show dropdown for secondary tabs */}
+            {!isMobile && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="hidden sm:inline">More</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                  <DropdownMenuItem onClick={() => setActiveTab('quotes')} className="flex items-center gap-2 cursor-pointer">
+                    <FileText className="h-4 w-4" />
+                    <span>Quotes</span>
                   </DropdownMenuItem>
-                )}
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => setActiveTab('settings')} className="flex items-center gap-2 cursor-pointer">
-                    <Settings className="h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem onClick={() => setActiveTab('calendar')} className="flex items-center gap-2 cursor-pointer">
+                    <Calendar className="h-4 w-4" />
+                    <span>Calendar</span>
                   </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem onClick={() => setActiveTab('featured')} className="flex items-center gap-2 cursor-pointer">
+                    <Star className="h-4 w-4" />
+                    <span>Featured</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('games')} className="flex items-center gap-2 cursor-pointer">
+                    <Gamepad2 className="h-4 w-4" />
+                    <span>Games</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('blog')} className="flex items-center gap-2 cursor-pointer">
+                    <FileText className="h-4 w-4" />
+                    <span>Blog</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('web')} className="flex items-center gap-2 cursor-pointer">
+                    <Code className="h-4 w-4" />
+                    <span>Web Projects</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('apps')} className="flex items-center gap-2 cursor-pointer">
+                    <Smartphone className="h-4 w-4" />
+                    <span>App Projects</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('ads')} className="flex items-center gap-2 cursor-pointer">
+                    <Megaphone className="h-4 w-4" />
+                    <span>Ads Pages</span>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="flex items-center gap-2 cursor-pointer">
+                      <Calculator className="h-4 w-4" />
+                      <span>Accounting</span>
+                    </DropdownMenuItem>
+                  )}
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => setActiveTab('settings')} className="flex items-center gap-2 cursor-pointer">
+                      <Settings className="h-4 w-4" />
+                      <span>Settings</span>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
 
           <MobileTabsContent value="overview">
