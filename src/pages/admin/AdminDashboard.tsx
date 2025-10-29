@@ -112,6 +112,11 @@ const AdminDashboard = () => {
               <Gamepad2 className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Games</span>
             </MobileTabsTrigger>
+            
+            <MobileTabsTrigger value="blog" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Blog</span>
+            </MobileTabsTrigger>
             <MobileTabsTrigger value="web" className="flex items-center gap-2">
               <Code className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Web</span>
@@ -207,6 +212,12 @@ const AdminDashboard = () => {
           <MobileTabsContent value="games">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminGames />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="blog">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminBlog />
             </React.Suspense>
           </MobileTabsContent>
 

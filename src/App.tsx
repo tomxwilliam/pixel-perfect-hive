@@ -47,6 +47,12 @@ import TermsOfService from "./pages/legal/TermsOfService";
 import RefundsPolicy from "./pages/legal/RefundsPolicy";
 import CookiePolicy from "./pages/legal/CookiePolicy";
 
+// Blog pages
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import BlogCategory from "./pages/BlogCategory";
+import BlogTag from "./pages/BlogTag";
+
 
 const queryClient = new QueryClient();
 
@@ -147,6 +153,12 @@ const App = () => (
               <Route path="/legal/terms" element={<TermsOfService />} />
               <Route path="/legal/refunds" element={<RefundsPolicy />} />
               <Route path="/legal/cookies" element={<CookiePolicy />} />
+              
+              {/* Blog pages */}
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/blog/category/:slug" element={<BlogCategory />} />
+              <Route path="/blog/tag/:tag" element={<BlogTag />} />
               
               {/* 404 page */}
               <Route path="/404" element={<NotFound />} />
