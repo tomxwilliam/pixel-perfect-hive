@@ -131,13 +131,13 @@ export default function GoogleAdsLandingTemplate({
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/assets/logo-dark.png" alt="404 Code Lab" className="h-8 dark:hidden" />
-            <img src="/assets/logo-light.png" alt="404 Code Lab" className="h-8 hidden dark:block" />
+            <img src="/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png" alt="404 Code Lab" className="h-8 dark:hidden" />
+            <img src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" alt="404 Code Lab" className="h-8 hidden dark:block" />
           </div>
           <div className="flex items-center gap-3">
-            <a href="tel:+1234567890" className="flex items-center gap-2 text-primary font-semibold hover:underline">
+            <a href="tel:+447496295759" className="flex items-center gap-2 text-primary font-semibold hover:underline">
               <Phone className="h-4 w-4" />
-              <span className="hidden sm:inline">(123) 456-7890</span>
+              <span className="hidden sm:inline">07496 295759</span>
             </a>
             <ThemeToggle />
             <Button size="lg" onClick={() => document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' })}>
