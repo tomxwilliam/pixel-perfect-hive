@@ -22,6 +22,7 @@ import { AdminGames } from '@/components/admin/AdminGames';
 import { AdminWebProjects } from '@/components/admin/AdminWebProjects';
 import { AdminAppProjects } from '@/components/admin/AdminAppProjects';
 import AdminFeaturedContent from '@/components/admin/AdminFeaturedContent';
+import AdminBlog from '@/components/admin/AdminBlog';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
