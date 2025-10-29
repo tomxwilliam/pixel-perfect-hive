@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star, Megaphone, MoreHorizontal } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star, Megaphone, MoreHorizontal, Edit } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { StaticNavigation } from '@/components/StaticNavigation';
@@ -26,6 +26,7 @@ import { AdminAppProjects } from '@/components/admin/AdminAppProjects';
 import AdminFeaturedContent from '@/components/admin/AdminFeaturedContent';
 import AdminBlog from '@/components/admin/AdminBlog';
 import AdminAdsPages from '@/components/admin/AdminAdsPages';
+import { AdminPageContent } from '@/components/admin/AdminPageContent';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -138,6 +139,12 @@ const AdminDashboard = () => {
                     <span className="text-xs sm:text-sm">Ads Pages</span>
                   </MobileTabsTrigger>
                   {isAdmin && (
+                    <MobileTabsTrigger value="page-content" className="flex items-center gap-2">
+                      <Edit className="h-4 w-4" />
+                      <span className="text-xs sm:text-sm">Page Content</span>
+                    </MobileTabsTrigger>
+                  )}
+                  {isAdmin && (
                     <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
                       <Calculator className="h-4 w-4" />
                       <span className="text-xs sm:text-sm">Accounting</span>
@@ -195,6 +202,12 @@ const AdminDashboard = () => {
                     <Megaphone className="h-4 w-4" />
                     <span>Ads Pages</span>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => setActiveTab('page-content')} className="flex items-center gap-2 cursor-pointer">
+                      <Edit className="h-4 w-4" />
+                      <span>Page Content</span>
+                    </DropdownMenuItem>
+                  )}
                   {isAdmin && (
                     <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="flex items-center gap-2 cursor-pointer">
                       <Calculator className="h-4 w-4" />
@@ -311,6 +324,14 @@ const AdminDashboard = () => {
               <AdminAdsPages />
             </React.Suspense>
           </MobileTabsContent>
+
+          {isAdmin && (
+            <MobileTabsContent value="page-content">
+              <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+                <AdminPageContent />
+              </React.Suspense>
+            </MobileTabsContent>
+          )}
           
         </MobileTabs>
       </div>

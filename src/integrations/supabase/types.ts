@@ -1640,6 +1640,93 @@ export type Database = {
         }
         Relationships: []
       }
+      page_content: {
+        Row: {
+          canonical_url: string | null
+          content_sections: Json[] | null
+          created_at: string | null
+          created_by: string | null
+          cta_section: Json | null
+          custom_css: string | null
+          custom_scripts: string | null
+          faq_items: Json[] | null
+          features: Json[] | null
+          hero_section: Json | null
+          id: string
+          is_active: boolean | null
+          last_modified_by: string | null
+          meta_description: string | null
+          meta_keywords: string[] | null
+          meta_title: string
+          no_index: boolean | null
+          og_description: string | null
+          og_image: string | null
+          og_title: string | null
+          page_name: string
+          page_route: string
+          page_type: string
+          testimonials: Json[] | null
+          twitter_card_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          canonical_url?: string | null
+          content_sections?: Json[] | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_section?: Json | null
+          custom_css?: string | null
+          custom_scripts?: string | null
+          faq_items?: Json[] | null
+          features?: Json[] | null
+          hero_section?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_modified_by?: string | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title: string
+          no_index?: boolean | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          page_name: string
+          page_route: string
+          page_type: string
+          testimonials?: Json[] | null
+          twitter_card_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          canonical_url?: string | null
+          content_sections?: Json[] | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_section?: Json | null
+          custom_css?: string | null
+          custom_scripts?: string | null
+          faq_items?: Json[] | null
+          features?: Json[] | null
+          hero_section?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_modified_by?: string | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string
+          no_index?: boolean | null
+          og_description?: string | null
+          og_image?: string | null
+          og_title?: string | null
+          page_name?: string
+          page_route?: string
+          page_type?: string
+          testimonials?: Json[] | null
+          twitter_card_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       pending_admin_invitations: {
         Row: {
           created_at: string
