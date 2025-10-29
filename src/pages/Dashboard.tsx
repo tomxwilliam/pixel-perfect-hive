@@ -134,28 +134,28 @@ const Dashboard = () => {
       description: 'Start a new project with us',
       icon: Plus,
       href: '/dashboard/projects/new',
-      color: 'bg-primary'
+      color: 'bg-info'
     },
     {
       title: 'Support Ticket',
       description: 'Get help with existing projects',
       icon: TicketIcon,
       href: '/dashboard/tickets/new',
-      color: 'bg-warn'
+      color: 'bg-danger'
     },
     {
       title: 'Book a Call',
       description: 'Schedule a consultation',
       icon: Calendar,
       href: '/dashboard/book-call',
-      color: 'bg-accent'
+      color: 'bg-ok'
     },
     {
       title: 'Subscriptions',
       description: 'Manage your subscriptions',
       icon: RefreshCw,
       href: '/dashboard/subscriptions',
-      color: 'bg-brand-2'
+      color: 'bg-warn'
     }
   ];
 

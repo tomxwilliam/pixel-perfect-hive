@@ -39,6 +39,7 @@ export default {
 				ok: 'hsl(var(--ok))',
 				warn: 'hsl(var(--warn))',
 				danger: 'hsl(var(--danger))',
+				info: 'hsl(var(--info))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
