@@ -22,7 +22,7 @@ const PartnerBanner = () => {
             <Button 
               variant="default" 
               size="sm"
-              onClick={() => window.open('https://www.20i.com/reseller/beevers', '_blank')}
+              onClick={() => window.open('https://www.20i.com/managed-cloud-hosting?rafMzQ1NzA4Mg', '_blank')}
               className="gap-2"
             >
               View Hosting Plans
