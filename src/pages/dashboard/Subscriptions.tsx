@@ -28,8 +28,8 @@ const Subscriptions = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <StaticNavigation />
       
-      <main className="flex-1 container mx-auto px-4 py-8 mt-20">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <main className="flex-1 container mx-auto px-4 py-6 mt-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           {/* Back Button */}
           <Link to="/dashboard">
             <Button variant="ghost" className="gap-2 mb-4">
