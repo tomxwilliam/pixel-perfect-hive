@@ -102,18 +102,18 @@ const AdminDashboard = () => {
                 <DollarSign className="h-4 w-4" />
                 <span className="text-xs sm:text-sm">Invoices</span>
               </MobileTabsTrigger>
+              <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Quotes</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Calendar</span>
+              </MobileTabsTrigger>
               
               {/* Mobile-only: Show all remaining tabs in the sheet */}
               {isMobile && (
                 <>
-                  <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    <span className="text-xs sm:text-sm">Quotes</span>
-                  </MobileTabsTrigger>
-                  <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-xs sm:text-sm">Calendar</span>
-                  </MobileTabsTrigger>
                   <MobileTabsTrigger value="featured" className="flex items-center gap-2">
                     <Star className="h-4 w-4" />
                     <span className="text-xs sm:text-sm">Featured</span>
@@ -170,14 +170,6 @@ const AdminDashboard = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-background z-50">
-                  <DropdownMenuItem onClick={() => setActiveTab('quotes')} className="flex items-center gap-2 cursor-pointer">
-                    <FileText className="h-4 w-4" />
-                    <span>Quotes</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('calendar')} className="flex items-center gap-2 cursor-pointer">
-                    <Calendar className="h-4 w-4" />
-                    <span>Calendar</span>
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setActiveTab('featured')} className="flex items-center gap-2 cursor-pointer">
                     <Star className="h-4 w-4" />
                     <span>Featured</span>
