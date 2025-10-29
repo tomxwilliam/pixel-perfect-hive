@@ -12,9 +12,11 @@ import { ProjectSlideshow } from "@/components/portfolio/ProjectSlideshow";
 import Seo from "@/components/Seo";
 import { Link } from "react-router-dom";
 import { useWebProjects } from "@/hooks/useWebProjects";
+import { usePageContent } from "@/hooks/usePageContent";
 
 const WebPortfolio = () => {
   const { data: projects, isLoading } = useWebProjects();
+  const { data: pageContent } = usePageContent('/portfolio/web');
   
   // Map features to icons
   const getFeatureIcon = (index: number) => {
@@ -43,9 +45,9 @@ const WebPortfolio = () => {
   };
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
-        title="Web Portfolio | Professional Website Development by 404 Code Lab"
-        description="Explore our web development portfolio. Custom websites, e-commerce platforms, and web applications built with React, Next.js, and modern technologies."
-        canonicalUrl="https://404codelab.com/portfolio/web"
+        title={pageContent?.meta_title || "Web Development Portfolio - 404 Code Lab Projects"}
+        description={pageContent?.meta_description || "Explore our web development portfolio featuring custom websites and applications."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/portfolio/web"}
       />
       <StaticNavigation />
       

@@ -1,13 +1,18 @@
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 
 export default function PrivacyPolicy() {
+  const { data: pageContent } = usePageContent('/legal/privacy');
+  
   return (
     <>
       <Seo
-        title="Privacy Policy | 404 Code Lab"
-        description="Learn how 404 Code Lab collects, uses, and protects your personal data in compliance with UK GDPR regulations."
+        title={pageContent?.meta_title || "Privacy Policy - 404 Code Lab"}
+        description={pageContent?.meta_description || "Read our privacy policy."}
+        canonicalUrl={pageContent?.canonical_url}
+        noIndex={pageContent?.no_index}
       />
       <div className="min-h-screen bg-background">
         <StaticNavigation />

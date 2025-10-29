@@ -4,27 +4,16 @@ import { Code, Zap, Users, Target } from "lucide-react";
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 const About = () => {
-  const seoData = {
-    title: "About 404 Code Lab | Scottish Indie Development Studio",
-    description: "Meet the team behind 404 Code Lab. Scottish indie development studio creating innovative games, apps, and websites with cutting-edge technology.",
-    canonicalUrl: "https://404codelab.com/about"
-  };
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    "mainEntity": {
-      "@type": "Organization",
-      "name": "404 Code Lab",
-      "description": seoData.description,
-      "foundingLocation": "Scotland",
-      "url": "https://404codelab.com"
-    }
-  };
+  const { data: pageContent } = usePageContent('/about');
 
   return <div className="min-h-screen bg-background text-foreground">
-      <Seo {...seoData} jsonLd={jsonLd} />
+      <Seo 
+        title={pageContent?.meta_title || "About 404 Code Lab - Scotland-Based Digital Studio"}
+        description={pageContent?.meta_description || "Learn about 404 Code Lab, a Scotland-based digital studio."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/about"}
+      />
       <StaticNavigation />
       
       {/* Hero Section */}

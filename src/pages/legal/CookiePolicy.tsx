@@ -1,18 +1,22 @@
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 import { Button } from "@/components/ui/button";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
 import { Settings } from "lucide-react";
 
 export default function CookiePolicy() {
   const { openPreferenceCenter } = useCookieConsent();
+  const { data: pageContent } = usePageContent('/legal/cookies');
 
   return (
     <>
       <Seo
-        title="Cookie Policy | 404 Code Lab"
-        description="Learn about how 404 Code Lab uses cookies and similar technologies to improve your browsing experience."
+        title={pageContent?.meta_title || "Cookie Policy - 404 Code Lab"}
+        description={pageContent?.meta_description || "Learn how we use cookies."}
+        canonicalUrl={pageContent?.canonical_url}
+        noIndex={pageContent?.no_index}
       />
       <div className="min-h-screen bg-background">
         <StaticNavigation />

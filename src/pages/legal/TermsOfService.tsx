@@ -1,13 +1,18 @@
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 
 export default function TermsOfService() {
+  const { data: pageContent } = usePageContent('/legal/terms');
+  
   return (
     <>
       <Seo
-        title="Terms of Service | 404 Code Lab"
-        description="Read the terms and conditions governing your use of 404 Code Lab's hosting and digital services."
+        title={pageContent?.meta_title || "Terms of Service - 404 Code Lab"}
+        description={pageContent?.meta_description || "Read the terms of service."}
+        canonicalUrl={pageContent?.canonical_url}
+        noIndex={pageContent?.no_index}
       />
       <div className="min-h-screen bg-background">
         <StaticNavigation />

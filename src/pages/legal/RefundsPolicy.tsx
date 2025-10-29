@@ -1,13 +1,18 @@
 import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 
 export default function RefundsPolicy() {
+  const { data: pageContent } = usePageContent('/legal/refunds');
+  
   return (
     <>
       <Seo
-        title="Refunds & Cancellations Policy | 404 Code Lab"
-        description="Learn about 404 Code Lab's refund and cancellation policy, including your 14-day cooling-off period under UK law."
+        title={pageContent?.meta_title || "Refunds & Cancellations Policy - 404 Code Lab"}
+        description={pageContent?.meta_description || "Learn about our refunds and cancellations policy."}
+        canonicalUrl={pageContent?.canonical_url}
+        noIndex={pageContent?.no_index}
       />
       <div className="min-h-screen bg-background">
         <StaticNavigation />

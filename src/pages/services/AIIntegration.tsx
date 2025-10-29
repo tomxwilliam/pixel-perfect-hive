@@ -5,24 +5,18 @@ import Seo from "@/components/Seo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { usePageContent } from "@/hooks/usePageContent";
 
 export default function AIIntegration() {
-  const title = "AI Integration into Apps and Websites | 404 Code Lab";
-  const description = "We integrate AI chatbots, automation, analytics, and personalised UX into apps and websites to drive growth and efficiency.";
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "AI Integration into Apps and Websites",
-    "provider": { "@type": "Organization", "name": "404 Code Lab" },
-    "areaServed": "Global",
-    "serviceType": "AI Integration",
-    "description": description
-  };
+  const { data: pageContent } = usePageContent('/services/ai-integration');
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Seo title={title} description={description} jsonLd={jsonLd} />
+      <Seo 
+        title={pageContent?.meta_title || "AI Integration Services - Add Intelligence to Your Apps | 404 Code Lab"}
+        description={pageContent?.meta_description || "Professional AI integration services for websites and mobile apps."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/services/ai-integration"}
+      />
       <StaticNavigation />
       <main>
         {/* Hero Section */}

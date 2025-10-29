@@ -11,7 +11,9 @@ import { Footer } from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Seo from "@/components/Seo";
+import { usePageContent } from "@/hooks/usePageContent";
 const Contact = () => {
+  const { data: pageContent } = usePageContent('/contact');
   const {
     toast
   } = useToast();
@@ -84,9 +86,9 @@ const Contact = () => {
   };
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
-        title="Contact 404 Code Lab | Get Your Project Quote Today"
-        description="Get in touch with 404 Code Lab for web development, mobile apps, games, and AI integration. Free project consultation and competitive quotes."
-        canonicalUrl="https://404codelab.com/contact"
+        title={pageContent?.meta_title || "Contact 404 Code Lab - Get In Touch"}
+        description={pageContent?.meta_description || "Get in touch with 404 Code Lab for web development, mobile apps, or game development projects."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"}
       />
       <StaticNavigation />
       

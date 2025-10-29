@@ -11,10 +11,12 @@ import { useGames } from "@/hooks/useGames";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState } from "react";
+import { usePageContent } from "@/hooks/usePageContent";
 
 const GamePortfolio = () => {
   const { data: games = [], isLoading } = useGames();
   const [processDialogOpen, setProcessDialogOpen] = useState(false);
+  const { data: pageContent } = usePageContent('/portfolio/games');
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
@@ -139,9 +141,9 @@ const GamePortfolio = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Seo 
-        title="Game Portfolio | Mobile Games by 404 Code Lab"
-        description="Explore our collection of addictive mobile games including BeeVerse. Professional game development with Unity, engaging gameplay, and monetization strategies."
-        canonicalUrl="https://404codelab.com/portfolio/games"
+        title={pageContent?.meta_title || "Game Development Portfolio - Mobile Games by 404 Code Lab"}
+        description={pageContent?.meta_description || "Check out our mobile game development portfolio."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/portfolio/games"}
       />
       <StaticNavigation />
       

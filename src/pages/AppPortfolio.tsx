@@ -9,6 +9,7 @@ import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { useAppProjects, AppProject } from "@/hooks/useAppProjects";
+import { usePageContent } from "@/hooks/usePageContent";
 
 const getStatusBadgeVariant = (status: string) => {
   const colors: Record<string, { bg: string; text: string; border: string }> = {
@@ -240,12 +241,14 @@ const AppProjectsSection = () => {
 
 
 const AppPortfolio = () => {
+  const { data: pageContent } = usePageContent('/portfolio/apps');
+  
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Seo 
-        title="App Portfolio | Mobile App Development by 404 Code Lab"
-        description="Discover our professional mobile app development portfolio. iOS and Android apps with React Native, native development, and custom solutions."
-        canonicalUrl="https://404codelab.com/portfolio/apps"
+        title={pageContent?.meta_title || "Mobile App Portfolio - iOS & Android Apps by 404 Code Lab"}
+        description={pageContent?.meta_description || "View our mobile app development portfolio."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/portfolio/apps"}
       />
       <StaticNavigation />
       

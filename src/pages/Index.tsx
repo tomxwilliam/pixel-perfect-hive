@@ -7,6 +7,7 @@ import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
 import { useFeaturedContent } from "@/hooks/useFeaturedContent";
+import { usePageContent } from "@/hooks/usePageContent";
 
 const FeaturedContentSection = () => {
   const { data: featuredContent } = useFeaturedContent();
@@ -67,11 +68,14 @@ const FeaturedContentSection = () => {
   );
 };
 const Index = () => {
+  const { data: pageContent } = usePageContent('/');
+  
   return (
     <>
       <Seo 
-        title="404 Code Lab - Building the Future of Play"
-        description="Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality."
+        title={pageContent?.meta_title || "404 Code Lab - Web Development, Mobile Apps & Games"}
+        description={pageContent?.meta_description || "Professional web development, mobile app creation, and game development services in Scotland."}
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"}
       />
       <div className="min-h-screen bg-background text-foreground">
         <StaticNavigation />
