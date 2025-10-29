@@ -118,7 +118,7 @@ const About = () => {
             </Card>
           </div>
 
-          {/* Services & Expertise Section - SEO Optimized */}
+          {/* Services & Expertise Section - SEO Optimised */}
           <div className="mt-16">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold mb-4 text-foreground">
@@ -134,7 +134,7 @@ const About = () => {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-bold mb-4 text-primary">Custom Web Development</h3>
                   <p className="text-muted-foreground mb-4">
-                    Scotland-based web development studio specializing in responsive websites, progressive web applications, 
+                    Scotland-based web development studio specialising in responsive websites, progressive web applications, 
                     and custom e-commerce solutions built with React, TypeScript, and modern frameworks.
                   </p>
                   <a href="/portfolio/web" className="text-primary hover:text-primary/80 font-medium">

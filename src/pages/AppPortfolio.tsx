@@ -431,7 +431,7 @@ const AppPortfolio = () => {
                               </div>
                               <div>
                                 <h3 className="font-bold text-accent mb-2">1. Discovery & Strategy</h3>
-                                <p className="text-sm">We start by understanding your vision, target audience, and business goals. This includes market research, competitor analysis, and feature prioritization.</p>
+                                <p className="text-sm">We start by understanding your vision, target audience, and business goals. This includes market research, competitor analysis, and feature prioritisation.</p>
                               </div>
                             </div>
                             

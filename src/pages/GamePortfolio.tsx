@@ -192,9 +192,9 @@ const GamePortfolio = () => {
                 <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-accent/10 flex items-center justify-center">
                   <Smartphone className="w-6 h-6 md:w-8 md:h-8 text-accent" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-foreground">Mobile-Optimized</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-foreground">Mobile-Optimised</h3>
                 <p className="text-muted-foreground">
-                  Built for touch controls and short sessions. Optimized performance across all devices, from budget phones to flagship models.
+                  Built for touch controls and short sessions. Optimised performance across all devices, from budget phones to flagship models.
                 </p>
               </CardContent>
             </Card>
@@ -338,8 +338,8 @@ const GamePortfolio = () => {
           </h2>
           
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-6 md:mb-8 leading-relaxed px-2">
-            We specialize in creating addictive mobile games with engaging gameplay loops, 
-            smart monetization strategies, and polished user experiences. Our full-stack 
+            We specialise in creating addictive mobile games with engaging gameplay loops, 
+            smart monetisation strategies, and polished user experiences. Our full-stack
             approach covers everything from initial concept to App Store launch and beyond.
           </p>
 
@@ -357,7 +357,7 @@ const GamePortfolio = () => {
               <CardContent className="p-0">
                 <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-foreground">Development</h3>
                 <p className="text-sm md:text-base text-muted-foreground">
-                  Built with Unity and optimized for both iOS and Android platforms with native performance.
+                  Built with Unity and optimised for both iOS and Android platforms with native performance.
                 </p>
               </CardContent>
             </Card>
@@ -366,7 +366,7 @@ const GamePortfolio = () => {
               <CardContent className="p-0">
                 <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3 text-foreground">Launch & Support</h3>
                 <p className="text-sm md:text-base text-muted-foreground">
-                  App Store optimization, analytics integration, and ongoing updates to keep players engaged.
+                  App Store optimisation, analytics integration, and ongoing updates to keep players engaged.
                 </p>
               </CardContent>
             </Card>
@@ -457,12 +457,12 @@ const GamePortfolio = () => {
                 <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Testing & Polish</h3>
               </div>
               <p className="text-sm md:text-base text-muted-foreground">
-                We rigorously test across devices, optimize performance, and add that final layer of polish that 
+                We rigorously test across devices, optimise performance, and add that final layer of polish that 
                 separates good games from great ones.
               </p>
               <ul className="list-disc list-inside space-y-1 md:space-y-2 text-sm md:text-base text-muted-foreground ml-4">
                 <li>Quality assurance testing</li>
-                <li>Performance optimization</li>
+                <li>Performance optimisation</li>
                 <li>Device compatibility testing</li>
                 <li>Bug fixing and refinement</li>
                 <li>Balance and difficulty tuning</li>
@@ -477,11 +477,11 @@ const GamePortfolio = () => {
               </div>
               <p className="text-sm md:text-base text-muted-foreground">
                 We handle all the technical details of getting your game onto the App Store and Google Play, 
-                including optimization for discoverability.
+                including optimisation for discoverability.
               </p>
               <ul className="list-disc list-inside space-y-1 md:space-y-2 text-sm md:text-base text-muted-foreground ml-4">
                 <li>App Store and Google Play account setup</li>
-                <li>Store listing optimization (ASO)</li>
+                <li>Store listing optimisation (ASO)</li>
                 <li>Marketing assets preparation</li>
                 <li>Submission and review process management</li>
                 <li>Launch day support</li>
@@ -502,7 +502,7 @@ const GamePortfolio = () => {
                 <li>Analytics integration and monitoring</li>
                 <li>Player feedback analysis</li>
                 <li>Regular content updates</li>
-                <li>Performance optimization based on data</li>
+                <li>Performance optimisation based on data</li>
                 <li>Ongoing technical support</li>
               </ul>
             </div>

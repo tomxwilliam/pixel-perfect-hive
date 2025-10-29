@@ -415,7 +415,7 @@ export function EnhancedEmailTemplateSettings() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Enhanced Email Templates</h1>
           <p className="text-muted-foreground">
-            Advanced email template management with categorization and live preview
+            Advanced email template management with categorisation and live preview
           </p>
         </div>
         <div className="flex gap-2">

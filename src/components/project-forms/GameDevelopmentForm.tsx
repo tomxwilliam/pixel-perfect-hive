@@ -43,7 +43,7 @@ export const GameDevelopmentForm: React.FC<GameDevelopmentFormProps> = ({ formDa
     { id: 'ad-monetization', label: 'Ad Monetisation' },
     { id: 'achievement-system', label: 'Achievement System' },
     { id: 'cloud-saves', label: 'Cloud Save System' },
-    { id: 'customization', label: 'Character/Item Customisation' },
+    { id: 'customisation', label: 'Character/Item Customisation' },
     { id: 'tournament-mode', label: 'Tournament/Competition Mode' },
     { id: 'daily-challenges', label: 'Daily Challenges/Quests' }
   ];

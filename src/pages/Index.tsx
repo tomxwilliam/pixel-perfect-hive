@@ -123,7 +123,7 @@ const Index = () => {
               Expert Digital Solutions for Modern Businesses
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              At 404 Code Lab, we specialise in creating cutting-edge mobile games, custom applications, and responsive web designs. 
+              At 404 Code Lab, we specialise in creating cutting-edge mobile games, custom applications, and responsive web designs.
               Our team of experienced developers and designers transforms your vision into high-performance digital products that 
               engage users and drive results. From concept to launch, we deliver pixel-perfect solutions tailored to your business needs.
             </p>

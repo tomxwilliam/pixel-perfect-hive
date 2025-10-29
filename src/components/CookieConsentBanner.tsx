@@ -19,7 +19,7 @@ export function CookieConsentBanner() {
                 We use cookies to enhance your experience
               </p>
               <p className="text-xs text-muted-foreground">
-                We use cookies to improve functionality, analyze traffic, and remember your preferences.{' '}
+                We use cookies to improve functionality, analyse traffic, and remember your preferences.{' '}
                 <Link to="/legal/cookies" className="text-primary hover:underline">
                   Learn more
                 </Link>

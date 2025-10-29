@@ -262,7 +262,7 @@ const AdminManagement: React.FC<AdminManagementProps> = ({ isSuperAdmin, superAd
     try {
       // BUSINESS LOGIC: Check if it's a company domain email
       // Note: This is a business rule for automatic admin assignment during signup
-      // It's not used for authorization checks - those use the user_roles table
+      // It's not used for authorisation checks - those use the user_roles table
       const is404CodeLabEmail = email.endsWith('@404codelab.com');
       
       // First check if user exists in profiles

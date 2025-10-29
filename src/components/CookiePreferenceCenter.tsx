@@ -120,7 +120,7 @@ export function CookiePreferenceCenter() {
                       Help us understand how visitors use our website to improve user experience.
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">
-                      Examples: Google Analytics, page views, user behavior tracking
+                      Examples: Google Analytics, page views, user behaviour tracking
                     </p>
                   </div>
                 </div>

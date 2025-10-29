@@ -484,7 +484,7 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
             <CardContent className="space-y-6">
               <div className="grid gap-4">
                 {[
-                  { key: 'auto_triage', label: 'Auto-triage Client Requests', desc: 'Automatically categorize by Web/App/Game services', icon: Target },
+                  { key: 'auto_triage', label: 'Auto-triage Client Requests', desc: 'Automatically categorise by Web/App/Game services', icon: Target },
                   { key: 'auto_quotes', label: 'Auto-generate Quotes', desc: 'Create rough estimates from intake forms', icon: DollarSign },
                   { key: 'email_replies', label: 'Draft Email Replies', desc: 'AI-powered professional responses', icon: Mail },
                   { key: 'welcome_messages', label: 'Welcome-back Messages', desc: 'Personalized messages for returning clients', icon: MessageSquare },
