@@ -421,6 +421,7 @@ export type Database = {
       blog_posts: {
         Row: {
           author_id: string | null
+          auto_published: boolean | null
           category_id: string | null
           content: string
           created_at: string | null
@@ -432,6 +433,7 @@ export type Database = {
           meta_title: string | null
           published_at: string | null
           read_time_minutes: number | null
+          scheduled_for: string | null
           slug: string
           status: string
           tags: string[] | null
@@ -441,6 +443,7 @@ export type Database = {
         }
         Insert: {
           author_id?: string | null
+          auto_published?: boolean | null
           category_id?: string | null
           content: string
           created_at?: string | null
@@ -452,6 +455,7 @@ export type Database = {
           meta_title?: string | null
           published_at?: string | null
           read_time_minutes?: number | null
+          scheduled_for?: string | null
           slug: string
           status?: string
           tags?: string[] | null
@@ -461,6 +465,7 @@ export type Database = {
         }
         Update: {
           author_id?: string | null
+          auto_published?: boolean | null
           category_id?: string | null
           content?: string
           created_at?: string | null
@@ -472,6 +477,7 @@ export type Database = {
           meta_title?: string | null
           published_at?: string | null
           read_time_minutes?: number | null
+          scheduled_for?: string | null
           slug?: string
           status?: string
           tags?: string[] | null

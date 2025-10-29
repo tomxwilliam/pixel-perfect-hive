@@ -14,13 +14,21 @@ export interface BlogPost {
   meta_title: string | null;
   meta_description: string | null;
   meta_keywords: string[] | null;
-  status: string;
+  status: "draft" | "published" | "scheduled";
   published_at: string | null;
+  scheduled_for?: string | null;
+  auto_published?: boolean;
   view_count: number;
   read_time_minutes: number | null;
   tags: string[] | null;
   created_at: string;
   updated_at: string;
+  blog_categories?: {
+    name: string;
+    slug: string;
+    color?: string;
+    icon?: string;
+  };
 }
 
 export function useBlogPosts(filters?: { status?: string; categoryId?: string; tag?: string }) {
