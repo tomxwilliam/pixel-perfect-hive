@@ -6,9 +6,11 @@ import { useCustomerSubscriptions } from "@/hooks/useCustomerSubscriptions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Monitor, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Monitor, Globe, ArrowLeft } from "lucide-react";
 import { SubscriptionPlanCard } from "@/components/customer/SubscriptionPlanCard";
 import { ActiveSubscriptionCard } from "@/components/customer/ActiveSubscriptionCard";
+import { Link } from "react-router-dom";
 
 const Subscriptions = () => {
   const { user } = useAuth();
@@ -28,6 +30,14 @@ const Subscriptions = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8 mt-20">
         <div className="max-w-7xl mx-auto space-y-8">
+          {/* Back Button */}
+          <Link to="/dashboard">
+            <Button variant="ghost" className="gap-2 mb-4">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+
           {/* Header */}
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-foreground">Subscriptions</h1>
