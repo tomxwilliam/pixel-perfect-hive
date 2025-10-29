@@ -267,7 +267,7 @@ const Dashboard = () => {
 
           {/* Main Content Tabs - Mobile Optimised */}
           <MobileTabs defaultValue="overview" className="space-y-6">
-            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-8'}>
+            <MobileTabsList className={isMobile ? '' : 'grid w-full grid-cols-9'}>
               <MobileTabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart className="h-4 w-4" />
                 Overview
@@ -287,6 +287,10 @@ const Dashboard = () => {
               <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Quotes
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="subscriptions" className="flex items-center gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Subscriptions
               </MobileTabsTrigger>
               <MobileTabsTrigger value="appointments" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -320,6 +324,32 @@ const Dashboard = () => {
 
           <MobileTabsContent value="quotes">
             <CustomerQuotes />
+          </MobileTabsContent>
+
+          <MobileTabsContent value="subscriptions">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <RefreshCw className="h-5 w-5" />
+                  Subscriptions
+                </CardTitle>
+                <CardDescription>
+                  Manage your IT support and website care subscriptions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    View and manage all your active subscriptions including IT Support Plans and Website Care Plans.
+                  </p>
+                  <Link to="/dashboard/subscriptions">
+                    <Button className="w-full">
+                      View All Subscriptions
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
           </MobileTabsContent>
 
           <MobileTabsContent value="appointments">
