@@ -14,10 +14,10 @@ export default function WebDevelopmentAds() {
 
   return (
     <GoogleAdsLandingTemplate
-      title="Professional Web Development Starting at £2,499 | 404 Code Lab"
+      title="Professional Web Development Starting at £299 | 404 Code Lab"
       description="Launch your professional website in 2 weeks. SEO-optimised, mobile-responsive, and built to convert. No hidden fees. Get your free quote today."
       
-      headline="Professional Web Development Starting at £2,499"
+      headline="Professional Web Development Starting at £299"
       subheadline="Launch Your Website in 2 Weeks - No Hidden Fees, 100% Satisfaction Guaranteed"
       
       urgencyMessage="🔥 Book this week and save 10% on your project"
@@ -99,10 +99,10 @@ export default function WebDevelopmentAds() {
               <SelectValue placeholder="Budget Range *" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2499-3999">£2,499 - £3,999</SelectItem>
-              <SelectItem value="4000-7999">£4,000 - £7,999</SelectItem>
-              <SelectItem value="8000-15999">£8,000 - £15,999</SelectItem>
-              <SelectItem value="16000+">£16,000+</SelectItem>
+              <SelectItem value="299-999">£299 - £999</SelectItem>
+              <SelectItem value="1000-2499">£1,000 - £2,499</SelectItem>
+              <SelectItem value="2500-4999">£2,500 - £4,999</SelectItem>
+              <SelectItem value="5000+">£5,000+</SelectItem>
               <SelectItem value="not-sure">Not Sure</SelectItem>
             </SelectContent>
           </Select>
