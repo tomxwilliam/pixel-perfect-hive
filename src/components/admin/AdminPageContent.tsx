@@ -12,8 +12,6 @@ import { Loader2, Plus, Save, Trash2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { PageContentBlockEditor } from "./PageContentBlockEditor";
-import { ContentBlock } from "@/types/cms";
 
 export function AdminPageContent() {
   const { data: pages, isLoading } = useAllPageContent();
@@ -188,10 +186,9 @@ export function AdminPageContent() {
                 <Tabs defaultValue="basic">
                   <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="basic">Basic</TabsTrigger>
-            <TabsTrigger value="seo">SEO</TabsTrigger>
-            <TabsTrigger value="blocks">Content Blocks</TabsTrigger>
-            <TabsTrigger value="content">Legacy Content</TabsTrigger>
-            <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                    <TabsTrigger value="seo">SEO</TabsTrigger>
+                    <TabsTrigger value="content">Content</TabsTrigger>
+                    <TabsTrigger value="advanced">Advanced</TabsTrigger>
                   </TabsList>
 
                   {/* Basic Tab */}
@@ -324,21 +321,7 @@ export function AdminPageContent() {
                     </div>
                   </TabsContent>
 
-                  {/* Content Blocks Tab */}
-                  <TabsContent value="blocks" className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-4">Content Blocks</h3>
-                      <p className="text-sm text-muted-foreground mb-6">
-                        Build your page using reusable content blocks. Drag to reorder.
-                      </p>
-                      <PageContentBlockEditor
-                        blocks={(formData.content_sections as ContentBlock[]) || []}
-                        onChange={(blocks) => updateField('content_sections', blocks)}
-                      />
-                    </div>
-                  </TabsContent>
-
-                  {/* Legacy Content Tab */}
+                  {/* Content Tab */}
                   <TabsContent value="content" className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="hero_section">Hero Section (JSON)</Label>
