@@ -14,10 +14,10 @@ export default function WebDevelopmentAds() {
 
   return (
     <GoogleAdsLandingTemplate
-      title="Professional Web Development Starting at $2,999 | 404 Code Lab"
-      description="Launch your professional website in 2 weeks. SEO-optimized, mobile-responsive, and built to convert. No hidden fees. Get your free quote today."
+      title="Professional Web Development Starting at £2,499 | 404 Code Lab"
+      description="Launch your professional website in 2 weeks. SEO-optimised, mobile-responsive, and built to convert. No hidden fees. Get your free quote today."
       
-      headline="Professional Web Development Starting at $2,999"
+      headline="Professional Web Development Starting at £2,499"
       subheadline="Launch Your Website in 2 Weeks - No Hidden Fees, 100% Satisfaction Guaranteed"
       
       urgencyMessage="🔥 Book this week and save 10% on your project"
@@ -32,7 +32,7 @@ export default function WebDevelopmentAds() {
         {
           icon: <Zap className="h-8 w-8" />,
           title: 'Lightning Fast',
-          description: 'Optimized for speed with load times under 2 seconds. Fast sites rank higher and convert better.',
+          description: 'Optimised for speed with load times under 2 seconds. Fast sites rank higher and convert better.',
         },
         {
           icon: <Smartphone className="h-8 w-8" />,
@@ -41,7 +41,7 @@ export default function WebDevelopmentAds() {
         },
         {
           icon: <TrendingUp className="h-8 w-8" />,
-          title: 'SEO Optimized',
+          title: 'SEO Optimised',
           description: 'Built for search engines from day one. Get found by customers searching for your services.',
         },
         {
@@ -99,10 +99,10 @@ export default function WebDevelopmentAds() {
               <SelectValue placeholder="Budget Range *" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2999-4999">$2,999 - $4,999</SelectItem>
-              <SelectItem value="5000-9999">$5,000 - $9,999</SelectItem>
-              <SelectItem value="10000-19999">$10,000 - $19,999</SelectItem>
-              <SelectItem value="20000+">$20,000+</SelectItem>
+              <SelectItem value="2499-3999">£2,499 - £3,999</SelectItem>
+              <SelectItem value="4000-7999">£4,000 - £7,999</SelectItem>
+              <SelectItem value="8000-15999">£8,000 - £15,999</SelectItem>
+              <SelectItem value="16000+">£16,000+</SelectItem>
               <SelectItem value="not-sure">Not Sure</SelectItem>
             </SelectContent>
           </Select>

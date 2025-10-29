@@ -15,17 +15,17 @@ export default function GameDevelopmentAds() {
   return (
     <GoogleAdsLandingTemplate
       title="Mobile Game Development That Generates Revenue | 404 Code Lab"
-      description="From concept to App Store in 12 weeks. Addictive gameplay, stunning graphics, proven monetization. 35+ games published generating $2M+ in revenue."
+      description="From concept to App Store in 12 weeks. Addictive gameplay, stunning graphics, proven monetisation. 35+ games published generating £1.6M+ in revenue."
       
       headline="Mobile Game Development That Generates Revenue"
-      subheadline="From Concept to App Store in 12 Weeks - Proven Monetization Strategies Included"
+      subheadline="From Concept to App Store in 12 Weeks - Proven Monetisation Strategies Included"
       
       urgencyMessage="⏰ Limited slots available for Q4 2025 development"
       
       trustSignals={[
         { value: '35+', label: 'Games Published' },
         { value: '5M+', label: 'Total Downloads' },
-        { value: '$2M+', label: 'Revenue Generated' },
+        { value: '£1.6M+', label: 'Revenue Generated' },
       ]}
       
       benefits={[
@@ -41,25 +41,25 @@ export default function GameDevelopmentAds() {
         },
         {
           icon: <DollarSign className="h-8 w-8" />,
-          title: 'Proven Monetization',
-          description: 'Multiple revenue streams: ads, IAP, subscriptions. We maximize your game\'s earning potential.',
+          title: 'Proven Monetisation',
+          description: 'Multiple revenue streams: ads, IAP, subscriptions. We maximise your game\'s earning potential.',
         },
         {
           icon: <TrendingUp className="h-8 w-8" />,
           title: 'Post-Launch Support',
-          description: 'Analytics, updates, and optimization to grow your player base and revenue over time.',
+          description: 'Analytics, updates, and optimisation to grow your player base and revenue over time.',
         },
       ]}
       
       testimonials={[
         {
-          quote: 'Our puzzle game hit 100K downloads in 3 months and generates $8K monthly revenue. Worth every penny!',
+          quote: 'Our puzzle game hit 100K downloads in 3 months and generates £6.5K monthly revenue. Worth every penny!',
           author: 'David Park',
           role: 'Game Studio Founder',
           rating: 5,
         },
         {
-          quote: 'They turned our rough idea into a polished, addictive game. The monetization strategy works perfectly.',
+          quote: 'They turned our rough idea into a polished, addictive game. The monetisation strategy works perfectly.',
           author: 'Lisa Wong',
           role: 'Indie Developer',
           rating: 5,

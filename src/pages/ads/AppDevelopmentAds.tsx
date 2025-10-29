@@ -15,10 +15,10 @@ export default function AppDevelopmentAds() {
   return (
     <GoogleAdsLandingTemplate
       title="Build Your Mobile App - iOS & Android | 404 Code Lab"
-      description="From idea to App Store in 6 weeks. Cross-platform, secure, scalable mobile apps starting at $15,999. 80+ apps launched with 2M+ downloads."
+      description="From idea to App Store in 6 weeks. Cross-platform, secure, scalable mobile apps starting at £12,999. 80+ apps launched with 2M+ downloads."
       
       headline="Build Your Mobile App - iOS & Android"
-      subheadline="From Idea to App Store in 6 Weeks - Starting at $15,999"
+      subheadline="From Idea to App Store in 6 Weeks - Starting at £12,999"
       
       urgencyMessage="🎁 Free consultation - Book within 48 hours and get app icon design free"
       
