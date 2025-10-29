@@ -93,6 +93,8 @@ export default function BlogPostEditor({ post, onClose }: BlogPostEditorProps) {
       featured_image_url: featuredImage,
       author_id: user?.id,
       published_at: data.status === "published" ? new Date().toISOString() : null,
+      // Fix: Convert empty string to null for UUID fields
+      category_id: data.category_id && data.category_id !== "" ? data.category_id : null,
     };
 
     if (post) {
