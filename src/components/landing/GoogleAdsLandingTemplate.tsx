@@ -155,10 +155,10 @@ export default function GoogleAdsLandingTemplate({
       
       {/* Simplified Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src="/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png" alt="404 Code Lab" className="h-8 dark:hidden" />
-            <img src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" alt="404 Code Lab" className="h-8 hidden dark:block" />
+        <div className="container flex h-14 md:h-16 items-center justify-between">
+          <div className="w-24 h-24 flex items-center justify-center">
+            <img src="/lovable-uploads/daa01be4-d91d-4d88-bec9-e9a2e01383a5.png" alt="404 Code Lab" className="w-full h-full object-contain dark:hidden" />
+            <img src="/lovable-uploads/40db8b65-10fc-4b8a-bdbe-0c197159ca3a.png" alt="404 Code Lab" className="w-full h-full object-contain hidden dark:block" />
           </div>
           <div className="flex items-center gap-3">
             <a href="tel:+447496295759" className="flex items-center gap-2 text-primary font-semibold hover:underline">
