@@ -53,6 +53,11 @@ import BlogPost from "./pages/BlogPost";
 import BlogCategory from "./pages/BlogCategory";
 import BlogTag from "./pages/BlogTag";
 
+// Google Ads Landing Pages
+import WebDevelopmentAds from "./pages/ads/WebDevelopmentAds";
+import GameDevelopmentAds from "./pages/ads/GameDevelopmentAds";
+import AppDevelopmentAds from "./pages/ads/AppDevelopmentAds";
+
 
 const queryClient = new QueryClient();
 
@@ -107,6 +112,11 @@ const App = () => (
               
               {/* Service pages */}
               <Route path="/services/ai-integration" element={<AIIntegration />} />
+              
+              {/* Google Ads Landing Pages */}
+              <Route path="/ads/web-development" element={<WebDevelopmentAds />} />
+              <Route path="/ads/game-development" element={<GameDevelopmentAds />} />
+              <Route path="/ads/app-development" element={<AppDevelopmentAds />} />
               
               {/* Authentication */}
               <Route path="/auth" element={<Auth />} />
