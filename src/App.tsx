@@ -35,6 +35,7 @@ import AIIntegration from "./pages/services/AIIntegration";
 import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
+import Subscriptions from "./pages/dashboard/Subscriptions";
 
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -140,6 +141,7 @@ const App = () => (
             <Route path="/dashboard/new-project" element={<ProtectedRoute><NewProject /></ProtectedRoute>} />
             <Route path="/dashboard/new-ticket" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
             <Route path="/dashboard/book-call" element={<ProtectedRoute><BookCall /></ProtectedRoute>} />
+            <Route path="/dashboard/subscriptions" element={<ProtectedRoute><Subscriptions /></ProtectedRoute>} />
               
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
               <Route path="/project-management" element={

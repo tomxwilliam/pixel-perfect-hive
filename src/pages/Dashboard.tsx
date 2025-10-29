@@ -38,7 +38,8 @@ import {
   Server,
   CheckCircle,
   XCircle,
-  Loader2
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -133,21 +134,28 @@ const Dashboard = () => {
       description: 'Start a new project with us',
       icon: Plus,
       href: '/dashboard/projects/new',
-      color: 'bg-blue-500'
+      color: 'bg-primary'
     },
     {
       title: 'Support Ticket',
       description: 'Get help with existing projects',
       icon: TicketIcon,
       href: '/dashboard/tickets/new',
-      color: 'bg-green-500'
+      color: 'bg-ok'
     },
     {
       title: 'Book a Call',
       description: 'Schedule a consultation',
       icon: Calendar,
       href: '/dashboard/book-call',
-      color: 'bg-purple-500'
+      color: 'bg-accent'
+    },
+    {
+      title: 'Subscriptions',
+      description: 'Manage your subscriptions',
+      icon: RefreshCw,
+      href: '/dashboard/subscriptions',
+      color: 'bg-brand-2'
     }
   ];
 

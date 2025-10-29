@@ -636,6 +636,53 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          customer_id: string
+          id: string
+          next_billing_date: string
+          plan_id: string
+          start_date: string
+          status: string
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          next_billing_date: string
+          plan_id: string
+          start_date?: string
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          next_billing_date?: string
+          plan_id?: string
+          start_date?: string
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       domain_hosting_settings: {
         Row: {
           api_settings: Json | null
@@ -3056,6 +3103,48 @@ export type Database = {
           name?: string
           priority?: string
           resolution_hours?: number
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          add_ons: string[] | null
+          category: string
+          created_at: string
+          description: string
+          display_order: number | null
+          features: Json
+          id: string
+          is_active: boolean
+          name: string
+          price_monthly: number
+          updated_at: string
+        }
+        Insert: {
+          add_ons?: string[] | null
+          category: string
+          created_at?: string
+          description: string
+          display_order?: number | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          price_monthly: number
+          updated_at?: string
+        }
+        Update: {
+          add_ons?: string[] | null
+          category?: string
+          created_at?: string
+          description?: string
+          display_order?: number | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_monthly?: number
+          updated_at?: string
         }
         Relationships: []
       }
