@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Phone, CheckCircle2, Star, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Seo from '@/components/Seo';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 interface Benefit {
   icon: React.ReactNode;
@@ -133,11 +134,12 @@ export default function GoogleAdsLandingTemplate({
             <img src="/assets/logo-dark.png" alt="404 Code Lab" className="h-8 dark:hidden" />
             <img src="/assets/logo-light.png" alt="404 Code Lab" className="h-8 hidden dark:block" />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <a href="tel:+1234567890" className="flex items-center gap-2 text-primary font-semibold hover:underline">
               <Phone className="h-4 w-4" />
               <span className="hidden sm:inline">(123) 456-7890</span>
             </a>
+            <ThemeToggle />
             <Button size="lg" onClick={() => document.getElementById('lead-form')?.scrollIntoView({ behavior: 'smooth' })}>
               Get Started
             </Button>
