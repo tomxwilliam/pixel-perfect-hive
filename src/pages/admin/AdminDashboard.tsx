@@ -3,7 +3,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star, Megaphone } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star, Megaphone, MoreHorizontal } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -73,77 +75,89 @@ const AdminDashboard = () => {
         </div>
 
         <MobileTabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <MobileTabsList className="w-full">
-            <MobileTabsTrigger value="overview" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Overview</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="crm" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">CRM</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="customers" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Customers</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="projects" className="flex items-center gap-2">
-              <FolderOpen className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Projects</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="tickets" className="flex items-center gap-2">
-              <Ticket className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Support</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Invoices</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="quotes" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Quotes</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="calendar" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Calendar</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="featured" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Featured</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="games" className="flex items-center gap-2">
-              <Gamepad2 className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Games</span>
-            </MobileTabsTrigger>
+          <div className="flex items-center gap-2 w-full">
+            <MobileTabsList className="flex-1">
+              <MobileTabsTrigger value="overview" className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Overview</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="crm" className="flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">CRM</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="customers" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Customers</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="projects" className="flex items-center gap-2">
+                <FolderOpen className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Projects</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="tickets" className="flex items-center gap-2">
+                <Ticket className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Support</span>
+              </MobileTabsTrigger>
+              <MobileTabsTrigger value="invoices" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">Invoices</span>
+              </MobileTabsTrigger>
+            </MobileTabsList>
             
-            <MobileTabsTrigger value="blog" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Blog</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="web" className="flex items-center gap-2">
-              <Code className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Web</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="apps" className="flex items-center gap-2">
-              <Smartphone className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Apps</span>
-            </MobileTabsTrigger>
-            <MobileTabsTrigger value="ads" className="flex items-center gap-2">
-              <Megaphone className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">Ads Pages</span>
-            </MobileTabsTrigger>
-            {isAdmin && (
-              <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
-                <Calculator className="h-4 w-4" />
-                <span className="text-xs sm:text-sm">Accounting</span>
-              </MobileTabsTrigger>
-            )}
-            {isAdmin && (
-              <MobileTabsTrigger value="settings" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
-                <span className="text-xs sm:text-sm">Settings</span>
-              </MobileTabsTrigger>
-            )}
-          </MobileTabsList>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="hidden sm:inline">More</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-background z-50">
+                <DropdownMenuItem onClick={() => setActiveTab('quotes')} className="flex items-center gap-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  <span>Quotes</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('calendar')} className="flex items-center gap-2 cursor-pointer">
+                  <Calendar className="h-4 w-4" />
+                  <span>Calendar</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('featured')} className="flex items-center gap-2 cursor-pointer">
+                  <Star className="h-4 w-4" />
+                  <span>Featured</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('games')} className="flex items-center gap-2 cursor-pointer">
+                  <Gamepad2 className="h-4 w-4" />
+                  <span>Games</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('blog')} className="flex items-center gap-2 cursor-pointer">
+                  <FileText className="h-4 w-4" />
+                  <span>Blog</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('web')} className="flex items-center gap-2 cursor-pointer">
+                  <Code className="h-4 w-4" />
+                  <span>Web Projects</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('apps')} className="flex items-center gap-2 cursor-pointer">
+                  <Smartphone className="h-4 w-4" />
+                  <span>App Projects</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setActiveTab('ads')} className="flex items-center gap-2 cursor-pointer">
+                  <Megaphone className="h-4 w-4" />
+                  <span>Ads Pages</span>
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => setActiveTab('accounting')} className="flex items-center gap-2 cursor-pointer">
+                    <Calculator className="h-4 w-4" />
+                    <span>Accounting</span>
+                  </DropdownMenuItem>
+                )}
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => setActiveTab('settings')} className="flex items-center gap-2 cursor-pointer">
+                    <Settings className="h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           <MobileTabsContent value="overview">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
