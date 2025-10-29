@@ -60,16 +60,11 @@ export const SubscriptionPlanCard = ({ plan }: SubscriptionPlanCardProps) => {
           <div className="pt-4 border-t border-border space-y-3">
             <p className="text-sm font-semibold text-muted-foreground">Optional Add-Ons:</p>
             <ul className="space-y-2">
-              {plan.add_ons.slice(0, 3).map((addon, index) => (
+              {plan.add_ons.slice(0, 2).map((addon, index) => (
                 <li key={index} className="flex items-start gap-2">
                   <span className="text-xs text-muted-foreground">• {addon}</span>
                 </li>
               ))}
-              {plan.add_ons.length > 3 && (
-                <li className="text-xs text-muted-foreground italic">
-                  + {plan.add_ons.length - 3} more available
-                </li>
-              )}
             </ul>
           </div>
         )}
