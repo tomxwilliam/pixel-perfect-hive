@@ -36,9 +36,6 @@ import NewProject from "./pages/dashboard/NewProject";
 import NewTicket from "./pages/dashboard/NewTicket";
 import BookCall from "./pages/dashboard/BookCall";
 
-// Partner pages
-import HostingPartner from "./pages/partner/HostingPartner";
-
 // Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import { AdminAccounting } from "./components/admin/AdminAccounting";
@@ -128,9 +125,6 @@ const App = () => (
             <Route path="/dashboard/new-ticket" element={<ProtectedRoute><NewTicket /></ProtectedRoute>} />
             <Route path="/dashboard/book-call" element={<ProtectedRoute><BookCall /></ProtectedRoute>} />
               
-            {/* Partner pages */}
-            <Route path="/partner/hosting" element={<HostingPartner />} />
-              
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
               <Route path="/project-management" element={
                 <ProtectedRoute requireCodeLabEmail={true}>
@@ -153,14 +147,6 @@ const App = () => (
               <Route path="/legal/terms" element={<TermsOfService />} />
               <Route path="/legal/refunds" element={<RefundsPolicy />} />
               <Route path="/legal/cookies" element={<CookiePolicy />} />
-              
-              {/* Legacy domain/hosting redirects */}
-              <Route path="/domains" element={<Navigate to="/partner/hosting" replace />} />
-              <Route path="/domain-search" element={<Navigate to="/partner/hosting" replace />} />
-              <Route path="/hosting" element={<Navigate to="/partner/hosting" replace />} />
-              <Route path="/hosting-domain" element={<Navigate to="/partner/hosting" replace />} />
-              <Route path="/billing/domains" element={<Navigate to="/partner/hosting" replace />} />
-              <Route path="/account/orders" element={<Navigate to="/partner/hosting" replace />} />
               
               {/* 404 page */}
               <Route path="/404" element={<NotFound />} />

@@ -148,13 +148,6 @@ const Dashboard = () => {
       icon: Calendar,
       href: '/dashboard/book-call',
       color: 'bg-purple-500'
-    },
-    {
-      title: 'Get Hosting & Domains (20i)',
-      description: 'Fast UK hosting + domains via our trusted partner.',
-      icon: Server,
-      href: '/partner/hosting',
-      color: 'bg-gradient-to-r from-cyan-500 to-blue-500'
     }
   ];
 

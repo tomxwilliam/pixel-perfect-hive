@@ -71,7 +71,6 @@ interface AIAgentSettings {
     welcome_messages: boolean;
     offline_progression: boolean;
     task_prioritization: boolean;
-    social_posting: boolean;
     calendar_scheduling: boolean;
   };
   vertex_config: any;
@@ -170,7 +169,6 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
               welcome_messages: false,
               offline_progression: false,
               task_prioritization: false,
-              social_posting: false,
               calendar_scheduling: false
             },
             ...updates
@@ -351,10 +349,6 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
           <MobileTabsTrigger value="calendar" className="flex items-center gap-1 text-xs">
             <Calendar className="h-3 w-3" />
             {!isMobile && 'Calendar'}
-          </MobileTabsTrigger>
-          <MobileTabsTrigger value="social" className="flex items-center gap-1 text-xs">
-            <Share2 className="h-3 w-3" />
-            {!isMobile && 'Social'}
           </MobileTabsTrigger>
           <MobileTabsTrigger value="system" className="flex items-center gap-1 text-xs">
             <Save className="h-3 w-3" />
@@ -667,75 +661,6 @@ const AIAgentSettingsComponent: React.FC<AIAgentSettingsProps> = ({ isSuperAdmin
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4" />
                       <span>Internal Team Reminders</span>
-                    </div>
-                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </MobileTabsContent>
-
-        <MobileTabsContent value="social" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Share2 className="h-5 w-5" />
-                Social Media Automation
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-4">
-                {[
-                  { key: 'social_posting', label: 'Auto-post Project Updates', desc: 'Twitter and LinkedIn integration', icon: Share2 },
-                ].map(({ key, label, desc, icon: Icon }) => (
-                  <div key={key} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-5 w-5 text-purple-500" />
-                      <div>
-                        <Label className="text-base font-medium">{label}</Label>
-                        <p className="text-sm text-muted-foreground">{desc}</p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={aiSettings?.automation_config?.[key as keyof typeof aiSettings.automation_config] || false}
-                      onCheckedChange={(checked) => 
-                        handleUpdateSettings({
-                          automation_config: {
-                            ...aiSettings?.automation_config,
-                            [key]: checked
-                          }
-                        })
-                      }
-                      disabled={!isConnected || !aiSettings?.is_enabled}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <Separator />
-
-              <div>
-                <h4 className="font-medium mb-3">Content Features</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      <span>Draft Social Content from Projects</span>
-                    </div>
-                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="h-4 w-4" />
-                      <span>Engagement Tracking</span>
-                    </div>
-                    <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>Optimal Posting Time Suggestions</span>
                     </div>
                     <Switch disabled={!isConnected || !aiSettings?.is_enabled} />
                   </div>

@@ -235,8 +235,7 @@ const NewProject = () => {
       case 1: return "Basic Information";
       case 2: return "Project Details";
       case 3: return "Additional Requirements";
-      case 4: return "Domain Registration";
-      case 5: return "Review & Submit";
+      case 4: return "Review & Submit";
       default: return "Project Setup";
     }
   };
@@ -246,8 +245,7 @@ const NewProject = () => {
       case 1: return "Tell us about your project basics";
       case 2: return "Provide specific details for your project type";
       case 3: return "Upload any additional files or requirements";
-      case 4: return "Search and register a domain for your project (optional)";
-      case 5: return "Review your project details before submission";
+      case 4: return "Review your project details before submission";
       default: return "";
     }
   };
@@ -305,12 +303,6 @@ const NewProject = () => {
                     <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
                       <Badge variant={currentStep >= 4 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>4</Badge>
                       <span className={`${currentStep >= 4 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
-                        Domain
-                      </span>
-                    </div>
-                    <div className={`flex ${isMobile ? 'flex-col' : ''} items-center ${isMobile ? 'text-center' : 'space-x-3'}`}>
-                      <Badge variant={currentStep >= 5 ? "default" : "secondary"} className={isMobile ? 'mb-1' : ''}>5</Badge>
-                      <span className={`${currentStep >= 5 ? "font-medium" : "text-muted-foreground"} ${isMobile ? 'text-xs' : ''}`}>
                         Review & Submit
                       </span>
                     </div>
@@ -426,50 +418,8 @@ const NewProject = () => {
                       </div>
                     )}
 
-                    {/* Step 4: Domain & Hosting */}
+                    {/* Step 4: Review & Submit */}
                     {currentStep === 4 && (
-                      <div className="space-y-6">
-                        <div>
-                          <h3 className="text-lg font-medium mb-4">Domain & Hosting</h3>
-                          <p className="text-sm text-muted-foreground mb-6">
-                            Need a domain and hosting? We partner with 20i for fast, secure UK hosting.
-                          </p>
-                        </div>
-                        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              Get Hosting & Domains via 20i
-                            </CardTitle>
-                            <CardDescription>
-                              Fast UK hosting + domain registration through our trusted partner
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                              <p className="text-sm">
-                                ✓ Managed cloud & WordPress hosting<br />
-                                ✓ Domain registration & transfers<br />
-                                ✓ Free SSL certificates & migrations<br />
-                                ✓ 24/7 UK-based support
-                              </p>
-                            </div>
-                            <Button 
-                              className="w-full" 
-                              onClick={() => window.open('/partner/hosting', '_blank')}
-                              type="button"
-                            >
-                              Learn More About 20i Hosting
-                            </Button>
-                            <p className="text-xs text-muted-foreground text-center">
-                              We may earn a commission at no extra cost to you
-                            </p>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    )}
-
-                    {/* Step 5: Review & Submit */}
-                    {currentStep === 5 && (
                       <div className="space-y-6">
                         <div>
                           <h3 className="text-lg font-medium mb-4">Project Summary</h3>

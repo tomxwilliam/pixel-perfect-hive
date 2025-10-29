@@ -171,7 +171,7 @@ export const AdminAccounting = () => {
             <CardHeader>
               <CardTitle>Accounting Data Export</CardTitle>
               <CardDescription>
-                Export comprehensive financial data for your accountant including invoices, quotes, projects, domains, hosting, and time tracking.
+                Export comprehensive financial data for your accountant including invoices, quotes, projects, and time tracking.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -414,8 +414,6 @@ export const AdminAccounting = () => {
                       <li>All invoices with payment status and amounts</li>
                       <li>Quotes with conversion tracking</li>
                       <li>Project budgets and actual costs</li>
-                      <li>Domain registration and renewal costs</li>
-                      <li>Hosting subscription billing</li>
                       <li>Time logs with billable hour calculations</li>
                       <li>Customer details for cross-referencing</li>
                       <li>Outstanding receivables and recurring revenue</li>

@@ -51,7 +51,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       const { data, error } = await supabase
         .from('api_integrations')
         .select('*')
-        .in('integration_type', ['unlimited_web_hosting', 'enom', 'whm_cpanel', 'google_ai'])
+        .eq('integration_type', 'google_ai')
         .order('integration_name', { ascending: true });
 
       if (error) throw error;
@@ -69,9 +69,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
   const getIntegrationName = (type: string): string => {
     const names: Record<string, string> = {
-      unlimited_web_hosting: 'Unlimited Web Hosting UK',
-      enom: 'eNom Domain Reseller',
-      whm_cpanel: 'WHM/cPanel',
       google_ai: 'Google AI Agent'
     };
     return names[type] || type;
@@ -80,9 +77,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
   const getIntegrationIcon = (type: string, isConnected: boolean) => {
     const iconClass = `h-6 w-6 ${isConnected ? 'text-green-500' : 'text-muted-foreground'}`;
     const icons: Record<string, React.ReactNode> = {
-      unlimited_web_hosting: <Server className={iconClass} />,
-      enom: <Globe className={iconClass} />,
-      whm_cpanel: <Server className={iconClass} />,
       google_ai: <Bot className={iconClass} />
     };
     return icons[type] || <Link2 className={iconClass} />;
@@ -90,9 +84,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
   const getIntegrationDescription = (type: string): string => {
     const descriptions: Record<string, string> = {
-      unlimited_web_hosting: 'Automatically provision, manage, and monitor cPanel hosting accounts with Unlimited Web Hosting UK.',
-      enom: 'Register and manage domains through eNom API for automated domain registration and DNS management.',
-      whm_cpanel: 'Manage cPanel hosting accounts through WHM (Web Host Manager) reseller interface for complete hosting automation.',
       google_ai: 'Leverage Google AI (Gemini) for intelligent customer support, content generation, and automated assistance.'
     };
     return descriptions[type] || `${type} integration for enhanced workflow automation.`;
@@ -110,94 +101,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
 
     setLoading(true);
     try {
-      if (integration.integration_type === 'unlimited_web_hosting') {
-        // For hosting provider, show a form to collect API credentials
-        const apiKey = prompt('Enter your Unlimited Web Hosting UK API Key:');
-        const apiUrl = prompt('Enter your Unlimited Web Hosting UK API URL:', 'https://api.unlimitedwebhosting.co.uk');
-        
-        if (apiKey && apiUrl) {
-          const { error } = await supabase
-            .from('api_integrations')
-            .update({
-              is_connected: true,
-              access_token: apiKey,
-              config_data: { api_url: apiUrl },
-              last_sync_at: new Date().toISOString()
-            })
-            .eq('id', integration.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Connected",
-            description: "Unlimited Web Hosting UK integration connected successfully",
-          });
-
-          fetchIntegrations();
-        }
-      } else if (integration.integration_type === 'enom') {
-        // For eNom domains
-        const apiUser = prompt('Enter your eNom API User:');
-        const apiToken = prompt('Enter your eNom API Token:');
-        
-        if (apiUser && apiToken) {
-          const { error } = await supabase
-            .from('api_integrations')
-            .update({
-              is_connected: true,
-              access_token: apiToken,
-              config_data: { 
-                api_url: 'https://reseller.enom.com/interface.asp',
-                api_user: apiUser
-              },
-              last_sync_at: new Date().toISOString()
-            })
-            .eq('id', integration.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Connected",
-            description: "eNom domain integration connected successfully",
-          });
-
-          fetchIntegrations();
-        }
-      } else if (integration.integration_type === 'whm_cpanel') {
-        // For WHM/cPanel, show comprehensive settings form
-        const whmUrl = prompt('Enter your WHM Server URL:', 'https://your-whm-server.com:2087');
-        const whmUsername = prompt('Enter your WHM Username:', 'root');
-        const whmApiToken = prompt('Enter your WHM API Token:');
-        const packageTemplate = prompt('Enter WHM Package Names (comma-separated):', 'starter,business,professional');
-        const serverIp = prompt('Enter Default Server IP:');
-        
-        if (whmUrl && whmUsername && whmApiToken) {
-          const { error } = await supabase
-            .from('api_integrations')
-            .update({
-              is_connected: true,
-              access_token: whmApiToken,
-              config_data: { 
-                whm_url: whmUrl,
-                whm_username: whmUsername,
-                package_template: packageTemplate,
-                server_ip: serverIp,
-                auto_provision: true
-              },
-              last_sync_at: new Date().toISOString()
-            })
-            .eq('id', integration.id);
-
-          if (error) throw error;
-
-          toast({
-            title: "Connected",
-            description: "WHM/cPanel integration connected successfully",
-          });
-
-          fetchIntegrations();
-        }
-      } else if (integration.integration_type === 'google_ai') {
+      if (integration.integration_type === 'google_ai') {
         // For Google AI, just mark as connected if user confirms
         const confirmed = confirm('This will enable Google AI integration using your configured credentials. Continue?');
         if (confirmed) {
@@ -297,7 +201,7 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          Only essential integrations are available: Web Hosting, Domain Management, and AI Assistant.
+          Only Google AI integration is available for automated assistance and intelligent customer support.
         </AlertDescription>
       </Alert>
 
@@ -396,31 +300,6 @@ const APIIntegrations: React.FC<APIIntegrationsProps> = ({ isSuperAdmin }) => {
                   )}
                 </div>
               </div>
-
-              {/* Show configuration details if connected */}
-              {integration.is_connected && integration.config_data && (
-                <div className="mt-4 p-3 bg-muted rounded-lg">
-                  <p className="text-sm font-medium mb-2">Configuration:</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    {integration.integration_type === 'whm_cpanel' && (
-                      <>
-                        <div>Server: {integration.config_data.whm_url}</div>
-                        <div>Username: {integration.config_data.whm_username}</div>
-                        <div>Auto-provision: {integration.config_data.auto_provision ? 'Enabled' : 'Disabled'}</div>
-                      </>
-                    )}
-                    {integration.integration_type === 'enom' && (
-                      <>
-                        <div>API URL: {integration.config_data.api_url}</div>
-                        <div>API User: {integration.config_data.api_user}</div>
-                      </>
-                    )}
-                    {integration.integration_type === 'unlimited_web_hosting' && (
-                      <div>API URL: {integration.config_data.api_url}</div>
-                    )}
-                  </div>
-                </div>
-              )}
 
               {!isSuperAdmin && (
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg">
