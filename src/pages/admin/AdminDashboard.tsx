@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MobileTabs, MobileTabsList, MobileTabsTrigger, MobileTabsContent } from '@/components/ui/mobile-tabs';
-import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star } from 'lucide-react';
+import { Users, FolderOpen, Ticket, DollarSign, TrendingUp, MessageSquare, Calendar, FileText, Settings, Globe, Server, Target, Calculator, Gamepad2, Code, Smartphone, Star, Megaphone } from 'lucide-react';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { AdminCustomers } from '@/components/admin/AdminCustomers';
@@ -23,6 +23,7 @@ import { AdminWebProjects } from '@/components/admin/AdminWebProjects';
 import { AdminAppProjects } from '@/components/admin/AdminAppProjects';
 import AdminFeaturedContent from '@/components/admin/AdminFeaturedContent';
 import AdminBlog from '@/components/admin/AdminBlog';
+import AdminAdsPages from '@/components/admin/AdminAdsPages';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard = () => {
@@ -125,6 +126,10 @@ const AdminDashboard = () => {
             <MobileTabsTrigger value="apps" className="flex items-center gap-2">
               <Smartphone className="h-4 w-4" />
               <span className="text-xs sm:text-sm">Apps</span>
+            </MobileTabsTrigger>
+            <MobileTabsTrigger value="ads" className="flex items-center gap-2">
+              <Megaphone className="h-4 w-4" />
+              <span className="text-xs sm:text-sm">Ads Pages</span>
             </MobileTabsTrigger>
             {isAdmin && (
               <MobileTabsTrigger value="accounting" className="flex items-center gap-2">
@@ -231,6 +236,12 @@ const AdminDashboard = () => {
           <MobileTabsContent value="apps">
             <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
               <AdminAppProjects />
+            </React.Suspense>
+          </MobileTabsContent>
+
+          <MobileTabsContent value="ads">
+            <React.Suspense fallback={<div className="flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+              <AdminAdsPages />
             </React.Suspense>
           </MobileTabsContent>
           

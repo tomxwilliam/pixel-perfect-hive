@@ -97,6 +97,57 @@ export type Database = {
           },
         ]
       }
+      ads_landing_pages: {
+        Row: {
+          created_at: string
+          cta_subtext: string
+          cta_text: string
+          headline: string
+          id: string
+          is_active: boolean
+          meta_description: string
+          meta_title: string
+          page_type: string
+          subheadline: string
+          testimonials: Json
+          trust_signals: Json
+          updated_at: string
+          urgency_message: string
+        }
+        Insert: {
+          created_at?: string
+          cta_subtext: string
+          cta_text: string
+          headline: string
+          id?: string
+          is_active?: boolean
+          meta_description: string
+          meta_title: string
+          page_type: string
+          subheadline: string
+          testimonials?: Json
+          trust_signals?: Json
+          updated_at?: string
+          urgency_message: string
+        }
+        Update: {
+          created_at?: string
+          cta_subtext?: string
+          cta_text?: string
+          headline?: string
+          id?: string
+          is_active?: boolean
+          meta_description?: string
+          meta_title?: string
+          page_type?: string
+          subheadline?: string
+          testimonials?: Json
+          trust_signals?: Json
+          updated_at?: string
+          urgency_message?: string
+        }
+        Relationships: []
+      }
       ai_agent_settings: {
         Row: {
           agent_name: string

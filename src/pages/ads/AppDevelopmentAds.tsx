@@ -1,32 +1,38 @@
 import GoogleAdsLandingTemplate from '@/components/landing/GoogleAdsLandingTemplate';
-import { Smartphone, Lock, Zap, BarChart3 } from 'lucide-react';
+import { Smartphone, Lock, Zap, BarChart3, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { useAdsLandingPage } from '@/hooks/useAdsLandingPages';
 
 export default function AppDevelopmentAds() {
   const [appType, setAppType] = useState('');
   const [platform, setPlatform] = useState('');
+  const { data: pageData, isLoading } = useAdsLandingPage('app_development');
 
   const getAdditionalFormData = () => ({
     appType,
     platform,
   });
 
+  if (isLoading || !pageData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <GoogleAdsLandingTemplate
-      title="Build Your Mobile App - iOS & Android | 404 Code Lab"
-      description="From idea to App Store in 8 weeks. Cross-platform, secure, scalable mobile apps starting at £999. 80+ apps launched with 2M+ downloads."
+      title={pageData.meta_title}
+      description={pageData.meta_description}
       
-      headline="Build Your Mobile App - iOS & Android"
-      subheadline="From Idea to App Store in 8 Weeks - Starting at £999"
+      headline={pageData.headline}
+      subheadline={pageData.subheadline}
       
-      urgencyMessage="🎁 Free consultation - Book within 48 hours and get app icon design free"
+      urgencyMessage={pageData.urgency_message}
       
-      trustSignals={[
-        { value: '80+', label: 'Apps Launched' },
-        { value: '4.7★', label: 'Average Rating' },
-        { value: '2M+', label: 'Total Downloads' },
-      ]}
+      trustSignals={pageData.trust_signals}
       
       benefits={[
         {
@@ -51,29 +57,10 @@ export default function AppDevelopmentAds() {
         },
       ]}
       
-      testimonials={[
-        {
-          quote: 'Our fitness app has 50K active users and growing. The team built exactly what we envisioned and more.',
-          author: 'Rachel Green',
-          role: 'FitLife App Founder',
-          rating: 5,
-        },
-        {
-          quote: 'From concept to launch in 7 weeks. The app is stable, fast, and our customers love it.',
-          author: 'Tom Anderson',
-          role: 'EcoShop CEO',
-          rating: 5,
-        },
-        {
-          quote: 'Best development team we\'ve worked with. Clear communication, on-time delivery, and great quality.',
-          author: 'Maria Santos',
-          role: 'MediConnect Founder',
-          rating: 5,
-        },
-      ]}
+      testimonials={pageData.testimonials}
       
-      ctaText="Get Your App Quote"
-      ctaSubtext="No commitment required. Free 30-minute consultation included."
+      ctaText={pageData.cta_text}
+      ctaSubtext={pageData.cta_subtext}
       
       formTitle="Start Building Your App Today"
       onGetAdditionalFormData={getAdditionalFormData}

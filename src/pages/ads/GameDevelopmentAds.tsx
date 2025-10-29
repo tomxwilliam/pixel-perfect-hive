@@ -1,32 +1,38 @@
 import GoogleAdsLandingTemplate from '@/components/landing/GoogleAdsLandingTemplate';
-import { Gamepad2, TrendingUp, Palette, DollarSign } from 'lucide-react';
+import { Gamepad2, TrendingUp, Palette, DollarSign, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { useAdsLandingPage } from '@/hooks/useAdsLandingPages';
 
 export default function GameDevelopmentAds() {
   const [gameType, setGameType] = useState('');
   const [currentStage, setCurrentStage] = useState('');
+  const { data: pageData, isLoading } = useAdsLandingPage('game_development');
 
   const getAdditionalFormData = () => ({
     gameType,
     currentStage,
   });
 
+  if (isLoading || !pageData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <GoogleAdsLandingTemplate
-      title="Mobile Game Development That Generates Revenue | 404 Code Lab"
-      description="From concept to App Store in 12 weeks. Addictive gameplay, stunning graphics, proven monetisation. 35+ games published generating £1.6M+ in revenue."
+      title={pageData.meta_title}
+      description={pageData.meta_description}
       
-      headline="Mobile Game Development That Generates Revenue"
-      subheadline="From Concept to App Store in 12 Weeks - Proven Monetisation Strategies Included"
+      headline={pageData.headline}
+      subheadline={pageData.subheadline}
       
-      urgencyMessage="⏰ Limited slots available for Q4 2025 development"
+      urgencyMessage={pageData.urgency_message}
       
-      trustSignals={[
-        { value: '35+', label: 'Games Published' },
-        { value: '5M+', label: 'Total Downloads' },
-        { value: '£1.6M+', label: 'Revenue Generated' },
-      ]}
+      trustSignals={pageData.trust_signals}
       
       benefits={[
         {
@@ -51,29 +57,10 @@ export default function GameDevelopmentAds() {
         },
       ]}
       
-      testimonials={[
-        {
-          quote: 'Our puzzle game hit 100K downloads in 3 months and generates £6.5K monthly revenue. Worth every penny!',
-          author: 'David Park',
-          role: 'Game Studio Founder',
-          rating: 5,
-        },
-        {
-          quote: 'They turned our rough idea into a polished, addictive game. The monetisation strategy works perfectly.',
-          author: 'Lisa Wong',
-          role: 'Indie Developer',
-          rating: 5,
-        },
-        {
-          quote: 'Professional team that understands both game design and business. Our game is now our main income source.',
-          author: 'Alex Rodriguez',
-          role: 'Solo Developer',
-          rating: 5,
-        },
-      ]}
+      testimonials={pageData.testimonials}
       
-      ctaText="Start Your Game Project"
-      ctaSubtext="Free consultation included. Let's discuss your game idea."
+      ctaText={pageData.cta_text}
+      ctaSubtext={pageData.cta_subtext}
       
       formTitle="Launch Your Hit Game"
       onGetAdditionalFormData={getAdditionalFormData}

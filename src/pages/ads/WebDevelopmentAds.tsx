@@ -2,31 +2,38 @@ import GoogleAdsLandingTemplate from '@/components/landing/GoogleAdsLandingTempl
 import { Zap, Shield, Smartphone, HeadphonesIcon, Code2, Rocket, TrendingUp, Lock } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { useAdsLandingPage } from '@/hooks/useAdsLandingPages';
+import { Loader2 } from 'lucide-react';
 
 export default function WebDevelopmentAds() {
   const [projectType, setProjectType] = useState('');
   const [budget, setBudget] = useState('');
+  const { data: pageData, isLoading } = useAdsLandingPage('web_development');
 
   const getAdditionalFormData = () => ({
     projectType,
     budget,
   });
 
+  if (isLoading || !pageData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <GoogleAdsLandingTemplate
-      title="Professional Web Development Starting at £299 | 404 Code Lab"
-      description="Launch your professional website in 2 weeks. SEO-optimised, mobile-responsive, and built to convert. No hidden fees. Get your free quote today."
+      title={pageData.meta_title}
+      description={pageData.meta_description}
       
-      headline="Professional Web Development Starting at £299"
-      subheadline="Launch Your Website in 2 Weeks - No Hidden Fees, 100% Satisfaction Guaranteed"
+      headline={pageData.headline}
+      subheadline={pageData.subheadline}
       
-      urgencyMessage="🔥 Book this week and save 10% on your project"
+      urgencyMessage={pageData.urgency_message}
       
-      trustSignals={[
-        { value: '150+', label: 'Websites Built' },
-        { value: '98%', label: 'Client Satisfaction' },
-        { value: '< 2s', label: 'Load Time' },
-      ]}
+      trustSignals={pageData.trust_signals}
       
       benefits={[
         {
@@ -51,29 +58,10 @@ export default function WebDevelopmentAds() {
         },
       ]}
       
-      testimonials={[
-        {
-          quote: 'Our new website increased leads by 300% in the first month. The team at 404 Code Lab delivered beyond our expectations.',
-          author: 'Sarah Johnson',
-          role: 'CEO, TechStart Inc',
-          rating: 5,
-        },
-        {
-          quote: 'Professional, fast, and affordable. They turned our vision into reality and the site performs flawlessly.',
-          author: 'Mike Chen',
-          role: 'Founder, GreenEats',
-          rating: 5,
-        },
-        {
-          quote: 'Best investment we made for our business. The website pays for itself with the new clients we get every week.',
-          author: 'Jennifer Martinez',
-          role: 'Owner, Elite Fitness',
-          rating: 5,
-        },
-      ]}
+      testimonials={pageData.testimonials}
       
-      ctaText="Get Your Free Quote Today"
-      ctaSubtext="No obligation. Receive your custom quote within 24 hours."
+      ctaText={pageData.cta_text}
+      ctaSubtext={pageData.cta_subtext}
       
       formTitle="Get Your Custom Web Development Quote"
       onGetAdditionalFormData={getAdditionalFormData}
