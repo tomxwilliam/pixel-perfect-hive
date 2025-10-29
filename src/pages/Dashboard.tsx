@@ -21,6 +21,7 @@ import { CustomerQuotes } from '@/components/customer/CustomerQuotes';
 import CustomerBilling from '@/components/customer/CustomerBilling';
 import { NotificationCenter } from '@/components/customer/NotificationCenter';
 import { CustomerAppointments } from '@/components/customer/CustomerAppointments';
+import PartnerBanner from '@/components/partner/PartnerBanner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   User, 
@@ -212,6 +213,11 @@ const Dashboard = () => {
             <Badge variant="secondary" className="text-sm">
               {profile?.role === 'admin' ? 'Administrator' : 'Customer'}
             </Badge>
+          </div>
+
+          {/* Partner Banner */}
+          <div className="mb-6">
+            <PartnerBanner />
           </div>
 
           {/* Stats Overview - Mobile Grid */}
