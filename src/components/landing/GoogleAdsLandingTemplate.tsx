@@ -175,7 +175,7 @@ export default function GoogleAdsLandingTemplate({
 
       <main className="pt-16">
         {/* Hero Section with Form */}
-        <section className="py-12 md:py-20 bg-gradient-to-br from-background via-background to-accent/5 dark:bg-[url('/assets/hero-bg-dark.png')] dark:bg-cover dark:bg-center dark:bg-no-repeat">
+        <section className="py-12 md:py-20 bg-[url('/assets/hero-bg-light.png')] bg-cover bg-center bg-no-repeat dark:bg-[url('/assets/hero-bg-dark.png')]">
           <div className="container">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Hero Content */}
