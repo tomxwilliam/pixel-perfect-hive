@@ -60,7 +60,7 @@ serve(async (req) => {
     }
 
     // Create Stripe checkout session
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    const origin = req.headers.get("origin") || Deno.env.get("APP_BASE_URL") || "https://404codelab.com";
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,

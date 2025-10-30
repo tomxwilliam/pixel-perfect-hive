@@ -17,6 +17,8 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Get origin for redirect URLs
+    const origin = req.headers.get("origin") || Deno.env.get("APP_BASE_URL") || "https://404codelab.com";
     // Verify caller is authenticated
     const supabaseAuth = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -114,8 +116,8 @@ const handler = async (req: Request): Promise<Response> => {
         },
       ],
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}&invoice=${invoiceId}`,
-      cancel_url: `${req.headers.get('origin')}/dashboard?payment=cancelled&invoice=${invoiceId}`,
+      success_url: `${origin}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}&invoice=${invoiceId}`,
+      cancel_url: `${origin}/dashboard?payment=cancelled&invoice=${invoiceId}`,
       metadata: {
         invoice_id: invoiceId,
         supabase_user_id: invoice.customer_id
