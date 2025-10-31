@@ -68,41 +68,90 @@ const Dashboard = () => {
   }, [searchParams]);
 
   const handlePaymentSuccess = async (sessionId: string, invoiceId: string | null) => {
+    console.log('Payment success callback triggered', { sessionId, invoiceId });
+    
     setVerifyingPayment(true);
     
+    const maxAttempts = 6; // 30 seconds total (5s intervals)
+    let attempt = 0;
+    let paymentConfirmed = false;
+
     try {
-      // Call verify-payment function to confirm payment status
-      const { data, error } = await supabase.functions.invoke('verify-payment', {
-        body: { sessionId }
-      });
+      while (attempt < maxAttempts && !paymentConfirmed) {
+        attempt++;
+        
+        const message = attempt === 1 
+          ? "Verifying payment..." 
+          : attempt < 3 
+          ? "Confirming with payment processor..." 
+          : "Processing payment confirmation...";
+        
+        console.log(`Payment verification attempt ${attempt}/${maxAttempts}`);
+        
+        if (attempt > 1) {
+          await new Promise(resolve => setTimeout(resolve, 5000)); // 5s between attempts
+        }
 
-      if (error) throw error;
-
-      if (data?.paymentStatus === 'paid') {
-        toast.success('Payment Successful!', {
-          description: `Your invoice has been paid successfully. Thank you!`,
-          icon: <CheckCircle className="h-5 w-5" />,
-          duration: 5000,
+        const { data, error } = await supabase.functions.invoke('verify-payment', {
+          body: { sessionId }
         });
 
-        // Refresh the page to update all data
+        if (error) {
+          console.error('Verification error:', error);
+          if (attempt === maxAttempts) throw error;
+          continue;
+        }
+
+        console.log('Verification response:', data);
+
+        if (data?.paymentStatus === 'paid') {
+          paymentConfirmed = true;
+          toast.success('Payment Successful!', {
+            description: 'Your invoice has been paid successfully. Thank you!',
+            icon: <CheckCircle className="h-5 w-5" />,
+            duration: 5000,
+          });
+          
+          // Poll invoice status to confirm database update
+          if (invoiceId) {
+            const { data: invoice } = await supabase
+              .from('invoices')
+              .select('status')
+              .eq('id', invoiceId)
+              .single();
+            
+            console.log('Invoice status after payment:', invoice?.status);
+          }
+
+          // Refresh the page to update all data
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+          break;
+        } else if (attempt < maxAttempts) {
+          toast.loading(message, { id: 'payment-verification', duration: Infinity });
+        }
+      }
+
+      if (!paymentConfirmed) {
+        toast.info('Payment Processing', {
+          description: 'Payment is being processed. Your invoice will update shortly.',
+          duration: 8000
+        });
+        // Still reload to show any updates
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
-      } else {
-        toast.warning('Payment Pending', {
-          description: 'Your payment is being processed. You will receive a confirmation shortly.',
-          duration: 5000,
-        });
+        }, 2000);
       }
     } catch (error: any) {
       console.error('Payment verification error:', error);
       toast.error('Verification Error', {
-        description: 'Unable to verify payment status. Please check your invoices or contact support.',
-        duration: 5000,
+        description: 'Unable to verify payment status. If payment was deducted, your invoice will update automatically or contact support.',
+        duration: 8000
       });
     } finally {
       setVerifyingPayment(false);
+      toast.dismiss('payment-verification');
       // Clean URL parameters
       searchParams.delete('payment');
       searchParams.delete('invoice');

@@ -33,14 +33,33 @@ const handler = async (req: Request): Promise<Response> => {
       apiVersion: '2023-10-16',
     });
 
-    // Retrieve checkout session
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    // Retry logic with exponential backoff
+    let session;
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelays = [0, 2000, 4000, 8000]; // 0s, 2s, 4s, 8s
 
-    console.log('Session retrieved:', {
-      id: session.id,
-      payment_status: session.payment_status,
-      metadata: session.metadata
-    });
+    while (retryCount <= maxRetries) {
+      if (retryCount > 0) {
+        console.log(`Retry attempt ${retryCount}/${maxRetries} after ${retryDelays[retryCount]}ms delay`);
+        await new Promise(resolve => setTimeout(resolve, retryDelays[retryCount]));
+      }
+
+      // Retrieve checkout session
+      session = await stripe.checkout.sessions.retrieve(sessionId);
+
+      console.log(`Session retrieved (attempt ${retryCount + 1}):`, {
+        id: session.id,
+        payment_status: session.payment_status,
+        metadata: session.metadata
+      });
+
+      if (session.payment_status === 'paid') {
+        break;
+      }
+
+      retryCount++;
+    }
 
     if (session.payment_status === 'paid') {
       const invoiceId = session.metadata?.invoice_id;
