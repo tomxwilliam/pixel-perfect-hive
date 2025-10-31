@@ -81,7 +81,7 @@ const Index = () => {
         <StaticNavigation />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-background via-primary/10 to-accent/20">
+      <section className="relative min-h-screen flex items-start justify-center px-4 pt-32 bg-gradient-to-br from-background via-primary/10 to-accent/20">
         {/* Light mode background */}
         <div className="absolute inset-0 bg-background/20 dark:hidden" style={{
           backgroundImage: 'url(/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png)',
@@ -96,6 +96,27 @@ const Index = () => {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }}></div>
+        
+        {/* Left Side Button */}
+        <div className="absolute left-8 top-1/2 -translate-y-1/2 hidden lg:block">
+          <Link to="/portfolio/games">
+            <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/20">
+              <Gamepad2 className="mr-2 h-5 w-5" />
+              View Games
+            </Button>
+          </Link>
+        </div>
+
+        {/* Right Side Button */}
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden lg:block">
+          <Link to="/portfolio/apps">
+            <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20">
+              <Smartphone className="mr-2 h-5 w-5" />
+              View Apps
+            </Button>
+          </Link>
+        </div>
+
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-3 py-2 text-xs sm:px-4 sm:text-sm inline-flex items-center justify-center">
             🚀 404 Code Lab
@@ -111,7 +132,7 @@ const Index = () => {
 
           <FeaturedContentSection />
 
-          <div className="flex items-center justify-center text-muted-foreground animate-bounce">
+          <div className="flex items-center justify-center text-muted-foreground animate-bounce mt-12">
             <span className="mr-2">Explore Our Work</span>
             <ArrowDown className="h-5 w-5" />
           </div>
