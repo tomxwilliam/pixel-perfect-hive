@@ -98,28 +98,28 @@ const Index = () => {
         }}></div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-3 py-2 text-xs sm:px-4 sm:text-sm inline-flex items-center justify-center">
+          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">
             🚀 404 Code Lab
           </Badge>
           
-          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px] md:text-7xl">
+          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px]">
             Building the Future of Play
           </h1>
           
-          <p className="text-xl md:text-2xl mb-8 text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl mb-8 text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
             Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
           </p>
 
           {/* View Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-row gap-4 justify-center items-center mb-12 flex-wrap">
             <Link to="/portfolio/games">
-              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/20 w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/20">
                 <Gamepad2 className="mr-2 h-5 w-5" />
                 View Games
               </Button>
             </Link>
             <Link to="/portfolio/apps">
-              <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20 w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20">
                 <Smartphone className="mr-2 h-5 w-5" />
                 View Apps
               </Button>
