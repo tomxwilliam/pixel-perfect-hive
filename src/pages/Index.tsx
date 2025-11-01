@@ -81,7 +81,7 @@ const Index = () => {
         <StaticNavigation />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-start justify-center px-4 pt-32 bg-gradient-to-br from-background via-primary/10 to-accent/20">
+      <section className="relative min-h-screen flex items-start justify-center px-4 pt-20 bg-gradient-to-br from-background via-primary/10 to-accent/20">
         {/* Light mode background */}
         <div className="absolute inset-0 bg-background/20 dark:hidden" style={{
           backgroundImage: 'url(/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png)',
