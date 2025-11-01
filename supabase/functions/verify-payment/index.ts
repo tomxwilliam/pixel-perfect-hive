@@ -17,12 +17,30 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify caller is authenticated
+    const supabaseAuth = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } }
+    );
+
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      console.error('Unauthorized: No user found');
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+        status: 401, 
+        headers: { 'Content-Type': 'application/json', ...corsHeaders } 
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     const { sessionId }: PaymentStatusRequest = await req.json();
+
+    console.log(`User ${user.id} verifying payment for session: ${sessionId}`);
 
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeSecretKey) {
@@ -63,13 +81,36 @@ const handler = async (req: Request): Promise<Response> => {
 
     if (session.payment_status === 'paid') {
       const invoiceId = session.metadata?.invoice_id;
+      const sessionUserId = session.metadata?.supabase_user_id;
       
       if (!invoiceId) {
         console.error('No invoice_id in session metadata');
         throw new Error('Invoice ID not found in session metadata');
       }
 
-      console.log('Processing payment for invoice:', invoiceId);
+      // SECURITY: Verify invoice ownership
+      const { data: invoice } = await supabase
+        .from('invoices')
+        .select('customer_id')
+        .eq('id', invoiceId)
+        .single();
+
+      if (!invoice) {
+        console.error(`Invoice ${invoiceId} not found`);
+        throw new Error('Invoice not found');
+      }
+
+      // Check if user is admin
+      const { data: hasAdminRole } = await supabase
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+
+      // Verify ownership: User must own the invoice OR be an admin OR match session user
+      if (invoice.customer_id !== user.id && !hasAdminRole && sessionUserId !== user.id) {
+        console.error(`Unauthorized: User ${user.id} does not own invoice ${invoiceId}`);
+        throw new Error('Unauthorized: You do not have permission to verify this payment');
+      }
+
+      console.log(`Processing payment for invoice: ${invoiceId} by user ${user.id}`);
       
       // Update invoice status
       const { error: invoiceError } = await supabase
@@ -130,15 +171,23 @@ const handler = async (req: Request): Promise<Response> => {
         p_related_id: invoiceId
       });
 
-      // Log activity
+      // Log activity with verified user
       await supabase.rpc('log_activity', {
-        p_user_id: session.metadata?.supabase_user_id,
-        p_actor_id: session.metadata?.supabase_user_id,
-        p_action: 'payment_completed',
+        p_user_id: invoice.customer_id,
+        p_actor_id: user.id,
+        p_action: 'payment_verified',
         p_entity_type: 'invoice',
         p_entity_id: invoiceId,
-        p_description: `Payment completed for invoice ${invoice?.invoice_number}`
+        p_description: `Payment verified by ${user.id} for invoice ${invoice?.invoice_number}. Stripe session: ${sessionId}`,
+        p_new_values: {
+          session_id: sessionId,
+          payment_status: session.payment_status,
+          verified_by: user.id,
+          verified_at: new Date().toISOString()
+        }
       });
+
+      console.log(`Payment verification completed for invoice ${invoiceId} by user ${user.id}`);
     }
 
     console.log('Returning response with status:', session.payment_status);

@@ -40,6 +40,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { customerId, returnUrl }: PortalRequest = await req.json();
 
+    console.log(`User ${user.id} creating portal session with customer ID: ${customerId}`);
+
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeSecretKey) {
       throw new Error('Stripe not configured');
@@ -52,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Get user profile
     const { data: profile } = await supabase
       .from('profiles')
-      .select('*')
+      .select('stripe_customer_id')
       .eq('id', user.id)
       .single();
 
@@ -61,6 +63,26 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     let stripeCustomerId = customerId;
+
+    // SECURITY: Verify customer ID ownership if provided
+    if (stripeCustomerId && profile.stripe_customer_id && stripeCustomerId !== profile.stripe_customer_id) {
+      // Check if user is admin
+      const { data: hasAdminRole } = await supabase
+        .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+      
+      if (!hasAdminRole) {
+        console.error(`Unauthorized: User ${user.id} attempted to access customer ${stripeCustomerId} but owns ${profile.stripe_customer_id}`);
+        await supabase.rpc('log_activity', {
+          p_user_id: user.id,
+          p_actor_id: user.id,
+          p_action: 'unauthorized_portal_attempt',
+          p_entity_type: 'stripe_customer',
+          p_entity_id: null,
+          p_description: `Unauthorized attempt to access customer portal for ${stripeCustomerId}`
+        });
+        throw new Error('Forbidden: You do not have permission to access this customer portal');
+      }
+    }
 
     // If no customer ID provided, find Stripe customer
     if (!stripeCustomerId) {
@@ -84,6 +106,22 @@ const handler = async (req: Request): Promise<Response> => {
       customer: stripeCustomerId,
       return_url: returnUrl || defaultReturnUrl,
     });
+
+    // Log portal session creation
+    await supabase.rpc('log_activity', {
+      p_user_id: user.id,
+      p_actor_id: user.id,
+      p_action: 'portal_session_created',
+      p_entity_type: 'stripe_portal',
+      p_entity_id: null,
+      p_description: `Customer portal session created for Stripe customer ${stripeCustomerId}`,
+      p_new_values: {
+        stripe_customer_id: stripeCustomerId,
+        session_url: session.url
+      }
+    });
+
+    console.log(`Portal session created successfully for user ${user.id}, customer ${stripeCustomerId}`);
 
     return new Response(JSON.stringify({ 
       url: session.url 

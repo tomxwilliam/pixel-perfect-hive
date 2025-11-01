@@ -61,6 +61,8 @@ const handler = async (req: Request): Promise<Response> => {
       idProtectPriceGBP
     }: CombinedCheckoutRequest = await req.json();
 
+    console.log(`User ${user.id} creating combined checkout for domain ${domain}, hosting ${hostingPriceId}`);
+
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeSecretKey) {
       throw new Error('Stripe not configured');
@@ -215,6 +217,26 @@ const handler = async (req: Request): Promise<Response> => {
       .from('orders')
       .update({ stripe_session_id: session.id })
       .eq('id', order.id);
+
+    // Log checkout creation
+    await supabase.rpc('log_activity', {
+      p_user_id: user.id,
+      p_actor_id: user.id,
+      p_action: 'combined_checkout_created',
+      p_entity_type: 'order',
+      p_entity_id: order.id,
+      p_description: `Combined checkout created for domain ${domain} and hosting package`,
+      p_new_values: {
+        order_id: order.id,
+        session_id: session.id,
+        domain: domain,
+        hosting_price_id: hostingPriceId,
+        years: years,
+        total_amount: orderData.total_amount
+      }
+    });
+
+    console.log(`Combined checkout session ${session.id} created successfully for order ${order.id}`);
 
     return new Response(JSON.stringify({ 
       url: session.url,

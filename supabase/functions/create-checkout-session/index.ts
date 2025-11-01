@@ -41,6 +41,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { priceId, customerId, mode = 'payment' }: CheckoutRequest = await req.json();
 
+    console.log(`User ${user.id} creating checkout session for price ${priceId}, mode: ${mode}`);
+
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeSecretKey) {
       throw new Error('Stripe not configured');
@@ -112,6 +114,24 @@ const handler = async (req: Request): Promise<Response> => {
     };
 
     const session = await stripe.checkout.sessions.create(sessionParams);
+
+    // Log checkout session creation
+    await supabase.rpc('log_activity', {
+      p_user_id: user.id,
+      p_actor_id: user.id,
+      p_action: 'checkout_session_created',
+      p_entity_type: 'stripe_session',
+      p_entity_id: null,
+      p_description: `Checkout session created for ${mode} with price ${priceId}`,
+      p_new_values: {
+        session_id: session.id,
+        price_id: priceId,
+        mode: mode,
+        customer_id: stripeCustomerId
+      }
+    });
+
+    console.log(`Checkout session ${session.id} created successfully for user ${user.id}`);
 
     return new Response(JSON.stringify({ 
       url: session.url,

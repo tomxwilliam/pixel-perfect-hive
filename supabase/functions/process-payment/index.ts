@@ -58,16 +58,25 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error('Invoice already paid');
     }
 
-    // Ensure caller owns the invoice unless admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    const isAdmin = profile?.role === 'admin';
-    if (!isAdmin && invoice.customer_id !== user.id) {
-      throw new Error('Forbidden');
+    // SECURITY: Verify invoice ownership using has_role for admin check
+    const { data: hasAdminRole } = await supabase
+      .rpc('has_role', { _user_id: user.id, _role: 'admin' });
+
+    if (!hasAdminRole && invoice.customer_id !== user.id) {
+      console.error(`Unauthorized: User ${user.id} attempted to process payment for invoice ${invoiceId} owned by ${invoice.customer_id}`);
+      // Log unauthorized attempt
+      await supabase.rpc('log_activity', {
+        p_user_id: user.id,
+        p_actor_id: user.id,
+        p_action: 'unauthorized_payment_attempt',
+        p_entity_type: 'invoice',
+        p_entity_id: invoiceId,
+        p_description: `Unauthorized attempt to process payment for invoice ${invoice.invoice_number}`
+      });
+      throw new Error('Forbidden: You do not have permission to process this invoice');
     }
+
+    console.log(`User ${user.id} (admin: ${hasAdminRole}) processing payment for invoice ${invoiceId}`);
 
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeSecretKey) {
@@ -134,6 +143,22 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('id', invoiceId);
 
     console.log(`Updated invoice ${invoiceId} with session ID: ${session.id}`);
+
+    // Log payment initiation
+    await supabase.rpc('log_activity', {
+      p_user_id: invoice.customer_id,
+      p_actor_id: user.id,
+      p_action: 'payment_initiated',
+      p_entity_type: 'invoice',
+      p_entity_id: invoiceId,
+      p_description: `Payment session created for invoice ${invoice.invoice_number}`,
+      p_new_values: {
+        stripe_session_id: session.id,
+        amount: invoice.amount,
+        initiated_by: user.id,
+        is_admin: hasAdminRole
+      }
+    });
 
     return new Response(JSON.stringify({ 
       success: true, 
