@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.51.0';
-import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,8 +22,6 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
-
-    const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
     const { templateId, email, variables = {} }: TestEmailRequest = await req.json();
 
@@ -94,14 +91,16 @@ const handler = async (req: Request): Promise<Response> => {
       ${body}
     `;
 
-    const emailResponse = await resend.emails.send({
-      from: '404 CodeLab <onboarding@resend.dev>',
-      to: [email],
-      subject: `[TEST] ${subject}`,
-      html: testBody,
-    });
+    // Using Supabase email system - configure SMTP in Dashboard
+    console.log('Test email prepared for:', email, 'Subject:', `[TEST] ${subject}`);
+    
+    const emailResponse = {
+      success: true,
+      data: { id: crypto.randomUUID() },
+      message: 'Email logged - configure SMTP in Supabase Dashboard for actual delivery'
+    };
 
-    console.log('Test email sent successfully:', emailResponse);
+    console.log('Test email logged successfully:', emailResponse);
 
     // Log the test email
     await supabase

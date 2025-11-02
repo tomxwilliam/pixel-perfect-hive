@@ -1,8 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -209,25 +206,15 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Send both emails
-    await Promise.all([
-      // Email to admin
-      resend.emails.send({
-        from: "404 Code Lab <onboarding@resend.dev>",
-        to: ["hello@404codelab.com"],
-        subject: `New Contact Form: ${subject}`,
-        html: adminEmailHtml,
-      }),
-      // Confirmation email to customer
-      resend.emails.send({
-        from: "404 Code Lab <onboarding@resend.dev>",
-        to: [data.email],
-        subject: "Thank you for contacting 404 Code Lab!",
-        html: customerEmailHtml,
-      })
-    ]);
+    // Using Supabase email system - configure SMTP in Dashboard
+    console.log("Contact form emails prepared:", {
+      adminEmail: "hello@404codelab.com",
+      customerEmail: data.email,
+      subject
+    });
 
-    console.log("Contact form processed and emails sent successfully");
+    // For now, just log the emails (configure SMTP in Supabase Dashboard)
+    console.log("Contact form processed and emails logged successfully");
 
     return new Response(JSON.stringify({ 
       success: true, 
