@@ -1,12 +1,27 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.51.0';
 import Stripe from "https://esm.sh/stripe@14.21.0";
+import { z } from 'https://esm.sh/zod@3.23.8';
 import { handleDomainRegistrationPayment } from './_handlers/domain-registration.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
 };
+
+// Schema for validating webhook metadata to prevent injection attacks
+const webhookMetadataSchema = z.object({
+  order_id: z.string().uuid('Invalid order ID format'),
+  domain: z.string()
+    .regex(/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i, 'Invalid domain format')
+    .max(253, 'Domain name too long'),
+  years: z.number().int().min(1).max(10, 'Registration must be 1-10 years'),
+  id_protect: z.boolean().optional().default(false),
+  nameservers: z.array(
+    z.string().regex(/^[a-z0-9.-]+$/i, 'Invalid nameserver format')
+  ).min(2).max(4, 'Must provide 2-4 nameservers'),
+  supabase_user_id: z.string().uuid('Invalid user ID')
+});
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -272,20 +287,49 @@ async function handleChargeRefunded(supabase: any, charge: Stripe.Charge) {
 // Process domain order after successful payment (hosting credentials removed for security)
 async function processDomainOrder(supabase: any, session: any) {
   try {
-    const orderId = session.metadata?.order_id;
-    const domain = session.metadata?.domain;
-    const years = parseInt(session.metadata?.years || '1');
-    const idProtect = session.metadata?.id_protect === 'true';
-    const nameservers = JSON.parse(session.metadata?.nameservers || '["ns1.404codelab.com", "ns2.404codelab.com"]');
-    const userId = session.metadata?.supabase_user_id;
+    // STEP 1: VALIDATE METADATA to prevent injection attacks
+    const validationResult = webhookMetadataSchema.safeParse({
+      order_id: session.metadata?.order_id,
+      domain: session.metadata?.domain,
+      years: parseInt(session.metadata?.years || '1'),
+      id_protect: session.metadata?.id_protect === 'true',
+      nameservers: JSON.parse(session.metadata?.nameservers || '["ns1.404codelab.com", "ns2.404codelab.com"]'),
+      supabase_user_id: session.metadata?.supabase_user_id
+    });
 
-    if (!orderId || !domain || !userId) {
-      throw new Error('Missing required metadata for order processing');
+    if (!validationResult.success) {
+      console.error('⚠️ INVALID WEBHOOK METADATA DETECTED:', validationResult.error);
+      throw new Error(`Metadata validation failed: ${validationResult.error.message}`);
     }
 
-    console.log(`Processing order ${orderId} for domain ${domain}`);
+    const validated = validationResult.data;
+    console.log(`✅ Metadata validated for order ${validated.order_id}`);
 
-    // Update order status
+    // STEP 2: VERIFY ORDER OWNERSHIP to prevent order hijacking
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('customer_id, status, total_amount')
+      .eq('id', validated.order_id)
+      .single();
+
+    if (orderError || !order) {
+      throw new Error('Order not found');
+    }
+
+    if (order.customer_id !== validated.supabase_user_id) {
+      console.error('⚠️ ORDER HIJACKING ATTEMPT DETECTED!');
+      console.error(`Order ${validated.order_id} belongs to ${order.customer_id}, not ${validated.supabase_user_id}`);
+      throw new Error('Order does not belong to specified user');
+    }
+
+    if (order.status !== 'pending') {
+      console.log(`Order ${validated.order_id} status is ${order.status}, skipping processing`);
+      return;
+    }
+
+    console.log(`Processing order ${validated.order_id} for domain ${validated.domain}`);
+
+    // STEP 3: Update order status with validated data
     await supabase
       .from('orders')
       .update({
@@ -293,20 +337,26 @@ async function processDomainOrder(supabase: any, session: any) {
         stripe_payment_intent_id: session.payment_intent,
         completed_at: new Date().toISOString()
       })
-      .eq('id', orderId);
+      .eq('id', validated.order_id);
 
-    // Register domain with eNom
+    // STEP 4: Register domain with validated values
     await registerDomainWithEnom(
-      supabase, domain, years, idProtect, nameservers, orderId, userId
+      supabase, 
+      validated.domain, 
+      validated.years, 
+      validated.id_protect, 
+      validated.nameservers, 
+      validated.order_id, 
+      validated.supabase_user_id
     );
 
-    // Mark order as completed
+    // STEP 5: Mark order as completed
     await supabase
       .from('orders')
       .update({ status: 'completed' })
-      .eq('id', orderId);
+      .eq('id', validated.order_id);
 
-    console.log(`Successfully registered domain ${domain}`);
+    console.log(`✅ Successfully registered domain ${validated.domain}`);
     
     // Note: Hosting credentials are managed externally via WHM/cPanel admin interface
     // Customers should contact support for hosting access details
