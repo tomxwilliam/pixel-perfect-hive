@@ -1120,8 +1120,6 @@ export type Database = {
       hosting_orders: {
         Row: {
           billing_cycle: string | null
-          cpanel_password_encrypted: string | null
-          cpanel_username: string | null
           created_at: string
           customer_id: string
           domain_name: string | null
@@ -1129,19 +1127,13 @@ export type Database = {
           hosting_package_id: string
           hosting_price_gbp: number
           id: string
-          provisioned_at: string | null
-          server_ip: string | null
           status: string | null
           stripe_session_id: string | null
           stripe_subscription_id: string | null
-          suspended_at: string | null
           updated_at: string
-          whm_account_id: string | null
         }
         Insert: {
           billing_cycle?: string | null
-          cpanel_password_encrypted?: string | null
-          cpanel_username?: string | null
           created_at?: string
           customer_id: string
           domain_name?: string | null
@@ -1149,19 +1141,13 @@ export type Database = {
           hosting_package_id: string
           hosting_price_gbp: number
           id?: string
-          provisioned_at?: string | null
-          server_ip?: string | null
           status?: string | null
           stripe_session_id?: string | null
           stripe_subscription_id?: string | null
-          suspended_at?: string | null
           updated_at?: string
-          whm_account_id?: string | null
         }
         Update: {
           billing_cycle?: string | null
-          cpanel_password_encrypted?: string | null
-          cpanel_username?: string | null
           created_at?: string
           customer_id?: string
           domain_name?: string | null
@@ -1169,14 +1155,10 @@ export type Database = {
           hosting_package_id?: string
           hosting_price_gbp?: number
           id?: string
-          provisioned_at?: string | null
-          server_ip?: string | null
           status?: string | null
           stripe_session_id?: string | null
           stripe_subscription_id?: string | null
-          suspended_at?: string | null
           updated_at?: string
-          whm_account_id?: string | null
         }
         Relationships: []
       }
@@ -1810,8 +1792,6 @@ export type Database = {
           created_at: string
           domain_name: string
           domain_price: number
-          hosting_plan_id: string | null
-          hosting_price: number | null
           id: string
           invoice_id: string | null
           reviewed_at: string | null
@@ -1828,8 +1808,6 @@ export type Database = {
           created_at?: string
           domain_name: string
           domain_price: number
-          hosting_plan_id?: string | null
-          hosting_price?: number | null
           id?: string
           invoice_id?: string | null
           reviewed_at?: string | null
@@ -1846,8 +1824,6 @@ export type Database = {
           created_at?: string
           domain_name?: string
           domain_price?: number
-          hosting_plan_id?: string | null
-          hosting_price?: number | null
           id?: string
           invoice_id?: string | null
           reviewed_at?: string | null
@@ -3830,15 +3806,7 @@ export type Database = {
         }
         Returns: string
       }
-      decrypt_hosting_credential: {
-        Args: { encrypted: string }
-        Returns: string
-      }
       decrypt_oauth_token: { Args: { encrypted: string }; Returns: string }
-      encrypt_hosting_credential: {
-        Args: { plaintext: string }
-        Returns: string
-      }
       encrypt_oauth_token: { Args: { plaintext: string }; Returns: string }
       get_oauth_access_token: {
         Args: { p_connection_id: string }

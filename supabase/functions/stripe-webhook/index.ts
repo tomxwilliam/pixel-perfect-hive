@@ -212,9 +212,9 @@ async function handleCheckoutCompleted(supabase: any, session: Stripe.Checkout.S
     }
   }
   
-  // Handle new combined hosting + domain orders
+  // Handle new combined domain orders
   if (orderId) {
-    await processHostingDomainOrder(supabase, session);
+    await processDomainOrder(supabase, session);
   }
 }
 
@@ -223,10 +223,10 @@ async function handleInvoicePaymentSucceeded(supabase: any, invoice: Stripe.Invo
   console.log(`Invoice payment succeeded: ${invoice.id}`);
   
   if (invoice.subscription) {
-    // Handle subscription renewals
+    // Handle subscription renewals - domain registration only
     const metadata = invoice.metadata || {};
     if (metadata.domain && metadata.order_id) {
-      await processHostingDomainOrder(supabase, {
+      await processDomainOrder(supabase, {
         metadata,
         payment_intent: invoice.payment_intent,
         customer: invoice.customer
@@ -238,10 +238,7 @@ async function handleInvoicePaymentSucceeded(supabase: any, invoice: Stripe.Invo
 // Handle invoice.payment_failed
 async function handleInvoicePaymentFailed(supabase: any, invoice: Stripe.Invoice) {
   console.log(`Invoice payment failed: ${invoice.id}`);
-  
-  if (invoice.subscription) {
-    await suspendHostingServices(supabase, invoice.customer as string, 'payment_failed');
-  }
+  // Note: Hosting suspension handled externally via WHM admin interface
 }
 
 // Handle subscription events
@@ -269,19 +266,17 @@ async function handlePaymentIntentFailed(supabase: any, paymentIntent: Stripe.Pa
 
 async function handleChargeRefunded(supabase: any, charge: Stripe.Charge) {
   console.log(`Charge refunded: ${charge.id}`);
-  // Could trigger hosting suspension or domain transfer back
+  // Note: Hosting account management handled externally via WHM
 }
 
-// Process hosting and domain order after successful payment
-async function processHostingDomainOrder(supabase: any, session: any) {
+// Process domain order after successful payment (hosting credentials removed for security)
+async function processDomainOrder(supabase: any, session: any) {
   try {
     const orderId = session.metadata?.order_id;
     const domain = session.metadata?.domain;
     const years = parseInt(session.metadata?.years || '1');
     const idProtect = session.metadata?.id_protect === 'true';
     const nameservers = JSON.parse(session.metadata?.nameservers || '["ns1.404codelab.com", "ns2.404codelab.com"]');
-    const whmPackage = session.metadata?.whm_package;
-    const hostingPackageId = session.metadata?.hosting_package_id;
     const userId = session.metadata?.supabase_user_id;
 
     if (!orderId || !domain || !userId) {
@@ -301,13 +296,8 @@ async function processHostingDomainOrder(supabase: any, session: any) {
       .eq('id', orderId);
 
     // Register domain with eNom
-    const domainRegistration = await registerDomainWithEnom(
+    await registerDomainWithEnom(
       supabase, domain, years, idProtect, nameservers, orderId, userId
-    );
-
-    // Create hosting account with WHM
-    const hostingAccount = await createHostingAccountWithWHM(
-      supabase, domain, whmPackage, orderId, userId, hostingPackageId
     );
 
     // Mark order as completed
@@ -316,12 +306,12 @@ async function processHostingDomainOrder(supabase: any, session: any) {
       .update({ status: 'completed' })
       .eq('id', orderId);
 
-    // Send welcome email
-    await sendWelcomeEmail(supabase, userId, domain, hostingAccount);
-
-    console.log(`Successfully provisioned hosting and domain for ${domain}`);
+    console.log(`Successfully registered domain ${domain}`);
+    
+    // Note: Hosting credentials are managed externally via WHM/cPanel admin interface
+    // Customers should contact support for hosting access details
   } catch (error) {
-    console.error('Error processing hosting/domain order:', error);
+    console.error('Error processing domain order:', error);
     
     if (session.metadata?.order_id) {
       await supabase
@@ -452,215 +442,12 @@ async function registerDomainWithEnom(
   }
 }
 
-// Create hosting account with WHM
-async function createHostingAccountWithWHM(
-  supabase: any,
-  domain: string,
-  packageName: string,
-  orderId: string,
-  userId: string,
-  hostingPackageId: string
-) {
-  const whmUrl = Deno.env.get('WHM_API_URL');
-  const whmToken = Deno.env.get('WHM_API_TOKEN');
+// Hosting account creation removed - credentials now managed externally via WHM admin panel
+// This eliminates security risks of storing/transmitting cPanel passwords
 
-  // Generate credentials
-  const username = domain.replace(/[^a-z0-9]/gi, '').substring(0, 8) + Math.random().toString(36).substring(2, 4);
-  const password = generateRandomPassword();
+// Hosting suspension removed - account management now handled externally via WHM admin panel
 
-  // Create hosting account record
-  const { data: hostingAccount, error } = await supabase
-    .from('hosting_accounts')
-    .insert({
-      order_id: orderId,
-      customer_id: userId,
-      hosting_package_id: hostingPackageId,
-      domain_name: domain,
-      cpanel_username: username,
-      cpanel_password: password,
-      status: 'provisioning'
-    })
-    .select()
-    .single();
-
-  if (error) throw error;
-
-  if (!whmUrl || !whmToken) {
-    console.warn('WHM credentials not configured, creating mock hosting account');
-    
-    // Update with mock data
-    await supabase
-      .from('hosting_accounts')
-      .update({
-        status: 'active',
-        whm_account_id: `mock_${Date.now()}`,
-        server_ip: '192.168.1.100',
-        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-      })
-      .eq('id', hostingAccount.id);
-
-    return { ...hostingAccount, cpanel_username: username, cpanel_password: password };
-  }
-
-  try {
-    // Call WHM API to create account
-    const whmApiUrl = new URL('/json-api/createacct', whmUrl);
-    
-    const whmParams = {
-      username: username,
-      password: password,
-      domain: domain,
-      plan: packageName || 'default',
-      contactemail: 'admin@404codelab.com'
-    };
-
-    const response = await fetch(whmApiUrl.toString(), {
-      method: 'POST',
-      headers: {
-        'Authorization': `whm root:${whmToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams(whmParams).toString()
-    });
-
-    const data = await response.json();
-
-    if (!data.metadata?.result || data.metadata.result !== 1) {
-      throw new Error(`WHM account creation failed: ${data.metadata?.reason || 'Unknown error'}`);
-    }
-
-    console.log(`Created hosting account for ${domain} with username ${username}`);
-
-    // Update hosting account with success
-    await supabase
-      .from('hosting_accounts')
-      .update({
-        status: 'active',
-        whm_account_id: data.data?.acct || `whm_${Date.now()}`,
-        server_ip: whmUrl.replace(/^https?:\/\//, '').split(':')[0],
-        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-      })
-      .eq('id', hostingAccount.id);
-
-    return { ...hostingAccount, cpanel_username: username, cpanel_password: password };
-  } catch (error) {
-    console.error('Hosting account creation failed:', error);
-    
-    // Update status to failed
-    await supabase
-      .from('hosting_accounts')
-      .update({ status: 'failed' })
-      .eq('id', hostingAccount.id);
-    
-    throw error;
-  }
-}
-
-// Suspend hosting services
-async function suspendHostingServices(supabase: any, customerId: string, reason: string) {
-  try {
-    const { data: hostingAccounts } = await supabase
-      .from('hosting_accounts')
-      .select('*')
-      .eq('customer_id', customerId)
-      .eq('status', 'active');
-
-    for (const account of hostingAccounts || []) {
-      await suspendWHMAccount(account.whm_account_id);
-      
-      await supabase
-        .from('hosting_accounts')
-        .update({
-          status: 'suspended',
-          suspended_at: new Date().toISOString()
-        })
-        .eq('id', account.id);
-    }
-
-    console.log(`Suspended ${hostingAccounts?.length || 0} hosting accounts for customer ${customerId} due to ${reason}`);
-  } catch (error) {
-    console.error('Error suspending hosting services:', error);
-  }
-}
-
-// Suspend WHM account
-async function suspendWHMAccount(accountId: string) {
-  const whmUrl = Deno.env.get('WHM_API_URL');
-  const whmToken = Deno.env.get('WHM_API_TOKEN');
-
-  if (!whmUrl || !whmToken) {
-    console.log(`Would suspend WHM account ${accountId} (WHM not configured)`);
-    return;
-  }
-
-  try {
-    const suspendUrl = new URL('/json-api/suspendacct', whmUrl);
-    suspendUrl.searchParams.set('user', accountId);
-    suspendUrl.searchParams.set('reason', 'Payment failed or subscription cancelled');
-
-    const response = await fetch(suspendUrl.toString(), {
-      method: 'POST',
-      headers: {
-        'Authorization': `whm root:${whmToken}`
-      }
-    });
-
-    const data = await response.json();
-    console.log(`Suspended WHM account ${accountId}:`, data);
-  } catch (error) {
-    console.error(`Failed to suspend WHM account ${accountId}:`, error);
-  }
-}
-
-// Generate random password
-function generateRandomPassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-}
-
-// Send welcome email with domain and cPanel details
-async function sendWelcomeEmail(supabase: any, userId: string, domain: string, hostingAccount: any) {
-  try {
-    // Get user profile for email
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('email, first_name, last_name')
-      .eq('id', userId)
-      .single();
-
-    if (!profile?.email) {
-      console.error('No email found for user:', userId);
-      return;
-    }
-
-    console.log(`Sending welcome email to ${profile.email} for domain ${domain}`);
-    
-    // Call send-email function with welcome template
-    await supabase.functions.invoke('send-email', {
-      body: {
-        to: profile.email,
-        subject: `Welcome! Your domain ${domain} is ready`,
-        template: 'welcome_hosting_domain',
-        data: {
-          customerName: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Customer',
-          domain: domain,
-          cpanelUsername: hostingAccount.cpanel_username,
-          cpanelPassword: hostingAccount.cpanel_password,
-          serverIp: hostingAccount.server_ip || 'Will be provided separately',
-          cpanelUrl: `https://${domain}:2083` // Standard cPanel URL
-        }
-      }
-    });
-
-    console.log(`Welcome email sent successfully to ${profile.email}`);
-  } catch (error) {
-    console.error('Failed to send welcome email:', error);
-    // Don't throw - email failure shouldn't fail the entire process
-  }
-}
+// Welcome email and credential generation removed for security
+// Hosting credentials are now managed exclusively via WHM admin interface
 
 serve(handler);
