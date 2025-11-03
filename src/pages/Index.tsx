@@ -118,10 +118,10 @@ const Index = () => {
                 View Games
               </Button>
             </Link>
-            <Link to="/portfolio/apps">
+            <Link to="/portfolio/web">
               <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20">
-                <Smartphone className="mr-2 h-5 w-5" />
-                View Apps
+                <Globe className="mr-2 h-5 w-5" />
+                View Web Projects
               </Button>
             </Link>
           </div>
