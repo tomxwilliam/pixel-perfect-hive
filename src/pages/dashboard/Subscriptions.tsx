@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, Monitor, Globe, ArrowLeft } from "lucide-react";
+import { Loader2, Monitor, Globe, ArrowLeft, Smartphone } from "lucide-react";
 import { SubscriptionPlanCard } from "@/components/customer/SubscriptionPlanCard";
 import { ActiveSubscriptionCard } from "@/components/customer/ActiveSubscriptionCard";
+import { AppHostingPlanCard } from "@/components/customer/AppHostingPlanCard";
 import { Link } from "react-router-dom";
 
 const Subscriptions = () => {
@@ -42,7 +43,7 @@ const Subscriptions = () => {
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-foreground">Subscriptions</h1>
             <p className="text-muted-foreground">
-              Manage your IT support and website care subscriptions
+              Manage your subscriptions for website care, app hosting, and IT support
             </p>
           </div>
 
@@ -64,10 +65,14 @@ const Subscriptions = () => {
 
           {/* Available Plans */}
           <Tabs defaultValue="website_care" className="space-y-6">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-2xl grid-cols-3">
               <TabsTrigger value="website_care" className="gap-2">
                 <Globe className="h-4 w-4" />
                 Website Care Plans
+              </TabsTrigger>
+              <TabsTrigger value="app_hosting" className="gap-2">
+                <Smartphone className="h-4 w-4" />
+                App Hosting Plans
               </TabsTrigger>
               <TabsTrigger value="it_support" className="gap-2">
                 <Monitor className="h-4 w-4" />
@@ -96,6 +101,55 @@ const Subscriptions = () => {
                     ))}
                   </div>
                 )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="app_hosting" className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Smartphone className="h-6 w-6 text-primary" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">App Hosting Plans</h2>
+                    <p className="text-muted-foreground">iOS and Google Play app deployment services</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <AppHostingPlanCard
+                    title="iOS App Hosting"
+                    description="Hosting & distribution for your iOS app."
+                    price="£30"
+                    priceLabel="/month"
+                    features={[
+                      "Build hosting & version storage",
+                      "TestFlight distribution & invite management",
+                      "Crash/analytics relay (client provides keys)",
+                      "Basic update support (1 build/month)",
+                      "Priority email support during business hours"
+                    ]}
+                    buttonText="Choose iOS Hosting"
+                    priceId={import.meta.env.VITE_STRIPE_PRICE_IOS_MONTHLY}
+                    isRecurring={true}
+                  />
+                  
+                  <AppHostingPlanCard
+                    title="Google Play Submission"
+                    description="One-off setup & first release."
+                    price="£50"
+                    priceLabel="one-off"
+                    features={[
+                      "Play Console app setup (client provides access)",
+                      "App signing / key configuration guidance",
+                      "Store listing setup (text, icons, screenshots)",
+                      "Compliance checklist (policies, content ratings)",
+                      "Internal/Closed test → Production rollout"
+                    ]}
+                    note="*Client supplies final assets & copy. One resubmission included if rejected for policy reasons."
+                    buttonText="Book Play Submission"
+                    priceId={import.meta.env.VITE_STRIPE_PRICE_PLAY_SUBMISSION}
+                    isRecurring={false}
+                  />
+                </div>
               </div>
             </TabsContent>
 
