@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye, Download, Send, DollarSign, Calendar, Search, Plus, Pencil, Trash } from 'lucide-react';
+import { Eye, Download, Send, DollarSign, Calendar, Search, Plus, Pencil, Trash, CheckCircle } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Tables } from '@/integrations/supabase/types';
 import { CreateInvoiceDialog } from './forms/CreateInvoiceDialog';
@@ -59,7 +59,40 @@ export const AdminInvoices = () => {
     }
   };
 
-const handleDeleteConfirm = async () => {
+  const handleMarkAsPaid = async (invoice: InvoiceWithCustomer) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Not authenticated');
+        return;
+      }
+
+      toast.loading('Marking invoice as paid...');
+
+      const { data, error } = await supabase.functions.invoke('admin-mark-invoice-paid', {
+        body: {
+          invoiceNumber: invoice.invoice_number,
+          paymentMethod: 'manual',
+          notes: 'Manually marked as paid by admin'
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      toast.dismiss();
+      toast.success('Invoice marked as paid successfully');
+      await fetchInvoices();
+    } catch (error) {
+      toast.dismiss();
+      console.error('Error marking invoice as paid:', error);
+      toast.error('Failed to mark invoice as paid');
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
       const { error } = await supabase.from('invoices').delete().eq('id', deleteTarget.id);
@@ -243,6 +276,16 @@ const handleDeleteConfirm = async () => {
                   </div>
                   
                   <div className="flex items-center justify-end pt-2 border-t space-x-2">
+                    {invoice.status === 'pending' && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleMarkAsPaid(invoice)}
+                        className="text-green-600 hover:text-green-700"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -314,6 +357,17 @@ const handleDeleteConfirm = async () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
+                        {invoice.status === 'pending' && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => handleMarkAsPaid(invoice)}
+                            className="text-green-600 hover:text-green-700"
+                            title="Mark as Paid"
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button variant="ghost" size="sm" onClick={() => { setSelectedInvoice(invoice); setIsModalOpen(true); }}>
                           <Eye className="h-4 w-4" />
                         </Button>
