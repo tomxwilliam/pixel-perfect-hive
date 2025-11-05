@@ -96,8 +96,6 @@ serve(async (req) => {
       .update({
         status: "paid",
         paid_at: new Date().toISOString(),
-        payment_method: paymentMethod,
-        updated_at: new Date().toISOString(),
       })
       .eq("id", invoice.id);
 
