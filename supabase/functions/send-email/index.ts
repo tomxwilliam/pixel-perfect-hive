@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.0';
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,6 +15,7 @@ interface EmailRequest {
   template_data?: any;
   customer_id?: string;
   ai_generated?: boolean;
+  cc?: string[];
 }
 
 serve(async (req) => {
@@ -27,7 +29,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { to, subject, content, template_type, template_data, customer_id, ai_generated = false }: EmailRequest = await req.json();
+    const { to, subject, content, template_type, template_data, customer_id, ai_generated = false, cc }: EmailRequest = await req.json();
 
     if (!to || !subject || !content) {
       return new Response(JSON.stringify({ error: 'Missing required fields: to, subject, content' }), {
@@ -35,10 +37,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    // Using Supabase's email system
-    // Configure your SMTP settings in Supabase Dashboard > Project Settings > Auth > SMTP Settings
-    // Or integrate with your preferred email service provider
 
     // Get email template if template_type provided
     let finalContent = content;
@@ -53,7 +51,6 @@ serve(async (req) => {
         .single();
 
       if (template) {
-        // Replace template variables
         finalSubject = template.subject;
         finalContent = template.body_html;
         
@@ -67,24 +64,42 @@ serve(async (req) => {
       }
     }
 
-    // Send email using Supabase Auth SMTP
-    // Note: This requires SMTP configuration in Supabase Dashboard
-    // Alternatively, integrate with your preferred email service here
-    
-    console.log('Email prepared for sending:', {
-      to,
-      subject: finalSubject,
-      template_type
+    // Initialize SMTP client
+    const client = new SMTPClient({
+      connection: {
+        hostname: Deno.env.get('SMTP_HOST') ?? '',
+        port: Number(Deno.env.get('SMTP_PORT') ?? '465'),
+        tls: true,
+        auth: {
+          username: Deno.env.get('SMTP_USER') ?? '',
+          password: Deno.env.get('SMTP_PASSWORD') ?? '',
+        },
+      },
     });
 
-    // For now, just log the email (configure SMTP in Supabase Dashboard)
-    const emailResult = {
-      success: true,
-      message: 'Email logged - configure SMTP in Supabase Dashboard for actual delivery'
-    };
+    console.log('Sending email via SMTP:', {
+      to,
+      subject: finalSubject,
+      template_type,
+      from: Deno.env.get('SMTP_FROM_EMAIL')
+    });
+
+    // Send email via SMTP
+    await client.send({
+      from: Deno.env.get('SMTP_FROM_EMAIL') ?? 'hello@404codelab.com',
+      to: to,
+      cc: cc?.join(', '),
+      subject: finalSubject,
+      content: finalContent,
+      html: finalContent,
+    });
+
+    await client.close();
+
+    console.log('Email sent successfully via SMTP');
 
     // Log email in database
-    await supabaseClient
+    const { data: emailLog } = await supabaseClient
       .from('email_logs')
       .insert({
         recipient_email: to,
@@ -94,13 +109,13 @@ serve(async (req) => {
         customer_id: customer_id,
         ai_generated: ai_generated,
         sent_at: new Date().toISOString(),
-      });
-
-    console.log('Email sent successfully:', emailResult);
+      })
+      .select()
+      .single();
 
     return new Response(JSON.stringify({ 
       success: true, 
-      email_id: emailResult.id,
+      email_id: emailLog?.id,
       message: 'Email sent successfully'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
