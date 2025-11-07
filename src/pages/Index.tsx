@@ -8,75 +8,47 @@ import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
 import { useFeaturedContent } from "@/hooks/useFeaturedContent";
 import { usePageContent } from "@/hooks/usePageContent";
-
 const FeaturedContentSection = () => {
-  const { data: featuredContent } = useFeaturedContent();
-
+  const {
+    data: featuredContent
+  } = useFeaturedContent();
   if (!featuredContent || featuredContent.length === 0) {
     return null;
   }
-
-  return (
-    <>
-      {featuredContent.map((content) => {
-        const isExternalLink = content.cta_link.startsWith('http');
-        const gradientFrom = content.gradient_from || "primary";
-        const gradientTo = content.gradient_to || "accent";
-        const borderColor = content.border_color || "primary";
-
-        return (
-          <Card 
-            key={content.id}
-            className={`mb-4 overflow-hidden border border-${borderColor}/20 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-xs mx-auto`}
-          >
+  return <>
+      {featuredContent.map(content => {
+      const isExternalLink = content.cta_link.startsWith('http');
+      const gradientFrom = content.gradient_from || "primary";
+      const gradientTo = content.gradient_to || "accent";
+      const borderColor = content.border_color || "primary";
+      return <Card key={content.id} className={`mb-4 overflow-hidden border border-${borderColor}/20 bg-gradient-to-br from-${gradientFrom}/5 to-${gradientTo}/5 max-w-xs mx-auto`}>
             <CardContent className="p-3">
               <div className="flex items-start gap-2">
-                {content.icon && (
-                  <div className="text-xl">{content.icon}</div>
-                )}
+                {content.icon && <div className="text-xl">{content.icon}</div>}
                 <div className="flex-1">
                   <h3 className="text-base font-semibold mb-0.5">{content.title}</h3>
-                  {content.subtitle && (
-                    <p className="text-xs text-muted-foreground mb-0.5">{content.subtitle}</p>
-                  )}
-                  {content.description && (
-                    <p className="text-xs text-muted-foreground/70 mb-2">{content.description}</p>
-                  )}
-                  {isExternalLink ? (
-                    <Button 
-                      variant="default" 
-                      size="sm"
-                      onClick={() => window.open(content.cta_link, '_blank')}
-                      className="tap-target h-8 text-xs px-3"
-                    >
+                  {content.subtitle && <p className="text-xs text-muted-foreground mb-0.5">{content.subtitle}</p>}
+                  {content.description && <p className="text-xs text-muted-foreground/70 mb-2">{content.description}</p>}
+                  {isExternalLink ? <Button variant="default" size="sm" onClick={() => window.open(content.cta_link, '_blank')} className="tap-target h-8 text-xs px-3">
                       {content.cta_text} <ArrowRight className="ml-1.5 h-3 w-3" />
-                    </Button>
-                  ) : (
-                    <Link to={content.cta_link}>
+                    </Button> : <Link to={content.cta_link}>
                       <Button variant="default" size="sm" className="tap-target h-8 text-xs px-3">
                         {content.cta_text} <ArrowRight className="ml-1.5 h-3 w-3" />
                       </Button>
-                    </Link>
-                  )}
+                    </Link>}
                 </div>
               </div>
             </CardContent>
-          </Card>
-        );
-      })}
-    </>
-  );
+          </Card>;
+    })}
+    </>;
 };
 const Index = () => {
-  const { data: pageContent } = usePageContent('/');
-  
-  return (
-    <>
-      <Seo 
-        title={pageContent?.meta_title || "404 Code Lab - Web Development, Mobile Apps & Games"}
-        description={pageContent?.meta_description || "Professional web development, mobile app creation, and game development services in Scotland."}
-        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"}
-      />
+  const {
+    data: pageContent
+  } = usePageContent('/');
+  return <>
+      <Seo title={pageContent?.meta_title || "404 Code Lab - Web Development, Mobile Apps & Games"} description={pageContent?.meta_description || "Professional web development, mobile app creation, and game development services in Scotland."} canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"} />
       <div className="min-h-screen bg-background text-foreground">
         <StaticNavigation />
       
@@ -98,9 +70,7 @@ const Index = () => {
         }}></div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">
-            🎉 Limited Time Offer - 2% Off All Projects
-          </Badge>
+          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">🎉 Limited Time Offer - 20% Off All Projects</Badge>
           
           <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px]">
             Building the Future of Play
@@ -226,7 +196,6 @@ const Index = () => {
 
         <Footer />
       </div>
-    </>
-  );
+    </>;
 };
 export default Index;
