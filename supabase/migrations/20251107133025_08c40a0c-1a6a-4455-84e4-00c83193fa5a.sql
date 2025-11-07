@@ -1,0 +1,199 @@
+-- Function to call the send-notification-email edge function
+CREATE OR REPLACE FUNCTION send_email_notification(
+  p_event_type TEXT,
+  p_entity_id UUID,
+  p_entity_type TEXT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  PERFORM
+    net.http_post(
+      url := 'https://ucsxwhnscgbcshaghyrq.supabase.co/functions/v1/send-notification-email',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || current_setting('request.headers')::json->>'authorization'
+      ),
+      body := jsonb_build_object(
+        'event_type', p_event_type,
+        'entity_id', p_entity_id,
+        'entity_type', p_entity_type
+      )
+    );
+END;
+$$;
+
+-- Trigger for project creation
+CREATE OR REPLACE FUNCTION notify_project_created()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.approval_status = 'pending' AND OLD.approval_status IS NULL THEN
+    PERFORM send_email_notification('project_request_submitted', NEW.id, 'project');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_project_created ON projects;
+CREATE TRIGGER trigger_notify_project_created
+  AFTER INSERT ON projects
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_project_created();
+
+-- Trigger for project status changes
+CREATE OR REPLACE FUNCTION notify_project_status_change()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.approval_status != OLD.approval_status THEN
+    IF NEW.approval_status = 'approved' THEN
+      PERFORM send_email_notification('project_approved', NEW.id, 'project');
+    ELSIF NEW.approval_status = 'rejected' THEN
+      PERFORM send_email_notification('project_rejected', NEW.id, 'project');
+    ELSIF NEW.approval_status = 'revision_requested' THEN
+      PERFORM send_email_notification('project_revision_requested', NEW.id, 'project');
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_project_status_change ON projects;
+CREATE TRIGGER trigger_notify_project_status_change
+  AFTER UPDATE ON projects
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_project_status_change();
+
+-- Trigger for ticket creation
+CREATE OR REPLACE FUNCTION notify_ticket_created()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM send_email_notification('ticket_created', NEW.id, 'ticket');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_ticket_created ON tickets;
+CREATE TRIGGER trigger_notify_ticket_created
+  AFTER INSERT ON tickets
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_ticket_created();
+
+-- Trigger for invoice creation
+CREATE OR REPLACE FUNCTION notify_invoice_created()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM send_email_notification('invoice_created', NEW.id, 'invoice');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_invoice_created ON invoices;
+CREATE TRIGGER trigger_notify_invoice_created
+  AFTER INSERT ON invoices
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_invoice_created();
+
+-- Trigger for invoice status changes
+CREATE OR REPLACE FUNCTION notify_invoice_paid()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.status = 'paid' AND OLD.status != 'paid' THEN
+    PERFORM send_email_notification('invoice_paid', NEW.id, 'invoice');
+  ELSIF NEW.status = 'overdue' AND OLD.status != 'overdue' THEN
+    PERFORM send_email_notification('invoice_overdue', NEW.id, 'invoice');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_invoice_paid ON invoices;
+CREATE TRIGGER trigger_notify_invoice_paid
+  AFTER UPDATE ON invoices
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_invoice_paid();
+
+-- Trigger for quote creation
+CREATE OR REPLACE FUNCTION notify_quote_created()
+RETURNS TRIGGER AS $$
+BEGIN
+  PERFORM send_email_notification('quote_created', NEW.id, 'quote');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_quote_created ON quotes;
+CREATE TRIGGER trigger_notify_quote_created
+  AFTER INSERT ON quotes
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_quote_created();
+
+-- Trigger for quote status changes
+CREATE OR REPLACE FUNCTION notify_quote_status_change()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.status != OLD.status THEN
+    IF NEW.status = 'accepted' THEN
+      PERFORM send_email_notification('quote_accepted', NEW.id, 'quote');
+    ELSIF NEW.status = 'rejected' THEN
+      PERFORM send_email_notification('quote_rejected', NEW.id, 'quote');
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_quote_status_change ON quotes;
+CREATE TRIGGER trigger_notify_quote_status_change
+  AFTER UPDATE ON quotes
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_quote_status_change();
+
+-- Trigger for subscription changes
+CREATE OR REPLACE FUNCTION notify_subscription_change()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    PERFORM send_email_notification('subscription_created', NEW.id, 'subscription');
+  ELSIF TG_OP = 'UPDATE' THEN
+    IF NEW.status = 'cancelled' AND OLD.status != 'cancelled' THEN
+      PERFORM send_email_notification('subscription_cancelled', NEW.id, 'subscription');
+    ELSIF NEW.status = 'active' AND OLD.status = 'cancelled' THEN
+      PERFORM send_email_notification('subscription_renewed', NEW.id, 'subscription');
+    ELSIF NEW.status = 'past_due' AND OLD.status != 'past_due' THEN
+      PERFORM send_email_notification('subscription_payment_failed', NEW.id, 'subscription');
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_subscription_change ON customer_subscriptions;
+CREATE TRIGGER trigger_notify_subscription_change
+  AFTER INSERT OR UPDATE ON customer_subscriptions
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_subscription_change();
+
+-- Trigger for appointment changes
+CREATE OR REPLACE FUNCTION notify_appointment_change()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    PERFORM send_email_notification('appointment_created', NEW.id, 'appointment');
+  ELSIF TG_OP = 'UPDATE' THEN
+    IF NEW.status = 'cancelled' AND OLD.status != 'cancelled' THEN
+      PERFORM send_email_notification('appointment_cancelled', NEW.id, 'appointment');
+    ELSIF (NEW.call_date != OLD.call_date OR NEW.call_time != OLD.call_time) THEN
+      PERFORM send_email_notification('appointment_updated', NEW.id, 'appointment');
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trigger_notify_appointment_change ON call_bookings;
+CREATE TRIGGER trigger_notify_appointment_change
+  AFTER INSERT OR UPDATE ON call_bookings
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_appointment_change();
