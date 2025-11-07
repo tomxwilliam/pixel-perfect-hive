@@ -99,7 +99,7 @@ const Index = () => {
         
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">
-            🚀 404 Code Lab
+            🎉 Limited Time Offer - 2% Off All Projects
           </Badge>
           
           <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px]">
