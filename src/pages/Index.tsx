@@ -62,7 +62,7 @@ const Index = () => {
             centerVignette={true}
             outerVignette={false}
             smooth={true}
-            glitchColors={['#FF0080', '#00FFFF', '#00FF00']}
+            glitchColors={['#8B5CF6', '#1DD3DD', '#A78BFA']}
           />
         </div>
         
