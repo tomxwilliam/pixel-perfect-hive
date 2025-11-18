@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import Seo from '@/components/Seo';
 import { useFeaturedContent } from "@/hooks/useFeaturedContent";
 import { usePageContent } from "@/hooks/usePageContent";
+import LetterGlitch from "@/components/LetterGlitch";
 const FeaturedContentSection = () => {
   const {
     data: featuredContent
@@ -53,21 +54,16 @@ const Index = () => {
         <StaticNavigation />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-start justify-center px-4 pt-12 bg-gradient-to-br from-background via-primary/10 to-accent/20">
-        {/* Light mode background */}
-        <div className="absolute inset-0 bg-background/20 dark:hidden" style={{
-          backgroundImage: 'url(/lovable-uploads/0dc251b9-ee51-4b4b-a33a-a9cd8bd5888a.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}></div>
-        {/* Dark mode background */}
-        <div className="absolute inset-0 bg-background/20 hidden dark:block" style={{
-          backgroundImage: 'url(/lovable-uploads/0649ad28-de44-42bb-b776-70c0a8fca446.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}></div>
+      <section className="relative min-h-screen flex items-start justify-center px-4 pt-12">
+        {/* LetterGlitch Background */}
+        <div className="absolute inset-0">
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={false}
+            smooth={true}
+          />
+        </div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">🎉 Limited Time Offer - 20% Off All Projects</Badge>
