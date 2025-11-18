@@ -66,37 +66,39 @@ const Index = () => {
         </div>
         
         <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 px-4 py-2 text-sm inline-flex items-center justify-center">🎉 Limited Time Offer - 20% Off All Projects</Badge>
-          
-          <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[15px]">
-            Building the Future of Play
-          </h1>
-          
-          <p className="text-xl mb-8 text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
-            Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
-          </p>
+          <div className="backdrop-blur-md bg-background/80 dark:bg-background/70 rounded-2xl p-8 shadow-2xl">
+            <Badge className="mb-6 bg-primary/30 text-primary border-primary/40 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg">🎉 Limited Time Offer - 20% Off All Projects</Badge>
+            
+            <h1 className="text-6xl font-bold mb-6 text-foreground drop-shadow-lg py-[15px]">
+              Building the Future of Play
+            </h1>
+            
+            <p className="text-xl mb-8 text-foreground/90 max-w-2xl mx-auto leading-relaxed px-4 drop-shadow-md">
+              Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
+            </p>
 
-          {/* View Buttons */}
-          <div className="flex flex-row gap-4 justify-center items-center mb-12 flex-wrap">
-            <Link to="/portfolio/games">
-              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/20">
-                <Gamepad2 className="mr-2 h-5 w-5" />
-                View Games
-              </Button>
-            </Link>
-            <Link to="/portfolio/web">
-              <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20">
-                <Globe className="mr-2 h-5 w-5" />
-                View Web Projects
-              </Button>
-            </Link>
-          </div>
+            {/* View Buttons */}
+            <div className="flex flex-row gap-4 justify-center items-center mb-12 flex-wrap">
+              <Link to="/portfolio/games">
+                <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/20 bg-background/50 backdrop-blur-sm">
+                  <Gamepad2 className="mr-2 h-5 w-5" />
+                  View Games
+                </Button>
+              </Link>
+              <Link to="/portfolio/web">
+                <Button size="lg" variant="outline" className="border-accent/50 hover:bg-accent/20 bg-background/50 backdrop-blur-sm">
+                  <Globe className="mr-2 h-5 w-5" />
+                  View Web Projects
+                </Button>
+              </Link>
+            </div>
 
-          <FeaturedContentSection />
+            <FeaturedContentSection />
 
-          <div className="flex items-center justify-center text-muted-foreground animate-bounce mt-12">
-            <span className="mr-2">Explore Our Work</span>
-            <ArrowDown className="h-5 w-5" />
+            <div className="flex items-center justify-center text-foreground/80 animate-bounce mt-12 drop-shadow-md">
+              <span className="mr-2">Explore Our Work</span>
+              <ArrowDown className="h-5 w-5" />
+            </div>
           </div>
         </div>
       </section>
