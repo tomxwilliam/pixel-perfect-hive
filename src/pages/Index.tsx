@@ -63,7 +63,7 @@ const Index = () => {
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg">🎉 Limited Time Offer - 20% Off All Projects</Badge>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] md:whitespace-nowrap">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] md:whitespace-nowrap mx-auto text-center">
             Fast, sharp websites for your business
           </h1>
           
