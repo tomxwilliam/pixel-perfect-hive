@@ -172,9 +172,28 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <StaticNavigation />
-      <div className="flex items-center justify-center min-h-[calc(100vh-140px)] p-4">
+    <div className="relative min-h-screen bg-background overflow-hidden">
+      {/* Background Images */}
+      <div className="absolute inset-0 z-0">
+        <div className="relative w-full h-full">
+          <img 
+            src="/assets/hero-bg-light.png" 
+            alt="" 
+            className="absolute inset-0 w-full h-full object-cover opacity-100 dark:opacity-0 transition-opacity duration-300"
+          />
+          <img 
+            src="/assets/hero-bg-dark.png" 
+            alt="" 
+            className="absolute inset-0 w-full h-full object-cover opacity-0 dark:opacity-100 transition-opacity duration-300"
+          />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10">
+        <StaticNavigation />
+      </div>
+      <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-140px)] p-4">
         <div className="w-full max-w-md space-y-6">
           <Card>
             <CardHeader className="text-center">
@@ -348,7 +367,9 @@ const Auth = () => {
           </Card>
         </div>
       </div>
-      <Footer />
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 };
