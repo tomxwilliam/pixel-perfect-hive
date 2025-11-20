@@ -14,11 +14,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
   const { signIn, signUp, signInWithGoogle, user, profile, loading, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -81,6 +83,13 @@ const Auth = () => {
     setIsLoading(true);
     setError('');
     setSuccessMessage('');
+
+    // Check if terms are accepted first
+    if (!termsAccepted) {
+      setError('You must agree to the Terms and Conditions to create an account');
+      setIsLoading(false);
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -345,6 +354,34 @@ const Auth = () => {
                           disabled={isLoading}
                         />
                       </div>
+                      
+                      {/* Terms and Conditions Checkbox */}
+                      <div className="flex items-start space-x-3 py-4">
+                        <Checkbox
+                          id="terms"
+                          checked={termsAccepted}
+                          onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                          disabled={isLoading}
+                          aria-required="true"
+                          aria-label="Accept Terms and Conditions"
+                        />
+                        <Label 
+                          htmlFor="terms" 
+                          className="text-sm leading-relaxed cursor-pointer text-muted-foreground"
+                        >
+                          I confirm I have read and agree to the{' '}
+                          <Link 
+                            to="/legal/terms" 
+                            className="text-primary hover:text-primary/80 underline underline-offset-4"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Terms and Conditions
+                          </Link>
+                          , including attribution, portfolio use, and data processing.
+                        </Label>
+                      </div>
+
                       {error && (
                         <Alert variant="destructive">
                           <AlertDescription>{error}</AlertDescription>
@@ -355,7 +392,7 @@ const Auth = () => {
                           <AlertDescription>{successMessage}</AlertDescription>
                         </Alert>
                       )}
-                      <Button type="submit" className="w-full" disabled={isLoading}>
+                      <Button type="submit" className="w-full" disabled={isLoading || !termsAccepted}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Create Account
                       </Button>
