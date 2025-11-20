@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Mail, Coffee, MessageCircle } from "lucide-react";
+import { Github, Linkedin, Mail, Coffee, MessageCircle, Star } from "lucide-react";
 import { FaTiktok, FaXTwitter, FaBehance } from "react-icons/fa6";
 import { useTheme } from "@/hooks/useTheme";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
@@ -107,6 +107,33 @@ export const Footer = () => {
               <p>📱 07496 295759</p>
               <p>📍 Based in Scotland</p>
               <p>🌍 Working worldwide</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Review Buttons Section */}
+        <div className="mt-8 pt-8 border-t border-border">
+          <div className="flex flex-col items-center gap-4">
+            <h3 className="font-semibold text-foreground text-center">Leave us a Review</h3>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a
+                href="https://uk.trustpilot.com/review/404codelab.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+              >
+                <Star className="h-5 w-5" />
+                Review on Trustpilot
+              </a>
+              <a
+                href="https://share.google/AwTR0yfYWXKuSCb9R"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors font-medium"
+              >
+                <Star className="h-5 w-5" />
+                Review on Google
+              </a>
             </div>
           </div>
         </div>
