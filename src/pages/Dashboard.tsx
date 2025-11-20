@@ -39,7 +39,8 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
-  RefreshCw
+  RefreshCw,
+  Star
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -276,6 +277,40 @@ const Dashboard = () => {
           <div className="mb-6">
             <PartnerBanner />
           </div>
+
+          {/* Review Buttons */}
+          <Card className="mb-6 card-premium">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-center">
+                  <h3 className="font-semibold text-lg mb-2">Love our work? Leave us a review!</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Your feedback helps us improve and helps others discover our services
+                  </p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <a
+                    href="https://uk.trustpilot.com/review/404codelab.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                  >
+                    <Star className="h-5 w-5" />
+                    Review on Trustpilot
+                  </a>
+                  <a
+                    href="https://share.google/AwTR0yfYWXKuSCb9R"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors font-medium"
+                  >
+                    <Star className="h-5 w-5" />
+                    Review on Google
+                  </a>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Stats Overview - Mobile Grid */}
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6'} mb-6`}>
