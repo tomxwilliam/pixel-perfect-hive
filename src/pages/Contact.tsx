@@ -87,7 +87,7 @@ const Contact = () => {
   return <div className="min-h-screen bg-background text-foreground">
         <Seo 
           title={pageContent?.meta_title || "Contact 404 Code Lab Edinburgh & Glasgow - Web Development Scotland"}
-          description={pageContent?.meta_description || "Contact 404 Code Lab for web development, mobile apps, and game development in Edinburgh, Glasgow & Central Scotland. Call +44 7864 502527 or email info@404codelab.com"}
+          description={pageContent?.meta_description || "Contact 404 Code Lab for web development, mobile apps, and game development in Edinburgh, Glasgow & Central Scotland. Call +44 7864 502527 or email hello@404codelab.com"}
           canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"}
         />
       <StaticNavigation />
@@ -244,7 +244,7 @@ const Contact = () => {
                     📞 +44 7864 502527
                   </p>
                   <p className="text-muted-foreground mb-4">
-                    ✉️ info@404codelab.com
+                    ✉️ hello@404codelab.com
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Proudly serving Edinburgh, Glasgow, Stirling, Falkirk, Livingston, and all of Central Scotland

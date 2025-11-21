@@ -39,7 +39,7 @@ export const Footer = () => {
               <p className="font-semibold text-foreground">404 Code Lab</p>
               <p>Central Scotland</p>
               <p>📞 <a href="tel:+447864502527" className="hover:text-primary transition-colors">+44 7864 502527</a></p>
-              <p>✉️ <a href="mailto:info@404codelab.com" className="hover:text-primary transition-colors">info@404codelab.com</a></p>
+              <p>✉️ <a href="mailto:hello@404codelab.com" className="hover:text-primary transition-colors">hello@404codelab.com</a></p>
             </div>
             
             <div className="flex space-x-4">
@@ -115,7 +115,7 @@ export const Footer = () => {
               <p className="font-semibold text-foreground">404 Code Lab</p>
               <p>Central Scotland</p>
               <p>📞 <a href="tel:+447864502527" className="hover:text-primary transition-colors">+44 7864 502527</a></p>
-              <p>✉️ <a href="mailto:info@404codelab.com" className="hover:text-primary transition-colors">info@404codelab.com</a></p>
+              <p>✉️ <a href="mailto:hello@404codelab.com" className="hover:text-primary transition-colors">hello@404codelab.com</a></p>
               <p className="pt-2">Serving Edinburgh, Glasgow & Central Scotland</p>
             </div>
           </div>
