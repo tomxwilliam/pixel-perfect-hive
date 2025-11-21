@@ -22,11 +22,11 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <div className="w-16 h-16 flex items-center justify-center mb-4">
+            <div className="w-24 h-24 flex items-center justify-center mb-4">
               <img 
                 src={logoSrc} 
                 alt="404 Code Lab Logo" 
-                className="h-16 w-auto object-contain"
+                className="h-24 w-auto object-contain"
               />
             </div>
             <p className="text-muted-foreground mb-4 max-w-md">
