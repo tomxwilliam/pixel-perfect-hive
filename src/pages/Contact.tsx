@@ -85,11 +85,11 @@ const Contact = () => {
     });
   };
   return <div className="min-h-screen bg-background text-foreground">
-      <Seo 
-        title={pageContent?.meta_title || "Contact 404 Code Lab - Get In Touch"}
-        description={pageContent?.meta_description || "Get in touch with 404 Code Lab for web development, mobile apps, or game development projects."}
-        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"}
-      />
+        <Seo 
+          title={pageContent?.meta_title || "Contact 404 Code Lab Edinburgh & Glasgow - Web Development Scotland"}
+          description={pageContent?.meta_description || "Contact 404 Code Lab for web development, mobile apps, and game development in Edinburgh, Glasgow & Central Scotland. Call +44 7864 502527 or email info@404codelab.com"}
+          canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"}
+        />
       <StaticNavigation />
       
       {/* Hero Section */}
@@ -100,11 +100,11 @@ const Contact = () => {
           </Badge>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
-            Get In Touch
+            Contact Us in Edinburgh & Glasgow
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Have a question, pitch, or just want to say hi? Drop us a message — we'll get back faster than a swarm of bees.
+            Serving businesses across Edinburgh, Glasgow, Stirling, Falkirk, and throughout Central Scotland. Have a question, pitch, or just want to say hi? Drop us a message — we'll get back faster than a swarm of bees.
           </p>
         </div>
       </section>
@@ -232,10 +232,23 @@ const Contact = () => {
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     <MapPin className="h-6 w-6 text-accent mr-3" />
-                    <h3 className="text-xl font-bold text-accent">Location</h3>
+                    <h3 className="text-xl font-bold text-accent">Our Location</h3>
                   </div>
-                  <p className="text-muted-foreground mb-2">📍 Based in Scotland</p>
-                  <p className="text-muted-foreground">🌍 Working worldwide</p>
+                  <p className="text-muted-foreground mb-2">
+                    <strong>404 Code Lab</strong>
+                  </p>
+                  <p className="text-muted-foreground mb-2">
+                    Central Scotland
+                  </p>
+                  <p className="text-muted-foreground mb-2">
+                    📞 +44 7864 502527
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    ✉️ info@404codelab.com
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Proudly serving Edinburgh, Glasgow, Stirling, Falkirk, Livingston, and all of Central Scotland
+                  </p>
                 </CardContent>
               </Card>
 
