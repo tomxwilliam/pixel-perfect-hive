@@ -64,7 +64,7 @@ const Index = () => {
           "image": "https://404codelab.com/assets/logo-dark.png",
           "url": "https://404codelab.com",
           "telephone": "+44-7864-502527",
-          "email": "info@404codelab.com",
+          "email": "hello@404codelab.com",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Central Scotland",
