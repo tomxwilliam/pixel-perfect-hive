@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { StaticNavigation } from '@/components/StaticNavigation';
 import { Footer } from '@/components/Footer';
 import { Checkbox } from '@/components/ui/checkbox';
+import LetterGlitch from '@/components/LetterGlitch';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -182,20 +183,9 @@ const Auth = () => {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
-      {/* Background Images */}
+      {/* LetterGlitch Background */}
       <div className="absolute inset-0 z-0">
-        <div className="relative w-full h-full">
-          <img 
-            src="/assets/hero-bg-light.png" 
-            alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-100 dark:opacity-0 transition-opacity duration-300"
-          />
-          <img 
-            src="/assets/hero-bg-dark.png" 
-            alt="" 
-            className="absolute inset-0 w-full h-full object-cover opacity-0 dark:opacity-100 transition-opacity duration-300"
-          />
-        </div>
+        <LetterGlitch glitchSpeed={50} centerVignette={true} outerVignette={false} smooth={true} glitchColors={['#8B5CF6', '#1DD3DD', '#A78BFA']} />
       </div>
 
       {/* Content */}
