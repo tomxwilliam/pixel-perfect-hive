@@ -33,6 +33,15 @@ export const Footer = () => {
               Scottish-based indie dev studio creating standout digital experiences. 
               Bold ideas, pixel-perfect reality.
             </p>
+            
+            {/* NAP Information */}
+            <div className="mb-4 text-sm text-muted-foreground space-y-1">
+              <p className="font-semibold text-foreground">404 Code Lab</p>
+              <p>Central Scotland</p>
+              <p>📞 <a href="tel:+447864502527" className="hover:text-primary transition-colors">+44 7864 502527</a></p>
+              <p>✉️ <a href="mailto:info@404codelab.com" className="hover:text-primary transition-colors">info@404codelab.com</a></p>
+            </div>
+            
             <div className="flex space-x-4">
               <a href="https://github.com/tomxwilliam" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
                 <Github className="h-5 w-5" />
@@ -102,11 +111,12 @@ export const Footer = () => {
           {/* Contact */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Contact</h3>
-            <div className="space-y-2 text-muted-foreground">
-              <p>📧 hello@404codelab.com</p>
-              <p>📱 07496 295759</p>
-              <p>📍 Based in Scotland</p>
-              <p>🌍 Working worldwide</p>
+            <div className="space-y-2 text-muted-foreground text-sm">
+              <p className="font-semibold text-foreground">404 Code Lab</p>
+              <p>Central Scotland</p>
+              <p>📞 <a href="tel:+447864502527" className="hover:text-primary transition-colors">+44 7864 502527</a></p>
+              <p>✉️ <a href="mailto:info@404codelab.com" className="hover:text-primary transition-colors">info@404codelab.com</a></p>
+              <p className="pt-2">Serving Edinburgh, Glasgow & Central Scotland</p>
             </div>
           </div>
         </div>

@@ -49,7 +49,74 @@ const Index = () => {
     data: pageContent
   } = usePageContent('/');
   return <>
-      <Seo title={pageContent?.meta_title || "404 Code Lab - Web Development, Mobile Apps & Games"} description={pageContent?.meta_description || "Professional web development, mobile app creation, and game development services in Scotland."} canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"} />
+      <Seo 
+        title={pageContent?.meta_title || "Web Development Edinburgh & Glasgow | Mobile Apps & Games Scotland - 404 Code Lab"} 
+        description={pageContent?.meta_description || "Expert web development, mobile app creation, and game development services in Edinburgh, Glasgow & Central Scotland. Professional digital solutions for Scottish businesses."} 
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"} 
+      />
+      
+      {/* LocalBusiness JSON-LD Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": "404 Code Lab",
+          "image": "https://404codelab.com/assets/logo-dark.png",
+          "url": "https://404codelab.com",
+          "telephone": "+44-7864-502527",
+          "email": "info@404codelab.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Central Scotland",
+            "addressLocality": "Edinburgh",
+            "addressRegion": "Scotland",
+            "postalCode": "EH",
+            "addressCountry": "GB"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 55.9533,
+            "longitude": -3.1883
+          },
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "Edinburgh"
+            },
+            {
+              "@type": "City",
+              "name": "Glasgow"
+            },
+            {
+              "@type": "City",
+              "name": "Stirling"
+            },
+            {
+              "@type": "City",
+              "name": "Falkirk"
+            },
+            {
+              "@type": "City",
+              "name": "Livingston"
+            }
+          ],
+          "priceRange": "££",
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              "opens": "09:00",
+              "closes": "17:00"
+            }
+          ],
+          "sameAs": [
+            "https://uk.trustpilot.com/review/404codelab.com",
+            "https://www.linkedin.com/company/404-code-lab",
+            "https://github.com/404codelab"
+          ]
+        })}
+      </script>
+      
       <div className="min-h-screen bg-background text-foreground">
         <StaticNavigation />
       
@@ -63,12 +130,12 @@ const Index = () => {
         <div className="relative z-10 text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg">🎉 Limited Time Offer - 20% Off All Projects</Badge>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] md:whitespace-nowrap md:ml-[-10%] mx-auto">
-            Fast, sharp websites for your business
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] mx-auto">
+            Fast, Sharp Websites for Edinburgh & Glasgow Businesses
           </h1>
           
           <p className="text-xl mb-8 text-background dark:text-foreground drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] max-w-2xl mx-auto leading-relaxed px-4">
-            Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality.
+            Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality. | Serving Edinburgh, Glasgow & Central Scotland
           </p>
 
           {/* View Buttons */}
@@ -159,6 +226,38 @@ const Index = () => {
                 </Link>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Areas Section */}
+      <section className="py-20 px-4 bg-muted/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Serving Businesses Across Central Scotland</h2>
+            <p className="text-xl text-muted-foreground">Professional web development, mobile apps, and game development services throughout the Central Belt</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {[
+              { city: "Edinburgh", description: "Capital city digital solutions" },
+              { city: "Glasgow", description: "West Coast web development" },
+              { city: "Stirling", description: "Historic city tech services" },
+              { city: "Falkirk", description: "Central Belt app development" },
+              { city: "Livingston", description: "West Lothian web design" },
+              { city: "Dunfermline", description: "Fife digital services" },
+              { city: "Hamilton", description: "South Lanarkshire solutions" },
+              { city: "Paisley", description: "Renfrewshire web services" },
+              { city: "East Kilbride", description: "Tech for local businesses" },
+              { city: "Cumbernauld", description: "North Lanarkshire apps" }
+            ].map((area, index) => (
+              <Card key={index} className="text-center hover:border-primary/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-lg mb-2 text-foreground">{area.city}</h3>
+                  <p className="text-sm text-muted-foreground">{area.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
