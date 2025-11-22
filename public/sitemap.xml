@@ -97,4 +97,30 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <!-- Location-specific landing pages -->
+  <url>
+    <loc>https://404codelab.com/web-development-edinburgh</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://404codelab.com/web-development-glasgow</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://404codelab.com/app-development-edinburgh</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://404codelab.com/app-development-glasgow</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
 </urlset>
