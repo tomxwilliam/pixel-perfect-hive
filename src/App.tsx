@@ -59,6 +59,12 @@ import WebDevelopmentAds from "./pages/ads/WebDevelopmentAds";
 import GameDevelopmentAds from "./pages/ads/GameDevelopmentAds";
 import AppDevelopmentAds from "./pages/ads/AppDevelopmentAds";
 
+// Location Landing Pages
+import WebDevelopmentEdinburgh from "./pages/location/WebDevelopmentEdinburgh";
+import WebDevelopmentGlasgow from "./pages/location/WebDevelopmentGlasgow";
+import AppDevelopmentEdinburgh from "./pages/location/AppDevelopmentEdinburgh";
+import AppDevelopmentGlasgow from "./pages/location/AppDevelopmentGlasgow";
+
 
 const queryClient = new QueryClient();
 
@@ -118,6 +124,12 @@ const App = () => (
               <Route path="/ads/web-development" element={<WebDevelopmentAds />} />
               <Route path="/ads/game-development" element={<GameDevelopmentAds />} />
               <Route path="/ads/app-development" element={<AppDevelopmentAds />} />
+              
+              {/* Location Landing Pages */}
+              <Route path="/web-development-edinburgh" element={<WebDevelopmentEdinburgh />} />
+              <Route path="/web-development-glasgow" element={<WebDevelopmentGlasgow />} />
+              <Route path="/app-development-edinburgh" element={<AppDevelopmentEdinburgh />} />
+              <Route path="/app-development-glasgow" element={<AppDevelopmentGlasgow />} />
               
               {/* Authentication */}
               <Route path="/auth" element={<Auth />} />

@@ -59,6 +59,7 @@ interface EnhancedLandingTemplateProps {
   heroStats?: { label: string; value: string }[];
   techStack?: string[];
   faq?: { question: string; answer: string }[];
+  customSection?: ReactNode;
   seo?: { title: string; description: string; noIndex?: boolean };
 }
 
@@ -80,6 +81,7 @@ export default function EnhancedLandingTemplate({
   heroStats,
   techStack,
   faq,
+  customSection,
   seo,
 }: EnhancedLandingTemplateProps) {
   const jsonLd = {
@@ -299,6 +301,9 @@ export default function EnhancedLandingTemplate({
             </div>
           </section>
         )}
+
+        {/* Custom Section */}
+        {customSection && customSection}
 
         {/* Pricing */}
         {pricing && pricing.length > 0 && (
