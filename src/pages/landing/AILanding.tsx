@@ -1,7 +1,16 @@
 import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplate";
 import { Brain, Zap, Users, TrendingUp, Code, Settings, BarChart, MessageSquare } from "lucide-react";
+import { generateServiceSchema, generateBreadcrumbSchema, AI_INTEGRATION_SERVICE } from "@/lib/schema";
 
 export default function AILanding() {
+  const schemas = [
+    generateServiceSchema(AI_INTEGRATION_SERVICE),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "AI Integration", url: "https://404codelab.com/services/ai-integration" }
+    ])
+  ];
+  
   return (
     <EnhancedLandingTemplate
       title="AI Integration"
@@ -180,6 +189,7 @@ export default function AILanding() {
       seo={{
         title: "AI Integration Edinburgh & Glasgow | Scotland | 404 Code Lab",
         description: "AI integration services across Scotland's Central Belt. Custom AI solutions for Edinburgh and Glasgow businesses. Chatbots, automation, predictive analytics, machine learning. Reduce costs and boost efficiency.",
+        jsonLd: schemas
       }}
     />
   );

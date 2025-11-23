@@ -2,8 +2,30 @@ import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplat
 import { Smartphone, MapPin, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export default function AppDevelopmentEdinburgh() {
+  const edinburghAppService = {
+    name: "App Development in Edinburgh",
+    description: "Professional mobile app development for Edinburgh businesses. iOS, Android, and cross-platform apps for Scotland's capital. Serving tourism, finance, and hospitality sectors.",
+    serviceType: "Mobile Application Development",
+    areaServed: ["Edinburgh", "Leith", "New Town", "Old Town", "Morningside", "Scotland"],
+    offers: [
+      { name: "Edinburgh MVP App", price: "15999", priceCurrency: "GBP" },
+      { name: "Edinburgh Growth App", price: "29999", priceCurrency: "GBP" },
+      { name: "Edinburgh Enterprise App", price: "50999", priceCurrency: "GBP" }
+    ]
+  };
+
+  const schemas = [
+    generateServiceSchema(edinburghAppService),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "App Development", url: "https://404codelab.com/services/mobile-apps" },
+      { name: "Edinburgh", url: "https://404codelab.com/app-development-edinburgh" }
+    ])
+  ];
+
   return (
     <EnhancedLandingTemplate
       title="App Development in Edinburgh"
@@ -223,6 +245,7 @@ export default function AppDevelopmentEdinburgh() {
       seo={{
         title: "App Development Edinburgh | Mobile App Developer Edinburgh Scotland - 404 Code Lab",
         description: "Professional mobile app development in Edinburgh. iOS, Android & cross-platform apps for Edinburgh businesses. Expert development for tourism, finance, hospitality. Call +44 7864 502527",
+        jsonLd: schemas
       }}
     />
   );

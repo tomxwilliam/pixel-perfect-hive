@@ -2,8 +2,30 @@ import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplat
 import { Globe, MapPin, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export default function WebDevelopmentEdinburgh() {
+  const edinburghWebService = {
+    name: "Web Development in Edinburgh",
+    description: "Professional web design and development services for Edinburgh businesses. Custom websites, web applications, and e-commerce solutions in Scotland's capital.",
+    serviceType: "Web Development",
+    areaServed: ["Edinburgh", "Leith", "New Town", "Old Town", "Morningside", "Stockbridge", "Scotland"],
+    offers: [
+      { name: "Edinburgh Landing Page", price: "2999", priceCurrency: "GBP" },
+      { name: "Edinburgh Business Website", price: "5999", priceCurrency: "GBP" },
+      { name: "Edinburgh Web App", price: "12999", priceCurrency: "GBP" }
+    ]
+  };
+
+  const schemas = [
+    generateServiceSchema(edinburghWebService),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "Web Development", url: "https://404codelab.com/services/web-development" },
+      { name: "Edinburgh", url: "https://404codelab.com/web-development-edinburgh" }
+    ])
+  ];
+
   return (
     <EnhancedLandingTemplate
       title="Web Development in Edinburgh"
@@ -223,6 +245,7 @@ export default function WebDevelopmentEdinburgh() {
       seo={{
         title: "Web Development Edinburgh | Website Design Edinburgh Scotland - 404 Code Lab",
         description: "Professional web development in Edinburgh. Custom websites, e-commerce, and web applications for Edinburgh businesses. Expert local SEO. Serving Leith, Morningside, Stockbridge. Call +44 7864 502527",
+        jsonLd: schemas
       }}
     />
   );

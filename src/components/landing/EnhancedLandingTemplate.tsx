@@ -60,7 +60,7 @@ interface EnhancedLandingTemplateProps {
   techStack?: string[];
   faq?: { question: string; answer: string }[];
   customSection?: ReactNode;
-  seo?: { title: string; description: string; noIndex?: boolean };
+  seo?: { title: string; description: string; noIndex?: boolean; jsonLd?: Record<string, any> | Record<string, any>[] };
 }
 
 export default function EnhancedLandingTemplate({
@@ -94,7 +94,7 @@ export default function EnhancedLandingTemplate({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {seo && <Seo title={seo.title} description={seo.description} jsonLd={jsonLd} noIndex={seo.noIndex} />}
+      {seo && <Seo title={seo.title} description={seo.description} jsonLd={seo.jsonLd || jsonLd} noIndex={seo.noIndex} />}
       <StaticNavigation />
       
       {/* Hero Section */}

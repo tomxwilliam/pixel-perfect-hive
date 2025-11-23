@@ -2,8 +2,30 @@ import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplat
 import { Globe, MapPin, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export default function WebDevelopmentGlasgow() {
+  const glasgowWebService = {
+    name: "Web Development in Glasgow",
+    description: "Expert web design and development services for Glasgow businesses. Custom websites, web applications, and e-commerce solutions in Scotland's largest city.",
+    serviceType: "Web Development",
+    areaServed: ["Glasgow", "West End", "Merchant City", "Finnieston", "Shawlands", "Partick", "Scotland"],
+    offers: [
+      { name: "Glasgow Landing Page", price: "2999", priceCurrency: "GBP" },
+      { name: "Glasgow Business Website", price: "5999", priceCurrency: "GBP" },
+      { name: "Glasgow Web App", price: "12999", priceCurrency: "GBP" }
+    ]
+  };
+
+  const schemas = [
+    generateServiceSchema(glasgowWebService),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "Web Development", url: "https://404codelab.com/services/web-development" },
+      { name: "Glasgow", url: "https://404codelab.com/web-development-glasgow" }
+    ])
+  ];
+
   return (
     <EnhancedLandingTemplate
       title="Web Development in Glasgow"
@@ -223,6 +245,7 @@ export default function WebDevelopmentGlasgow() {
       seo={{
         title: "Web Development Glasgow | Website Design Glasgow Scotland - 404 Code Lab",
         description: "Expert web development in Glasgow. Custom websites, e-commerce, and web applications for Glasgow businesses. Professional local SEO. Serving West End, Merchant City, Finnieston. Call +44 7864 502527",
+        jsonLd: schemas
       }}
     />
   );

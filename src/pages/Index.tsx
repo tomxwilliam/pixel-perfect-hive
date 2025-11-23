@@ -9,6 +9,17 @@ import Seo from '@/components/Seo';
 import { useFeaturedContent } from "@/hooks/useFeaturedContent";
 import { usePageContent } from "@/hooks/usePageContent";
 import LetterGlitch from "@/components/LetterGlitch";
+import { 
+  generateLocalBusinessSchema, 
+  generateOrganizationSchema,
+  generateBreadcrumbSchema,
+  generateWebPageSchema,
+  WEB_DEVELOPMENT_SERVICE,
+  APP_DEVELOPMENT_SERVICE,
+  GAME_DEVELOPMENT_SERVICE,
+  AI_INTEGRATION_SERVICE,
+  generateServiceSchema
+} from "@/lib/schema";
 const FeaturedContentSection = () => {
   const {
     data: featuredContent
@@ -48,74 +59,41 @@ const Index = () => {
   const {
     data: pageContent
   } = usePageContent('/');
+  
+  // Generate comprehensive schemas
+  const schemas = [
+    generateLocalBusinessSchema(),
+    generateOrganizationSchema(),
+    generateServiceSchema(WEB_DEVELOPMENT_SERVICE),
+    generateServiceSchema(APP_DEVELOPMENT_SERVICE),
+    generateServiceSchema(GAME_DEVELOPMENT_SERVICE),
+    generateServiceSchema(AI_INTEGRATION_SERVICE),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" }
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "404 Code Lab",
+      url: "https://404codelab.com",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://404codelab.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ];
+  
   return <>
       <Seo 
         title={pageContent?.meta_title || "Web Development Edinburgh & Glasgow | Mobile Apps & Games Scotland - 404 Code Lab"} 
         description={pageContent?.meta_description || "Expert web development, mobile app creation, and game development services in Edinburgh, Glasgow & Central Scotland. Professional digital solutions for Scottish businesses."} 
-        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"} 
+        canonicalUrl={pageContent?.canonical_url || "https://404codelab.com"}
+        jsonLd={schemas}
       />
-      
-      {/* LocalBusiness JSON-LD Schema */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          "name": "404 Code Lab",
-          "image": "https://404codelab.com/assets/logo-dark.png",
-          "url": "https://404codelab.com",
-          "telephone": "+44-7864-502527",
-          "email": "hello@404codelab.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Central Scotland",
-            "addressLocality": "Edinburgh",
-            "addressRegion": "Scotland",
-            "postalCode": "EH",
-            "addressCountry": "GB"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 55.9533,
-            "longitude": -3.1883
-          },
-          "areaServed": [
-            {
-              "@type": "City",
-              "name": "Edinburgh"
-            },
-            {
-              "@type": "City",
-              "name": "Glasgow"
-            },
-            {
-              "@type": "City",
-              "name": "Stirling"
-            },
-            {
-              "@type": "City",
-              "name": "Falkirk"
-            },
-            {
-              "@type": "City",
-              "name": "Livingston"
-            }
-          ],
-          "priceRange": "££",
-          "openingHoursSpecification": [
-            {
-              "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              "opens": "09:00",
-              "closes": "17:00"
-            }
-          ],
-          "sameAs": [
-            "https://uk.trustpilot.com/review/404codelab.com",
-            "https://www.linkedin.com/company/404-code-lab",
-            "https://github.com/404codelab"
-          ]
-        })}
-      </script>
       
       <div className="min-h-screen bg-background text-foreground">
         <StaticNavigation />

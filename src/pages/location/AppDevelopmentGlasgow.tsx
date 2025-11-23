@@ -2,8 +2,30 @@ import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplat
 import { Smartphone, MapPin, TrendingUp, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { generateServiceSchema, generateBreadcrumbSchema } from "@/lib/schema";
 
 export default function AppDevelopmentGlasgow() {
+  const glasgowAppService = {
+    name: "App Development in Glasgow",
+    description: "Expert mobile app development for Glasgow businesses. iOS, Android, and cross-platform apps for Scotland's largest city. Specialist development for events, retail, and hospitality.",
+    serviceType: "Mobile Application Development",
+    areaServed: ["Glasgow", "West End", "Merchant City", "Finnieston", "Shawlands", "Scotland"],
+    offers: [
+      { name: "Glasgow MVP App", price: "15999", priceCurrency: "GBP" },
+      { name: "Glasgow Growth App", price: "29999", priceCurrency: "GBP" },
+      { name: "Glasgow Enterprise App", price: "50999", priceCurrency: "GBP" }
+    ]
+  };
+
+  const schemas = [
+    generateServiceSchema(glasgowAppService),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "App Development", url: "https://404codelab.com/services/mobile-apps" },
+      { name: "Glasgow", url: "https://404codelab.com/app-development-glasgow" }
+    ])
+  ];
+
   return (
     <EnhancedLandingTemplate
       title="App Development in Glasgow"
@@ -223,6 +245,7 @@ export default function AppDevelopmentGlasgow() {
       seo={{
         title: "App Development Glasgow | Mobile App Developer Glasgow Scotland - 404 Code Lab",
         description: "Expert mobile app development in Glasgow. iOS, Android & cross-platform apps for Glasgow businesses. Specialist development for events, retail, hospitality. Call +44 7864 502527",
+        jsonLd: schemas
       }}
     />
   );

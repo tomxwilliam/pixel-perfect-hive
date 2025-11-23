@@ -1,7 +1,16 @@
 import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplate";
 import { Smartphone, Zap, Users, Star, Code, Palette, Play, Store } from "lucide-react";
+import { generateServiceSchema, generateBreadcrumbSchema, APP_DEVELOPMENT_SERVICE } from "@/lib/schema";
 
 export default function AppsLanding() {
+  const schemas = [
+    generateServiceSchema(APP_DEVELOPMENT_SERVICE),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "Mobile App Development", url: "https://404codelab.com/services/mobile-apps" }
+    ])
+  ];
+  
   return (
     <EnhancedLandingTemplate
       title="Mobile App Development"
@@ -180,6 +189,7 @@ export default function AppsLanding() {
       seo={{
         title: "Mobile App Development Edinburgh & Glasgow | Scotland | 404 Code Lab",
         description: "Professional mobile app development across Scotland's Central Belt. iOS & Android apps for Edinburgh, Glasgow, and Scottish businesses. React Native, native development, UI/UX design. Get your quote!",
+        jsonLd: schemas
       }}
     />
   );

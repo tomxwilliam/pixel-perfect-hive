@@ -6,9 +6,19 @@ interface SeoProps {
   canonicalUrl?: string;
   jsonLd?: Record<string, any> | Record<string, any>[];
   noIndex?: boolean;
+  includeOrganization?: boolean;
+  includeLocalBusiness?: boolean;
 }
 
-export default function Seo({ title, description, canonicalUrl, jsonLd, noIndex }: SeoProps) {
+export default function Seo({ 
+  title, 
+  description, 
+  canonicalUrl, 
+  jsonLd, 
+  noIndex,
+  includeOrganization = false,
+  includeLocalBusiness = false
+}: SeoProps) {
   useEffect(() => {
     // Title
     if (title) document.title = title;
@@ -45,15 +55,22 @@ export default function Seo({ title, description, canonicalUrl, jsonLd, noIndex 
       robots.content = noIndex ? "noindex, nofollow" : "index, follow";
     }
 
-    // Structured data
+    // Structured data - handle both single schema and array of schemas
     const scriptId = "seo-json-ld";
     const existing = document.getElementById(scriptId);
     if (existing) existing.remove();
+    
     if (jsonLd) {
       const script = document.createElement("script");
       script.type = "application/ld+json";
       script.id = scriptId;
-      script.text = JSON.stringify(jsonLd);
+      
+      // If it's an array of schemas, wrap in @graph
+      const schemaData = Array.isArray(jsonLd) 
+        ? { "@context": "https://schema.org", "@graph": jsonLd }
+        : jsonLd;
+      
+      script.text = JSON.stringify(schemaData);
       document.head.appendChild(script);
     }
 
@@ -62,7 +79,7 @@ export default function Seo({ title, description, canonicalUrl, jsonLd, noIndex 
       const s = document.getElementById(scriptId);
       if (s) s.remove();
     };
-  }, [title, description, canonicalUrl, JSON.stringify(jsonLd), noIndex]);
+  }, [title, description, canonicalUrl, JSON.stringify(jsonLd), noIndex, includeOrganization, includeLocalBusiness]);
 
   return null;
 }
