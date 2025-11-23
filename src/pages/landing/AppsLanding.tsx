@@ -6,7 +6,7 @@ export default function AppsLanding() {
     <EnhancedLandingTemplate
       title="Mobile App Development"
       subtitle="Create Apps That Users Love"
-      intro="From concept to App Store success, we build beautiful, high-performance mobile apps that engage users and drive business growth. Native quality, cross-platform efficiency."
+      intro="From concept to App Store success, we build beautiful, high-performance mobile apps that engage users and drive business growth. Serving Edinburgh, Glasgow, and across Scotland's Central Belt with native quality and cross-platform efficiency."
       icon={<Smartphone className="h-4 w-4" />}
       
       heroStats={[
@@ -178,8 +178,8 @@ export default function AppsLanding() {
       secondaryCtaHref="/app-portfolio"
       
       seo={{
-        title: "Professional Mobile App Development | iOS & Android | 404 Code Lab",
-        description: "Custom mobile app development for iOS and Android. React Native, native development, UI/UX design, and App Store optimisation. Get your quote today!",
+        title: "Mobile App Development Edinburgh & Glasgow | Scotland | 404 Code Lab",
+        description: "Professional mobile app development across Scotland's Central Belt. iOS & Android apps for Edinburgh, Glasgow, and Scottish businesses. React Native, native development, UI/UX design. Get your quote!",
       }}
     />
   );

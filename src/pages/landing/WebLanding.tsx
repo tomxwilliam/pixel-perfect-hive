@@ -6,7 +6,7 @@ export default function WebLanding() {
     <EnhancedLandingTemplate
       title="Web Development"
       subtitle="Build Powerful Web Apps That Convert"
-      intro="Transform your business with modern, lightning-fast websites and web applications that drive real results. From concept to launch, we create digital experiences that captivate users and boost your bottom line."
+      intro="Transform your business with modern, lightning-fast websites and web applications that drive real results. Serving Edinburgh, Glasgow, and businesses across Scotland's Central Belt, we create digital experiences that captivate users and boost your bottom line."
       icon={<Globe className="h-4 w-4" />}
       
       heroStats={[
@@ -178,8 +178,8 @@ export default function WebLanding() {
       secondaryCtaHref="/web-portfolio"
       
       seo={{
-        title: "Professional Web Development Services | 404 Code Lab",
-        description: "Custom websites and web applications that drive results. Fast, secure, SEO-optimised development with modern technologies. Get a quote today!",
+        title: "Web Development Edinburgh & Glasgow | Scotland | 404 Code Lab",
+        description: "Professional web development services across Scotland's Central Belt. Serving Edinburgh, Glasgow, and beyond with custom websites, web apps, and e-commerce solutions. Get your quote today!",
       }}
     />
   );

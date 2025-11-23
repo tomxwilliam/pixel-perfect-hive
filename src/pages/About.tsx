@@ -28,8 +28,8 @@ const About = () => {
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            404 Code Lab is a Scottish-based indie dev studio creating standout digital experiences. 
-            Whether it's a buzzing game, a smooth mobile app, or a sharp website — we bring bold ideas to life.
+            404 Code Lab is a Scotland-based indie dev studio creating standout digital experiences across the Central Belt. 
+            From Edinburgh to Glasgow and everywhere in between, whether it's a buzzing game, a smooth mobile app, or a sharp website — we bring bold ideas to life.
           </p>
         </div>
       </section>
@@ -45,8 +45,8 @@ const About = () => {
                 that people actually want to use — no filler, no fluff, just pure engagement.
               </p>
               <p className="text-muted-foreground text-lg leading-relaxed">
-                From the bustling streets of Scotland to screens worldwide, we craft everything ourselves. 
-                One studio. One vision. Zero templates.
+                From Edinburgh's historic streets to Glasgow's creative quarters, across the Central Belt to screens worldwide, 
+                we craft everything ourselves. One studio. One vision. Zero templates.
               </p>
             </div>
             
@@ -123,8 +123,8 @@ const About = () => {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-bold mb-4 text-primary">Custom Web Development</h3>
                   <p className="text-muted-foreground mb-4">
-                    Scotland-based web development studio specialising in responsive websites, progressive web applications, 
-                    and custom e-commerce solutions built with React, TypeScript, and modern frameworks.
+                    Central Belt web development studio specialising in responsive websites, progressive web applications, 
+                    and custom e-commerce solutions. Serving Edinburgh, Glasgow, and businesses across Scotland with React, TypeScript, and modern frameworks.
                   </p>
                   <a href="/portfolio/web" className="text-primary hover:text-primary/80 font-medium">
                     View Web Projects →
@@ -149,8 +149,8 @@ const About = () => {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-bold mb-4 text-primary">Mobile App Development</h3>
                   <p className="text-muted-foreground mb-4">
-                    Professional mobile application development for iOS and Android. Creating intuitive, 
-                    high-performance apps for startups and established businesses throughout Scotland and the UK.
+                    Professional mobile application development for iOS and Android across the Central Belt. 
+                    Creating intuitive, high-performance apps for Edinburgh and Glasgow startups, plus established businesses throughout Scotland and the UK.
                   </p>
                   <a href="/portfolio/apps" className="text-primary hover:text-primary/80 font-medium">
                     View App Portfolio →
@@ -176,19 +176,22 @@ const About = () => {
             <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4 text-center text-foreground">
-                  Scottish Digital Development Studio Serving Global Clients
+                  Central Belt Digital Studio Serving Scotland & Beyond
                 </h3>
                 <p className="text-lg text-muted-foreground text-center max-w-3xl mx-auto mb-6">
-                  Based in Scotland, 404 Code Lab provides professional software development, web design, game development, 
-                  and mobile app creation services to clients across the United Kingdom and internationally. 
-                  We combine local Scottish creativity with global technical expertise.
+                  Based in Scotland's Central Belt, 404 Code Lab serves Edinburgh, Glasgow, and businesses throughout the region. 
+                  We provide professional software development, web design, game development, and mobile app creation services 
+                  to clients across the United Kingdom and internationally. Combining Edinburgh's technical excellence with 
+                  Glasgow's creative innovation, we deliver world-class solutions with local expertise.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
-                  <span>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland-based</span>
+                  <span>🏴󠁧󠁢󠁳󠁣󠁴󠁿 Central Belt based</span>
                   <span>•</span>
-                  <span>🇬🇧 UK-wide service</span>
+                  <span>🏙️ Edinburgh & Glasgow</span>
                   <span>•</span>
-                  <span>🌍 International clients</span>
+                  <span>🇬󠁢 Scotland-wide service</span>
+                  <span>•</span>
+                  <span>🌍 International reach</span>
                   <span>•</span>
                   <span>💼 Professional development</span>
                 </div>
