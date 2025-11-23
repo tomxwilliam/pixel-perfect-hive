@@ -1,7 +1,16 @@
 import EnhancedLandingTemplate from "@/components/landing/EnhancedLandingTemplate";
 import { Globe, Search, Smartphone, Zap, Code, Palette, Users, Calendar } from "lucide-react";
+import { generateServiceSchema, generateBreadcrumbSchema, WEB_DEVELOPMENT_SERVICE } from "@/lib/schema";
 
 export default function WebLanding() {
+  const schemas = [
+    generateServiceSchema(WEB_DEVELOPMENT_SERVICE),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "Web Development", url: "https://404codelab.com/services/web-development" }
+    ])
+  ];
+  
   return (
     <EnhancedLandingTemplate
       title="Web Development"
@@ -180,6 +189,7 @@ export default function WebLanding() {
       seo={{
         title: "Web Development Edinburgh & Glasgow | Scotland | 404 Code Lab",
         description: "Professional web development services across Scotland's Central Belt. Serving Edinburgh, Glasgow, and beyond with custom websites, web apps, and e-commerce solutions. Get your quote today!",
+        jsonLd: schemas
       }}
     />
   );

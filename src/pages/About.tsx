@@ -5,14 +5,39 @@ import { StaticNavigation } from "@/components/StaticNavigation";
 import { Footer } from "@/components/Footer";
 import Seo from "@/components/Seo";
 import { usePageContent } from "@/hooks/usePageContent";
+import { 
+  generateOrganizationSchema, 
+  generateBreadcrumbSchema, 
+  generateWebPageSchema,
+  WEB_DEVELOPMENT_SERVICE,
+  APP_DEVELOPMENT_SERVICE,
+  GAME_DEVELOPMENT_SERVICE,
+  AI_INTEGRATION_SERVICE,
+  generateServiceSchema
+} from "@/lib/schema";
+
 const About = () => {
   const { data: pageContent } = usePageContent('/about');
+
+  const schemas = [
+    generateOrganizationSchema(),
+    generateBreadcrumbSchema([
+      { name: "Home", url: "https://404codelab.com" },
+      { name: "About", url: "https://404codelab.com/about" }
+    ]),
+    ...generateWebPageSchema({
+      name: "About 404 Code Lab - Scotland Digital Studio",
+      description: "Learn about 404 Code Lab, Scotland's Central Belt digital development studio serving Edinburgh, Glasgow, and beyond.",
+      url: "https://404codelab.com/about"
+    })
+  ];
 
   return <div className="min-h-screen bg-background text-foreground">
       <Seo 
         title={pageContent?.meta_title || "About 404 Code Lab - Scotland-Based Digital Studio"}
         description={pageContent?.meta_description || "Learn about 404 Code Lab, a Scotland-based digital studio."}
         canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/about"}
+        jsonLd={schemas}
       />
       <StaticNavigation />
       
