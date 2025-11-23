@@ -6,7 +6,7 @@ export default function AILanding() {
     <EnhancedLandingTemplate
       title="AI Integration"
       subtitle="Supercharge Your Business with AI"
-      intro="Transform your operations with intelligent AI solutions. From customer support chatbots to predictive analytics, we integrate cutting-edge AI that delivers measurable results and competitive advantages."
+      intro="Transform your operations with intelligent AI solutions. Serving Edinburgh, Glasgow, and businesses across Scotland's Central Belt, we integrate cutting-edge AI – from customer support chatbots to predictive analytics – that delivers measurable results and competitive advantages."
       icon={<Brain className="h-4 w-4" />}
       
       heroStats={[
@@ -178,8 +178,8 @@ export default function AILanding() {
       secondaryCtaHref="/contact"
       
       seo={{
-        title: "AI Integration Services | Custom AI Solutions | 404 Code Lab",
-        description: "Transform your business with custom AI solutions. Chatbots, automation, predictive analytics, and machine learning. Reduce costs and boost efficiency.",
+        title: "AI Integration Edinburgh & Glasgow | Scotland | 404 Code Lab",
+        description: "AI integration services across Scotland's Central Belt. Custom AI solutions for Edinburgh and Glasgow businesses. Chatbots, automation, predictive analytics, machine learning. Reduce costs and boost efficiency.",
       }}
     />
   );
