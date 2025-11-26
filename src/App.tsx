@@ -11,59 +11,63 @@ import { CookieConsentProvider, useCookieConsent } from "@/hooks/useCookieConsen
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { CookiePreferenceCenter } from "@/components/CookiePreferenceCenter";
 import { initializeAnalytics, trackPageView } from "@/lib/analytics";
-import { useEffect } from "react";
-// Pages
+import { useEffect, lazy, Suspense } from "react";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
+
+// Critical pages - load immediately
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import ProjectManagement from "./pages/ProjectManagement";
-import NotFound from "./pages/NotFound";
-import Support from "./pages/Support";
-import UserSettings from "./pages/UserSettings";
+
+// Lazy load all other pages for better performance
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ProjectManagement = lazy(() => import("./pages/ProjectManagement"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Support = lazy(() => import("./pages/Support"));
+const UserSettings = lazy(() => import("./pages/UserSettings"));
 
 // Portfolio pages
-import GamePortfolio from "./pages/GamePortfolio";
-import AppPortfolio from "./pages/AppPortfolio";  
-import WebPortfolio from "./pages/WebPortfolio";
+const GamePortfolio = lazy(() => import("./pages/GamePortfolio"));
+const AppPortfolio = lazy(() => import("./pages/AppPortfolio"));
+const WebPortfolio = lazy(() => import("./pages/WebPortfolio"));
 
 // Service pages
-import AIIntegration from "./pages/services/AIIntegration";
+const AIIntegration = lazy(() => import("./pages/services/AIIntegration"));
 
 // Dashboard pages
-import NewProject from "./pages/dashboard/NewProject";
-import NewTicket from "./pages/dashboard/NewTicket";
-import BookCall from "./pages/dashboard/BookCall";
-import Subscriptions from "./pages/dashboard/Subscriptions";
+const NewProject = lazy(() => import("./pages/dashboard/NewProject"));
+const NewTicket = lazy(() => import("./pages/dashboard/NewTicket"));
+const BookCall = lazy(() => import("./pages/dashboard/BookCall"));
+const Subscriptions = lazy(() => import("./pages/dashboard/Subscriptions"));
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import { AdminAccounting } from "./components/admin/AdminAccounting";
-import AdminSettings from "./components/admin/AdminSettings";
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminAccounting = lazy(() => import("./components/admin/AdminAccounting").then(m => ({ default: m.AdminAccounting })));
+const AdminSettings = lazy(() => import("./components/admin/AdminSettings"));
 
 // Legal pages
-import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
-import TermsOfService from "./pages/legal/TermsOfService";
-import RefundsPolicy from "./pages/legal/RefundsPolicy";
-import CookiePolicy from "./pages/legal/CookiePolicy";
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
+const RefundsPolicy = lazy(() => import("./pages/legal/RefundsPolicy"));
+const CookiePolicy = lazy(() => import("./pages/legal/CookiePolicy"));
 
 // Blog pages
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import BlogCategory from "./pages/BlogCategory";
-import BlogTag from "./pages/BlogTag";
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const BlogCategory = lazy(() => import("./pages/BlogCategory"));
+const BlogTag = lazy(() => import("./pages/BlogTag"));
 
 // Google Ads Landing Pages
-import WebDevelopmentAds from "./pages/ads/WebDevelopmentAds";
-import GameDevelopmentAds from "./pages/ads/GameDevelopmentAds";
-import AppDevelopmentAds from "./pages/ads/AppDevelopmentAds";
+const WebDevelopmentAds = lazy(() => import("./pages/ads/WebDevelopmentAds"));
+const GameDevelopmentAds = lazy(() => import("./pages/ads/GameDevelopmentAds"));
+const AppDevelopmentAds = lazy(() => import("./pages/ads/AppDevelopmentAds"));
 
 // Location Landing Pages
-import WebDevelopmentEdinburgh from "./pages/location/WebDevelopmentEdinburgh";
-import WebDevelopmentGlasgow from "./pages/location/WebDevelopmentGlasgow";
-import AppDevelopmentEdinburgh from "./pages/location/AppDevelopmentEdinburgh";
-import AppDevelopmentGlasgow from "./pages/location/AppDevelopmentGlasgow";
+const WebDevelopmentEdinburgh = lazy(() => import("./pages/location/WebDevelopmentEdinburgh"));
+const WebDevelopmentGlasgow = lazy(() => import("./pages/location/WebDevelopmentGlasgow"));
+const AppDevelopmentEdinburgh = lazy(() => import("./pages/location/AppDevelopmentEdinburgh"));
+const AppDevelopmentGlasgow = lazy(() => import("./pages/location/AppDevelopmentGlasgow"));
 
 
 const queryClient = new QueryClient();
@@ -100,7 +104,8 @@ const App = () => (
             <BrowserRouter>
               <AnalyticsTracker />
               <ScrollToTop />
-              <Routes>
+              <Suspense fallback={<PageSkeleton />}>
+                <Routes>
               {/* Main pages */}
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
@@ -187,7 +192,8 @@ const App = () => (
               {/* 404 page */}
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
+                </Routes>
+              </Suspense>
             <CookieConsentBanner />
             <CookiePreferenceCenter />
           </BrowserRouter>

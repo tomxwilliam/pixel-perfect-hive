@@ -240,6 +240,136 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Why Choose Us Section */}
+      <section className="py-20 px-4 bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-6 text-foreground">Why Choose 404 Code Lab?</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              We're a Glasgow-based development studio combining technical expertise with creative innovation. 
+              Our approach focuses on delivering exceptional results that exceed expectations.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="border-border hover:border-primary/50 transition-all">
+              <CardContent className="p-6 text-center">
+                <Code className="h-10 w-10 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-3">Expert Development</h3>
+                <p className="text-muted-foreground">
+                  Years of experience in React, React Native, Unity, and modern web technologies.
+                  We build scalable solutions using industry best practices.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border hover:border-accent/50 transition-all">
+              <CardContent className="p-6 text-center">
+                <Zap className="h-10 w-10 text-accent mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-3">Fast Turnaround</h3>
+                <p className="text-muted-foreground">
+                  Rapid development cycles mean your product reaches market faster. 
+                  We deliver MVPs in weeks, not months.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border hover:border-primary/50 transition-all">
+              <CardContent className="p-6 text-center">
+                <Users className="h-10 w-10 text-primary mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-3">Collaborative Process</h3>
+                <p className="text-muted-foreground">
+                  You're involved every step of the way. Regular updates, clear communication,
+                  and transparent project management.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border hover:border-accent/50 transition-all">
+              <CardContent className="p-6 text-center">
+                <Smartphone className="h-10 w-10 text-accent mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-3">Mobile-First Design</h3>
+                <p className="text-muted-foreground">
+                  Every project is optimized for mobile devices. Responsive design ensures
+                  perfect performance across all screen sizes.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Frequently Asked Questions</h2>
+            <p className="text-xl text-muted-foreground">Everything you need to know about working with 404 Code Lab</p>
+          </div>
+
+          <div className="space-y-6">
+            <Card className="border-border">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-3 text-foreground">How long does a typical web development project take?</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Project timelines vary depending on complexity. A simple brochure website takes 2-3 weeks, 
+                  while a custom web application with database integration typically requires 6-12 weeks. 
+                  Mobile apps range from 8-16 weeks depending on features. We provide detailed timelines during 
+                  our initial consultation and keep you updated throughout the development process.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-3 text-foreground">What technologies do you specialize in?</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  We specialize in modern web technologies including React, TypeScript, Node.js, and Tailwind CSS 
+                  for web development. For mobile apps, we use React Native for cross-platform development and Swift/Kotlin 
+                  for native iOS/Android apps. Our game development expertise includes Unity, C#, and mobile game optimization. 
+                  We also integrate AI services, payment systems like Stripe, and cloud platforms such as Supabase.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-3 text-foreground">Do you offer ongoing support and maintenance?</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Yes! We provide comprehensive support packages including bug fixes, security updates, feature enhancements, 
+                  and technical support. Our maintenance plans start from £199/month and include regular updates, 
+                  performance monitoring, and priority support. We also offer pay-as-you-go support for clients who 
+                  prefer flexibility over fixed monthly costs.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-3 text-foreground">Can you help with app store submissions?</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Absolutely. We handle the entire app store submission process for both Apple App Store and Google Play Store. 
+                  This includes preparing app metadata, screenshots, privacy policies, and handling the technical submission process. 
+                  We also provide guidance on app store optimization (ASO) to improve your app's visibility and download rates.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border">
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-3 text-foreground">What's your pricing model?</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  We offer flexible pricing based on project scope. Simple websites start from £999, custom web applications 
+                  from £2,999, and mobile apps from £4,999. Game development projects are quoted individually based on 
+                  complexity. We provide detailed fixed-price quotes after an initial consultation, with milestone-based 
+                  payments to ensure transparency. We also offer hourly rates for smaller projects and ongoing support work.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-4 bg-gradient-to-r from-primary/20 to-accent/20">
         <div className="max-w-4xl mx-auto text-center">
