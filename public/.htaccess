@@ -2,6 +2,10 @@
 Options -MultiViews
 RewriteEngine On
 
+# Force HTTPS redirect
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # If the site is at a subfolder, change this. Example: /myapp/
 RewriteBase /
 
@@ -12,6 +16,14 @@ RewriteRule ^ - [L]
 
 # Send everything else to the SPA entry
 RewriteRule ^ index.html [L]
+
+# Security Headers
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
 
 # Set proper MIME types
 <IfModule mod_mime.c>
