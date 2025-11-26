@@ -42,13 +42,13 @@ const MobileTabsList = React.forwardRef<
               <span className="font-medium">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
-            <div className="p-6 border-b">
+          <SheetContent side="left" className="w-[85vw] max-w-sm p-0 flex flex-col">
+            <div className="p-6 border-b flex-shrink-0">
               <h2 className="text-lg font-semibold">Navigation</h2>
             </div>
             <TabsPrimitive.List
               ref={ref}
-              className="flex flex-col space-y-1 p-4"
+              className="flex flex-col space-y-1 p-4 overflow-y-auto flex-1"
               {...props}
             >
               {React.Children.map(children, (child) => {
