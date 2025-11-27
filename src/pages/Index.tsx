@@ -325,12 +325,12 @@ const Index = () => {
 
             <Card className="border-border">
               <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-3 text-foreground">What's your pricing model?</h3>
+                <h3 className="text-xl font-bold mb-3 text-foreground">How does your pricing work?</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  We offer flexible pricing based on project scope. Simple websites start from £999, custom web applications 
-                  from £2,999, and mobile apps from £4,999. Game development projects are quoted individually based on 
-                  complexity. We provide detailed fixed-price quotes after an initial consultation, with milestone-based 
-                  payments to ensure transparency. We also offer hourly rates for smaller projects and ongoing support work.
+                  We offer flexible pricing tailored to each project's scope and requirements. After an initial consultation, 
+                  we provide detailed fixed-price quotes with milestone-based payments to ensure complete transparency. 
+                  We also offer hourly rates for smaller projects and ongoing support work. Contact us for a free quote 
+                  specific to your project needs.
                 </p>
               </CardContent>
             </Card>
