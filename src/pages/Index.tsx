@@ -208,38 +208,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Service Areas Section */}
-      <section className="py-20 px-4 bg-muted/50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4 text-foreground">Serving Businesses Across Central Scotland</h2>
-            <p className="text-xl text-muted-foreground">Professional web development, mobile apps, and game development services throughout the Central Belt</p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {[
-              { city: "Edinburgh", description: "Capital city digital solutions" },
-              { city: "Glasgow", description: "West Coast web development" },
-              { city: "Stirling", description: "Historic city tech services" },
-              { city: "Falkirk", description: "Central Belt app development" },
-              { city: "Livingston", description: "West Lothian web design" },
-              { city: "Dunfermline", description: "Fife digital services" },
-              { city: "Hamilton", description: "South Lanarkshire solutions" },
-              { city: "Paisley", description: "Renfrewshire web services" },
-              { city: "East Kilbride", description: "Tech for local businesses" },
-              { city: "Cumbernauld", description: "North Lanarkshire apps" }
-            ].map((area, index) => (
-              <Card key={index} className="text-center hover:border-primary/50 transition-all">
-                <CardContent className="p-6">
-                  <h3 className="font-bold text-lg mb-2 text-foreground">{area.city}</h3>
-                  <p className="text-sm text-muted-foreground">{area.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Why Choose Us Section */}
       <section className="py-20 px-4 bg-background">
         <div className="max-w-6xl mx-auto">
@@ -366,6 +334,38 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Service Areas Section */}
+      <section className="py-20 px-4 bg-muted/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4 text-foreground">Serving Businesses Across Central Scotland</h2>
+            <p className="text-xl text-muted-foreground">Professional web development, mobile apps, and game development services throughout the Central Belt</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {[
+              { city: "Edinburgh", description: "Capital city digital solutions" },
+              { city: "Glasgow", description: "West Coast web development" },
+              { city: "Stirling", description: "Historic city tech services" },
+              { city: "Falkirk", description: "Central Belt app development" },
+              { city: "Livingston", description: "West Lothian web design" },
+              { city: "Dunfermline", description: "Fife digital services" },
+              { city: "Hamilton", description: "South Lanarkshire solutions" },
+              { city: "Paisley", description: "Renfrewshire web services" },
+              { city: "East Kilbride", description: "Tech for local businesses" },
+              { city: "Cumbernauld", description: "North Lanarkshire apps" }
+            ].map((area, index) => (
+              <Card key={index} className="text-center hover:border-primary/50 transition-all">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-lg mb-2 text-foreground">{area.city}</h3>
+                  <p className="text-sm text-muted-foreground">{area.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
