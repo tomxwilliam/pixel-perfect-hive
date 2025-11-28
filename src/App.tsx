@@ -13,6 +13,7 @@ import { CookiePreferenceCenter } from "@/components/CookiePreferenceCenter";
 import { initializeAnalytics, trackPageView } from "@/lib/analytics";
 import { useEffect, lazy, Suspense } from "react";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
+import MailerLiteButton from "@/components/MailerLiteButton";
 
 // Critical pages - load immediately
 import Index from "./pages/Index";
@@ -196,6 +197,7 @@ const App = () => (
               </Suspense>
             <CookieConsentBanner />
             <CookiePreferenceCenter />
+            <MailerLiteButton />
           </BrowserRouter>
         </TooltipProvider>
         </CookieConsentProvider>
