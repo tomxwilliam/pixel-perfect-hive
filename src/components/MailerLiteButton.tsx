@@ -20,7 +20,7 @@ const MailerLiteButton = () => {
       aria-label="Subscribe to newsletter"
     >
       <Mail className="w-5 h-5" />
-      <span className="hidden sm:inline font-medium">Subscribe</span>
+      <span className="hidden sm:inline font-medium">Free Website Planner</span>
     </button>
   );
 };
