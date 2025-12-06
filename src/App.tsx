@@ -70,6 +70,9 @@ const WebDevelopmentGlasgow = lazy(() => import("./pages/location/WebDevelopment
 const AppDevelopmentEdinburgh = lazy(() => import("./pages/location/AppDevelopmentEdinburgh"));
 const AppDevelopmentGlasgow = lazy(() => import("./pages/location/AppDevelopmentGlasgow"));
 
+// Standalone pages
+const HeroBackground = lazy(() => import("./pages/HeroBackground"));
+
 
 const queryClient = new QueryClient();
 
@@ -136,6 +139,9 @@ const App = () => (
               <Route path="/web-development-glasgow" element={<WebDevelopmentGlasgow />} />
               <Route path="/app-development-edinburgh" element={<AppDevelopmentEdinburgh />} />
               <Route path="/app-development-glasgow" element={<AppDevelopmentGlasgow />} />
+              
+              {/* Standalone pages */}
+              <Route path="/hero-background" element={<HeroBackground />} />
               
               {/* Authentication */}
               <Route path="/auth" element={<Auth />} />
