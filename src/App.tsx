@@ -70,6 +70,9 @@ const WebDevelopmentGlasgow = lazy(() => import("./pages/location/WebDevelopment
 const AppDevelopmentEdinburgh = lazy(() => import("./pages/location/AppDevelopmentEdinburgh"));
 const AppDevelopmentGlasgow = lazy(() => import("./pages/location/AppDevelopmentGlasgow"));
 
+// Standalone pages
+const Background = lazy(() => import("./pages/Background"));
+
 
 const queryClient = new QueryClient();
 
@@ -189,6 +192,9 @@ const App = () => (
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/blog/category/:slug" element={<BlogCategory />} />
               <Route path="/blog/tag/:tag" element={<BlogTag />} />
+              
+              {/* Standalone pages */}
+              <Route path="/background" element={<Background />} />
               
               {/* 404 page */}
               <Route path="/404" element={<NotFound />} />
