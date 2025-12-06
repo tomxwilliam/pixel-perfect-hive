@@ -13,9 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Seo from "@/components/Seo";
 import { usePageContent } from "@/hooks/usePageContent";
 const Contact = () => {
-  const {
-    data: pageContent
-  } = usePageContent('/contact');
+  const { data: pageContent } = usePageContent('/contact');
   const {
     toast
   } = useToast();
@@ -34,10 +32,7 @@ const Contact = () => {
     setIsLoading(true);
     try {
       // Send contact form data via Supabase edge function
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('send-contact-notification', {
+      const { data, error } = await supabase.functions.invoke('send-contact-notification', {
         body: {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -48,6 +43,7 @@ const Contact = () => {
           message: formData.message
         }
       });
+
       if (error) throw error;
       toast({
         title: "Message sent! 🚀",
@@ -81,6 +77,7 @@ const Contact = () => {
       [e.target.name]: e.target.value
     });
   };
+
   const handleSelectChange = (value: string) => {
     setFormData({
       ...formData,
@@ -88,7 +85,11 @@ const Contact = () => {
     });
   };
   return <div className="min-h-screen bg-background text-foreground">
-        <Seo title={pageContent?.meta_title || "Contact 404 Code Lab Edinburgh & Glasgow - Web Development Scotland"} description={pageContent?.meta_description || "Contact 404 Code Lab for web development, mobile apps, and game development in Edinburgh, Glasgow & Central Scotland. Call +44 7864 502527 or email hello@404codelab.com"} canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"} />
+        <Seo 
+          title={pageContent?.meta_title || "Contact 404 Code Lab Edinburgh & Glasgow - Web Development Scotland"}
+          description={pageContent?.meta_description || "Contact 404 Code Lab for web development, mobile apps, and game development in Edinburgh, Glasgow & Central Scotland. Call +44 7864 502527 or email hello@404codelab.com"}
+          canonicalUrl={pageContent?.canonical_url || "https://404codelab.com/contact"}
+        />
       <StaticNavigation />
       
       {/* Hero Section */}
@@ -98,7 +99,7 @@ const Contact = () => {
             📬 Let's Build Something Together
           </Badge>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent py-[6px]">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
             Contact Us in Edinburgh & Glasgow
           </h1>
           
@@ -157,7 +158,7 @@ const Contact = () => {
                       <SelectTrigger type="button">
                         <SelectValue placeholder="Select a service category" />
                       </SelectTrigger>
-                      <SelectContent onCloseAutoFocus={e => e.preventDefault()}>
+                      <SelectContent onCloseAutoFocus={(e) => e.preventDefault()}>
                         <SelectItem value="game-development">
                           🎮 Game Development
                         </SelectItem>
@@ -263,7 +264,11 @@ const Contact = () => {
                   <p className="text-muted-foreground mb-6 font-medium">
                     📱 07496 295759
                   </p>
-                  <Button onClick={() => window.open('https://wa.me/447496295759?text=Hi%20404CodeLabs!%20I%27m%20interested%20in%20your%20services.', '_blank')} className="w-full bg-green-600 hover:bg-green-700 text-white border-0" size="lg">
+                  <Button 
+                    onClick={() => window.open('https://wa.me/447496295759?text=Hi%20404CodeLabs!%20I%27m%20interested%20in%20your%20services.', '_blank')}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white border-0"
+                    size="lg"
+                  >
                     <Phone className="mr-2 h-5 w-5" />
                     Message on WhatsApp
                   </Button>
