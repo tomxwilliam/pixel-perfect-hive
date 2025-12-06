@@ -1,4 +1,5 @@
 import { Mail } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -7,6 +8,12 @@ declare global {
 }
 
 const MailerLiteButton = () => {
+  const location = useLocation();
+  
+  // Hide on background page
+  if (location.pathname === '/background') {
+    return null;
+  }
   const handleClick = () => {
     if (window.ml) {
       window.ml('show', 'T6SkkF', true);
