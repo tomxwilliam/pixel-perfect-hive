@@ -99,25 +99,25 @@ const Index = () => {
         <StaticNavigation />
       
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-start justify-center px-4 pt-12">
+      <section className="relative min-h-screen flex items-start justify-center px-4 pt-12" style={{ isolation: 'isolate' }}>
         {/* LetterGlitch Background */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0" style={{ zIndex: 0 }}>
           <LetterGlitch glitchSpeed={50} centerVignette={true} outerVignette={false} smooth={true} glitchColors={['#8B5CF6', '#1DD3DD', '#A78BFA']} />
         </div>
         
-        <div className="relative z-20 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg relative z-30">🎉 Limited Time Offer - 20% Off All Projects</Badge>
+        <div className="relative text-center max-w-4xl mx-auto" style={{ zIndex: 10 }}>
+          <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg" style={{ position: 'relative', zIndex: 20 }}>🎉 Limited Time Offer - 20% Off All Projects</Badge>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] mx-auto">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] mx-auto" style={{ position: 'relative', zIndex: 10 }}>
             Fast, Sharp Websites for Edinburgh & Glasgow Businesses
           </h1>
           
-          <p className="text-xl mb-8 text-background dark:text-foreground drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] max-w-2xl mx-auto leading-relaxed px-4">
+          <p className="text-xl mb-8 text-background dark:text-foreground drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] max-w-2xl mx-auto leading-relaxed px-4" style={{ position: 'relative', zIndex: 10 }}>
             Smart apps. Addictive games. Slick web design. We turn bold ideas into pixel-perfect reality. | Serving Edinburgh, Glasgow & Central Scotland
           </p>
 
           {/* View Buttons */}
-          <div className="flex flex-row gap-4 justify-center items-center mb-12 flex-wrap">
+          <div className="flex flex-row gap-4 justify-center items-center mb-12 flex-wrap" style={{ position: 'relative', zIndex: 10 }}>
             <Link to="/portfolio/games">
               <Button size="lg" variant="default" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl">
                 <Gamepad2 className="mr-2 h-5 w-5" />
@@ -132,9 +132,11 @@ const Index = () => {
             </Link>
           </div>
 
-          <FeaturedContentSection />
+          <div style={{ position: 'relative', zIndex: 10 }}>
+            <FeaturedContentSection />
+          </div>
 
-          <div className="flex items-center justify-center text-background dark:text-foreground animate-bounce mt-12 drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]">
+          <div className="flex items-center justify-center text-background dark:text-foreground animate-bounce mt-12 drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ position: 'relative', zIndex: 10 }}>
             <span className="mr-2">Explore Our Work</span>
             <ArrowDown className="h-5 w-5" />
           </div>

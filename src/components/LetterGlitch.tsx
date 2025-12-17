@@ -225,13 +225,16 @@ const LetterGlitch = ({
     width: '100%',
     height: '100%',
     backgroundColor: '#000000',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    zIndex: 0
   };
 
   const canvasStyle: React.CSSProperties = {
     display: 'block',
     width: '100%',
-    height: '100%'
+    height: '100%',
+    position: 'relative',
+    zIndex: 0
   };
 
   const outerVignetteStyle: React.CSSProperties = {
@@ -241,7 +244,8 @@ const LetterGlitch = ({
     width: '100%',
     height: '100%',
     pointerEvents: 'none',
-    background: 'radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%)'
+    background: 'radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%)',
+    zIndex: 1
   };
 
   const centerVignetteStyle: React.CSSProperties = {
@@ -251,7 +255,8 @@ const LetterGlitch = ({
     width: '100%',
     height: '100%',
     pointerEvents: 'none',
-    background: 'radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)'
+    background: 'radial-gradient(circle, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)',
+    zIndex: 1
   };
 
   return (
