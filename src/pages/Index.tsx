@@ -101,12 +101,12 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-start justify-center px-4 pt-12">
         {/* LetterGlitch Background */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <LetterGlitch glitchSpeed={50} centerVignette={true} outerVignette={false} smooth={true} glitchColors={['#8B5CF6', '#1DD3DD', '#A78BFA']} />
         </div>
         
-        <div className="relative z-10 text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg">🎉 Limited Time Offer - 20% Off All Projects</Badge>
+        <div className="relative z-20 text-center max-w-4xl mx-auto">
+          <Badge className="mb-6 bg-primary text-primary-foreground border-0 px-4 py-2 text-sm inline-flex items-center justify-center shadow-lg relative z-30">🎉 Limited Time Offer - 20% Off All Projects</Badge>
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-background dark:text-foreground drop-shadow-[0_0_10px_rgba(0,0,0,0.8)] py-[15px] mx-auto">
             Fast, Sharp Websites for Edinburgh & Glasgow Businesses

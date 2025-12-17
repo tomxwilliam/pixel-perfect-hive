@@ -113,9 +113,12 @@ const LetterGlitch = ({
   };
 
   const drawLetters = () => {
-    if (!context.current || letters.current.length === 0) return;
+    const canvas = canvasRef.current;
+    if (!context.current || letters.current.length === 0 || !canvas) return;
     const ctx = context.current;
-    const { width, height } = canvasRef.current!.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
+    if (!rect) return;
+    const { width, height } = rect;
     ctx.clearRect(0, 0, width, height);
     ctx.font = `${fontSize}px monospace`;
     ctx.textBaseline = 'top';
