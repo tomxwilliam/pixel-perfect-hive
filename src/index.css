@@ -125,6 +125,22 @@ All colors MUST be HSL.
     transition-duration: 200ms;
     transition-timing-function: ease-in-out;
   }
+
+  /* Cross-browser compatibility */
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
 }
 
 @layer components {
@@ -198,18 +214,40 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Animation keyframes */
-  @keyframes messageSlideIn {
+  /* Animation keyframes with webkit prefixes */
+  @-webkit-keyframes messageSlideIn {
     from {
       opacity: 0;
+      -webkit-transform: translateY(20px) scale(0.95);
       transform: translateY(20px) scale(0.95);
     }
     to {
       opacity: 1;
+      -webkit-transform: translateY(0) scale(1);
+      transform: translateY(0) scale(1);
+    }
+  }
+  @keyframes messageSlideIn {
+    from {
+      opacity: 0;
+      -webkit-transform: translateY(20px) scale(0.95);
+      transform: translateY(20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      -webkit-transform: translateY(0) scale(1);
       transform: translateY(0) scale(1);
     }
   }
   
+  @-webkit-keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+    }
+  }
   @keyframes pulseGlow {
     0%, 100% {
       box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
@@ -218,9 +256,52 @@ All colors MUST be HSL.
       box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
     }
   }
+
+  @-webkit-keyframes slideInFromBottom {
+    from {
+      -webkit-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes slideInFromBottom {
+    from {
+      -webkit-transform: translateY(100%);
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      -webkit-transform: translateY(0);
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
   
   .pulse-glow {
+    -webkit-animation: pulseGlow 2s ease-in-out infinite;
     animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .slide-in-bottom {
+    -webkit-animation: slideInFromBottom 0.5s ease-out forwards;
+    animation: slideInFromBottom 0.5s ease-out forwards;
+  }
+
+  /* Cross-browser gradient text */
+  .bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* Ensure text-transparent works cross-browser */
+  .text-transparent {
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 }
 

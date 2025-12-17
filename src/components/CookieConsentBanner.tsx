@@ -9,7 +9,7 @@ export function CookieConsentBanner() {
   if (hasConsented) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg animate-in slide-in-from-bottom duration-500">
+    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6 bg-background border-t border-border shadow-lg slide-in-bottom" style={{ backgroundColor: 'hsl(222, 47%, 7%)' }}>
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
           <div className="flex items-start gap-3 flex-1">
@@ -32,6 +32,7 @@ export function CookieConsentBanner() {
               onClick={acceptAll}
               className="flex-1 md:flex-none"
               size="sm"
+              style={{ backgroundColor: '#8B5CF6', color: '#ffffff' }}
             >
               Accept All
             </Button>
